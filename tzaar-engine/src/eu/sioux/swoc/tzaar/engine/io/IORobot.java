@@ -19,54 +19,56 @@ package eu.sioux.swoc.tzaar.engine.io;
 
 import java.io.IOException;
 
+import org.json.simple.JSONObject;
+
 public class IORobot implements AutoCloseable
 {
 	IOHandler handler;
 	StringBuilder dump;
 	int errorCounter;
 	final int maxErrors = 2;
-	
+
 	public IORobot(String command) throws IOException
 	{
 		handler = new IOHandler(command);
 		dump = new StringBuilder();
 		errorCounter = 0;
 	}
-	
+
 	public void setup(long timeOut)
 	{
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	public String doMove(long timeOut)
 	{
-//		String output = "pick_starting_regions " + timeOut;
-//		for(Region region : pickableRegions)
-//			output = output.concat(" " + region.getId());
-//
-		String output = "Do your job, idiot";
+		JSONObject obj = new JSONObject();
+		obj.put("message", "init");
+		obj.put("boardState", new Integer(100));
+		String output = obj.toString();
 		handler.writeLine(output);
 		String line = handler.readLine(timeOut);
 		dump.append(output + "\n");
 		dump.append(line + "\n");
 		return line;
 	}
-	
+
 	@Override
 	public void close()
 	{
 		handler.close();
 	}
-	
+
 	public String getStdin()
 	{
 		return handler.getStdin();
 	}
-	
+
 	public String getStdout()
 	{
 		return handler.getStdout();
 	}
-	
+
 	public String getStderr()
 	{
 		return handler.getStderr();
