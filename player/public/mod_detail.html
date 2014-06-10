@@ -1,0 +1,132 @@
+<header>
+	<div class="player1-active" ng-if="'white' == activeColor" style="width:45%">{{game.bot1}}</div>
+	<div class="player1-inactive" ng-if="'white' != activeColor" style="width:45%">{{game.bot1}}</div>
+	<div class="VS">VS</div>
+	<div class="player2-active" ng-if="'black' == activeColor" style="width:45%">{{game.bot2}}</div>
+	<div class="player2-inactive" ng-if="'black' != activeColor" style="width:45%">{{game.bot2}}</div>
+</header>
+
+<section>
+	<article>
+		<canvas id="c" width="550" height="550" ng-click="clickGame($event)" style="position:absolute;"></canvas>
+		<canvas id="cmove" width="550" height="550" style="position:relative; top:0px; left:0px"></canvas>
+		<div class="winningPlayer player2-active" ng-if="winner != null && winner == game.bot2" style="position:relative; top:-317px;"> 
+			<div>We have a winner!</div>
+			<div style="font-size: 28px;">{{winner}}</div>
+		</div>
+		<div class="winningPlayer player1-active" ng-if="winner != null && winner == game.bot1" style="position:relative; top:-317px;"> 
+			<div>We have a winner!</div>
+			<div style="font-size: 28px;">{{winner}}</div>
+		</div>
+	</article>
+	<article>
+		<input type="checkbox" ng-model="printlabels"> 
+		Show labels <br/>
+		<caption><strong>Game Moves<strong></caption>
+		<textarea readonly style="width: 100%; resize: vertical">{{game.moves}}</textarea>
+	</article>
+
+</section>
+<aside>
+	<table style="width:100%" >
+	   <caption><strong>Game Info<strong></caption>
+	   <thead>
+	      <tr>
+		 <th></th>
+		 <th></th>
+	      </tr>
+	   </thead>
+	   <tbody>
+	      <tr>
+		 <th>Name</th>
+		 <td align='right'>{{game.name}}</td>
+	      </tr>
+	      <tr>
+		 <th>Bot1</th>
+		 <td align='right'>{{game.bot1}}</td>
+	      </tr>
+	      <tr>
+		 <th>Bot2</th>
+		 <td align='right'>{{game.bot2}}</td>
+	      </tr>
+	      <tr>		 
+	   </tbody>
+	</table>
+	<table style="width:100%">
+		<thead>
+			<tr>
+				<th></th>
+				<th style='text-align:center; font-size:24px'>White</th>
+				<th style='text-align:center; font-size:24px'>Black</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<th style='text-align:center; font-size:24px'>Tzaar</th>
+				<td style='text-align:center; font-size:24px'>
+					<div class="progress progress-striped active" style="position:relative;">
+						<div class="progress-bar"  role="progressbar" style="width:{{100 * game.whiteTzaarCount/6}}%; background-color:rgb({{220 - 220 * game.whiteTzaarCount/6 | number : 0}},{{220 * game.whiteTzaarCount/6 | number : 0}},0);position:absolute; top:0;left:0">
+						</div>
+						<div style="position:absolute;left:45%; top:0;"> {{game.whiteTzaarCount}}</div>
+					</div>
+				</td>
+				<td style='text-align:center; font-size:24px'>
+					<div class="progress progress-striped active" style="position:relative;" >
+						<div class="progress-bar"  role="progressbar" style="width:{{100 * game.blackTzaarCount/6}}%; background-color:rgb({{220 - 220 * game.blackTzaarCount/6 | number : 0}},{{220 * game.blackTzaarCount/6 | number : 0}},0);position:absolute; top:0;left:0">
+						</div>
+						<div style="position:absolute;left:45%; top:0;"> {{game.blackTzaarCount}}</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<th style='text-align:center; font-size:24px'>Tzarras</th>
+				<td style='text-align:center; font-size:24px'>
+					<div class="progress progress-striped active" style="position:relative;"  >
+						<div class="progress-bar"  role="progressbar" style="width:{{100 * game.whiteTzarrasCount/9}}%; background-color:rgb({{220 - 220 * game.whiteTzarrasCount/9 | number : 0}},{{220 * game.whiteTzarrasCount/9 | number : 0}},0);position:absolute; top:0;left:0">
+						</div>
+						<div style="position:absolute;left:45%; top:0;"> {{game.whiteTzarrasCount}}</div>
+					</div>
+				</td>
+				<td style='text-align:center; font-size:24px'>
+					<div class="progress progress-striped active" style="position:relative;"  >
+						<div class="progress-bar"  role="progressbar" style="width:{{100 * game.blackTzarrasCount/9}}%; background-color:rgb({{220 - 220 * game.blackTzarrasCount/9 | number : 0}},{{220 * game.blackTzarrasCount/9 | number : 0}},0);position:absolute; top:0;left:0">
+						</div>
+						<div style="position:absolute;left:45%; top:0;"> {{game.blackTzarrasCount}}</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<th style='text-align:center; font-size:24px'>Totts</th>
+				<td style='text-align:center; font-size:24px'>
+					<div class="progress progress-striped active" style="position:relative;"  >
+						<div class="progress-bar"  role="progressbar" style="width:{{100 * game.whiteTottsCount/15}}%; background-color:rgb({{220 - 220 * game.whiteTottsCount/15 | number : 0}},{{220 * game.whiteTottsCount/15 | number : 0}},0);position:absolute; top:0;left:0">
+						</div>
+						<div style="position:absolute;left:45%; top:0;"> {{game.whiteTottsCount}}</div>
+					</div>
+				</td>
+				<td style='text-align:center; font-size:24px'>
+					<div class="progress progress-striped active" style="position:relative;"  >
+						<div class="progress-bar"  role="progressbar" style="width:{{100 * game.blackTottsCount/15}}%; background-color:rgb({{220 - 220 * game.blackTottsCount/15 | number : 0}},{{220 * game.blackTottsCount/15 | number : 0}},0);position:absolute; top:0;left:0">
+						</div>
+						<div style="position:absolute;left:45%; top:0;"> {{game.blackTottsCount}}</div>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<br/><br/>
+	<strong>Active Player = {{activeColor}} </strong><br/>
+	<!-- Our Player -->
+	<div class="controls">
+		<div class="play" ng-hide="isPlaying" ng-click="startPlaying()"> </div>
+		<div class="pause" ng-show="isPlaying" ng-click="pausePlaying()"> </div>
+		<div class="previous" ng-click="decreaseMoveAndUpdate()"> </div>
+		<div class="next" ng-click="increaseMoveAndUpdate()"> </div>
+	</div>
+	<!--            -->
+	Completed Moves: {{currentmoveIndex}} <br/>
+	<br/>
+	<div class="moveTypeAnimation-container" >
+		<img ng-repeat="moveString in game.moveStrings" class="moveTypeAnimation" ng-if="moveString.index == currentmoveIndex" src="{{moveString.move_img}}" height="250" width="250" style="clear:both;"></img>
+	</div>
+</aside>

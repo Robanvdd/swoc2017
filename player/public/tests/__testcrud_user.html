@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<link rel="shortcut icon" href="assets/ico/favicon.png">		
+	<!-- Bootstrap core CSS -->
+	<link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+	<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!--[if lt IE 9]>
+		<script src="assets/js/html5shiv.js"></script>
+		<script src="assets/js/respond.min.js"></script>
+	<![endif]-->
+	
+	<title>User</title>
+</head>
+<body>
+	
+	<div class="container">
+		
+		<h1>CRUD User</h1>
+			
+		<div class="row">
+			
+			<div class="col-lg-8">
+				<legend>Data Pengguna</legend>
+				
+				<table width="100%" class="table table-hover">
+					<thead>
+						<tr>
+							<th width="50px">No</th><th>Data</th><th width="150px">Aksi</th>
+						</tr>
+					</thead>
+					<tbody data-bind="foreach: mainList">
+						<tr>
+							<td data-bind="text: $index() + 1"></td>
+							<td>
+									Nama: <span data-bind="text: fullname"></span><br/>
+									Email: <span data-bind="text: email"></span><br/>
+							</td>								
+							<td>
+								<a href="#editModal" class="btn btn-warning btn-mini" data-toggle="modal" data-bind="click: $root.editMain" title="EDIT"><b class="glyphicon glyphicon-pencil"></b></i></a>
+								<a href="#" class="btn btn-danger btn-mini" data-bind="click: $root.deleteMain" title="DELETE"><b class="glyphicon glyphicon-remove"></b></a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<br/>
+				<button class="btn btn-info btn-sm" data-bind="click: refreshMainList">Reload <b class="glyphicon glyphicon-refresh"></b></button>
+			</div><!-- end of .col-lg-8 -->
+			
+			<div class="col-lg-4">
+				<form role="form" class="form-horizontal">
+					<legend>Pengisian Pengguna</legend>
+					<div class="form-group"><label for="inputfullname" class="col-lg-4 control-label">Nama</label><div class="col-lg-8"><input type="text" class="form-control" id="inputfullname" placeholder="Nama" data-bind="value:newFullname"></div></div>
+					<div class="form-group"><label for="inputemail" class="col-lg-4 control-label">Email</label><div class="col-lg-8"><input type="text" class="form-control" id="inputemail" placeholder="Email" data-bind="value:newEmail"></div></div>
+					<div class="form-group"><label for="inputpassword" class="col-lg-4 control-label">Password</label><div class="col-lg-8"><input type="password" class="form-control" id="inputpassword" placeholder="Password" data-bind="value:newPassword"></div></div>
+					
+					<div class="form-group">
+						<div class="col-lg-offset-2 col-lg-10">
+							<button type="reset" class="btn btn-warning btn-large">Reset <b class="glyphicon glyphicon-refresh"></b></button>&nbsp;
+							<button type="button" class="btn btn-default" data-bind="click: createSave">Submit &raquo;</button>	
+						</div>							
+					</div>
+				</form>
+			</div><!-- end of .col-lg-4 -->
+		
+		</div><!-- end of .row -->
+	
+	</div> <!-- end of .container -->
+
+	<!-- MODALS -->
+	<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Edit Data Pengguna</h4>
+				</div>
+				<div class="modal-body">
+					<form id="formuliredit" role="form" class="form-horizontal">
+						<div class="form-group"><label for="updatefullname" class="col-lg-4 control-label">Nama</label><div class="col-lg-8"><input type="text" class="form-control" id="updatefullname" placeholder="Nama" data-bind="value:selectedFullname"></div></div>
+						<div class="form-group"><label for="updateemail" class="col-lg-4 control-label">Email</label><div class="col-lg-8"><input type="text" class="form-control" id="updateemail" placeholder="Email" data-bind="value:selectedEmail"></div></div>
+						<div class="form-group"><label for="updatepassword" class="col-lg-4 control-label">Password</label><div class="col-lg-8"><input type="text" class="form-control" id="updatepassword" placeholder="Password" data-bind="value:selectedPassword"></div></div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<a href="#" class="btn btn-warning" data-dismiss="modal">Close &times;</a>
+					<a href="#" class="btn btn-primary" id="savechangebtn" data-bind="click: editSave">Save Changes &raquo;</a>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	
+	<!-- END OF MODALS -->
+
+	<!-- Bootstrap core JavaScript
+	================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script src="js/jquery-1.10.2.js"></script>
+	<script src="bootstrap/js/bootstrap.min.js"></script>
+	<script src="js/knockout-2.3.0.js"></script>
+	
+	<script type="text/javascript">
+			
+	function MainViewModel(data) {
+		var self = this;
+		
+		self.newFullname = ko.observable();
+		self.newEmail = ko.observable();
+		self.newPassword = ko.observable();
+
+		self.selectedId = ko.observable();
+		self.selectedFullname = ko.observable();
+		self.selectedEmail = ko.observable();
+		self.selectedPassword = ko.observable();
+		
+		self.mainList = ko.observableArray([]);
+		
+		//RETRIEVE
+		self.refreshMainList = function() {			
+			$.getJSON('http://localhost:8090/api/user/retrieveall/', function(result) {
+				self.mainList(result);
+			});
+		}
+		
+		//CREATE: ON SAVE
+		self.createSave = function(){
+			$.post('http://localhost:8090/api/user/create/',
+				{
+				'fullname' : self.newFullname(),
+				'email' : self.newEmail(),
+				'password' : self.newPassword(),
+				},
+				function(data){
+					self.refreshMainList();
+				}
+			);
+		}
+		
+		//UPDATE: ON SELECT
+		self.editMain = function(data) {
+			self.selectedFullname(data.fullname);
+			self.selectedEmail(data.email);
+			self.selectedPassword(data.password);
+			self.selectedId(data._id);
+			$('#editModal').on('shown', function () {
+				$('#savechangebtn').focus();
+			})
+		}
+		
+		//UPDATE: ON SAVE
+		self.editSave = function(){
+			$.post('http://localhost:8090/api/user/update/',
+				{
+					'fullname' : self.selectedFullname(),
+					'email' : self.selectedEmail(),
+					'password' : self.selectedPassword(),
+					'id' : self.selectedId()
+				},
+				function(data){
+					self.refreshMainList();
+				}
+			);
+		}
+		
+		//DELETE
+		self.deleteMain = function(data) {
+			if(confirm('Are you sure you want to delete?')){
+				$.post('http://localhost:8090/api/user/delete/',{'id':data._id},function(delData){
+					self.refreshMainList();
+				});
+			}
+		}
+				
+	}
+
+	//INITS
+	var vm = new MainViewModel();
+	ko.applyBindings(vm);
+	vm.refreshMainList();
+	
+	</script>
+</body>
+</html>

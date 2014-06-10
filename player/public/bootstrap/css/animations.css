@@ -1,0 +1,111 @@
+.moveTypeAnimation-container {
+position:relative;
+height: 250px;
+width: 100%;
+}
+
+.moveTypeAnimation {
+position:absolute;
+top: 0;
+left: 50px;
+}
+
+.moveTypeAnimation.ng-enter {
+  -webkit-transform-origin: 125px 0 -125px;
+  -webkit-transition:all linear 0.5s;
+  -moz-transform-origin: 125px 0 -125px;
+  -moz-transition:all linear 0.5s;
+  -o-transform-origin: 125px 0 -125px;
+  -o-transition:all linear 0.5s;
+  transform-origin: 125px 0 -125px;
+  transition:all linear 0.5s;
+  display:block!important;
+
+-webkit-transform : rotate3D(0,1,0,90deg);
+
+-moz-transform: rotate3D(0,1,0,90deg);
+
+-ms-transform : rotate3D(0,1,0,90deg);
+
+-o-transform : rotate3D(0,1,0,90deg);
+
+transform: rotate3D(0,1,0,90deg);
+
+
+}
+.moveTypeAnimation.ng-enter.ng-enter-active {
+
+-webkit-transform : rotate3D(0,1,0,0);
+
+-moz-transform : rotate3D(0,1,0,0);
+
+-ms-transform : rotate3D(0,1,0,0);
+
+-o-transform : rotate3D(0,1,0,0);
+
+transform : rotate3D(0,1,0,0);
+}
+
+ .moveTypeAnimation.ng-leave {
+  -webkit-transform-origin: 125px 0 -125px;
+  -webkit-transition:all linear 0.5s;
+  -moz-transform-origin: 125px 0 -125px;
+  -moz-transition:all linear 0.5s ;
+  -o-transform-origin: 125px 0 -125px;
+  -o-transition:all linear 0.5s ;
+  transform-origin: 125px 0 -125px;
+  transition:all linear 0.5s ;
+  display:block!important;
+
+
+-webkit-transform : rotate3D(0,1,0,0);
+
+-moz-transform : rotate3D(0,1,0,0);
+
+-ms-transform : rotate3D(0,1,0,0);
+
+-o-transform : rotate3D(0,1,0,0);
+
+transform : rotate3D(0,1,0,0);
+}
+
+
+.moveTypeAnimation.ng-leave.ng-leave-active {
+
+-webkit-transform : rotate3D(0,1,0,-90deg);
+
+-moz-transform: rotate3D(0,1,0,-90deg);
+
+-ms-transform : rotate3D(0,1,0,-90deg);
+
+-o-transform : rotate3D(0,1,0,-90deg);
+
+transform: rotate3D(0,1,0,-90deg);
+}
+
+.winningPlayer.ng-enter {
+	transition:all linear 0.5s;
+	left: 275px;
+	right: 275px;
+	width: 0%;
+}
+
+.winningPlayer.ng-enter.ng-enter-active {
+	left: 0px;
+	right: 550px;
+	width: 100%;
+}
+
+.winningPlayer.ng-leave {
+	transition:all linear 0.5s;
+	left: 0px;
+	right: 550px;
+	width: 100%;
+}
+
+.winningPlayer.ng-leave.ng-leave-active {
+	left: 275px;
+	right: 275px;
+	width: 0%;
+}
+

@@ -1,0 +1,22 @@
+<h2>LIST</h2>
+
+<table width="100%" class="table table-hover">
+	<thead>
+		<tr>
+			<th width="50px">No</th><th>Data</th><th>Detail</th><th>Delete</th>
+		</tr>
+	</thead>
+		<tr ng-repeat="game in games | orderBy:'name'">
+			<td>{{$index+1}}</td>
+			<td>
+				Name: <span>{{game.name}}</span>
+			</td>
+			<td>
+				<a class="btn btn-primary btn-mini" href="#/detail/{{game._id}}">Detail <b class="glyphicon glyphicon-search"></b></a>
+			</td>
+			<td>
+				<a class="btn btn-primary btn-mini" ng-click="deleteSubmit(game._id)">Delete</a>
+			</td>
+		</tr>
+	</tbody>
+</table>

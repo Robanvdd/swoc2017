@@ -1,0 +1,23 @@
+{
+  "name": "tutorial_MEAN_stack",
+  "version": "0.0.1",
+  "description": "belajar MEAN stack",
+  "main": "server.js",
+  "dependencies": {
+  "express": "~3.5.0",
+  "mongoose": "~3.6.13",
+  "request" : "~2.36.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "mongo",
+    "angular",
+    "node",
+    "express"
+  ],
+  "author": "@arisetyo",
+  "license": "ISC"
+}

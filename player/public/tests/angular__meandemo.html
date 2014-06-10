@@ -1,0 +1,38 @@
+<!doctype html>
+<html ng-app>
+<head>
+	<script src="js/angular.js"></script>
+	<script src="meandemo.js"></script>
+	
+	<link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+</head>
+<body>
+	<div class="container">
+
+		<h2>MEAN Demo</h2>
+		
+		<div ng-controller="MeanDemo">
+		
+			<button ng-click="loadData()" class="btn btn-primary btn-mini">load data</button>
+			
+			<table width="100%" class="table table-hover">
+				<thead>
+					<tr>
+						<th width="50px">No</th><th>Data</th>
+					</tr>
+				</thead>
+					<tr ng-repeat="user in users">
+						<td>{{$index+1}}</td>
+						<td>
+								Nama: <span>{{user.fullname}}</span><br/>
+								Email: <span>{{user.email}}</span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+		</div>
+
+	</div>
+</body>
+</html>
