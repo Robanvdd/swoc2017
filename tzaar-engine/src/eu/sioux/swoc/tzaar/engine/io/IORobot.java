@@ -21,6 +21,8 @@ import java.io.IOException;
 
 import org.json.simple.JSONObject;
 
+import eu.sioux.swoc.tzaar.engine.Board;
+
 public class IORobot implements AutoCloseable
 {
 	IOHandler handler;
@@ -40,16 +42,19 @@ public class IORobot implements AutoCloseable
 	}
 
 	@SuppressWarnings("unchecked")
-	public String doMove(long timeOut)
+	public String doMove(Board board, long timeOut)
 	{
 		JSONObject obj = new JSONObject();
 		obj.put("message", "init");
-		obj.put("boardState", new Integer(100));
+		obj.put("boardState", board.Serialize());
+		
 		String output = obj.toString();
 		handler.writeLine(output);
+		
 		String line = handler.readLine(timeOut);
-		dump.append(output + "\n");
-		dump.append(line + "\n");
+		
+		dump.append("output: " + output + "\n");
+		dump.append("line: " + line + "\n");
 		return line;
 	}
 
