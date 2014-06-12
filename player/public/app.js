@@ -22,6 +22,10 @@ meanApp.config(['$routeProvider', function($routeProvider) {
 			controller:'PlayCtrl',
 			templateUrl:'mod_play.html'
 		})
+		.when('/playvcpu/', {
+			controller:'PlayvCPUCtrl',
+			templateUrl:'mod_play_v_cpu.html'
+		})
 		.otherwise({
 			redirectTo: '/'
 		});

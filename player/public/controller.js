@@ -1,8 +1,23 @@
 var meanControllers = angular.module('meanControllers', ['ngAnimate']);
 
+meanControllers.controller('PlayvCPUCtrl', ['$scope', '$http', '$location', function ($scope, $http, $location) {
+$scope.getCPUMove = function(data) {
+		$http.post('/api/game/botmove/', data)
+			.success(function(data){
+				$scope.game.moves = data;
+			})
+			.error(function(data) {
+				console.log(data);
+			});
+	}
+	$scope.game = {startstate: "oOOOOozZZZooztTTzooztoOtzoOZTO otzoOZToOTZOOZttTZOOzzzZOooooO"};	
+	$scope.game.moves = "";
+	$scope.getCPUMove({move : "testmove"});
+}]);
+
 //CONTROLLER FOR mod_list.html
 meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', function ($scope, $http, $location) {
-        $scope.getAll = function() {
+	$scope.getAll = function() {
 		$http.get('/api/game/retrieveall/')
 			.success(function(data){
 				$scope.games = data;
@@ -11,7 +26,7 @@ meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', function
 				console.log(data);
 			});
 	}
-        $scope.deleteSubmit = function($id) {
+	$scope.deleteSubmit = function($id) {
                 console.log($id);
                 var data = { id : $id};
 		$http.post('/api/game/delete/', data).success(function(){

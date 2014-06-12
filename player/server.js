@@ -4,7 +4,8 @@ var application_root = __dirname,
 	path 	= require("path"),
 	url 	= require("url"),
 	request = require("request"),
-	Game 	= require('./routes/game');
+	Game 	= require('./routes/game'),
+	exec    = require('child_process').execFile;
 
 var app = express();
 
@@ -33,7 +34,7 @@ app.get('/api/game/retrieveall/', function(req, res) {
 });
 
 app.get('/api/game/retrieveid/:id', function(req, res) { 
-	Game.RetrieveById(/*"5383392a8b6dfb387e000001"*/req.params.id, function(err, success) {
+	Game.RetrieveById(req.params.id, function(err, success) {
 		if(err) throw err;
 		else res.send(success);
 	});
@@ -51,6 +52,15 @@ app.post('/api/game/delete', function(req, res) {
 		if(err) throw err;
 		else res.send(success);
 	});
+});
+
+app.post('/api/game/botmove', function(req, res) {
+	console.log("fun() start");
+	exec('HelloJithin.exe', function(err, data) {  
+        console.log(err)
+        console.log(data.toString());   
+		res.send(data.toString());                    
+    });
 });
 
 //======================= START SERVER ======================
