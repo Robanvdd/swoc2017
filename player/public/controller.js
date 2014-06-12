@@ -1,18 +1,570 @@
 var meanControllers = angular.module('meanControllers', ['ngAnimate']);
 
-meanControllers.controller('PlayvCPUCtrl', ['$scope', '$http', '$location', function ($scope, $http, $location) {
-$scope.getCPUMove = function(data) {
-		$http.post('/api/game/botmove/', data)
+meanControllers.factory("GameLibrary", function() {
+	var gameLibrary = {};
+	gameLibrary.numberOfSides = 6;
+	gameLibrary.size = 240;
+	gameLibrary.Xcenter = 275;
+	gameLibrary.Ycenter = 275;
+	gameLibrary.stoneRadius = 20;
+	
+	gameLibrary.unit_distance = (gameLibrary.size / 4);
+	// Vertical |
+	// NW_SE \
+	// NE_SW /
+	// ((starting at top))
+	gameLibrary.vertical_X = 0;
+	gameLibrary.vertical_Y = gameLibrary.unit_distance;
+	
+	gameLibrary.NW_SE_X = gameLibrary.unit_distance * Math.cos(0.5* 2 * Math.PI / gameLibrary.numberOfSides);
+	gameLibrary.NW_SE_Y = gameLibrary.unit_distance * Math.sin(0.5* 2 * Math.PI / gameLibrary.numberOfSides);
+
+	gameLibrary.NE_SW_X = gameLibrary.unit_distance * Math.cos(5.5* 2 * Math.PI / gameLibrary.numberOfSides);
+	gameLibrary.NE_SW_Y = gameLibrary.unit_distance * Math.sin(5.5* 2 * Math.PI / gameLibrary.numberOfSides);
+
+	gameLibrary.colA = {
+		name : "A",
+		size : 5,
+		Xcoord : gameLibrary.Xcenter +  (gameLibrary.size) * Math.cos((3.5)* 2 * Math.PI / gameLibrary.numberOfSides),
+		Ycoord : gameLibrary.Ycenter +  (gameLibrary.size) * Math.sin((3.5)* 2 * Math.PI / gameLibrary.numberOfSides),
+		stones: []
+	};
+
+	gameLibrary.colB = {
+		name : "B",
+		size : 6,
+		Xcoord : gameLibrary.colA.Xcoord + gameLibrary.NE_SW_X,
+		Ycoord : gameLibrary.colA.Ycoord + gameLibrary.NE_SW_Y,
+		stones: []
+	};
+
+	gameLibrary.colC = {
+		name : "C",
+		size : 7,
+		Xcoord : gameLibrary.colB.Xcoord + gameLibrary.NE_SW_X,
+		Ycoord : gameLibrary.colB.Ycoord + gameLibrary.NE_SW_Y,
+		stones: []
+	};
+
+	gameLibrary.colD = {
+		name : "D",
+		size : 8,
+		Xcoord : gameLibrary.colC.Xcoord + gameLibrary.NE_SW_X,
+		Ycoord : gameLibrary.colC.Ycoord + gameLibrary.NE_SW_Y,
+		stones: []
+	};
+
+	gameLibrary.colE = {
+		name : "E",
+		size : 9,
+		Xcoord : gameLibrary.colD.Xcoord + gameLibrary.NE_SW_X,
+		Ycoord : gameLibrary.colD.Ycoord + gameLibrary.NE_SW_Y,
+		stones: []
+	};
+
+	gameLibrary.colF = {
+		name : "F",
+		size : 8,
+		Xcoord : gameLibrary.colE.Xcoord + gameLibrary.NW_SE_X,
+		Ycoord : gameLibrary.colE.Ycoord + gameLibrary.NW_SE_Y,
+		stones: []
+	};
+
+	gameLibrary.colG = {
+		name : "G",
+		size : 7,
+		Xcoord : gameLibrary.colF.Xcoord + gameLibrary.NW_SE_X,
+		Ycoord : gameLibrary.colF.Ycoord + gameLibrary.NW_SE_Y,
+		stones: []
+	};
+
+	gameLibrary.colH = {
+		name : "H",
+		size : 6,
+		Xcoord : gameLibrary.colG.Xcoord + gameLibrary.NW_SE_X,
+		Ycoord : gameLibrary.colG.Ycoord + gameLibrary.NW_SE_Y,
+		stones: []
+	};
+
+	gameLibrary.colI = {
+		name : "I",
+		size : 5,
+		Xcoord : gameLibrary.colH.Xcoord + gameLibrary.NW_SE_X,
+		Ycoord : gameLibrary.colH.Ycoord + gameLibrary.NW_SE_Y,
+		stones: []
+	};
+
+
+	gameLibrary.cols = [gameLibrary.colA, gameLibrary.colB, gameLibrary.colC, gameLibrary.colD, gameLibrary.colE, gameLibrary.colF, gameLibrary.colG, gameLibrary.colH, gameLibrary.colI];
+	angular.forEach(gameLibrary.cols, function(column, key) {
+		for (var i=1; i<= column.size; i++) {
+			column.stones.push({
+				name : column.name + i,
+				Xcoord : column.Xcoord,
+				Ycoord : column.Ycoord + column.stones.length * gameLibrary.vertical_Y,
+				color : null,
+				height : null,
+				type : null
+			});
+			console.log("added a stone to column " + column.name + ": " + column.stones[i-1].name 
+			+ " at X:" + column.stones[i-1].Xcoord + " Y:" + column.stones[i-1].Ycoord);
+		}
+	});
+
+	gameLibrary.loadGame = function() {
+		console.log("Selected game state:" + gameLibrary.game.startstate);
+		if (gameLibrary.game.startstate.length == 61) {
+			var stoneIndex = 0;
+			angular.forEach(gameLibrary.cols, function(column, key) {
+				angular.forEach(column.stones, function(stone, key) {
+					if ( stone.name != "E5" ) {
+						stone.height = 1;
+						var stoneState = gameLibrary.game.startstate[stoneIndex];
+						switch ( stoneState ) {
+							case "t" :
+								stone.color = "white";
+								stone.type = "TZAAR";
+							break;
+							case "z" :
+								stone.color = "white";
+								stone.type = "TZARRAS";
+							break;
+							case "o" :
+								stone.color = "white";
+								stone.type = "TOTTS";
+							break;
+							case "T" :
+								stone.color = "black";
+								stone.type = "TZAAR";
+							break;
+							case "Z" :
+								stone.color = "black";
+								stone.type = "TZARRAS";
+							break;
+							case "O" :
+								stone.color = "black";
+								stone.type = "TOTTS";
+							break;
+							default :
+								stone.type = null;
+								stone.color = null; 
+							break;
+						}
+					}
+					stoneIndex++;
+				});
+			});
+		} else {
+			console.log("invalid game state length, should be 61 chars long: " + gameLibrary.game.startstate.length);
+		}
+	}
+
+	gameLibrary.loadMoves = function() {
+		gameLibrary.game.moveStrings = [{ index: 0, moveString: "PASS", move_img: ""}];
+		for ( var moveIndex = 0; moveIndex < (gameLibrary.game.moves.length/4); moveIndex++) {
+			var move = gameLibrary.getMoveString(moveIndex);
+			if (moveIndex == (gameLibrary.game.moves.length/4)-1) {
+				//last move
+				move.move_img = "./img/w.png"
+			} else if (move.moveString != "PASS" ) {
+				if (move.endstone.color == move.startstone.color) {
+					move.move_img = "./img/shield_PNG1268.png";
+					move.endstone.height = move.startstone.height + 1;
+				} else {
+					move.move_img = "./img/Crossed_gladii.png";
+					move.endstone.height = move.startstone.height;
+					move.endstone.color = move.startstone.color;
+				}
+				move.endstone.type = move.startstone.type;
+				move.startstone.color = null;
+				move.startstone.type = null;
+			} else {
+				move.move_img = "./img/clock-147257_640.png";
+			}
+			console.log("adding move " + move.index);
+			gameLibrary.game.moveStrings.push(move);
+		}
+		//reset game
+		gameLibrary.loadGame();
+	};
+
+	gameLibrary.getMoveString = function(moveIndex) {
+		var move = gameLibrary.game.moves.substring(moveIndex*4, moveIndex*4 + 4)
+		console.log("getMove: " + move);
+		if (move != "PASS") {
+			var startcol = gameLibrary.cols[move.charCodeAt(0) - "A".charCodeAt(0) ];
+			//console.log("found startcol:" + startcol.name + "startcol:Xcoord" + startcol.Xcoord);
+			var start = startcol.stones[move.charCodeAt(1) - "1".charCodeAt(0)];
+			//console.log("found startstone: " + start.name + " X:" + start.Xcoord + " from move: " + move);
+
+			var endcol = gameLibrary.cols[move.charCodeAt(2) - "A".charCodeAt(0)];
+			var end = endcol.stones[move.charCodeAt(3) - "1".charCodeAt(0)];
+			//console.log("found endstone: " + end.name + " from move: " + move);
+
+			return { index: moveIndex+1, moveString: move, startstone: start, endstone: end };
+		} else {
+			return { index: moveIndex+1, moveString: move};
+		}
+	}
+
+	gameLibrary.drawGame = function() {
+
+		console.log("draw game");
+		var cxt = document.getElementById('c').getContext('2d');
+		cxt.clearRect(0,0,cxt.canvas.width,cxt.canvas.height);
+		  
+		//draw grey hexagon
+		cxt.beginPath();
+		cxt.moveTo (gameLibrary.Xcenter +  gameLibrary.size * Math.cos(0.5), gameLibrary.Ycenter +  gameLibrary.size *  Math.sin(0.5));          
+
+		for (var i = 1; i <= gameLibrary.numberOfSides;i += 1) {
+		    cxt.lineTo (gameLibrary.Xcenter + gameLibrary.size * Math.cos((i+0.5) * 2 * Math.PI / gameLibrary.numberOfSides), gameLibrary.Ycenter + gameLibrary.size * Math.sin((i+0.5) * 2 * Math.PI / gameLibrary.numberOfSides));
+		}
+		cxt.fillStyle = '#F0F0F0';
+		cxt.strokeStyle = "#000000";
+		cxt.lineWidth = 1;
+		cxt.fill();
+		//clear center piece
+		cxt.fillStyle = '#FFFFFF';
+		cxt.beginPath();
+		cxt.moveTo (gameLibrary.Xcenter +  (gameLibrary.size/4) * Math.cos(0.5), gameLibrary.Ycenter +  (gameLibrary.size/4) *  Math.sin(0.5));          
+
+		for (var i = 1; i <= gameLibrary.numberOfSides;i += 1) {
+		    cxt.lineTo (gameLibrary.Xcenter + (gameLibrary.size/4) * Math.cos((i+0.5) * 2 * Math.PI / gameLibrary.numberOfSides), gameLibrary.Ycenter + (gameLibrary.size/4) * Math.sin((i+0.5) * 2 * Math.PI / gameLibrary.numberOfSides));
+		}
+		cxt.fill();
+
+
+		//model = 
+		//   A  B  C  D  E  F  G  H  I
+		//              E1
+		//           D1    F1
+		//        C1    E2    G1
+		//     B1    D2    F2    H1
+		//  A1    C2    E3    G2    I1
+		//     B2    D3    F3    H2
+		//  A2    C3    E4    G3    I2
+		//     B3    D4    F4    H3
+		//  A3    C4    XX    G4    I3
+		//     B4    D5    F5    H4
+		//  A4    C5    E6    G5    I4
+		//     B5    D6    F6    H5
+		//  A5    C6    E7    G6    I5
+		//     B6    D7    F7    H6
+		//        C7    E8    G7
+		//           D8    F8
+		//              E9
+
+
+		cxt.beginPath();
+		//vertical lines
+		cxt.moveTo (gameLibrary.colA.stones[0].Xcoord, gameLibrary.colA.stones[0].Ycoord);
+		cxt.lineTo (gameLibrary.colA.stones[4].Xcoord, gameLibrary.colA.stones[4].Ycoord);
+		cxt.moveTo (gameLibrary.colB.stones[0].Xcoord, gameLibrary.colB.stones[0].Ycoord);
+		cxt.lineTo (gameLibrary.colB.stones[5].Xcoord, gameLibrary.colB.stones[5].Ycoord);
+		cxt.moveTo (gameLibrary.colC.stones[0].Xcoord, gameLibrary.colC.stones[0].Ycoord);
+		cxt.lineTo (gameLibrary.colC.stones[6].Xcoord, gameLibrary.colC.stones[6].Ycoord);
+		cxt.moveTo (gameLibrary.colD.stones[0].Xcoord, gameLibrary.colD.stones[0].Ycoord);
+		cxt.lineTo (gameLibrary.colD.stones[7].Xcoord, gameLibrary.colD.stones[7].Ycoord);
+
+		cxt.moveTo (gameLibrary.colE.stones[0].Xcoord, gameLibrary.colE.stones[0].Ycoord);
+		cxt.lineTo (gameLibrary.colE.stones[3].Xcoord, gameLibrary.colE.stones[3].Ycoord);
+		cxt.moveTo (gameLibrary.colE.stones[5].Xcoord, gameLibrary.colE.stones[5].Ycoord);
+		cxt.lineTo (gameLibrary.colE.stones[8].Xcoord, gameLibrary.colE.stones[8].Ycoord);
+
+		cxt.moveTo (gameLibrary.colF.stones[0].Xcoord, gameLibrary.colF.stones[0].Ycoord);
+		cxt.lineTo (gameLibrary.colF.stones[7].Xcoord, gameLibrary.colF.stones[7].Ycoord);
+		cxt.moveTo (gameLibrary.colG.stones[0].Xcoord, gameLibrary.colG.stones[0].Ycoord);
+		cxt.lineTo (gameLibrary.colG.stones[6].Xcoord, gameLibrary.colG.stones[6].Ycoord);
+		cxt.moveTo (gameLibrary.colH.stones[0].Xcoord, gameLibrary.colH.stones[0].Ycoord);
+		cxt.lineTo (gameLibrary.colH.stones[5].Xcoord, gameLibrary.colH.stones[5].Ycoord);
+		cxt.moveTo (gameLibrary.colI.stones[0].Xcoord, gameLibrary.colI.stones[0].Ycoord);
+		cxt.lineTo (gameLibrary.colI.stones[4].Xcoord, gameLibrary.colI.stones[4].Ycoord);
+
+		//NW_SE lines
+		cxt.moveTo (gameLibrary.colE.stones[0].Xcoord, gameLibrary.colE.stones[0].Ycoord);
+		cxt.lineTo (gameLibrary.colI.stones[0].Xcoord, gameLibrary.colI.stones[0].Ycoord);
+		cxt.moveTo (gameLibrary.colD.stones[0].Xcoord, gameLibrary.colD.stones[0].Ycoord);
+		cxt.lineTo (gameLibrary.colI.stones[1].Xcoord, gameLibrary.colI.stones[1].Ycoord);
+		cxt.moveTo (gameLibrary.colC.stones[0].Xcoord, gameLibrary.colC.stones[0].Ycoord);
+		cxt.lineTo (gameLibrary.colI.stones[2].Xcoord, gameLibrary.colI.stones[2].Ycoord);
+		cxt.moveTo (gameLibrary.colB.stones[0].Xcoord, gameLibrary.colB.stones[0].Ycoord);
+		cxt.lineTo (gameLibrary.colI.stones[3].Xcoord, gameLibrary.colI.stones[3].Ycoord);
+
+		cxt.moveTo (gameLibrary.colA.stones[0].Xcoord, gameLibrary.colA.stones[0].Ycoord);
+		cxt.lineTo (gameLibrary.colD.stones[3].Xcoord, gameLibrary.colD.stones[3].Ycoord);
+		cxt.moveTo (gameLibrary.colF.stones[4].Xcoord, gameLibrary.colF.stones[4].Ycoord);
+		cxt.lineTo (gameLibrary.colI.stones[4].Xcoord, gameLibrary.colI.stones[4].Ycoord);
+
+		cxt.moveTo (gameLibrary.colA.stones[1].Xcoord, gameLibrary.colA.stones[1].Ycoord);
+		cxt.lineTo (gameLibrary.colH.stones[5].Xcoord, gameLibrary.colH.stones[5].Ycoord);
+		cxt.moveTo (gameLibrary.colA.stones[2].Xcoord, gameLibrary.colA.stones[2].Ycoord);
+		cxt.lineTo (gameLibrary.colG.stones[6].Xcoord, gameLibrary.colG.stones[6].Ycoord);
+		cxt.moveTo (gameLibrary.colA.stones[3].Xcoord, gameLibrary.colA.stones[3].Ycoord);
+		cxt.lineTo (gameLibrary.colF.stones[7].Xcoord, gameLibrary.colF.stones[7].Ycoord);
+		cxt.moveTo (gameLibrary.colA.stones[4].Xcoord, gameLibrary.colA.stones[4].Ycoord);
+		cxt.lineTo (gameLibrary.colE.stones[8].Xcoord, gameLibrary.colE.stones[8].Ycoord);
+
+		//NE_SW lines
+		cxt.moveTo (gameLibrary.colE.stones[0].Xcoord, gameLibrary.colE.stones[0].Ycoord);
+		cxt.lineTo (gameLibrary.colA.stones[0].Xcoord, gameLibrary.colA.stones[0].Ycoord);
+		cxt.moveTo (gameLibrary.colF.stones[0].Xcoord, gameLibrary.colF.stones[0].Ycoord);
+		cxt.lineTo (gameLibrary.colA.stones[1].Xcoord, gameLibrary.colA.stones[1].Ycoord);
+		cxt.moveTo (gameLibrary.colG.stones[0].Xcoord, gameLibrary.colG.stones[0].Ycoord);
+		cxt.lineTo (gameLibrary.colA.stones[2].Xcoord, gameLibrary.colA.stones[2].Ycoord);
+		cxt.moveTo (gameLibrary.colH.stones[0].Xcoord, gameLibrary.colH.stones[0].Ycoord);
+		cxt.lineTo (gameLibrary.colA.stones[3].Xcoord, gameLibrary.colA.stones[3].Ycoord);
+
+		cxt.moveTo (gameLibrary.colI.stones[0].Xcoord, gameLibrary.colI.stones[0].Ycoord);
+		cxt.lineTo (gameLibrary.colF.stones[3].Xcoord, gameLibrary.colF.stones[3].Ycoord);
+		cxt.moveTo (gameLibrary.colD.stones[4].Xcoord, gameLibrary.colD.stones[4].Ycoord);
+		cxt.lineTo (gameLibrary.colA.stones[4].Xcoord, gameLibrary.colA.stones[4].Ycoord);
+
+		cxt.moveTo (gameLibrary.colI.stones[1].Xcoord, gameLibrary.colI.stones[1].Ycoord);
+		cxt.lineTo (gameLibrary.colB.stones[5].Xcoord, gameLibrary.colB.stones[5].Ycoord);
+		cxt.moveTo (gameLibrary.colI.stones[2].Xcoord, gameLibrary.colI.stones[2].Ycoord);
+		cxt.lineTo (gameLibrary.colC.stones[6].Xcoord, gameLibrary.colC.stones[6].Ycoord);
+		cxt.moveTo (gameLibrary.colI.stones[3].Xcoord, gameLibrary.colI.stones[3].Ycoord);
+		cxt.lineTo (gameLibrary.colD.stones[7].Xcoord, gameLibrary.colD.stones[7].Ycoord);
+		cxt.moveTo (gameLibrary.colI.stones[4].Xcoord, gameLibrary.colI.stones[4].Ycoord);
+		cxt.lineTo (gameLibrary.colE.stones[8].Xcoord, gameLibrary.colE.stones[8].Ycoord);
+		cxt.stroke();
+
+
+		//draw all stones
+		angular.forEach(gameLibrary.cols, function(column, key) {
+			angular.forEach(column.stones, function(stone, key) {
+				if ( ! (gameLibrary.currentmove != null && gameLibrary.currentmove.startstone == stone) ) {
+					gameLibrary.drawStone(stone.Xcoord, stone.Ycoord, stone.color, stone.type, stone.height);
+				}
+			});
+		});
+
+
+		if (gameLibrary.printlabels) {
+			//label all points, with text to the right of the point
+			cxt.font = "bold 14px sans-serif";
+			cxt.fillStyle = '#C00000';
+
+			angular.forEach(gameLibrary.cols, function(column, key) {
+				angular.forEach(column.stones, function(stone, key) {
+					if ( stone.name != "E5" ) {
+						cxt.fillText(stone.name, stone.Xcoord+7, stone.Ycoord+7);
+					}
+				});
+			});
+		}
+	};
+
+	gameLibrary.drawStone = function(X, Y, color, type, height) {
+		var cxt = document.getElementById('c').getContext('2d');
+		var stripeHeight = height % 7; //14 is maximum legal height I believe 
+		var bandHeight = (height - stripeHeight) / 7;
+		var stripeColor = '#D0D0D0';
+		if ( bandHeight >= 1) {
+			stripeHeight++;
+			stripeColor = '#FF6601'; //Sioux orange
+			console.log("Orange!");
+		}
+		if ( bandHeight >= 2) {
+			stripeColor = '#FFD700'; //Gold
+			console.log("Gold!");
+		}
+		if ( gameLibrary.selectedStone != null &&  X == gameLibrary.selectedStone.Xcoord && Y == gameLibrary.selectedStone.Ycoord ) {
+			stripeColor = '#0000FF'; //BLUE
+		} else if ( gameLibrary.isValidTargetStone(X,Y) == "true" ) {
+			stripeColor = '#00FF00'; //GREEN
+		}
+		cxt.strokeStyle = stripeColor;
+		cxt.lineWidth = 3;
+		var radius = gameLibrary.stoneRadius;	
+		var mainColor = null;
+		if ( color == "white" ) {
+			//draw white stone
+			mainColor = '#FFFFFF';
+		} else if ( color == "black" ) {
+			//draw black stone
+			mainColor = '#000000';
+		} else {
+			return;
+		}
+		//draw shadow first
+		cxt.globalAlpha = 0.5;
+		cxt.fillStyle = '#000000';
+		for (var i = 1; i <= height; i++) {
+			cxt.beginPath();
+			cxt.arc(X+(3*i), Y+(3*i), radius, 0, 2 * Math.PI, false);
+			cxt.fill();
+		}
+		cxt.globalAlpha = 1.0;
+		//draw stone
+		cxt.fillStyle = mainColor;
+		cxt.beginPath();
+		cxt.arc(X, Y, radius, 0, 2 * Math.PI, false);
+		cxt.fill(); cxt.stroke();
+		switch ( type ) {
+			case "TZAAR" :
+				//console.log("TZAAR stone type at " + stone.name );
+				//draw outer circle
+				cxt.fillStyle = stripeColor;
+				cxt.beginPath();
+				cxt.arc(X, Y, radius*0.7, 0, 2 * Math.PI, false);
+				cxt.fill();
+				cxt.fillStyle = mainColor;
+				cxt.beginPath();
+				cxt.arc(X, Y, radius*0.5, 0, 2 * Math.PI, false);
+				cxt.fill();
+				//draw inner circle
+				cxt.beginPath();
+				cxt.fillStyle = stripeColor;
+				cxt.arc(X, Y, radius*0.3, 0, 2 * Math.PI, false);
+				cxt.fill();
+			break;
+			case "TZARRAS" :
+				//console.log("TZARRAS stone type at " + stone.name );
+				//draw inner circle
+				cxt.beginPath();
+				cxt.fillStyle = stripeColor;
+				cxt.arc(X, Y, radius*0.4, 0, 2 * Math.PI, false);
+				cxt.fill();
+			break;
+			case "TOTTS" :
+				//console.log("TOTTS stone type at " + stone.name );
+			break;
+			default:
+				console.log("Unknown stone type at " + stone.name );
+			break;
+		}
+		if (stripeHeight > 1) {
+			cxt.fillStyle = stripeColor;
+			for (var i = 0; i < stripeHeight; i++) {
+				//console.log(color + " stone @ X: " + X + ", Y:" + Y + ", height: " + height);
+				var angle = (Math.PI*1.5) + i *( (Math.PI*2) / (stripeHeight) );
+				var offset = Math.PI/15;
+				cxt.beginPath();
+				cxt.moveTo(X,Y);
+				cxt.arc(X,Y, radius*0.9, angle - offset, angle + offset, false);
+				cxt.fill()
+			}
+		}
+	}
+
+	gameLibrary.isValidTargetStone =  function(X, Y) {
+		var result = "false";
+		angular.forEach(gameLibrary.validTargetStones, function(stone, key) {
+			if ( stone.Xcoord == X && stone.Ycoord == Y ) {
+				result = "true";
+			}
+		});
+		return result;
+	}
+
+	gameLibrary.processMoves = function(moveCount) {
+	gameLibrary.loadGame();
+	for ( var moveIndex = 0; moveIndex <= moveCount; moveIndex++) {
+		var move = gameLibrary.game.moveStrings[moveIndex];
+		console.log("processing move: " +  move.moveString);
+		if (move.moveString != "PASS" ) {
+			if (move.endstone.color == move.startstone.color) {
+				move.endstone.height = move.endstone.height + move.startstone.height;
+			} else {
+				move.endstone.height = move.startstone.height;
+				move.endstone.color = move.startstone.color;
+			}
+			move.endstone.type = move.startstone.type;
+			move.startstone.color = null;
+			move.startstone.type = null;
+		}
+	}
+	gameLibrary.updateStoneCount();
+	gameLibrary.checkVictory();
+	};
+
+	gameLibrary.checkVictory = function() {
+		var victory = false;
+		if ( gameLibrary.game.whiteTzaarCount == 0 || 
+			gameLibrary.game.whiteTzarrasCount == 0 ||
+			gameLibrary.game.whiteTottsCount == 0 ) {
+			gameLibrary.winner = gameLibrary.game.bot2;
+			victory = true;
+		} else if (gameLibrary.game.blackTzaarCount == 0 ||
+			gameLibrary.game.blackTzarrasCount == 0 ||
+			gameLibrary.game.blackTottsCount == 0 ) {
+			gameLibrary.winner = gameLibrary.game.bot1;
+			victory = true;
+		} else if ( false ) {//no more legal moves
+			victory = true;
+		}
+		if ( victory ) {
+			gameLibrary.game.moveStrings.push({ index: gameLibrary.game.moveStrings.length, moveString: "PASS", move_img: "./img/w.png"});
+			gameLibrary.currentmoveIndex++;
+		}
+	}
+
+	gameLibrary.updateStoneCount = function() {
+		gameLibrary.game.whiteTzaarCount = 0;
+		gameLibrary.game.whiteTzarrasCount = 0;
+		gameLibrary.game.whiteTottsCount = 0;
+		gameLibrary.game.blackTzaarCount = 0;
+		gameLibrary.game.blackTzarrasCount = 0;
+		gameLibrary.game.blackTottsCount = 0;
+		angular.forEach(gameLibrary.cols, function(column, key) {
+			angular.forEach(column.stones, function(stone, key) {
+				if ( stone.color == "white" ) {
+					switch ( stone.type ) {
+						case "TZAAR" :
+							gameLibrary.game.whiteTzaarCount++;
+						break;
+						case "TZARRAS" :
+							gameLibrary.game.whiteTzarrasCount++;
+						break;
+						case "TOTTS" :
+							gameLibrary.game.whiteTottsCount++;
+						break;
+					}
+				} else if ( stone.color == "black") {
+					switch ( stone.type ) {
+						case "TZAAR" :
+							gameLibrary.game.blackTzaarCount++;
+						break;
+						case "TZARRAS" :
+							gameLibrary.game.blackTzarrasCount++;
+						break;
+						case "TOTTS" :
+							gameLibrary.game.blackTottsCount++;
+						break;
+					}
+				}
+			});
+		});
+	};
+
+	return gameLibrary;
+});
+
+meanControllers.controller('PlayvCPUCtrl', ['$scope', '$http', '$location', 'GameLibrary', function ($scope, $http, $location, GameLibrary) {
+	$scope.getCPUMove = function(columns, cpu) {
+		$http.post('/api/game/botmove/', {cols: columns, CPUcolor: cpu })
 			.success(function(data){
-				$scope.game.moves = data;
+				GameLibrary.game.moves = GameLibrary.game.moves + data;
+				$scope.game.moves = $scope.game.moves + data;
+				GameLibrary.loadMoves();
+				GameLibrary.processMoves(GameLibrary.game.moves.length/4);
+				GameLibrary.drawGame();
 			})
 			.error(function(data) {
 				console.log(data);
 			});
 	}
-	$scope.game = {startstate: "oOOOOozZZZooztTTzooztoOtzoOZTO otzoOZToOTZOOZttTZOOzzzZOooooO"};	
-	$scope.game.moves = "";
-	$scope.getCPUMove({move : "testmove"});
+	GameLibrary.game = {startstate: "oOOOOozZZZooztTTzooztoOtzoOZTO otzoOZToOTZOOZttTZOOzzzZOooooO"};	
+	$scope.game = GameLibrary.game;
+	$scope.game.moveStrings = [{ index: 0, moveString: "PASS", move_img: ""}];
+	GameLibrary.game.moves = "";
+	$scope.game.moves = GameLibrary.game.moves;
+	GameLibrary.loadGame();
+	GameLibrary.drawGame();
+	$scope.CPUcolor = 1;
+	$scope.getCPUMove(GameLibrary.cols, $scope.CPUcolor);
 }]);
 
 //CONTROLLER FOR mod_list.html
