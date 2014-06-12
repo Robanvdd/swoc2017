@@ -111,6 +111,29 @@ meanControllers.factory("GameLibrary", function() {
 		}
 	});
 
+	//NE_SW cols
+	gameLibrary.NE_SWcolE1 = {name: "E1", size: 5, stones: [gameLibrary.colE.stones[0], gameLibrary.colD.stones[0], gameLibrary.colC.stones[0], gameLibrary.colB.stones[0], gameLibrary.colA.stones[0]]};
+	gameLibrary.NE_SWcolF1 = {name: "F1", size: 6, stones: [gameLibrary.colF.stones[0], gameLibrary.colE.stones[1], gameLibrary.colD.stones[1], gameLibrary.colC.stones[1], gameLibrary.colB.stones[1], gameLibrary.colA.stones[1]]};
+	gameLibrary.NE_SWcolG1 = {name: "G1", size: 7, stones: [gameLibrary.colG.stones[0], gameLibrary.colF.stones[1], gameLibrary.colE.stones[2], gameLibrary.colD.stones[2], gameLibrary.colC.stones[2], gameLibrary.colB.stones[2], gameLibrary.colA.stones[2]]};
+	gameLibrary.NE_SWcolH1 = {name: "H1", size: 8, stones: [gameLibrary.colH.stones[0], gameLibrary.colG.stones[1], gameLibrary.colF.stones[2], gameLibrary.colE.stones[3], gameLibrary.colD.stones[3], gameLibrary.colC.stones[3], gameLibrary.colB.stones[3], gameLibrary.colA.stones[3]]};
+	gameLibrary.NE_SWcolI1 = {name: "I1", size: 9, stones: [gameLibrary.colI.stones[0], gameLibrary.colH.stones[1], gameLibrary.colG.stones[2], gameLibrary.colF.stones[3], gameLibrary.colE.stones[4], gameLibrary.colD.stones[4], gameLibrary.colC.stones[4], gameLibrary.colB.stones[4], gameLibrary.colA.stones[4]]};
+	gameLibrary.NE_SWcolI2 = {name: "I2", size: 8, stones: [gameLibrary.colI.stones[1], gameLibrary.colH.stones[2], gameLibrary.colG.stones[3], gameLibrary.colF.stones[4], gameLibrary.colE.stones[5], gameLibrary.colD.stones[5], gameLibrary.colC.stones[5], gameLibrary.colB.stones[5]]};
+	gameLibrary.NE_SWcolI3 = {name: "I3", size: 7, stones: [gameLibrary.colI.stones[2], gameLibrary.colH.stones[3], gameLibrary.colG.stones[4], gameLibrary.colF.stones[5], gameLibrary.colE.stones[6], gameLibrary.colD.stones[6], gameLibrary.colC.stones[6]]};
+	gameLibrary.NE_SWcolI4 = {name: "I4", size: 6, stones: [gameLibrary.colI.stones[3], gameLibrary.colH.stones[4], gameLibrary.colG.stones[5], gameLibrary.colF.stones[6], gameLibrary.colE.stones[7], gameLibrary.colD.stones[7]]};
+	gameLibrary.NE_SWcolI5 = {name: "I5", size: 5, stones: [gameLibrary.colI.stones[4], gameLibrary.colH.stones[5], gameLibrary.colG.stones[6], gameLibrary.colF.stones[7], gameLibrary.colE.stones[8]]};
+	gameLibrary.NE_SWcols = [gameLibrary.NE_SWcolE1, gameLibrary.NE_SWcolF1, gameLibrary.NE_SWcolG1, gameLibrary.NE_SWcolH1, gameLibrary.NE_SWcolI1, gameLibrary.NE_SWcolI2, gameLibrary.NE_SWcolI3, gameLibrary.NE_SWcolI4, gameLibrary.NE_SWcolI5];
+	gameLibrary.NW_SEcolE1 = {name: "E1", size: 5, stones: [gameLibrary.colE.stones[0], gameLibrary.colF.stones[0], gameLibrary.colG.stones[0], gameLibrary.colH.stones[0], gameLibrary.colI.stones[0]]};
+	gameLibrary.NW_SEcolD1 = {name: "D1", size: 6, stones: [gameLibrary.colD.stones[0], gameLibrary.colE.stones[1], gameLibrary.colF.stones[1], gameLibrary.colG.stones[1], gameLibrary.colH.stones[1], gameLibrary.colI.stones[1]]};
+	gameLibrary.NW_SEcolC1 = {name: "C1", size: 7, stones: [gameLibrary.colC.stones[0], gameLibrary.colD.stones[1], gameLibrary.colE.stones[2], gameLibrary.colF.stones[2], gameLibrary.colG.stones[2], gameLibrary.colH.stones[2], gameLibrary.colI.stones[2]]};
+	gameLibrary.NW_SEcolB1 = {name: "B1", size: 8, stones: [gameLibrary.colB.stones[0], gameLibrary.colC.stones[1], gameLibrary.colD.stones[2], gameLibrary.colE.stones[3], gameLibrary.colF.stones[3], gameLibrary.colG.stones[3], gameLibrary.colH.stones[3], gameLibrary.colI.stones[3]]};
+	gameLibrary.NW_SEcolA1 = {name: "A1", size: 9, stones: [gameLibrary.colA.stones[0], gameLibrary.colB.stones[1], gameLibrary.colC.stones[2], gameLibrary.colD.stones[3], gameLibrary.colE.stones[4], gameLibrary.colF.stones[4], gameLibrary.colG.stones[4], gameLibrary.colH.stones[4], gameLibrary.colI.stones[4]]};
+	gameLibrary.NW_SEcolA2 = {name: "A2", size: 8, stones: [gameLibrary.colA.stones[1], gameLibrary.colB.stones[2], gameLibrary.colC.stones[3], gameLibrary.colD.stones[4], gameLibrary.colE.stones[5], gameLibrary.colF.stones[5], gameLibrary.colG.stones[5], gameLibrary.colH.stones[5]]};
+	gameLibrary.NW_SEcolA3 = {name: "A3", size: 7, stones: [gameLibrary.colA.stones[2], gameLibrary.colB.stones[3], gameLibrary.colC.stones[4], gameLibrary.colD.stones[5], gameLibrary.colE.stones[6], gameLibrary.colF.stones[6], gameLibrary.colG.stones[6]]};
+	gameLibrary.NW_SEcolA4 = {name: "A4", size: 6, stones: [gameLibrary.colA.stones[3], gameLibrary.colB.stones[4], gameLibrary.colC.stones[5], gameLibrary.colD.stones[6], gameLibrary.colE.stones[7], gameLibrary.colF.stones[7]]};
+	gameLibrary.NW_SEcolA5 = {name: "A5", size: 5, stones: [gameLibrary.colA.stones[4], gameLibrary.colB.stones[5], gameLibrary.colC.stones[6], gameLibrary.colD.stones[7], gameLibrary.colE.stones[8]]};
+	gameLibrary.NW_SEcols = [gameLibrary.NW_SEcolE1, gameLibrary.NW_SEcolD1, gameLibrary.NW_SEcolC1, gameLibrary.NW_SEcolB1, gameLibrary.NW_SEcolA1, gameLibrary.NW_SEcolA2, gameLibrary.NW_SEcolA3, gameLibrary.NW_SEcolA4, gameLibrary.NW_SEcolA5];
+
+
 	gameLibrary.loadGame = function() {
 		console.log("Selected game state:" + gameLibrary.game.startstate);
 		if (gameLibrary.game.startstate.length == 61) {
@@ -460,24 +483,24 @@ meanControllers.factory("GameLibrary", function() {
 	}
 
 	gameLibrary.processMoves = function(moveCount) {
-	gameLibrary.loadGame();
-	for ( var moveIndex = 0; moveIndex <= moveCount; moveIndex++) {
-		var move = gameLibrary.game.moveStrings[moveIndex];
-		console.log("processing move: " +  move.moveString);
-		if (move.moveString != "PASS" ) {
-			if (move.endstone.color == move.startstone.color) {
-				move.endstone.height = move.endstone.height + move.startstone.height;
-			} else {
-				move.endstone.height = move.startstone.height;
-				move.endstone.color = move.startstone.color;
+		gameLibrary.loadGame();
+		for ( var moveIndex = 0; moveIndex <= moveCount; moveIndex++) {
+			var move = gameLibrary.game.moveStrings[moveIndex];
+			console.log("processing move: " +  move.moveString);
+			if (move.moveString != "PASS" ) {
+				if (move.endstone.color == move.startstone.color) {
+					move.endstone.height = move.endstone.height + move.startstone.height;
+				} else {
+					move.endstone.height = move.startstone.height;
+					move.endstone.color = move.startstone.color;
+				}
+				move.endstone.type = move.startstone.type;
+				move.startstone.color = null;
+				move.startstone.type = null;
 			}
-			move.endstone.type = move.startstone.type;
-			move.startstone.color = null;
-			move.startstone.type = null;
 		}
-	}
-	gameLibrary.updateStoneCount();
-	gameLibrary.checkVictory();
+		gameLibrary.updateStoneCount();
+		gameLibrary.checkVictory();
 	};
 
 	gameLibrary.checkVictory = function() {
@@ -539,6 +562,252 @@ meanControllers.factory("GameLibrary", function() {
 		});
 	};
 
+
+	gameLibrary.updateActiveColor = function(applyFlag) {
+		var color = "";
+		if ( gameLibrary.winner != null ) {
+			color = "Game Over";
+		} else 	if ( (Math.floor((gameLibrary.currentmoveIndex+1)/2) % 2) == 0) {
+				color = "white";
+		} else {
+				color = "black";
+		}
+		gameLibrary.activeColor = color;
+		console.log("gameLibrary.currentmoveIndex : " + gameLibrary.currentmoveIndex + " activeColor: " + gameLibrary.activeColor);
+	};
+
+	gameLibrary.clickGame = function(event) {
+		console.log("clickGame, event: " + event + " pageX: " + event.pageX + " pageY: " + event.pageY);
+		var canvasX = event.pageX - event.target.offsetLeft;
+		var canvasY = event.pageY - event.target.offsetTop;
+		console.log("clickGame, event: " + event + " canvasX : " + canvasX  + " canvasY : " + canvasY );
+		var performMove = false;
+		var validTargetStone = null;
+		//did we click on a valid target?
+		angular.forEach(gameLibrary.validTargetStones, function(stone, key) {
+			if ( Math.abs(stone.Xcoord - canvasX) < gameLibrary.stoneRadius && Math.abs(stone.Ycoord - canvasY) < gameLibrary.stoneRadius) {
+				console.log("clicked valid target stone: " + stone.name);
+				validTargetStone = stone;
+				performMove = true;
+			}
+		});
+		if (performMove == true) {
+			var move = {};
+			move.endstone = validTargetStone;
+			move.startstone = gameLibrary.selectedStone;
+			if (move.endstone.color != move.startstone.color) {
+				move.move_img = "./img/Crossed_gladii.png";
+			} else {
+				move.move_img = "./img/shield_PNG1268.png";
+			}
+			move.index = gameLibrary.game.moveStrings.length;
+			gameLibrary.game.moves = gameLibrary.game.moves + "" + move.startstone.name + move.endstone.name;
+			gameLibrary.game.moveStrings.push(move);
+			gameLibrary.selectedStone = null;
+			gameLibrary.validTargetStones = [];
+			
+			gameLibrary.currentmoveIndex++;
+			gameLibrary.currentmove = gameLibrary.game.moveStrings[gameLibrary.currentmoveIndex];
+			var startTime = (new Date()).getTime();
+			gameLibrary.isAnimating = true;
+			gameLibrary.animate( startTime);
+		} else {
+			gameLibrary.selectedStone = null;
+			gameLibrary.validTargetStones = [];
+			var selectedVerticalColumn = null;
+			angular.forEach(gameLibrary.cols, function(column, key) {
+				angular.forEach(column.stones, function(stone, key) {
+					if ( Math.abs(stone.Xcoord - canvasX) < gameLibrary.stoneRadius && Math.abs(stone.Ycoord - canvasY) < gameLibrary.stoneRadius) {
+						console.log("clicked stone: " + stone.name);
+						if ( stone.color == gameLibrary.activeColor) {
+							gameLibrary.selectedStone = stone;
+							selectedVerticalColumn = column;
+						}
+					}
+				});
+			});
+			if (gameLibrary.selectedStone != null) {
+				var targetX = gameLibrary.selectedStone.Xcoord;
+				var targetY = gameLibrary.selectedStone.Ycoord;
+				var mayDefend = ((gameLibrary.currentmoveIndex+1) % 2 == 1) && (gameLibrary.currentmoveIndex != 0);
+				console.log("moveIndex: " + gameLibrary.currentmoveIndex + " mayDefend: " + mayDefend);
+				//get vertical targets
+				var verticalIndex = 0;
+				for (var i = 0; i < selectedVerticalColumn.size; i++) {
+					if ( selectedVerticalColumn.stones[i] == gameLibrary.selectedStone) {
+						verticalIndex = i;
+					}
+				}
+				for (var i = verticalIndex -1; i >= 0; i--) {
+					var stone = selectedVerticalColumn.stones[i];
+					if ( stone.name == "E5" ) break;
+					if ( stone.color != null ) {
+						if ((mayDefend && stone.color == gameLibrary.selectedStone.color) || (stone.height <= gameLibrary.selectedStone.height && stone.color != gameLibrary.selectedStone.color)) {
+							console.log("valid target vertical stone: " + stone.name + " X:" + stone.Xcoord + " Y:" + stone.Ycoord);
+							gameLibrary.validTargetStones.push(stone);
+						}
+						break;
+					}
+				}
+				for (var i = verticalIndex +1; i < selectedVerticalColumn.size; i++) {
+					var stone = selectedVerticalColumn.stones[i];
+					if ( stone.name == "E5" ) break;
+					if ( stone.color != null ) {
+						if ((mayDefend && stone.color == gameLibrary.selectedStone.color) || (stone.height <= gameLibrary.selectedStone.height && stone.color != gameLibrary.selectedStone.color)) {
+							console.log("valid target vertical stone: " + stone.name + " X:" + stone.Xcoord + " Y:" + stone.Ycoord);
+							gameLibrary.validTargetStones.push(stone);
+						}
+						break;
+					}
+				}
+				//get NE_SW targets
+				var selectedNE_SWColumn = null;
+				var NE_SWIndex = 0;
+
+				angular.forEach(gameLibrary.NE_SWcols, function(column, key) {
+					for (var stoneIndex = 0; stoneIndex < column.stones.length; stoneIndex++) {
+						var stone = column.stones[stoneIndex];
+						if ( stone == gameLibrary.selectedStone ) {
+							selectedNE_SWColumn = column;
+							NE_SWIndex = stoneIndex;
+						}
+					}
+				});
+				for (var i = NE_SWIndex -1; i >= 0; i--) {
+					var stone = selectedNE_SWColumn.stones[i];
+					if ( stone.name == "E5" ) break;
+					if ( stone.color != null ) {
+						if ((mayDefend && stone.color == gameLibrary.selectedStone.color) || (stone.height <= gameLibrary.selectedStone.height && stone.color != gameLibrary.selectedStone.color)) {
+							console.log("valid target NE_SW stone: " + stone.name );
+							gameLibrary.validTargetStones.push(stone);
+						}
+						break;
+					}
+				}
+				for (var i = NE_SWIndex +1; i < selectedNE_SWColumn.size; i++) {
+					var stone = selectedNE_SWColumn.stones[i];
+					if ( stone.name == "E5" ) break;
+					if ( stone.color != null ) {
+						if ((mayDefend && stone.color == gameLibrary.selectedStone.color) || (stone.height <= gameLibrary.selectedStone.height && stone.color != gameLibrary.selectedStone.color)) {
+							console.log("valid target NE_SW stone: " + stone.name );
+							gameLibrary.validTargetStones.push(stone);
+						}
+						break;
+					}
+				}
+				//get NW_SE targets
+				var selectedNW_SEColumn = null;
+				var NW_SEIndex = 0;
+
+				angular.forEach(gameLibrary.NW_SEcols, function(column, key) {
+					for (var stoneIndex = 0; stoneIndex < column.stones.length; stoneIndex++) {
+						var stone = column.stones[stoneIndex];
+						if ( stone == gameLibrary.selectedStone ) {
+							selectedNW_SEColumn = column;
+							NW_SEIndex = stoneIndex;
+						}
+					}
+				});
+				for (var i = NW_SEIndex -1; i >= 0; i--) {
+					var stone = selectedNW_SEColumn.stones[i];
+					if ( stone.name == "E5" ) break;
+					if ( stone.color != null ) {
+						if ((mayDefend && stone.color == gameLibrary.selectedStone.color) || (stone.height <= gameLibrary.selectedStone.height && stone.color != gameLibrary.selectedStone.color)) {
+							console.log("valid target NW_SE stone: " + stone.name );
+							gameLibrary.validTargetStones.push(stone);
+						}
+						break;
+					}
+				}
+				for (var i = NW_SEIndex +1; i < selectedNW_SEColumn.size; i++) {
+					var stone = selectedNW_SEColumn.stones[i];
+					if ( stone.name == "E5" ) break;
+					if ( stone.color != null ) {
+						if ((mayDefend && stone.color == gameLibrary.selectedStone.color) || (stone.height <= gameLibrary.selectedStone.height && stone.color != gameLibrary.selectedStone.color)) {
+							console.log("valid target NW_SE stone: " + stone.name );
+							gameLibrary.validTargetStones.push(stone);
+						}
+						break;
+					}
+				}
+			}
+			gameLibrary.drawGame();
+		}
+	}
+
+	gameLibrary.increaseMoveAndUpdate = function() {
+		//update next move
+        if ( gameLibrary.currentmoveIndex < (gameLibrary.game.moves.length/4)) {
+			gameLibrary.currentmoveIndex++;
+			gameLibrary.currentmove = gameLibrary.game.moveStrings[gameLibrary.currentmoveIndex];
+			var startTime = (new Date()).getTime();
+			gameLibrary.isAnimating = true;
+			gameLibrary.drawGame();
+			gameLibrary.animate( startTime);
+		}
+	};
+
+	window.requestAnimFrame = (function(callback) {
+        return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+        function(callback) {
+          window.setTimeout(callback, 1000 / 60);
+        };
+      })();
+
+	gameLibrary.animate = function( startTime) {
+		
+		var cxt = document.getElementById('cmove').getContext('2d');
+		cxt.clearRect(0,0,cxt.canvas.width,cxt.canvas.height);
+		if (gameLibrary.currentmove == null || gameLibrary.currentmove.moveString == "PASS") {
+			console.log("done animating, currentmoveIndex:" + gameLibrary.currentmoveIndex);
+			/*gameLibrary.isAnimating = false;
+			console.log("Calling processMoves from animate function start");
+			gameLibrary.processMoves(gameLibrary.currentmoveIndex);
+			gameLibrary.updateActiveColor(false);
+			gameLibrary.drawGame();
+			return;*/
+		} else {
+
+	        // update
+	        var time = (new Date()).getTime() - startTime;
+			var period = 1000;
+
+			var startX = gameLibrary.currentmove.startstone.Xcoord;
+			var startY = gameLibrary.currentmove.startstone.Ycoord;
+			var endX = gameLibrary.currentmove.endstone.Xcoord;
+			var endY = gameLibrary.currentmove.endstone.Ycoord;
+			//console.log("animate:  Xcoord: " + gameLibrary.currentmove.startstone.Xcoord );
+			//console.log("endX: " + endX + " startX: " + startX + " time: " + time + " time/period " + time/period);
+			var currentX = startX - ((startX - endX) * (time/period)); 
+			var currentY = startY - ((startY - endY) * (time/period));
+
+			//gameLibrary.drawGame();
+			
+			//console.log("animate, currentmove=" + gameLibrary.currentmove.index + "X:" + currentX + " Y:" + currentY + " color:" + gameLibrary.currentmove.startstone.color);
+			gameLibrary.drawStone(currentX, currentY, gameLibrary.currentmove.startstone.color, gameLibrary.currentmove.startstone.type, gameLibrary.currentmove.startstone.height, cxt);
+		}
+	        // request new frame
+		if ( time < period ) {
+			//console.log("do another animate");
+			requestAnimFrame(function() {
+			  gameLibrary.animate( startTime);
+			});
+		} else {
+			console.log("done animating, currentmoveIndex:" + gameLibrary.currentmoveIndex);
+			cxt.clearRect(0,0,cxt.canvas.width,cxt.canvas.height);
+			gameLibrary.isAnimating = false;
+			console.log("Calling processMoves from animate function end");
+			gameLibrary.processMoves(gameLibrary.currentmoveIndex);
+			gameLibrary.updateActiveColor(true);
+			gameLibrary.drawGame();
+			if(gameLibrary.isPlaying) {
+				gameLibrary.increaseMoveAndUpdate();
+			}
+		}
+	};
+
+	gameLibrary.currentmoveIndex = 0;
+
 	return gameLibrary;
 });
 
@@ -546,11 +815,11 @@ meanControllers.controller('PlayvCPUCtrl', ['$scope', '$http', '$location', 'Gam
 	$scope.getCPUMove = function(columns, cpu) {
 		$http.post('/api/game/botmove/', {cols: columns, CPUcolor: cpu })
 			.success(function(data){
-				GameLibrary.game.moves = GameLibrary.game.moves + data;
+				console.log("Cpu move(s):" + data);
+				//GameLibrary.game.moves = GameLibrary.game.moves + data;
 				$scope.game.moves = $scope.game.moves + data;
 				GameLibrary.loadMoves();
-				GameLibrary.processMoves(GameLibrary.game.moves.length/4);
-				GameLibrary.drawGame();
+				GameLibrary.increaseMoveAndUpdate();
 			})
 			.error(function(data) {
 				console.log(data);
@@ -563,6 +832,19 @@ meanControllers.controller('PlayvCPUCtrl', ['$scope', '$http', '$location', 'Gam
 	$scope.game.moves = GameLibrary.game.moves;
 	GameLibrary.loadGame();
 	GameLibrary.drawGame();
+
+	$scope.clickGame = function(event) {
+		console.log("clickgame");
+		GameLibrary.clickGame(event);
+	};
+	$scope.$watch('game', function() {
+		console.log("activeColor changed");
+		if ( GameLibrary.activeColor == "white") {
+			$scope.getCPUMove(GameLibrary.cols, $scope.CPUcolor);
+		}
+	});
+	$scope.game.bot1 = "CPU";
+	$scope.game.bot2 = "Player"
 	$scope.CPUcolor = 1;
 	$scope.getCPUMove(GameLibrary.cols, $scope.CPUcolor);
 }]);

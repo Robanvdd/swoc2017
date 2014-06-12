@@ -9,7 +9,7 @@
 <section>
 	<article>
 		<canvas id="c" width="550" height="550" ng-click="clickGame($event)" style="position:absolute;"></canvas>
-		<canvas id="cmove" width="550" height="550" style="position:relative; top:0px; left:0px"></canvas>
+		<canvas id="cmove" width="550" height="550" style="position:relative; top:0px; left:0px" ng-click="clickGame($event)"></canvas>
 		<div class="winningPlayer player2-active" ng-if="winner != null && winner == game.bot2" style="position:relative; top:-317px;"> 
 			<div>We have a winner!</div>
 			<div style="font-size: 28px;">{{winner}}</div>
@@ -115,16 +115,7 @@
 		</tbody>
 	</table>
 	<br/><br/>
-	<strong>Active Player = {{activeColor}} </strong><br/>
 	<!-- Our Player -->
-	<div class="controls">
-		<div class="play" ng-hide="isPlaying" ng-click="startPlaying()"> </div>
-		<div class="pause" ng-show="isPlaying" ng-click="pausePlaying()"> </div>
-		<div class="previous" ng-click="decreaseMoveAndUpdate()"> </div>
-		<div class="next" ng-click="increaseMoveAndUpdate()"> </div>
-	</div>
-	<!--            -->
-	Completed Moves: {{currentmoveIndex}} <br/>
 	<br/>
 	<div class="moveTypeAnimation-container" >
 		<img ng-repeat="moveString in game.moveStrings" class="moveTypeAnimation" ng-if="moveString.index == currentmoveIndex" src="{{moveString.move_img}}" height="250" width="250" style="clear:both;"></img>
