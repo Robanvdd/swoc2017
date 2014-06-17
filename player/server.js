@@ -57,7 +57,7 @@ app.post('/api/game/delete', function(req, res) {
 app.post('/api/game/botmove', function(req, res) {
 	console.log("botmove start on "+ process.platform);
 	console.log("cols: " + req.body.cols);
-	console.log("cols size:" + req.body.cols.size);
+	console.log("AI level:" + req.body.AILevel)
 	var AIboard = [ [  0,   0,   0,   0,   0, 100, 100, 100, 100],
 					[  0,   0,   0,   0,   0,   0, 100, 100, 100],
 					[  0,   0,   0,   0,   0,   0,   0, 100, 100],
@@ -86,12 +86,12 @@ app.post('/api/game/botmove', function(req, res) {
 		var column = req.body.cols[j];
 		for (var i=0; i< column.size; i++) {
 			var stone = column.stones[i];
-			console.log("stone: " + stone.name +  " color=" + stone.color + " type:" + stone.type);
+			//console.log("stone: " + stone.name +  " color=" + stone.color + " type:" + stone.type);
 			var index = i;
 			if ( startOffset > 0) {	
 				index = i + startOffset;
 			}
-			console.log("col: " + index + " index:" + j);
+			//console.log("col: " + index + " index:" + j);
 			if ( stone.color == "white") {
 				switch (stone.type) {
 					case "TZAAR"   : AIboard[index][j] = 3; AIboardStackHeight[index][j] = stone.height; break;
@@ -109,8 +109,8 @@ app.post('/api/game/botmove', function(req, res) {
 		}
 		startOffset++;
 	}
-	console.log(AIboard);
-	console.log(AIboardStackHeight);
+	//console.log(AIboard);
+	//console.log(AIboardStackHeight);
 
 	var fs  = require('fs');
 
@@ -137,7 +137,7 @@ app.post('/api/game/botmove', function(req, res) {
 				console.log(err);
 				res.send({result: "error, Could not write to file"});
 			} else {
-				exec('./tzaar',  ['-b', 'test', '-t', '2'], function(err, data) {  
+				exec('./tzaar',  ['-b', 'test', '-t', '2', '-a', req.body.AILevel], function(err, data) {  
 					console.log(err)
 					console.log(data.toString());
 					fs.readFile('test', function(err, data){

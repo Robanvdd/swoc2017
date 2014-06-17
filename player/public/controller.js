@@ -129,6 +129,7 @@ meanControllers.factory("GameLibrary", function() {
 		game.NE_SWcolI4 = {name: "I4", size: 6, stones: [game.colI.stones[3], game.colH.stones[4], game.colG.stones[5], game.colF.stones[6], game.colE.stones[7], game.colD.stones[7]]};
 		game.NE_SWcolI5 = {name: "I5", size: 5, stones: [game.colI.stones[4], game.colH.stones[5], game.colG.stones[6], game.colF.stones[7], game.colE.stones[8]]};
 		game.NE_SWcols = [game.NE_SWcolE1, game.NE_SWcolF1, game.NE_SWcolG1, game.NE_SWcolH1, game.NE_SWcolI1, game.NE_SWcolI2, game.NE_SWcolI3, game.NE_SWcolI4, game.NE_SWcolI5];
+		//NW_SE cols
 		game.NW_SEcolE1 = {name: "E1", size: 5, stones: [game.colE.stones[0], game.colF.stones[0], game.colG.stones[0], game.colH.stones[0], game.colI.stones[0]]};
 		game.NW_SEcolD1 = {name: "D1", size: 6, stones: [game.colD.stones[0], game.colE.stones[1], game.colF.stones[1], game.colG.stones[1], game.colH.stones[1], game.colI.stones[1]]};
 		game.NW_SEcolC1 = {name: "C1", size: 7, stones: [game.colC.stones[0], game.colD.stones[1], game.colE.stones[2], game.colF.stones[2], game.colG.stones[2], game.colH.stones[2], game.colI.stones[2]]};
@@ -506,6 +507,7 @@ meanControllers.factory("GameLibrary", function() {
 				move.startstone.type = null;
 			}
 		}
+		gameLibrary.updateActiveColor(game, false);
 		gameLibrary.updateStoneCount(game);
 		gameLibrary.checkVictory(game);
 	};
@@ -522,8 +524,26 @@ meanControllers.factory("GameLibrary", function() {
 			game.blackTottsCount == 0 ) {
 			game.winner = game.bot1;
 			victory = true;
-		} else if ( false ) {//no more legal moves
-			victory = true;
+		} else  {
+			validmove = false;
+			angular.forEach(game.cols, function(column, key) {
+				angular.forEach(column.stones, function(stone, key) {
+					if ( stone.color == game.activeColor) {
+						var validTargetStones = gameLibrary.getValidTargets(game, stone);
+						if ( validTargetStones.length > 0) {
+							validmove = true;
+						}
+					}
+				});
+			});
+			if ( validmove == false) {
+				victory = true;
+				if (game.activeColor == "white") {
+					game.winner = game.bot2;
+				} else {
+					game.winner = game.bot1;
+				}
+			}
 		}
 		if ( victory ) {
 			game.moveStrings.push({ index: game.moveStrings.length, moveString: "PASS", move_img: "./img/w.png"});
@@ -634,112 +654,57 @@ meanControllers.factory("GameLibrary", function() {
 				});
 			});
 			if (game.selectedStone != null) {
-				var targetX = game.selectedStone.Xcoord;
-				var targetY = game.selectedStone.Ycoord;
-				var mayDefend = ((game.currentmoveIndex+1) % 2 == 1) && (game.currentmoveIndex != 0);
-				console.log("moveIndex: " + game.currentmoveIndex + " mayDefend: " + mayDefend);
-				//get vertical targets
-				var verticalIndex = 0;
-				for (var i = 0; i < selectedVerticalColumn.size; i++) {
-					if ( selectedVerticalColumn.stones[i] == game.selectedStone) {
-						verticalIndex = i;
-					}
-				}
-				for (var i = verticalIndex -1; i >= 0; i--) {
-					var stone = selectedVerticalColumn.stones[i];
-					if ( stone.name == "E5" ) break;
-					if ( stone.color != null ) {
-						if ((mayDefend && stone.color == game.selectedStone.color) || (stone.height <= game.selectedStone.height && stone.color != game.selectedStone.color)) {
-							console.log("valid target vertical stone: " + stone.name + " X:" + stone.Xcoord + " Y:" + stone.Ycoord);
-							game.validTargetStones.push(stone);
-						}
-						break;
-					}
-				}
-				for (var i = verticalIndex +1; i < selectedVerticalColumn.size; i++) {
-					var stone = selectedVerticalColumn.stones[i];
-					if ( stone.name == "E5" ) break;
-					if ( stone.color != null ) {
-						if ((mayDefend && stone.color == game.selectedStone.color) || (stone.height <= game.selectedStone.height && stone.color != game.selectedStone.color)) {
-							console.log("valid target vertical stone: " + stone.name + " X:" + stone.Xcoord + " Y:" + stone.Ycoord);
-							game.validTargetStones.push(stone);
-						}
-						break;
-					}
-				}
-				//get NE_SW targets
-				var selectedNE_SWColumn = null;
-				var NE_SWIndex = 0;
-
-				angular.forEach(game.NE_SWcols, function(column, key) {
-					for (var stoneIndex = 0; stoneIndex < column.stones.length; stoneIndex++) {
-						var stone = column.stones[stoneIndex];
-						if ( stone == game.selectedStone ) {
-							selectedNE_SWColumn = column;
-							NE_SWIndex = stoneIndex;
-						}
-					}
-				});
-				for (var i = NE_SWIndex -1; i >= 0; i--) {
-					var stone = selectedNE_SWColumn.stones[i];
-					if ( stone.name == "E5" ) break;
-					if ( stone.color != null ) {
-						if ((mayDefend && stone.color == game.selectedStone.color) || (stone.height <= game.selectedStone.height && stone.color != game.selectedStone.color)) {
-							console.log("valid target NE_SW stone: " + stone.name );
-							game.validTargetStones.push(stone);
-						}
-						break;
-					}
-				}
-				for (var i = NE_SWIndex +1; i < selectedNE_SWColumn.size; i++) {
-					var stone = selectedNE_SWColumn.stones[i];
-					if ( stone.name == "E5" ) break;
-					if ( stone.color != null ) {
-						if ((mayDefend && stone.color == game.selectedStone.color) || (stone.height <= game.selectedStone.height && stone.color != game.selectedStone.color)) {
-							console.log("valid target NE_SW stone: " + stone.name );
-							game.validTargetStones.push(stone);
-						}
-						break;
-					}
-				}
-				//get NW_SE targets
-				var selectedNW_SEColumn = null;
-				var NW_SEIndex = 0;
-
-				angular.forEach(game.NW_SEcols, function(column, key) {
-					for (var stoneIndex = 0; stoneIndex < column.stones.length; stoneIndex++) {
-						var stone = column.stones[stoneIndex];
-						if ( stone == game.selectedStone ) {
-							selectedNW_SEColumn = column;
-							NW_SEIndex = stoneIndex;
-						}
-					}
-				});
-				for (var i = NW_SEIndex -1; i >= 0; i--) {
-					var stone = selectedNW_SEColumn.stones[i];
-					if ( stone.name == "E5" ) break;
-					if ( stone.color != null ) {
-						if ((mayDefend && stone.color == game.selectedStone.color) || (stone.height <= game.selectedStone.height && stone.color != game.selectedStone.color)) {
-							console.log("valid target NW_SE stone: " + stone.name );
-							game.validTargetStones.push(stone);
-						}
-						break;
-					}
-				}
-				for (var i = NW_SEIndex +1; i < selectedNW_SEColumn.size; i++) {
-					var stone = selectedNW_SEColumn.stones[i];
-					if ( stone.name == "E5" ) break;
-					if ( stone.color != null ) {
-						if ((mayDefend && stone.color == game.selectedStone.color) || (stone.height <= game.selectedStone.height && stone.color != game.selectedStone.color)) {
-							console.log("valid target NW_SE stone: " + stone.name );
-							game.validTargetStones.push(stone);
-						}
-						break;
-					}
-				}
+				game.validTargetStones = gameLibrary.getValidTargets(game, game.selectedStone);
 			}
 			gameLibrary.drawGame(game);
 		}
+	}
+
+	gameLibrary.getValidTargets = function(game, sourceStone) {
+		var targetX = sourceStone.Xcoord;
+		var targetY = sourceStone.Ycoord;
+		var mayDefend = ((game.currentmoveIndex+1) % 2 == 1) && (game.currentmoveIndex != 0);
+		console.log("moveIndex: " + game.currentmoveIndex + " mayDefend: " + mayDefend);
+		var validTargetStones = [];
+
+		var allCols = [game.cols, game.NE_SWcols, game.NW_SEcols];
+		angular.forEach(allCols, function(cols, key){
+			var index = 0;
+			var selectedColumn = null;
+			angular.forEach(cols, function(column, key) {
+				for (var stoneIndex = 0; stoneIndex < column.stones.length; stoneIndex++) {
+					var stone = column.stones[stoneIndex];
+					if ( stone == sourceStone ) {
+						selectedColumn = column;
+						index = stoneIndex;
+					}
+				}
+			});
+
+			for (var i = index -1; i >= 0; i--) {
+				var stone = selectedColumn.stones[i];
+				if ( stone.name == "E5" ) break;
+				if ( stone.color != null ) {
+					if ((mayDefend && stone.color == sourceStone.color) || (stone.height <= sourceStone.height && stone.color != sourceStone.color)) {
+						console.log("valid target NE_SW stone: " + stone.name );
+						validTargetStones.push(stone);
+					}
+					break;
+				}
+			}
+			for (var i = index +1; i < selectedColumn.size; i++) {
+				var stone = selectedColumn.stones[i];
+				if ( stone.name == "E5" ) break;
+				if ( stone.color != null ) {
+					if ((mayDefend && stone.color == sourceStone.color) || (stone.height <= sourceStone.height && stone.color != sourceStone.color)) {
+						console.log("valid target NE_SW stone: " + stone.name );
+						validTargetStones.push(stone);
+					}
+					break;
+				}
+			}
+		});
+		return validTargetStones;
 	}
 
 	gameLibrary.increaseMoveAndUpdate = function(game) {
@@ -770,7 +735,6 @@ meanControllers.factory("GameLibrary", function() {
 			/*game.isAnimating = false;
 			console.log("Calling processMoves from animate function start");
 			gameLibrary.processMoves(game.currentmoveIndex);
-			gameLibrary.updateActiveColor(false);
 			gameLibrary.drawGame(game);
 			return;*/
 		} else {
@@ -805,7 +769,6 @@ meanControllers.factory("GameLibrary", function() {
 			game.isAnimating = false;
 			console.log("Calling processMoves from animate function end");
 			gameLibrary.processMoves(game, game.currentmoveIndex);
-			gameLibrary.updateActiveColor(game, true);
 			gameLibrary.drawGame(game);
 			game.animationDone();
 			if(game.isPlaying) {
@@ -818,12 +781,13 @@ meanControllers.factory("GameLibrary", function() {
 });
 
 meanControllers.controller('PlayvCPUCtrl', ['$scope', '$http', '$location', 'GameLibrary', function ($scope, $http, $location, GameLibrary) {
-	$scope.getCPUMove = function(columns, cpu) {
-		$http.post('/api/game/botmove/', {cols: columns, CPUcolor: cpu })
+	$scope.getCPUMove = function(columns, cpu, level) {
+		$http.post('/api/game/botmove/', {cols: columns, CPUcolor: cpu, AILevel: level })
 			.success(function(data){
 				console.log("Cpu move(s):" + data);
 				$scope.game.moves = $scope.game.moves + data;
-				GameLibrary.loadMoves($scope.game);
+				GameLibrary.loadMoves($scope.game);				
+				GameLibrary.processMoves($scope.game, $scope.game.currentmoveIndex);
 				GameLibrary.increaseMoveAndUpdate($scope.game);
 			})
 			.error(function(data) {
@@ -838,20 +802,79 @@ meanControllers.controller('PlayvCPUCtrl', ['$scope', '$http', '$location', 'Gam
 	GameLibrary.loadGame($scope.game);
 	GameLibrary.drawGame($scope.game);
 
+	$scope.selectCPUColor = function(color) {
+		console.log("selectCPUColor");
+		$scope.CPUcolor = color;
+	}
+
+	$scope.selectCPU = function() {
+		console.log("selectCPU");
+		GameLibrary.updateStoneCount($scope.game);
+		GameLibrary.updateActiveColor($scope.game);
+		var CPUname;
+		switch ($scope.AILevel) {
+			case 1 : CPUname = "AIALPHABETA";
+			case 2 : CPUname = "AIALPHABETA_ID";
+			case 3 : CPUname = "AIALPHABETA_ID_PV";
+			case 4 : CPUname = "AIALPHABETA_ID_PV_MO";
+			case 5 : CPUname = "AIALPHABETA_ID_MO";
+			case 6 : CPUname = "AIALPHABETA_RANDOM";
+			case 7 : CPUname = "AIALPHABETA_ID_PV_MO_SCOUT";
+			case 8 : CPUname = "AIALPHABETA_ID_PV_MO_HISTORY";
+			case 9 : CPUname = "AIALPHABETA_MAX";
+			case 20 : CPUname = "DFPNS";
+			case 21 : CPUname = "DFPNS_EPS_TRICK";
+			case 22 : CPUname = "WEAK_PNS";
+			case 23 : CPUname = "DFPNS_EVAL_BASED";
+			case 24 : CPUname = "DFPNS_WEAK_EPS_EVAL";
+			case 25 : CPUname = "DFPNS_DYNAMIC_WIDENING_EPS_EVAL";
+			case 40 : CPUname = "BEGINNERS_AI";
+			case 41 : CPUname = "INTERMEDIATE_AI";
+			case 42 : CPUname = "AICOMBI_RANDOM_AB_PNS";
+		}
+		if ( $scope.CPUcolor == 1) {
+			$scope.game.bot1 = CPUname;
+			$scope.game.bot2 = "Player";
+			$scope.getCPUMove($scope.game.cols, $scope.CPUcolor, $scope.AILevel);
+		} else {
+			$scope.game.bot1 = "Player";
+			$scope.game.bot2 = CPUname;
+		}
+		$scope.CPUSelected = true;
+	}
+
+
 	$scope.clickGame = function(event) {
 		console.log("clickgame");
 		GameLibrary.clickGame($scope.game, event);
 	};
 	$scope.game.animationDone = function() {
-		console.log("animationDone");
-		if ( $scope.game.activeColor == "white") {
-			$scope.getCPUMove($scope.game.cols, $scope.CPUcolor);
+		console.log("animationDone, currentmoveIndex:" + $scope.game.currentmoveIndex);
+		if ( $scope.game.isCpuMove() == 1) {
+			$scope.getCPUMove($scope.game.cols, $scope.CPUcolor, $scope.AILevel);
+		} else if ( $scope.game.isCpuMove() == 2) {
+			GameLibrary.increaseMoveAndUpdate($scope.game);
 		}
 	};
-	$scope.game.bot1 = "CPU";
-	$scope.game.bot2 = "Player"
-	$scope.CPUcolor = 1;
-	$scope.getCPUMove($scope.game.cols, $scope.CPUcolor);
+
+	$scope.game.isCpuMove = function() {
+		var cpuMove = 0;
+		console.log("currentmoveIndex: " + $scope.game.currentmoveIndex + ", ($scope.game.currentmoveIndex+1) % 4)=" + (($scope.game.currentmoveIndex+1) % 4));
+		if ( $scope.CPUcolor == 1 ) { //white
+			if ( (($scope.game.currentmoveIndex+1) % 4) == 0) { // It is CPU's first turn
+				cpuMove = 1;
+			} else if ( (($scope.game.currentmoveIndex+1) % 4) == 1) { // It is CPU's second turn
+				cpuMove = 2;
+			}
+		} else { // black
+			if ( (($scope.game.currentmoveIndex+1) % 4) == 2) { // It is CPU's first turn
+				cpuMove = 1;
+			} else if ( (($scope.game.currentmoveIndex+1) % 4) == 3) { // It is CPU's second turn
+				cpuMove = 2;
+			}
+		} 
+		return cpuMove;
+	};
 }]);
 
 //CONTROLLER FOR mod_list.html

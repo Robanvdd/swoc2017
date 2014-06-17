@@ -1,4 +1,36 @@
-<header>
+<header ng-hide="CPUSelected">
+	<div class="player1-active" ng-if="CPUcolor == -1" style="width:45%" ng-click="selectCPUColor(-1)">White</div>
+	<div class="player1-inactive" ng-if="CPUcolor != -1" style="width:45%" ng-click="selectCPUColor(-1)">White</div>
+	<div class="VS">Choose your color</div>
+	<div class="player2-active" ng-if="CPUcolor == 1" style="width:45%" ng-click="selectCPUColor(1)">Black</div>
+	<div class="player2-inactive" ng-if="CPUcolor != 1" style="width:45%" ng-click="selectCPUColor(1)">Black</div>
+	<br/>
+	Choose AI level
+	<select ng-model="AILevel">
+	    <option value="1">AIALPHABETA</option>
+	    <option value="2">AIALPHABETA_ID</option>
+	    <option value="3">AIALPHABETA_ID_PV</option>
+	    <option value="4">AIALPHABETA_ID_PV_MO</option>
+	    <option value="5">AIALPHABETA_ID_MO</option>
+	    <option value="6">AIALPHABETA_RANDOM</option>
+	    <option value="7">AIALPHABETA_ID_PV_MO_SCOUT</option>
+	    <option value="8">AIALPHABETA_ID_PV_MO_HISTORY</option>
+	    <option value="9">AIALPHABETA_MAX</option>
+	    <option value="20">DFPNS</option>
+	    <option value="21">DFPNS_EPS_TRICK</option>
+	    <option value="22">WEAK_PNS</option>
+	    <option value="23">DFPNS_EVAL_BASED</option>
+	    <option value="24">DFPNS_WEAK_EPS_EVAL</option>
+	    <option value="25">DFPNS_DYNAMIC_WIDENING_EPS_EVAL</option>
+	    <option value="40">BEGINNERS_AI</option>
+	    <option value="41">INTERMEDIATE_AI</option>
+	    <option value="42">AICOMBI_RANDOM_AB_PNS</option>
+  	</select> 
+  	<br/>
+    <button ng-click="selectCPU()" ng-show="CPUcolor && AILevel" > Select </button>
+</header>
+
+<header ng-show="CPUSelected"> 
 	<div class="player1-active" ng-if="'white' == activeColor" style="width:45%">{{game.bot1}}</div>
 	<div class="player1-inactive" ng-if="'white' != activeColor" style="width:45%">{{game.bot1}}</div>
 	<div class="VS">VS</div>
@@ -6,7 +38,7 @@
 	<div class="player2-inactive" ng-if="'black' != activeColor" style="width:45%">{{game.bot2}}</div>
 </header>
 
-<section>
+<section ng-show="CPUSelected">
 	<article>
 		<canvas id="c" width="550" height="550" ng-click="clickGame($event)" style="position:absolute;"></canvas>
 		<canvas id="cmove" width="550" height="550" style="position:relative; top:0px; left:0px" ng-click="clickGame($event)"></canvas>
@@ -27,31 +59,7 @@
 	</article>
 
 </section>
-<aside>
-	<table style="width:100%" >
-	   <caption><strong>Game Info<strong></caption>
-	   <thead>
-	      <tr>
-		 <th></th>
-		 <th></th>
-	      </tr>
-	   </thead>
-	   <tbody>
-	      <tr>
-		 <th>Name</th>
-		 <td align='right'>{{game.name}}</td>
-	      </tr>
-	      <tr>
-		 <th>Bot1</th>
-		 <td align='right'>{{game.bot1}}</td>
-	      </tr>
-	      <tr>
-		 <th>Bot2</th>
-		 <td align='right'>{{game.bot2}}</td>
-	      </tr>
-	      <tr>		 
-	   </tbody>
-	</table>
+<aside ng-show="CPUSelected">
 	<table style="width:100%">
 		<thead>
 			<tr>
