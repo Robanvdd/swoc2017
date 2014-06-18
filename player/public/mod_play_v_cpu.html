@@ -5,7 +5,10 @@
 	<div class="player2-active" ng-if="CPUcolor == 1" style="width:45%" ng-click="selectCPUColor(1)">Black</div>
 	<div class="player2-inactive" ng-if="CPUcolor != 1" style="width:45%" ng-click="selectCPUColor(1)">Black</div>
 	<br/>
+	<h2>
+	<br/>
 	Choose AI level
+  	</h2>
 	<select ng-model="AILevel">
 	    <option value="1">AIALPHABETA</option>
 	    <option value="2">AIALPHABETA_ID</option>
@@ -42,13 +45,13 @@
 	<article>
 		<canvas id="c" width="550" height="550" ng-click="clickGame($event)" style="position:absolute;"></canvas>
 		<canvas id="cmove" width="550" height="550" style="position:relative; top:0px; left:0px" ng-click="clickGame($event)"></canvas>
-		<div class="winningPlayer player2-active" ng-if="winner != null && winner == game.bot2" style="position:relative; top:-317px;"> 
+		<div class="winningPlayer player2-active" ng-if="game.winner != null && game.winner == game.bot2" style="position:relative; top:-317px;"> 
 			<div>We have a winner!</div>
-			<div style="font-size: 28px;">{{winner}}</div>
+			<div style="font-size: 28px;">{{game.winner}}</div>
 		</div>
-		<div class="winningPlayer player1-active" ng-if="winner != null && winner == game.bot1" style="position:relative; top:-317px;"> 
+		<div class="winningPlayer player1-active" ng-if="game.winner != null && game.winner == game.bot1" style="position:relative; top:-317px;"> 
 			<div>We have a winner!</div>
-			<div style="font-size: 28px;">{{winner}}</div>
+			<div style="font-size: 28px;">{{game.winner}}</div>
 		</div>
 	</article>
 	<article>
@@ -126,6 +129,6 @@
 	<!-- Our Player -->
 	<br/>
 	<div class="moveTypeAnimation-container" >
-		<img ng-repeat="moveString in game.moveStrings" class="moveTypeAnimation" ng-if="moveString.index == currentmoveIndex" src="{{moveString.move_img}}" height="250" width="250" style="clear:both;"></img>
+		<img ng-repeat="moveString in game.moveStrings" class="moveTypeAnimation" ng-if="moveString.index == game.currentmoveIndex" src="{{moveString.move_img}}" height="250" width="250" style="clear:both;"></img>
 	</div>
 </aside>

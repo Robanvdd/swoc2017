@@ -152,6 +152,8 @@ app.post('/api/game/botmove', function(req, res) {
 							var secondMove = '';
 							if (secondMoves.length > 1) {
 								secondMove = secondMoves[1] + secondMoves[2];
+							} else if ( secondMoves[0] == "-1") {
+								secondMove = "PASS";
 							}
 							res.send(firstMove + secondMove);    
 						}
