@@ -1,13 +1,15 @@
 <header>
-	<div class="player1-active" ng-if="'white' == activeColor" style="width:45%">{{game.bot1}}</div>
-	<div class="player1-inactive" ng-if="'white' != activeColor" style="width:45%">{{game.bot1}}</div>
+	<div class="player1-active" ng-if="'white' == game.activeColor" style="width:45%">{{game.bot1}}</div>
+	<div class="player1-inactive" ng-if="'white' != game.activeColor" style="width:45%">{{game.bot1}}</div>
 	<div class="VS">VS</div>
-	<div class="player2-active" ng-if="'black' == activeColor" style="width:45%">{{game.bot2}}</div>
-	<div class="player2-inactive" ng-if="'black' != activeColor" style="width:45%">{{game.bot2}}</div>
+	<div class="player2-active" ng-if="'black' == game.activeColor" style="width:45%">{{game.bot2}}</div>
+	<div class="player2-inactive" ng-if="'black' != game.activeColor" style="width:45%">{{game.bot2}}</div>
 </header>
 
 <section>
 	<article>		
+		<div class="FirstMove" ng-if="game.passStatus == 'First_move'" >First move must be an attack move</div>
+		<div class="Pass" ng-if="game.passStatus == 'Pass'" ng-click="pauseClick()" >Click here to Pass</div>
 		<canvas id="c" width="550" height="550" ng-click="clickGame($event)" style="position:absolute;"></canvas>
 		<canvas id="cmove" width="550" height="550" style="position:relative; top:0px; left:0px" ng-click="clickGame($event)"></canvas>
 		<div class="winningPlayer player2-active" ng-if="game.winner != null && game.winner == game.bot2" style="position:relative; top:-317px;"> 

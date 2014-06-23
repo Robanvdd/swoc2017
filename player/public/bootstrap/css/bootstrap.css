@@ -35,6 +35,24 @@ header {
 	margin:5px 0px;
 }
 
+.Pass {
+  text-align: center;
+  font-size: 18px;
+  color: #000000;
+  background-color: #ffffff;
+  border:5px solid #000000;
+  border-radius:25px;
+}
+
+.FirstMove {
+  text-align: center;
+  font-size: 18px;
+  color: #a0a0a0;
+  background-color: #ffffff;
+  border:5px solid #f0f0f0;
+  border-radius:25px;
+}
+
 .winningPlayer {
 
 	width: 100%;

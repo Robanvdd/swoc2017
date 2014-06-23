@@ -17,6 +17,7 @@ meanControllers.factory("GameLibrary", function() {
 		
 		game.unit_distance = (game.size / 4);
 		game.activeColor = "white";
+		game.passStatus = "First_move";
 		// Vertical |
 		// NW_SE \
 		// NE_SW /
@@ -511,6 +512,7 @@ meanControllers.factory("GameLibrary", function() {
 
 	gameLibrary.checkVictory = function(game) {
 		var victory = false;
+		var mayPause = ((game.currentmoveIndex+1) % 2 == 1) && (game.currentmoveIndex != 0);
 		if ( game.whiteTzaarCount == 0 || 
 			game.whiteTzarrasCount == 0 ||
 			game.whiteTottsCount == 0 ) {
@@ -521,7 +523,7 @@ meanControllers.factory("GameLibrary", function() {
 			game.blackTottsCount == 0 ) {
 			game.winner = game.bot1;
 			victory = true;
-		} else  {
+		} else  if ( mayPause == false ) {
 			validmove = false;
 			angular.forEach(game.cols, function(column, key) {
 				angular.forEach(column.stones, function(stone, key) {
@@ -600,6 +602,24 @@ meanControllers.factory("GameLibrary", function() {
 		game.activeColor = color;
 		console.log("game.currentmoveIndex : " + game.currentmoveIndex + " activeColor: " + game.activeColor);
 	};
+
+	gameLibrary.pauseClick = function(game) {
+		var move = {};
+		move.move_img = "./img/clock-147257_640.png";
+		move.index = game.moveStrings.length;
+		move.moveString = "PASS"
+		game.moves = game.moves + move.moveString;
+		game.moveStrings.push(move);
+		game.selectedStone = null;
+		game.validTargetStones = [];
+		
+		game.currentmoveIndex++;
+		game.currentmove = game.moveStrings[game.currentmoveIndex];
+		gameLibrary.drawGame(game);
+		var startTime = (new Date()).getTime();
+		game.isAnimating = true;
+		gameLibrary.animate(game, startTime);
+	}
 
 	gameLibrary.clickGame = function(game, event) {
 		console.log("clickGame, event: " + event + " pageX: " + event.pageX + " pageY: " + event.pageY);
@@ -730,6 +750,8 @@ meanControllers.factory("GameLibrary", function() {
 		
 		var cxt = document.getElementById('cmove').getContext('2d');
 		cxt.clearRect(0,0,cxt.canvas.width,cxt.canvas.height);
+        var time = (new Date()).getTime() - startTime;
+		var period = 1000;
 		if (game.currentmove == null || game.currentmove.moveString == "PASS") {
 			console.log("done animating, currentmoveIndex:" + game.currentmoveIndex);
 			/*game.isAnimating = false;
@@ -740,8 +762,6 @@ meanControllers.factory("GameLibrary", function() {
 		} else {
 
 	        // update
-	        var time = (new Date()).getTime() - startTime;
-			var period = 1000;
 
 			var startX = game.currentmove.startstone.Xcoord;
 			var startY = game.currentmove.startstone.Ycoord;
@@ -848,8 +868,19 @@ meanControllers.controller('PlayvCPUCtrl', ['$scope', '$http', '$location', 'Gam
 		console.log("clickgame");
 		GameLibrary.clickGame($scope.game, event);
 	};
+
+	$scope.pauseClick = function() {
+		console.log("pauseClick");
+		GameLibrary.pauseClick($scope.game);	
+	}
 	$scope.game.animationDone = function() {
 		console.log("animationDone, currentmoveIndex:" + $scope.game.currentmoveIndex);
+		var mayPause = (($scope.game.currentmoveIndex+1) % 2 == 1) && ($scope.game.currentmoveIndex != 0);
+		if ( mayPause == true ) {
+			$scope.game.passStatus = "Pass";
+		} else {
+			$scope.game.passStatus = "First_move";
+		}
 			$scope.$apply(function() {		});
 		if ( $scope.game.isCpuMove() == 1) {
 			$scope.getCPUMove($scope.game.cols, $scope.CPUcolor, $scope.AILevel);
@@ -942,10 +973,21 @@ meanControllers.controller('PlayCtrl', ['$scope', '$http', '$location', 'GameLib
 		console.log("clickgame");
 		GameLibrary.clickGame($scope.game, event);
 	};
+
+	$scope.pauseClick = function() {
+		console.log("pauseClick");
+		GameLibrary.pauseClick($scope.game);	
+	}
+
 	$scope.game.animationDone = function() {
 		console.log("animationDone, currentmoveIndex:" + $scope.game.currentmoveIndex);
-
-			$scope.$apply(function() {		});
+		var mayPause = (($scope.game.currentmoveIndex+1) % 2 == 1) && ($scope.game.currentmoveIndex != 0);
+		if ( mayPause == true ) {
+			$scope.game.passStatus = "Pass";
+		} else {
+			$scope.game.passStatus = "First_move";
+		}
+		$scope.$apply(function() {		});	
 	};
 
     $scope.$watch('game.printlabels', function(value) {

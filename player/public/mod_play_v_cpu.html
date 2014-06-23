@@ -34,15 +34,17 @@
 </header>
 
 <header ng-show="CPUSelected"> 
-	<div class="player1-active" ng-if="'white' == activeColor" style="width:45%">{{game.bot1}}</div>
-	<div class="player1-inactive" ng-if="'white' != activeColor" style="width:45%">{{game.bot1}}</div>
+	<div class="player1-active" ng-if="'white' == game.activeColor" style="width:45%">{{game.bot1}}</div>
+	<div class="player1-inactive" ng-if="'white' != game.activeColor" style="width:45%">{{game.bot1}}</div>
 	<div class="VS">VS</div>
-	<div class="player2-active" ng-if="'black' == activeColor" style="width:45%">{{game.bot2}}</div>
-	<div class="player2-inactive" ng-if="'black' != activeColor" style="width:45%">{{game.bot2}}</div>
+	<div class="player2-active" ng-if="'black' == game.activeColor" style="width:45%">{{game.bot2}}</div>
+	<div class="player2-inactive" ng-if="'black' != game.activeColor" style="width:45%">{{game.bot2}}</div>
 </header>
 
 <section ng-show="CPUSelected">
 	<article>
+		<div class="FirstMove" ng-if="game.passStatus == 'First_move'" >First move must be an attack move</div>
+		<div class="Pass" ng-if="game.passStatus == 'Pass'" ng-click="pauseClick()" >Click here to Pass</div>
 		<canvas id="c" width="550" height="550" ng-click="clickGame($event)" style="position:absolute;"></canvas>
 		<canvas id="cmove" width="550" height="550" style="position:relative; top:0px; left:0px" ng-click="clickGame($event)"></canvas>
 		<div class="winningPlayer player2-active" ng-if="game.winner != null && game.winner == game.bot2" style="position:relative; top:-317px;"> 
@@ -55,7 +57,7 @@
 		</div>
 	</article>
 	<article>
-		<input type="checkbox" ng-model="printlabels"> 
+		<input type="checkbox" ng-model="game.printlabels"> 
 		Show labels <br/>
 		<caption><strong>Game Moves<strong></caption>
 		<textarea readonly style="width: 100%; resize: vertical">{{game.moves}}</textarea>
@@ -73,7 +75,7 @@
 		</thead>
 		<tbody>
 			<tr>
-				<th style='text-align:center; font-size:24px'>Tzaar</th>
+				<th style='text-align:center; font-size:24px'>Boulder</th>
 				<td style='text-align:center; font-size:24px'>
 					<div class="progress progress-striped active" style="position:relative;">
 						<div class="progress-bar"  role="progressbar" style="width:{{100 * game.whiteTzaarCount/6}}%; background-color:rgb({{220 - 220 * game.whiteTzaarCount/6 | number : 0}},{{220 * game.whiteTzaarCount/6 | number : 0}},0);position:absolute; top:0;left:0">
@@ -90,7 +92,7 @@
 				</td>
 			</tr>
 			<tr>
-				<th style='text-align:center; font-size:24px'>Tzarras</th>
+				<th style='text-align:center; font-size:24px'>Rock</th>
 				<td style='text-align:center; font-size:24px'>
 					<div class="progress progress-striped active" style="position:relative;"  >
 						<div class="progress-bar"  role="progressbar" style="width:{{100 * game.whiteTzarrasCount/9}}%; background-color:rgb({{220 - 220 * game.whiteTzarrasCount/9 | number : 0}},{{220 * game.whiteTzarrasCount/9 | number : 0}},0);position:absolute; top:0;left:0">
@@ -107,7 +109,7 @@
 				</td>
 			</tr>
 			<tr>
-				<th style='text-align:center; font-size:24px'>Totts</th>
+				<th style='text-align:center; font-size:24px'>Pebble</th>
 				<td style='text-align:center; font-size:24px'>
 					<div class="progress progress-striped active" style="position:relative;"  >
 						<div class="progress-bar"  role="progressbar" style="width:{{100 * game.whiteTottsCount/15}}%; background-color:rgb({{220 - 220 * game.whiteTottsCount/15 | number : 0}},{{220 * game.whiteTottsCount/15 | number : 0}},0);position:absolute; top:0;left:0">
