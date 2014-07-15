@@ -7,30 +7,17 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 
-html, body {
-  height: 100%;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
+:host {
+  overflow: hidden;
 }
 
-body {
-  margin: 0;
+.splash {
   background-color: #eee;
   background-repeat: no-repeat;
   background-position: 50%;
   background-image: url(images/splash.svg);
-  font-family: "RobotoDraft", sans-serif;
-  color: #444;
-  fill: #444;
-  font-weight: 400;
 }
 
-@media screen and (min-width: 900px) {
-  body {
-    background-size: 512px;
-  }
-}
-
-stones-app {
-  min-height: 450px;
-  overflow: hidden;
+.splash.wide {
+  background-size: 512px;
 }

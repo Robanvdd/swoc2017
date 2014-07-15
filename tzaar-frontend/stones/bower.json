@@ -1,7 +1,7 @@
 {
-  "name": "topeka",
+  "name": "stones",
   "version": "0.0.0",
-  "homepage": "https://github.com/Polymer/topeka",
+  "homepage": "https://github.com/JaWSnl/swoc2014",
   "authors": [],
   "description": "",
   "license": "BSD",
@@ -13,7 +13,4 @@
     "test",
     "tests"
   ],
-  "dependencies": {
-    "topeka-elements": "Polymer/topeka-elements#master"
-  }
 }
