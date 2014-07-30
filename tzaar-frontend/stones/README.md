@@ -14,5 +14,6 @@ To run the app:
 ### Python
 
   1. Make sure you have `python` [installed](https://www.python.org) installed.
-  2. `cd stones` and `python -m SimpleHTTPServer`
+  2. Linux: `cd stones` and `python -m SimpleHTTPServer` 
+  2. Windows: `cd stones` and `python -m http.server <insert portnumber>`
   3. Navigate to `http://localhost:8080` using your webbrowser.
