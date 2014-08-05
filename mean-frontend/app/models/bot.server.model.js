@@ -12,7 +12,6 @@ var mongoose = require('mongoose'),
 var BotSchema = new Schema({
 	name: {
 		type: String,
-		default: Date.now,
 		required: 'A bot name must be given'
 	},
 	ranking: {
@@ -29,7 +28,8 @@ var BotSchema = new Schema({
 	},
 	user: {
 		type: Schema.ObjectId,
-		ref: 'User'
+		ref: 'User',
+		required: 'A user must be given'
 	}
 });
 
