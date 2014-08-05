@@ -14,17 +14,17 @@ var MatchSchema = new Schema({
 		type: Date,
 		default: Date.now
 	},
-	whiteBotId: {
+	whiteBot: {
 		type: Schema.ObjectId,
 		ref: 'Bot',
 		required: 'WhiteBotId must be given'
 	},
-	blackBotId: {
+	blackBot: {
 		type: Schema.ObjectId,
 		ref: 'Bot',
 		required: 'BlackBotId must be given'
 	},
-	winnerBotId: {
+	winnerBot: {
 		type: Schema.ObjectId,
 		ref: 'Bot'
 	},

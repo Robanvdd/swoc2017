@@ -38,8 +38,8 @@ describe('Match Model Unit Tests:', function() {
 			bot.save(function(){
 				match = new Match({
 					startedOn: '2014-01-01 12:00:00',
-					whiteBotId: bot,
-					blackBotId: bot
+					whiteBot: bot,
+					blackBot: bot
 				});
 
 				done();
@@ -57,7 +57,7 @@ describe('Match Model Unit Tests:', function() {
 		});
 
 		it('should be able to show an error when try to save without whiteBot', function(done) {
-			match.whiteBotId = 0;
+			match.whiteBot = 0;
 
 			return match.save(function(err) {
 				should.exist(err);
@@ -66,7 +66,7 @@ describe('Match Model Unit Tests:', function() {
 		});
 
 		it('should be able to show an error when try to save without blackBot', function(done) {
-			match.blackBotId = 0;
+			match.blackBot = 0;
 
 			return match.save(function(err) {
 				should.exist(err);
