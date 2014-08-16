@@ -6,25 +6,26 @@ import org.json.simple.JSONObject;
 public class Board
 {
 	// owners
-	public static final int Empty = 0;
-	public static final int White = 1;
-	public static final int Black = -1;
+	public static final int OnwerNone = 0;
+	public static final int OwnerWhite = 1;
+	public static final int OwnerBlack = -1;
 	
 	// stone types
+	public static final int StoneNone = 0;
 	public static final int StoneA = 1;
 	public static final int StoneB = 2;
 	public static final int StoneC = 3;
 	
-	public static final int Illegal = 100; // must be (x mod 4 == 0)
+	public static final int Illegal = GetCode(OnwerNone, StoneNone, 100); // must be (x mod 4 == 0)
 
 	private final int[][] state;
 
-	private static final int BlackA = GetCode(Black, StoneA, 1);
-	private static final int BlackB = GetCode(Black, StoneB, 1);
-	private static final int BlackC = GetCode(Black, StoneC, 1);
-	private static final int WhiteA = GetCode(White, StoneA, 1);
-	private static final int WhiteB = GetCode(White, StoneB, 1);
-	private static final int WhiteC = GetCode(White, StoneC, 1);
+	private static final int BlackA = GetCode(OwnerBlack, StoneA, 1);
+	private static final int BlackB = GetCode(OwnerBlack, StoneB, 1);
+	private static final int BlackC = GetCode(OwnerBlack, StoneC, 1);
+	private static final int WhiteA = GetCode(OwnerWhite, StoneA, 1);
+	private static final int WhiteB = GetCode(OwnerWhite, StoneB, 1);
+	private static final int WhiteC = GetCode(OwnerWhite, StoneC, 1);
 	
 	private static final int[][] DefaultState = 
 		{ 
@@ -58,7 +59,7 @@ public class Board
 	{
 		if (IsIllegal(location))
 		{
-			return Empty;
+			return OnwerNone;
 		}
 		return GetOwner(state[location.Y][location.X]);
 	}
@@ -67,41 +68,42 @@ public class Board
 	{
 		if (IsIllegal(location))
 		{
-			return Empty;
+			return OnwerNone;
 		}
 		return GetStone(state[location.Y][location.X]);
 	}
 
-	public int GetCount(BoardLocation location)
+	public int GetHeight(BoardLocation location)
 	{
 		if (IsIllegal(location))
 		{
 			return 0;
 		}
-		return GetCount(state[location.Y][location.X]);
+		return GetHeight(state[location.Y][location.X]);
 	}
 	
-	private static int GetCode(int owner, int stone, int count)
+	private static int GetCode(int owner, int stone, int height)
 	{
 		assert (-1 <= owner && owner <= 1);
-		assert ((owner != 0 && 1 <= stone && stone < 4 && count > 0) ||
-				(owner == 0 && stone == 0 && count == 0));
-		return owner * (count * 4 + stone);
+		assert (0 <= stone && stone <= 3);
+		assert ((owner != 0 && stone != 0 && height > 0) ||
+				(owner == 0 && stone == 0 && (height == 0 || height == 100)));
+		return owner * (height * 4 + stone);
 	}
 	
 	private static int GetOwner(int fieldCode)
 	{
 		if (fieldCode == 0)
 		{
-			return Empty;
+			return OnwerNone;
 		}
 		else if (fieldCode > 0)
 		{
-			return White;
+			return OwnerWhite;
 		}
 		else
 		{
-			return Black;
+			return OwnerBlack;
 		}
 	}
 	
@@ -110,12 +112,12 @@ public class Board
 		return Math.abs(fieldCode) % 4;
 	}
 	
-	private static int GetCount(int fieldCode)
+	private static int GetHeight(int fieldCode)
 	{
 		return Math.abs(fieldCode) / 4;
 	}
 	
-	public Board ChangeState(BoardLocation location, int owner, int stone, int count)
+	public Board ChangeState(BoardLocation location, int owner, int stone, int height)
 	{
 		// TODO: check for legal locations
 		
@@ -127,7 +129,7 @@ public class Board
 			{
 				if (x == location.X && y == location.Y)
 				{
-					newState[y][x] = GetCode(owner, stone, count);
+					newState[y][x] = GetCode(owner, stone, height);
 				}
 				else
 				{

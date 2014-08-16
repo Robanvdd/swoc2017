@@ -44,11 +44,11 @@ public class IORobot implements AutoCloseable
 	@SuppressWarnings("unchecked")
 	public String doMove(Board board, long timeOut)
 	{
-		JSONObject obj = new JSONObject();
-		obj.put("message", "init");
-		obj.put("boardState", board.Serialize());
+//		JSONObject obj = new JSONObject();
+//		obj.put("message", "init");
+//		obj.put("boardState", board.Serialize());
 		
-		String output = obj.toString();
+		String output = board.Serialize();
 		handler.writeLine(output);
 		
 		String line = handler.readLine(timeOut);
