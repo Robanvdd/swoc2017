@@ -17,6 +17,109 @@ public class EngineRunner implements AutoCloseable
 		bot2 = new IORobot(executable2);
 		
 		board = new Board();
+		
+		String serialized = board.Serialize();
+		System.out.println("Board state:");
+		System.out.println(serialized);
+
+		DumpOwners(board);
+//		DumpStones(board);
+//		DumpCount(board);
+		DumpTotals(board);
+		
+		Board b = DoMove(board, new BoardLocation(0, 0), new BoardLocation(0, 1));
+
+		DumpOwners(b);
+//		DumpStones(b);
+//		DumpCount(b);
+		DumpTotals(b);
+		
+		b = DoMove(b, new BoardLocation(0, 1), new BoardLocation(1, 0));
+
+		DumpOwners(b);
+//		DumpStones(b);
+//		DumpCount(b);
+		DumpTotals(b);
+		
+	}
+
+	private static void DumpTotals(Board board)
+	{
+		System.out.println("Total:");
+		System.out.println("White: "
+				+ board.GetTotalCount(Board.White, Board.StoneA) + ", "
+				+ board.GetTotalCount(Board.White, Board.StoneB) + ", "
+				+ board.GetTotalCount(Board.White, Board.StoneC));
+		System.out.println("Black: "
+				+ board.GetTotalCount(Board.Black, Board.StoneA) + ", "
+				+ board.GetTotalCount(Board.Black, Board.StoneB) + ", "
+				+ board.GetTotalCount(Board.Black, Board.StoneC));
+	}
+	
+	private static Board DoMove(Board board, BoardLocation from, BoardLocation to)
+	{
+		int newOwner = board.GetOwner(from);
+		int newStone = board.GetStone(from);
+		int newCount = board.GetCount(from);
+
+		int oldOwner = board.GetOwner(to);
+		if (newOwner == oldOwner)
+		{
+			// strengthen
+			int oldCount = board.GetCount(to);
+			newCount += oldCount;
+		}
+		else
+		{
+			// TODO: check if count(to) <= count(from)
+			// attack
+		}
+		return board.ChangeState(from, Board.Empty, 0, 0).ChangeState(to, newOwner, newStone, newCount);
+	}
+
+	private static void DumpOwners(Board board)
+	{
+		System.out.println("---------------------------");
+		for (int y = 0; y < 9; y++)
+		{
+			for (int x = 0; x < 9; x++)
+			{
+				int owner = board.GetOwner(new BoardLocation(x, y));
+				System.out.print(" " + String.format("%2d", owner));
+			}
+			System.out.println();
+		}
+		System.out.println("---------------------------");
+	}
+
+	private static void DumpStones(Board board)
+	{
+		System.out.println("---------------------------");
+		for (int y = 0; y < 9; y++)
+		{
+			for (int x = 0; x < 9; x++)
+			{
+				int stone = board.GetStone(new BoardLocation(x, y));
+				System.out.print(" " + String.format("%2d", stone));
+			}
+			System.out.println();
+		}
+		System.out.println("---------------------------");
+	}
+
+	private static void DumpCount(Board board)
+	{
+		System.out.println("---------------------------");
+		for (int y = 0; y < 9; y++)
+		{
+			for (int x = 0; x < 9; x++)
+			{
+				int count = board.GetCount(new BoardLocation(x, y));
+				System.out.print(" " + String.format("%2d", count));
+			}
+			System.out.println();
+		}
+		System.out.println("---------------------------");
 	}
 
 	public void run()
@@ -25,13 +128,14 @@ public class EngineRunner implements AutoCloseable
 		
 		bot1.doMove(board, 2000);
 		bot2.doMove(board, 2000);
-
-		System.out.println("---- START OF DUMP 1 ----");
-		System.out.println(bot1.getDump());
-		System.out.println("---- END OF DUMP 1 ----");
-		System.out.println("---- START OF DUMP 2 ----");
-		System.out.println(bot2.getDump());
-		System.out.println("---- END OF DUMP 2 ----");
+//
+//		System.out.println("---- START OF DUMP 1 ----");
+//		System.out.println(bot1.getDump());
+//		System.out.println("---- END OF DUMP 1 ----");
+//		System.out.println("---- START OF DUMP 2 ----");
+//		System.out.println(bot2.getDump());
+//		System.out.println("---- END OF DUMP 2 ----");
+		System.out.println("Game ended");
 	}
 
 	@Override

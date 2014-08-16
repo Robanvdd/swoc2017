@@ -1,81 +1,175 @@
 package eu.sioux.swoc.tzaar.engine;
 
-import java.util.LinkedList;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class Board
 {
-	public final int InvalidOwner = 100;
-	public final int NoOwner = 0;
-	public final int WhiteA = 1;
-	public final int WhiteB = 2;
-	public final int WhiteC = 3;
-	public final int BlackA = -1;
-	public final int BlackB = -2;
-	public final int BlackC = -3;
+	// owners
+	public static final int Empty = 0;
+	public static final int White = 1;
+	public static final int Black = -1;
 	
-	private final int[][] owners =
-		{
-			{BlackA, WhiteA, WhiteA, WhiteA, WhiteA, InvalidOwner, InvalidOwner, InvalidOwner, InvalidOwner},
-			{BlackA, BlackB, WhiteB, WhiteB, WhiteB, BlackA, InvalidOwner, InvalidOwner, InvalidOwner},
-			{BlackA, BlackB, BlackC, WhiteC, WhiteC, BlackB, BlackA, InvalidOwner, InvalidOwner},
-			{BlackA, BlackB, BlackC, BlackA, WhiteA, BlackC, BlackB, BlackA, InvalidOwner},
-			{WhiteA, WhiteB, WhiteC, WhiteA, InvalidOwner, BlackA, BlackC, BlackB, BlackA},
-			{InvalidOwner, WhiteA, WhiteB, WhiteC, BlackA, WhiteA, WhiteC, WhiteB, WhiteA},
-			{InvalidOwner, InvalidOwner, WhiteA, WhiteB, BlackC, BlackC, WhiteC, WhiteB, WhiteA},
-			{InvalidOwner, InvalidOwner, InvalidOwner, WhiteA, BlackB, BlackB, BlackB, WhiteB, WhiteA},
-			{InvalidOwner, InvalidOwner, InvalidOwner, InvalidOwner, BlackA, BlackA, BlackA, BlackA, WhiteA},
+	// stone types
+	public static final int StoneA = 1;
+	public static final int StoneB = 2;
+	public static final int StoneC = 3;
+	
+	public static final int Illegal = 100; // must be (x mod 4 == 0)
+
+	private final int[][] state;
+
+	private static final int BlackA = GetCode(Black, StoneA, 1);
+	private static final int BlackB = GetCode(Black, StoneB, 1);
+	private static final int BlackC = GetCode(Black, StoneC, 1);
+	private static final int WhiteA = GetCode(White, StoneA, 1);
+	private static final int WhiteB = GetCode(White, StoneB, 1);
+	private static final int WhiteC = GetCode(White, StoneC, 1);
+	
+	private static final int[][] DefaultState = 
+		{ 
+			{ BlackA, WhiteA, WhiteA, WhiteA, WhiteA, Illegal, Illegal, Illegal, Illegal },
+			{ BlackA, BlackB, WhiteB, WhiteB, WhiteB, BlackA, Illegal, Illegal, Illegal },
+			{ BlackA, BlackB, BlackC, WhiteC, WhiteC, BlackB, BlackA, Illegal, Illegal },
+			{ BlackA, BlackB, BlackC, BlackA, WhiteA, BlackC, BlackB, BlackA, Illegal },
+			{ WhiteA, WhiteB, WhiteC, WhiteA, Illegal, BlackA, BlackC, BlackB, BlackA },
+			{ Illegal, WhiteA, WhiteB, WhiteC, BlackA, WhiteA, WhiteC, WhiteB, WhiteA },
+			{ Illegal, Illegal, WhiteA, WhiteB, BlackC, BlackC, WhiteC, WhiteB, WhiteA },
+			{ Illegal, Illegal, Illegal, WhiteA, BlackB, BlackB, BlackB, WhiteB, WhiteA },
+			{ Illegal, Illegal, Illegal, Illegal, BlackA, BlackA, BlackA, BlackA, WhiteA }, 
 		};
 
-	private final int[][] stacks = new int[9][9];
-
-	
 	public Board()
 	{
+		state = DefaultState;
+	}
+	
+	public Board(int[][] initialState)
+	{
+		state = initialState;
+	}
+	
+	public boolean IsIllegal(BoardLocation location)
+	{
+		return state[location.Y][location.X] == Illegal;
+	}
+
+	public int GetOwner(BoardLocation location)
+	{
+		if (IsIllegal(location))
+		{
+			return Empty;
+		}
+		return GetOwner(state[location.Y][location.X]);
+	}
+
+	public int GetStone(BoardLocation location)
+	{
+		if (IsIllegal(location))
+		{
+			return Empty;
+		}
+		return GetStone(state[location.Y][location.X]);
+	}
+
+	public int GetCount(BoardLocation location)
+	{
+		if (IsIllegal(location))
+		{
+			return 0;
+		}
+		return GetCount(state[location.Y][location.X]);
+	}
+	
+	private static int GetCode(int owner, int stone, int count)
+	{
+		assert (-1 <= owner && owner <= 1);
+		assert ((owner != 0 && 1 <= stone && stone < 4 && count > 0) ||
+				(owner == 0 && stone == 0 && count == 0));
+		return owner * (count * 4 + stone);
+	}
+	
+	private static int GetOwner(int fieldCode)
+	{
+		if (fieldCode == 0)
+		{
+			return Empty;
+		}
+		else if (fieldCode > 0)
+		{
+			return White;
+		}
+		else
+		{
+			return Black;
+		}
+	}
+	
+	private static int GetStone(int fieldCode)
+	{
+		return Math.abs(fieldCode) % 4;
+	}
+	
+	private static int GetCount(int fieldCode)
+	{
+		return Math.abs(fieldCode) / 4;
+	}
+	
+	public Board ChangeState(BoardLocation location, int owner, int stone, int count)
+	{
+		// TODO: check for legal locations
+		
+		int[][] newState = new int[9][9];
+		
 		for (int y = 0; y < 9; y++)
 		{
 			for (int x = 0; x < 9; x++)
 			{
-				int owner = owners[y][x];
-				if (owner == InvalidOwner)
+				if (x == location.X && y == location.Y)
 				{
-					stacks[y][x] = -1;
-				}
-				else if (owner == NoOwner)
-				{
-					stacks[y][x] = 0;
+					newState[y][x] = GetCode(owner, stone, count);
 				}
 				else
 				{
-					stacks[y][x] = 1;
+					newState[y][x] = state[y][x];
 				}
 			}
 		}
+		
+		return new Board(newState);
 	}
 	
-	public int GetOwner(String id)
+	public int GetTotalCount(int owner, int stone)
 	{
-		return NoOwner;
-	}
-	
-	public JSONObject Serialize()
-	{
-		JSONArray ownersArray = new JSONArray();
-		JSONArray stacksArray = new JSONArray();
+		int count = 0;
+		
 		for (int y = 0; y < 9; y++)
 		{
 			for (int x = 0; x < 9; x++)
 			{
-				ownersArray.add(owners[y][x]);
-				stacksArray.add(stacks[y][x]);
+				int code = state[y][x];
+				if (GetOwner(code) == owner && GetStone(code) == stone)
+				{
+					count++;
+				}
 			}
 		}
-			
-		JSONObject object = new JSONObject();
-		object.put("owners", ownersArray);
-		object.put("stacks", stacksArray);
-		return object;
+		return count;
+	}
+
+	public String Serialize()
+	{
+		JSONArray stateArray = new JSONArray();
+		for (int y = 0; y < 9; y++)
+		{
+			JSONArray row = new JSONArray();
+			for (int x = 0; x < 9; x++)
+			{
+				row.add(state[y][x]);
+			}
+			stateArray.add(row);
+		}
+
+		return stateArray.toJSONString();
 	}
 }
