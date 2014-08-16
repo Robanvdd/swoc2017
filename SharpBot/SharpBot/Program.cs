@@ -43,14 +43,6 @@ namespace SharpBot
 
                     Debug.WriteLine("Second move was {0}", secondStatus.Ok ? "Ok" : "NOT Ok");
                 }
-
-                //int[][] boardState = JsonConvert.DeserializeObject<int[][]>(line);
-
-                //Board board = new Board(boardState);
-
-                //var loc = new BoardLocation(2, 1);
-
-                //Console.WriteLine("{0} is owned by {1} with stone {2} of {3} height", loc, board.GetOwner(loc), board.GetStone(loc), board.GetHeight(loc));
             }
         }
 

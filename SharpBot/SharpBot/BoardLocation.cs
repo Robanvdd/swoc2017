@@ -11,7 +11,12 @@ namespace SharpBot
         {
             if (x < 0 || x >= 9 || y < 0 || y >= 9)
             {
-                throw new ArgumentOutOfRangeException("not a valid board location");
+                throw new ArgumentOutOfRangeException("location of the board");
+            }
+
+            if ((x - y) >= 5 || (y - x) >= 5)
+            {
+                throw new ArgumentException("location not legal");
             }
 
             X = x;

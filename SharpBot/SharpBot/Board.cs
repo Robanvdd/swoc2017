@@ -21,9 +21,9 @@ namespace SharpBot
     }
     class Board
     {
-        public static readonly int Illegal = GetCode(Owner.None, Stone.None, 100);
-
         private readonly int[][] state;
+
+        private static readonly int Empty = GetCode(Owner.None, Stone.None, 0);
 
         private static readonly int BlackA = GetCode(Owner.Black, Stone.A, 1);
         private static readonly int BlackB = GetCode(Owner.Black, Stone.B, 1);
@@ -37,35 +37,18 @@ namespace SharpBot
             state = initialState;
         }
 
-        public bool IsIllegal(BoardLocation location)
-        {
-            return state[location.Y][location.X] == Illegal;
-        }
-
         public Owner GetOwner(BoardLocation location)
         {
-            if (IsIllegal(location))
-            {
-                return Owner.None;
-            }
             return GetOwner(state[location.Y][location.X]);
         }
 
         public Stone GetStone(BoardLocation location)
         {
-            if (IsIllegal(location))
-            {
-                return Stone.None;
-            }
             return GetStone(state[location.Y][location.X]);
         }
 
         public int GetHeight(BoardLocation location)
         {
-            if (IsIllegal(location))
-            {
-                return 0;
-            }
             return GetHeight(state[location.Y][location.X]);
         }
 
@@ -74,7 +57,7 @@ namespace SharpBot
             Debug.Assert(-1 <= (int)owner && (int)owner <= 1);
             Debug.Assert(0 <= (int)stone && (int)stone <= 3);
             Debug.Assert((owner != Owner.None && stone != Stone.None && height > 0) ||
-                (owner == Owner.None && stone == Stone.None && (height == 0 || height == 100)));
+                (owner == Owner.None && stone == Stone.None && height == 0));
             return (int)owner * (height * 4 + (int)stone);
         }
 
@@ -104,14 +87,27 @@ namespace SharpBot
             return Math.Abs(fieldCode) / 4;
         }
 
-        public void Change(BoardLocation location, Owner owner, Stone stone, int height)
+        public void SetSpace(BoardLocation location, Owner owner, Stone stone, int height)
         {
-            if (IsIllegal(location))
+            if (owner == Owner.None)
             {
-                throw new ArgumentException("location not legal");
+                throw new ArgumentException("owner not specified");
+            }
+            if (stone == Stone.None)
+            {
+                throw new ArgumentException("stone not specified");
+            }
+            if (height <= 0)
+            {
+                throw new ArgumentException("height not specified");
             }
 
             state[location.Y][location.X] = GetCode(owner, stone, height);
+        }
+
+        public void ClearSpace(BoardLocation location)
+        {
+            state[location.Y][location.X] = Empty;
         }
 
         public int GetTotalCount(Owner owner, Stone stone)
@@ -131,6 +127,5 @@ namespace SharpBot
             }
             return count;
         }
-
     }
 }

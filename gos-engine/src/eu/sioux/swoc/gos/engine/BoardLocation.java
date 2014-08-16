@@ -4,10 +4,15 @@ public class BoardLocation
 {
 	public BoardLocation(int x, int y)
 	{
-		if (x < 0 || x >= 9 || y < 0 || y >= 9)
-		{
-			throw new IllegalArgumentException("not a valid board location");
-		}
+        if (x < 0 || x >= 9 || y < 0 || y >= 9)
+        {
+            throw new IllegalArgumentException("location of the board");
+        }
+
+        if ((x - y) >= 5 || (y - x) >= 5)
+        {
+            throw new IllegalArgumentException("location not legal");
+        }
 		
 		X = x;
 		Y = y;

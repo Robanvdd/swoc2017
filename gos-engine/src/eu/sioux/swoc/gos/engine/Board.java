@@ -13,9 +13,9 @@ public class Board
 	public static final int StoneB = 2;
 	public static final int StoneC = 3;
 	
-	public static final int Illegal = GetCode(OwnerNone, StoneNone, 100); // must be (x mod 4 == 0)
-
 	private final int[][] state;
+
+	private static final int Empty = GetCode(OwnerNone, StoneNone, 0);
 
 	private static final int BlackA = GetCode(OwnerBlack, StoneA, 1);
 	private static final int BlackB = GetCode(OwnerBlack, StoneB, 1);
@@ -26,15 +26,15 @@ public class Board
 	
 	private static final int[][] DefaultState = 
 		{ 
-			{ BlackA, WhiteA, WhiteA, WhiteA, WhiteA, Illegal, Illegal, Illegal, Illegal },
-			{ BlackA, BlackB, WhiteB, WhiteB, WhiteB, BlackA, Illegal, Illegal, Illegal },
-			{ BlackA, BlackB, BlackC, WhiteC, WhiteC, BlackB, BlackA, Illegal, Illegal },
-			{ BlackA, BlackB, BlackC, BlackA, WhiteA, BlackC, BlackB, BlackA, Illegal },
-			{ WhiteA, WhiteB, WhiteC, WhiteA, Illegal, BlackA, BlackC, BlackB, BlackA },
-			{ Illegal, WhiteA, WhiteB, WhiteC, BlackA, WhiteA, WhiteC, WhiteB, WhiteA },
-			{ Illegal, Illegal, WhiteA, WhiteB, BlackC, BlackC, WhiteC, WhiteB, WhiteA },
-			{ Illegal, Illegal, Illegal, WhiteA, BlackB, BlackB, BlackB, WhiteB, WhiteA },
-			{ Illegal, Illegal, Illegal, Illegal, BlackA, BlackA, BlackA, BlackA, WhiteA }, 
+			{ BlackA, WhiteA, WhiteA, WhiteA, WhiteA,  Empty,  Empty,  Empty,  Empty },
+			{ BlackA, BlackB, WhiteB, WhiteB, WhiteB, BlackA,  Empty,  Empty,  Empty },
+			{ BlackA, BlackB, BlackC, WhiteC, WhiteC, BlackB, BlackA,  Empty,  Empty },
+			{ BlackA, BlackB, BlackC, BlackA, WhiteA, BlackC, BlackB, BlackA,  Empty },
+			{ WhiteA, WhiteB, WhiteC, WhiteA,  Empty, BlackA, BlackC, BlackB, BlackA },
+			{  Empty, WhiteA, WhiteB, WhiteC, BlackA, WhiteA, WhiteC, WhiteB, WhiteA },
+			{  Empty,  Empty, WhiteA, WhiteB, BlackC, BlackC, WhiteC, WhiteB, WhiteA },
+			{  Empty,  Empty,  Empty, WhiteA, BlackB, BlackB, BlackB, WhiteB, WhiteA },
+			{  Empty,  Empty,  Empty,  Empty, BlackA, BlackA, BlackA, BlackA, WhiteA }, 
 		};
 
 	public Board()
@@ -47,35 +47,18 @@ public class Board
 		state = initialState;
 	}
 	
-	public boolean IsIllegal(BoardLocation location)
-	{
-		return state[location.Y][location.X] == Illegal;
-	}
-
 	public int GetOwner(BoardLocation location)
 	{
-		if (IsIllegal(location))
-		{
-			return OwnerNone;
-		}
 		return GetOwner(state[location.Y][location.X]);
 	}
 
 	public int GetStone(BoardLocation location)
 	{
-		if (IsIllegal(location))
-		{
-			return OwnerNone;
-		}
 		return GetStone(state[location.Y][location.X]);
 	}
 
 	public int GetHeight(BoardLocation location)
 	{
-		if (IsIllegal(location))
-		{
-			return 0;
-		}
 		return GetHeight(state[location.Y][location.X]);
 	}
 	
@@ -84,7 +67,7 @@ public class Board
 		assert (-1 <= owner && owner <= 1);
 		assert (0 <= stone && stone <= 3);
 		assert ((owner != 0 && stone != 0 && height > 0) ||
-				(owner == 0 && stone == 0 && (height == 0 || height == 100)));
+				(owner == 0 && stone == 0 && height == 0));
 		return owner * (height * 4 + stone);
 	}
 	
@@ -114,14 +97,27 @@ public class Board
 		return Math.abs(fieldCode) / 4;
 	}
 	
-	public void Change(BoardLocation location, int owner, int stone, int height)
+	public void SetSpace(BoardLocation location, int owner, int stone, int height)
 	{
-		if (IsIllegal(location))
+		if (owner == OwnerNone)
 		{
-			throw new IllegalArgumentException("location not legal");
+			throw new IllegalArgumentException("owner not specified");
+		}
+		if (stone == StoneNone)
+		{
+			throw new IllegalArgumentException("stone not specified");
+		}
+		if (height <= 0)
+		{
+			throw new IllegalArgumentException("height not specified");
 		}
 
 		state[location.Y][location.X] = GetCode(owner, stone, height);
+	}
+	
+	public void ClearSpace(BoardLocation location)
+	{
+		state[location.Y][location.X] = Empty;
 	}
 	
 	public int GetTotalCount(int owner, int stone)

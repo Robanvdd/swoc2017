@@ -63,7 +63,11 @@ public class EngineRunner implements AutoCloseable
 		{
 			for (int x = 0; x < 9; x++)
 			{
-				int owner = board.GetOwner(new BoardLocation(x, y));
+				int owner = Board.OwnerNone;
+				if ((x - y) < 5 && (y - x) < 5)
+				{
+					owner = board.GetOwner(new BoardLocation(x, y));
+				}
 				System.out.print(" " + String.format("%2d", owner));
 			}
 			System.out.println();
@@ -78,7 +82,11 @@ public class EngineRunner implements AutoCloseable
 		{
 			for (int x = 0; x < 9; x++)
 			{
-				int stone = board.GetStone(new BoardLocation(x, y));
+				int stone = Board.StoneNone;
+				if ((x - y) < 5 && (y - x) < 5)
+				{
+					stone = board.GetStone(new BoardLocation(x, y));
+				}
 				System.out.print(" " + String.format("%2d", stone));
 			}
 			System.out.println();
@@ -93,7 +101,11 @@ public class EngineRunner implements AutoCloseable
 		{
 			for (int x = 0; x < 9; x++)
 			{
-				int height = board.GetHeight(new BoardLocation(x, y));
+				int height = 0; 
+				if ((x - y) < 5 && (y - x) < 5)
+				{
+					height = board.GetHeight(new BoardLocation(x, y));
+				}
 				System.out.print(" " + String.format("%2d", height));
 			}
 			System.out.println();
@@ -212,7 +224,7 @@ public class EngineRunner implements AutoCloseable
 			// attack
 		}
 		
-		board.Change(to, newOwner, newStone, newCount);
-		board.Change(from, Board.OwnerNone, 0, 0);
+		board.SetSpace(to, newOwner, newStone, newCount);
+		board.ClearSpace(from);
 	}
 }
