@@ -44,73 +44,78 @@ public class EngineRunner implements AutoCloseable
 
 	private static void DumpTotals(Board board)
 	{
-		System.out.println("Total:");
-		System.out.println("White: "
-				+ board.GetTotalCount(Board.OwnerWhite, Board.StoneA) + ", "
-				+ board.GetTotalCount(Board.OwnerWhite, Board.StoneB) + ", "
-				+ board.GetTotalCount(Board.OwnerWhite, Board.StoneC));
-		System.out.println("Black: "
-				+ board.GetTotalCount(Board.OwnerBlack, Board.StoneA) + ", "
-				+ board.GetTotalCount(Board.OwnerBlack, Board.StoneB) + ", "
-				+ board.GetTotalCount(Board.OwnerBlack, Board.StoneC));
 	}
 	
 
 	private static void DumpOwners(Board board)
 	{
-		System.out.println("---------------------------");
+		System.out.print("-- owners --------  ");
+		System.out.print("-- stones --------  ");
+		System.out.println("-- heights ----------------");
 		for (int y = 0; y < 9; y++)
 		{
 			for (int x = 0; x < 9; x++)
 			{
-				int owner = Board.OwnerNone;
-				if ((x - y) < 5 && (y - x) < 5)
+				char c;
+				if ((x - y) < 5 && (y - x) < 5 && (x != 4 || y != 4))
 				{
-					owner = board.GetOwner(new BoardLocation(x, y));
+					int owner = board.GetOwner(new BoardLocation(x, y));
+					c = (owner == Board.OwnerBlack) ? 'B' :
+						(owner == Board.OwnerWhite) ? 'W' :
+						'.';
 				}
-				System.out.print(" " + String.format("%2d", owner));
+				else
+				{
+					c = ' ';
+				}
+				System.out.print(" " + c);
 			}
-			System.out.println();
-		}
-		System.out.println("---------------------------");
-	}
-
-	private static void DumpStones(Board board)
-	{
-		System.out.println("---------------------------");
-		for (int y = 0; y < 9; y++)
-		{
+			System.out.print("  ");
 			for (int x = 0; x < 9; x++)
 			{
-				int stone = Board.StoneNone;
-				if ((x - y) < 5 && (y - x) < 5)
+				char c;
+				if ((x - y) < 5 && (y - x) < 5 && (x != 4 || y != 4))
 				{
-					stone = board.GetStone(new BoardLocation(x, y));
+					int stone = board.GetStone(new BoardLocation(x, y));
+					c = (stone == Board.StoneA) ? 'a' :
+						(stone == Board.StoneB) ? 'b' :
+						(stone == Board.StoneC) ? 'c' :
+						'.';
 				}
-				System.out.print(" " + String.format("%2d", stone));
+				else
+				{
+					c = ' ';
+				}
+				System.out.print(" " + c);
 			}
-			System.out.println();
-		}
-		System.out.println("---------------------------");
-	}
-
-	private static void DumpHeights(Board board)
-	{
-		System.out.println("---------------------------");
-		for (int y = 0; y < 9; y++)
-		{
+			System.out.print("  ");
 			for (int x = 0; x < 9; x++)
 			{
-				int height = 0; 
-				if ((x - y) < 5 && (y - x) < 5)
+				String s;
+				if ((x - y) < 5 && (y - x) < 5 && (x != 4 || y != 4))
 				{
-					height = board.GetHeight(new BoardLocation(x, y));
+					int height = board.GetHeight(new BoardLocation(x, y));
+					s = String.format("%2d", height);
 				}
-				System.out.print(" " + String.format("%2d", height));
+				else
+				{
+					s = "  ";
+				}
+				System.out.print(" " + s);
 			}
 			System.out.println();
 		}
+		System.out.print("------------------  ");
+		System.out.print("------------------  ");
 		System.out.println("---------------------------");
+		System.out.print("White: "
+				+ board.GetTotalCount(Board.OwnerWhite, Board.StoneA) + " a, "
+				+ board.GetTotalCount(Board.OwnerWhite, Board.StoneB) + " b, "
+				+ board.GetTotalCount(Board.OwnerWhite, Board.StoneC) + " c");
+		System.out.println("  Black: "
+				+ board.GetTotalCount(Board.OwnerBlack, Board.StoneA) + " a, "
+				+ board.GetTotalCount(Board.OwnerBlack, Board.StoneB) + " b, "
+				+ board.GetTotalCount(Board.OwnerBlack, Board.StoneC) + " c");
 	}
 
 	public void run()
@@ -124,15 +129,11 @@ public class EngineRunner implements AutoCloseable
 			FirstRound();
 			
 			DumpOwners(board);
-			DumpStones(board);
-			DumpHeights(board);
 			DumpTotals(board);
 
 			NormalRound();
 			
 			DumpOwners(board);
-			DumpStones(board);
-			DumpHeights(board);
 			DumpTotals(board);
 		}
 		catch (Exception ex)
