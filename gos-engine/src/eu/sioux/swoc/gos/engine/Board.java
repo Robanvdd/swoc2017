@@ -1,12 +1,9 @@
 package eu.sioux.swoc.gos.engine;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
 public class Board
 {
 	// owners
-	public static final int OnwerNone = 0;
+	public static final int OwnerNone = 0;
 	public static final int OwnerWhite = 1;
 	public static final int OwnerBlack = -1;
 	
@@ -16,7 +13,7 @@ public class Board
 	public static final int StoneB = 2;
 	public static final int StoneC = 3;
 	
-	public static final int Illegal = GetCode(OnwerNone, StoneNone, 100); // must be (x mod 4 == 0)
+	public static final int Illegal = GetCode(OwnerNone, StoneNone, 100); // must be (x mod 4 == 0)
 
 	private final int[][] state;
 
@@ -59,7 +56,7 @@ public class Board
 	{
 		if (IsIllegal(location))
 		{
-			return OnwerNone;
+			return OwnerNone;
 		}
 		return GetOwner(state[location.Y][location.X]);
 	}
@@ -68,7 +65,7 @@ public class Board
 	{
 		if (IsIllegal(location))
 		{
-			return OnwerNone;
+			return OwnerNone;
 		}
 		return GetStone(state[location.Y][location.X]);
 	}
@@ -95,7 +92,7 @@ public class Board
 	{
 		if (fieldCode == 0)
 		{
-			return OnwerNone;
+			return OwnerNone;
 		}
 		else if (fieldCode > 0)
 		{
@@ -117,28 +114,14 @@ public class Board
 		return Math.abs(fieldCode) / 4;
 	}
 	
-	public Board ChangeState(BoardLocation location, int owner, int stone, int height)
+	public void Change(BoardLocation location, int owner, int stone, int height)
 	{
-		// TODO: check for legal locations
-		
-		int[][] newState = new int[9][9];
-		
-		for (int y = 0; y < 9; y++)
+		if (IsIllegal(location))
 		{
-			for (int x = 0; x < 9; x++)
-			{
-				if (x == location.X && y == location.Y)
-				{
-					newState[y][x] = GetCode(owner, stone, height);
-				}
-				else
-				{
-					newState[y][x] = state[y][x];
-				}
-			}
+			throw new IllegalArgumentException("location not legal");
 		}
-		
-		return new Board(newState);
+
+		state[location.Y][location.X] = GetCode(owner, stone, height);
 	}
 	
 	public int GetTotalCount(int owner, int stone)
@@ -157,21 +140,5 @@ public class Board
 			}
 		}
 		return count;
-	}
-
-	public String Serialize()
-	{
-		JSONArray stateArray = new JSONArray();
-		for (int y = 0; y < 9; y++)
-		{
-			JSONArray row = new JSONArray();
-			for (int x = 0; x < 9; x++)
-			{
-				row.add(state[y][x]);
-			}
-			stateArray.add(row);
-		}
-
-		return stateArray.toJSONString();
 	}
 }

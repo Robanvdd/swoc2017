@@ -19,43 +19,55 @@ package eu.sioux.swoc.gos.engine.io;
 
 import java.io.IOException;
 
-import org.json.simple.JSONObject;
-
-import eu.sioux.swoc.gos.engine.Board;
+import com.google.gson.Gson;
 
 public class IORobot implements AutoCloseable
 {
-	IOHandler handler;
-	StringBuilder dump;
-	int errorCounter;
-	final int maxErrors = 2;
+	private final IOHandler handler;
+	private final StringBuilder dump;
+	private final Gson gson;
 
 	public IORobot(String command) throws IOException
 	{
 		handler = new IOHandler(command);
 		dump = new StringBuilder();
-		errorCounter = 0;
+		gson = new Gson();
 	}
 
-	public void setup(long timeOut)
+	public void writeMessage(Object message)
 	{
+		// Serialize
+		String messageStr = gson.toJson(message);
+
+		// Write
+		dump.append(">" + messageStr + "\n");
+		handler.writeLine(messageStr);
 	}
 
-	@SuppressWarnings("unchecked")
-	public String doMove(Board board, long timeOut)
+	public <T> T readMessage(Class<T> classOfT)
 	{
-//		JSONObject obj = new JSONObject();
-//		obj.put("message", "init");
-//		obj.put("boardState", board.Serialize());
+		return readMessage(classOfT, 2000);
+	}
+
+	public <T> T readMessage(Class<T> classOfT, long timeOut)
+	{
+		// Read
+		String message = handler.readLine(timeOut);
+		dump.append("<" + message + "\n");
 		
-		String output = board.Serialize();
-		handler.writeLine(output);
-		
-		String line = handler.readLine(timeOut);
-		
-		dump.append("output: " + output + "\n");
-		dump.append("line: " + line + "\n");
-		return line;
+		// Deserialize
+		return gson.fromJson(message, classOfT);
+	}
+
+	public <T> T writeAndReadMessage(Object message, Class<T> classOfT)
+	{
+		return writeAndReadMessage(message, classOfT, 2000);
+	}
+	
+	public <T> T writeAndReadMessage(Object message, Class<T> classOfT, long timeOut)
+	{
+		writeMessage(message);
+		return readMessage(classOfT, timeOut);
 	}
 
 	@Override
