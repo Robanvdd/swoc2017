@@ -1,4 +1,4 @@
-package eu.sioux.swoc.tzaar.engine;
+package eu.sioux.swoc.gos.engine;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;

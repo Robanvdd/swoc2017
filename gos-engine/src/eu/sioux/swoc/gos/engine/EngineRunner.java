@@ -1,8 +1,8 @@
-package eu.sioux.swoc.tzaar.engine;
+package eu.sioux.swoc.gos.engine;
 
 import java.io.IOException;
 
-import eu.sioux.swoc.tzaar.engine.io.IORobot;
+import eu.sioux.swoc.gos.engine.io.IORobot;
 
 public class EngineRunner implements AutoCloseable
 {
