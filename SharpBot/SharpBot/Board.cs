@@ -104,29 +104,14 @@ namespace SharpBot
             return Math.Abs(fieldCode) / 4;
         }
 
-        public Board ChangeState(BoardLocation location, Owner owner, Stone stone, int height)
+        public void Change(BoardLocation location, Owner owner, Stone stone, int height)
         {
-            // TODO: check for legal locations
-
-            int[][] newState = new int[9][];
-
-            for (int y = 0; y < 9; y++)
+            if (IsIllegal(location))
             {
-                newState[y] = new int[9];
-                for (int x = 0; x < 9; x++)
-                {
-                    if (x == location.X && y == location.Y)
-                    {
-                        newState[y][x] = GetCode(owner, stone, height);
-                    }
-                    else
-                    {
-                        newState[y][x] = state[y][x];
-                    }
-                }
+                throw new ArgumentException("location not legal");
             }
 
-            return new Board(newState);
+            state[location.Y][location.X] = GetCode(owner, stone, height);
         }
 
         public int GetTotalCount(Owner owner, Stone stone)

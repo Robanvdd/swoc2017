@@ -48,8 +48,12 @@
   <ItemGroup>
     <Compile Include="Board.cs" />
     <Compile Include="BoardLocation.cs" />
+    <Compile Include="InitiateRequest.cs" />
+    <Compile Include="Move.cs" />
+    <Compile Include="MoveRequest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StatusResponse.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

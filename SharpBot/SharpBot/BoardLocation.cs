@@ -20,5 +20,10 @@ namespace SharpBot
 
         public readonly int X;
         public readonly int Y;
+
+        public override string ToString()
+        {
+            return "(" + X.ToString() + ", " + Y.ToString() + ")";
+        }
     }
 }
