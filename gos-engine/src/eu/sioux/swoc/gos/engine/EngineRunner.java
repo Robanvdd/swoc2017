@@ -17,105 +17,6 @@ public class EngineRunner implements AutoCloseable
 		botBlack = new IORobot(executableBlack);
 		
 		board = new Board();
-		
-//		String serialized = board.Serialize();
-//		System.out.println("Board state:");
-//		System.out.println(serialized);
-//
-//		DumpOwners(board);
-////		DumpStones(board);
-////		DumpCount(board);
-//		DumpTotals(board);
-//		
-//		Board b = DoMove(board, new BoardLocation(0, 0), new BoardLocation(0, 1));
-//
-//		DumpOwners(b);
-////		DumpStones(b);
-////		DumpCount(b);
-//		DumpTotals(b);
-//		
-//		b = DoMove(b, new BoardLocation(0, 1), new BoardLocation(1, 0));
-//
-//		DumpOwners(b);
-////		DumpStones(b);
-////		DumpCount(b);
-//		DumpTotals(b);
-	}
-
-	private static void DumpTotals(Board board)
-	{
-	}
-	
-
-	private static void DumpOwners(Board board)
-	{
-		System.out.print("-- owners --------  ");
-		System.out.print("-- stones --------  ");
-		System.out.println("-- heights ----------------");
-		for (int y = 0; y < 9; y++)
-		{
-			for (int x = 0; x < 9; x++)
-			{
-				char c;
-				if ((x - y) < 5 && (y - x) < 5 && (x != 4 || y != 4))
-				{
-					int owner = board.GetOwner(new BoardLocation(x, y));
-					c = (owner == Board.OwnerBlack) ? 'B' :
-						(owner == Board.OwnerWhite) ? 'W' :
-						'.';
-				}
-				else
-				{
-					c = ' ';
-				}
-				System.out.print(" " + c);
-			}
-			System.out.print("  ");
-			for (int x = 0; x < 9; x++)
-			{
-				char c;
-				if ((x - y) < 5 && (y - x) < 5 && (x != 4 || y != 4))
-				{
-					int stone = board.GetStone(new BoardLocation(x, y));
-					c = (stone == Board.StoneA) ? 'a' :
-						(stone == Board.StoneB) ? 'b' :
-						(stone == Board.StoneC) ? 'c' :
-						'.';
-				}
-				else
-				{
-					c = ' ';
-				}
-				System.out.print(" " + c);
-			}
-			System.out.print("  ");
-			for (int x = 0; x < 9; x++)
-			{
-				String s;
-				if ((x - y) < 5 && (y - x) < 5 && (x != 4 || y != 4))
-				{
-					int height = board.GetHeight(new BoardLocation(x, y));
-					s = String.format("%2d", height);
-				}
-				else
-				{
-					s = "  ";
-				}
-				System.out.print(" " + s);
-			}
-			System.out.println();
-		}
-		System.out.print("------------------  ");
-		System.out.print("------------------  ");
-		System.out.println("---------------------------");
-		System.out.print("White: "
-				+ board.GetTotalCount(Board.OwnerWhite, Board.StoneA) + " a, "
-				+ board.GetTotalCount(Board.OwnerWhite, Board.StoneB) + " b, "
-				+ board.GetTotalCount(Board.OwnerWhite, Board.StoneC) + " c");
-		System.out.println("  Black: "
-				+ board.GetTotalCount(Board.OwnerBlack, Board.StoneA) + " a, "
-				+ board.GetTotalCount(Board.OwnerBlack, Board.StoneB) + " b, "
-				+ board.GetTotalCount(Board.OwnerBlack, Board.StoneC) + " c");
 	}
 
 	public void run()
@@ -128,13 +29,11 @@ public class EngineRunner implements AutoCloseable
 			
 			FirstRound();
 			
-			DumpOwners(board);
-			DumpTotals(board);
+			board.Dump();
 
 			NormalRound();
 			
-			DumpOwners(board);
-			DumpTotals(board);
+			board.Dump();
 		}
 		catch (Exception ex)
 		{
@@ -196,16 +95,60 @@ public class EngineRunner implements AutoCloseable
 	{
 		MoveRequest request = new MoveRequest(board, allowedMoves);
 		Move move = bot.writeAndReadMessage(request, Move.class, timeOut);
+		
+	
+		// Check if move type is in allowed list
+		boolean allowedMove = false;
+		for (int i = 0; i < allowedMoves.length; i++)
+		{
+			if (move.Type == allowedMoves[i])
+			{
+				allowedMove = true;
+				break;
+			}
+		}
+	
+		if (allowedMove)
+		{
+			if (move.Type != Move.Pass)
+			{
+				allowedMove = ProcessMove(move, bot);
+			}
+			else
+			{
+				// Pass, do nothing
+			}
+		}
+		
+		
+		StatusResponse status = new StatusResponse(allowedMove);
+		bot.writeMessage(status);
+	}
+	
+	private boolean ProcessMove(Move move, IORobot bot)
+	{
+		assert (move.Type != Move.Pass);
+		
+		boolean accepted = true;
+		
+		// bot can only move from places owned by himself
+		int fromOwner = board.GetOwner(move.From);
+		accepted &= (bot == botWhite && fromOwner == Board.OwnerWhite) || (bot == botBlack && fromOwner == Board.OwnerBlack);
+		
+		// bot can only move to occupied places
+		int toOwner = board.GetOwner(move.To);
+		accepted &= (toOwner != Board.OwnerNone);
 
-		if (move.Type != Move.Pass)
+		// TODO: check if all places in between are empty
+		
+		if (accepted)
 		{
 			DoMove(board, move.From, move.To);
 		}
-
-		StatusResponse status = new StatusResponse(true);
-		bot.writeMessage(status);
+		
+		return accepted;
 	}
-
+	
 	private static void DoMove(Board board, BoardLocation from, BoardLocation to)
 	{
 		int newOwner = board.GetOwner(from);

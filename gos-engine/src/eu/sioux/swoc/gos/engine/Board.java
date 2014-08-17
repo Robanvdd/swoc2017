@@ -137,4 +137,75 @@ public class Board
 		}
 		return count;
 	}
+
+	public void Dump()
+	{
+		System.out.print("-- owners --------  ");
+		System.out.print("-- stones --------  ");
+		System.out.println("-- heights ----------------");
+		for (int y = 0; y < 9; y++)
+		{
+			for (int x = 0; x < 9; x++)
+			{
+				char c;
+				if ((x - y) < 5 && (y - x) < 5 && (x != 4 || y != 4))
+				{
+					int owner = GetOwner(new BoardLocation(x, y));
+					c = (owner == Board.OwnerBlack) ? 'B' :
+						(owner == Board.OwnerWhite) ? 'W' :
+						'.';
+				}
+				else
+				{
+					c = ' ';
+				}
+				System.out.print(" " + c);
+			}
+			System.out.print("  ");
+			for (int x = 0; x < 9; x++)
+			{
+				char c;
+				if ((x - y) < 5 && (y - x) < 5 && (x != 4 || y != 4))
+				{
+					int stone = GetStone(new BoardLocation(x, y));
+					c = (stone == Board.StoneA) ? 'a' :
+						(stone == Board.StoneB) ? 'b' :
+						(stone == Board.StoneC) ? 'c' :
+						'.';
+				}
+				else
+				{
+					c = ' ';
+				}
+				System.out.print(" " + c);
+			}
+			System.out.print("  ");
+			for (int x = 0; x < 9; x++)
+			{
+				String s;
+				if ((x - y) < 5 && (y - x) < 5 && (x != 4 || y != 4))
+				{
+					int height = GetHeight(new BoardLocation(x, y));
+					s = String.format("%2d", height);
+				}
+				else
+				{
+					s = "  ";
+				}
+				System.out.print(" " + s);
+			}
+			System.out.println();
+		}
+		System.out.print("------------------  ");
+		System.out.print("------------------  ");
+		System.out.println("---------------------------");
+		System.out.print("White: "
+				+ GetTotalCount(Board.OwnerWhite, Board.StoneA) + " a, "
+				+ GetTotalCount(Board.OwnerWhite, Board.StoneB) + " b, "
+				+ GetTotalCount(Board.OwnerWhite, Board.StoneC) + " c");
+		System.out.println("  Black: "
+				+ GetTotalCount(Board.OwnerBlack, Board.StoneA) + " a, "
+				+ GetTotalCount(Board.OwnerBlack, Board.StoneB) + " b, "
+				+ GetTotalCount(Board.OwnerBlack, Board.StoneC) + " c");
+	}
 }
