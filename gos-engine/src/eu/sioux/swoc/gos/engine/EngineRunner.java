@@ -92,13 +92,8 @@ public class EngineRunner implements AutoCloseable
 		DoOneMove(botWhite, AllMoves, NormalRoundTimeOut); 
 	}
 
-	private void DoOneMove(IORobot bot, int[] allowedMoves, long timeOut)
+	private boolean IsMoveInAllowedList(Move move, int[] allowedMoves)
 	{
-		MoveRequest request = new MoveRequest(board, allowedMoves);
-		Move move = bot.writeAndReadMessage(request, Move.class, timeOut);
-		
-	
-		// Check if move type is in allowed list
 		boolean allowedMove = false;
 		for (int i = 0; i < allowedMoves.length; i++)
 		{
@@ -108,46 +103,105 @@ public class EngineRunner implements AutoCloseable
 				break;
 			}
 		}
+
+		return allowedMove;
+	}
 	
-		if (allowedMove)
+	private boolean IsMoveValid(IORobot bot, Move move)
+	{
+		if (move.Type == Move.Pass)
 		{
-			if (move.Type != Move.Pass)
+			return (move.From == null && move.To == null);
+		}
+		else if (move.From == null || move.To == null)
+		{
+			return false;
+		}
+		else
+		{
+			int fromColor = board.GetOwner(move.From);
+			int toColor = board.GetOwner(move.To);
+			
+			int fromHeight = board.GetHeight(move.From);
+			int toHeight = board.GetHeight(move.To);
+			
+			int botColor = (bot == botWhite) ? Board.OwnerWhite : ((bot == botBlack) ? Board.OwnerBlack : Board.OwnerNone);
+
+			// TODO: check direction
+			// TODO: check if all places in between are empty
+			
+
+			if (fromColor != botColor &&             // can only move from places owned by bot
+			        toColor != Board.OwnerNone       // can not move to an empty place
+				)
 			{
-				allowedMove = ProcessMove(move, bot);
+				return false;
 			}
 			else
 			{
-				// Pass, do nothing
+				if (move.Type == Move.Attack &&
+				        fromColor != toColor &&       // can only attack the other color
+						fromHeight >= toHeight        // can only attack equal or lower stacks
+						)
+				{
+					return true;
+				}
+			    else if (move.Type == Move.Strengthen &&
+			            fromColor == toColor         // can only strengthen yourself
+						)
+				{
+					return true;
+				}
 			}
+
+			return false;
 		}
-		
-		
-		StatusResponse status = new StatusResponse(allowedMove);
-		bot.writeMessage(status);
 	}
 	
-	private boolean ProcessMove(Move move, IORobot bot)
+	private boolean IsValidPath(BoardLocation from, BoardLocation to)
 	{
-		assert (move.Type != Move.Pass);
-		
-		boolean accepted = true;
-		
-		// bot can only move from places owned by himself
-		int fromOwner = board.GetOwner(move.From);
-		accepted &= (bot == botWhite && fromOwner == Board.OwnerWhite) || (bot == botBlack && fromOwner == Board.OwnerBlack);
-		
-		// bot can only move to occupied places
-		int toOwner = board.GetOwner(move.To);
-		accepted &= (toOwner != Board.OwnerNone);
+	    boolean movingEast = (from.X < to.X);
+	    boolean movingWest = (from.X > to.X);
+	    boolean movingEastOrWest = movingEast || movingWest;
+	    boolean movingNorth = (from.Y < to.Y);
+	    boolean movingSouth = (from.Y > to.Y);
+	    boolean movingNorthOrSouth = movingNorth || movingSouth;
+	    
+	    // only allowed to move, N, E, S, W, NW, SE
 
-		// TODO: check if all places in between are empty
+	    boolean directionOk = 
+	            (movingEastOrWest && !movingNorthOrSouth) ||
+	            (movingNorthOrSouth && !movingEastOrWest) ||
+	            (movingEast && movingSouth) ||
+	            (movingWest && movingNorth);
+    
+	    return directionOk;
+	}
+	
+	private void DoOneMove(IORobot bot, int[] allowedMoves, long timeOut)
+	{
+		MoveRequest request = new MoveRequest(board, allowedMoves);
+		Move move = bot.writeAndReadMessage(request, Move.class, timeOut);
+
+		boolean moveProcessed = false;
 		
-		if (accepted)
+		boolean moveAllowed = IsMoveInAllowedList(move, allowedMoves);
+		if (moveAllowed)
 		{
-			DoMove(board, move.From, move.To);
-		}
-		
-		return accepted;
+			boolean moveValid = IsMoveValid(bot, move);
+
+			if (moveValid)
+			{
+				if (move.Type != Move.Pass)
+				{
+					DoMove(board, move.From, move.To);
+				}
+				moveProcessed = true;
+			}
+		}	
+
+		StatusResponse status = new StatusResponse(moveProcessed);
+		bot.writeMessage(status);
 	}
 	
 	private static void DoMove(Board board, BoardLocation from, BoardLocation to)
