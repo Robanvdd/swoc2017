@@ -78,6 +78,7 @@ public class EngineRunner implements AutoCloseable
 	
 	private void FirstRound()
 	{
+		// TODO: If bot does not give a valid move, then let it loose immediately
 		DoOneMove(botWhite, AttackOnly, FirstMoveTimeOut);
 	}
 	

@@ -4,14 +4,9 @@ public class BoardLocation
 {
 	public BoardLocation(int x, int y)
 	{
-        if (x < 0 || x >= 9 || y < 0 || y >= 9)
+        if (!IsLegal(x, y))
         {
-            throw new IllegalArgumentException("location of the board");
-        }
-
-        if ((x - y) >= 5 || (y - x) >= 5 || (x == 4 && y == 4))
-        {
-            throw new IllegalArgumentException("location not legal");
+            throw new IllegalArgumentException("not a legal board location");
         }
 		
 		X = x;
@@ -20,4 +15,10 @@ public class BoardLocation
 	
 	public final int X;
 	public final int Y;
+	
+	public static boolean IsLegal(int x, int y)
+	{
+		return x >= 0 && x < 9 && y >= 0 && y < 9 &&
+				(x - y) < 5 && (y - x) < 5 && (x != 4 || y != 4);
+	}
 }

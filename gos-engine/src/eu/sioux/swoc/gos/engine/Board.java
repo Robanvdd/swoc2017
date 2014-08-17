@@ -148,7 +148,7 @@ public class Board
 			for (int x = 0; x < 9; x++)
 			{
 				char c;
-				if ((x - y) < 5 && (y - x) < 5 && (x != 4 || y != 4))
+				if (BoardLocation.IsLegal(x, y))
 				{
 					int owner = GetOwner(new BoardLocation(x, y));
 					c = (owner == Board.OwnerBlack) ? 'B' :
@@ -165,7 +165,7 @@ public class Board
 			for (int x = 0; x < 9; x++)
 			{
 				char c;
-				if ((x - y) < 5 && (y - x) < 5 && (x != 4 || y != 4))
+				if (BoardLocation.IsLegal(x, y))
 				{
 					int stone = GetStone(new BoardLocation(x, y));
 					c = (stone == Board.StoneA) ? 'a' :
@@ -183,7 +183,7 @@ public class Board
 			for (int x = 0; x < 9; x++)
 			{
 				String s;
-				if ((x - y) < 5 && (y - x) < 5 && (x != 4 || y != 4))
+				if (BoardLocation.IsLegal(x, y))
 				{
 					int height = GetHeight(new BoardLocation(x, y));
 					s = String.format("%2d", height);

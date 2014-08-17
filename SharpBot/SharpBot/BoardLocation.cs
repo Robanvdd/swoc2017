@@ -9,14 +9,9 @@ namespace SharpBot
     {
         public BoardLocation(int x, int y)
         {
-            if (x < 0 || x >= 9 || y < 0 || y >= 9)
+            if (!IsLegal(x, y))
             {
-                throw new ArgumentOutOfRangeException("location of the board");
-            }
-
-            if ((x - y) >= 5 || (y - x) >= 5 || (x == 4 && y == 4))
-            {
-                throw new ArgumentException("location not legal");
+                throw new ArgumentException("not a legal board location");
             }
 
             X = x;
@@ -25,6 +20,12 @@ namespace SharpBot
 
         public readonly int X;
         public readonly int Y;
+
+        public static bool IsLegal(int x, int y)
+        {
+            return x >= 0 && x < 9 && y >= 0 && y < 9 &&
+                    (x - y) < 5 && (y - x) < 5 && (x != 4 || y != 4);
+        }
 
         public override string ToString()
         {
