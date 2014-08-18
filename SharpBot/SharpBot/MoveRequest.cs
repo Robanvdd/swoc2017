@@ -7,16 +7,16 @@ namespace SharpBot
 {
     class MoveRequest
     {
-        public MoveRequest(Board board, MoveType[] allowedTypes)
+        public MoveRequest(Board board, MoveType[] allowedMoves)
         {
             this.board = board;
-            this.allowedTypes = allowedTypes;
+            this.allowedMoves = allowedMoves;
         }
 
         private readonly Board board;
         public Board Board { get { return board; } }
 
-        private readonly MoveType[] allowedTypes;
-        public MoveType[] AllowedTypes { get { return allowedTypes; } }
+        private readonly MoveType[] allowedMoves;
+        public MoveType[] AllowedMoves { get { return allowedMoves; } }
     }
 }

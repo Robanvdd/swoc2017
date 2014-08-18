@@ -67,11 +67,12 @@ public class EngineRunner implements AutoCloseable
 	
 	private void SetupBots()
 	{
-		InitiateRequest initReq = new InitiateRequest(Board.OwnerWhite);
-		StatusResponse status = botWhite.writeAndReadMessage(initReq, StatusResponse.class, SetupTimeOut);
-		
-		System.out.println("SetupBots: status.Ok = " + status.Ok);
-	}
+        InitiateRequest initReqW = new InitiateRequest(Board.OwnerWhite);
+		StatusResponse statusW = botWhite.writeAndReadMessage(initReqW, StatusResponse.class, SetupTimeOut);
+
+        InitiateRequest initReqB = new InitiateRequest(Board.OwnerBlack);
+        StatusResponse statusB= botBlack.writeAndReadMessage(initReqB, StatusResponse.class, SetupTimeOut);
+}
 	
 	private static final int[] AttackOnly = { Move.Attack };
 	private static final int[] AllMoves = { Move.Pass, Move.Attack, Move.Strengthen };
@@ -84,98 +85,12 @@ public class EngineRunner implements AutoCloseable
 	
 	private void NormalRound()
 	{
-		// First black then white
-//		DoOneMove(botBlack, AttackOnly, NormalRoundTimeOut); 
-//		DoOneMove(botBlack, AllMoves, NormalRoundTimeOut); 
+		// First black then white, since white may start the game
+		DoOneMove(botBlack, AttackOnly, NormalRoundTimeOut); 
+		DoOneMove(botBlack, AllMoves, NormalRoundTimeOut); 
 
 		DoOneMove(botWhite, AttackOnly, NormalRoundTimeOut); 
-		DoOneMove(botWhite, AllMoves, NormalRoundTimeOut); 
-	}
-
-	private boolean IsMoveInAllowedList(Move move, int[] allowedMoves)
-	{
-		boolean allowedMove = false;
-		for (int i = 0; i < allowedMoves.length; i++)
-		{
-			if (move.Type == allowedMoves[i])
-			{
-				allowedMove = true;
-				break;
-			}
-		}
-
-		return allowedMove;
-	}
-	
-	private boolean IsMoveValid(IORobot bot, Move move)
-	{
-		if (move.Type == Move.Pass)
-		{
-			return (move.From == null && move.To == null);
-		}
-		else if (move.From == null || move.To == null)
-		{
-			return false;
-		}
-		else
-		{
-			int fromColor = board.GetOwner(move.From);
-			int toColor = board.GetOwner(move.To);
-			
-			int fromHeight = board.GetHeight(move.From);
-			int toHeight = board.GetHeight(move.To);
-			
-			int botColor = (bot == botWhite) ? Board.OwnerWhite : ((bot == botBlack) ? Board.OwnerBlack : Board.OwnerNone);
-
-			// TODO: check direction
-			// TODO: check if all places in between are empty
-			
-
-			if (fromColor != botColor &&             // can only move from places owned by bot
-			        toColor != Board.OwnerNone       // can not move to an empty place
-				)
-			{
-				return false;
-			}
-			else
-			{
-				if (move.Type == Move.Attack &&
-				        fromColor != toColor &&       // can only attack the other color
-						fromHeight >= toHeight        // can only attack equal or lower stacks
-						)
-				{
-					return true;
-				}
-			    else if (move.Type == Move.Strengthen &&
-			            fromColor == toColor         // can only strengthen yourself
-						)
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}
-	}
-	
-	private boolean IsValidPath(BoardLocation from, BoardLocation to)
-	{
-	    boolean movingEast = (from.X < to.X);
-	    boolean movingWest = (from.X > to.X);
-	    boolean movingEastOrWest = movingEast || movingWest;
-	    boolean movingNorth = (from.Y < to.Y);
-	    boolean movingSouth = (from.Y > to.Y);
-	    boolean movingNorthOrSouth = movingNorth || movingSouth;
-	    
-	    // only allowed to move, N, E, S, W, NW, SE
-
-	    boolean directionOk = 
-	            (movingEastOrWest && !movingNorthOrSouth) ||
-	            (movingNorthOrSouth && !movingEastOrWest) ||
-	            (movingEast && movingSouth) ||
-	            (movingWest && movingNorth);
-    
-	    return directionOk;
+		DoOneMove(botWhite, AllMoves, NormalRoundTimeOut);
 	}
 	
 	private void DoOneMove(IORobot bot, int[] allowedMoves, long timeOut)
@@ -184,46 +99,161 @@ public class EngineRunner implements AutoCloseable
 		Move move = bot.writeAndReadMessage(request, Move.class, timeOut);
 
 		boolean moveProcessed = false;
-		
-		boolean moveAllowed = IsMoveInAllowedList(move, allowedMoves);
-		if (moveAllowed)
+		if (IsMoveInAllowedList(move, allowedMoves) && IsMoveValid(bot, move))
 		{
-			boolean moveValid = IsMoveValid(bot, move);
-
-			if (moveValid)
-			{
-				if (move.Type != Move.Pass)
-				{
-					DoMove(board, move.From, move.To);
-				}
-				moveProcessed = true;
-			}
+			ProcessValidatedMove(move);
+			moveProcessed = true;
 		}	
 
 		StatusResponse status = new StatusResponse(moveProcessed);
 		bot.writeMessage(status);
 	}
 	
-	private static void DoMove(Board board, BoardLocation from, BoardLocation to)
+	private void ProcessValidatedMove(Move move)
 	{
-		int newOwner = board.GetOwner(from);
-		int newStone = board.GetStone(from);
-		int newCount = board.GetHeight(from);
-
-		int oldOwner = board.GetOwner(to);
-		if (newOwner == oldOwner)
-		{
-			// strengthen
-			int oldCount = board.GetHeight(to);
-			newCount += oldCount;
-		}
-		else
-		{
-			// TODO: check if count(to) <= count(from)
-			// attack
-		}
-		
-		board.SetSpace(to, newOwner, newStone, newCount);
-		board.ClearSpace(from);
+	    if (move.Type != Move.Pass)
+	    {
+    		int newOwner = board.GetOwner(move.From);
+    		int newStone = board.GetStone(move.From);
+    		int newCount = board.GetHeight(move.From);
+    
+    		int oldOwner = board.GetOwner(move.To);
+    		if (newOwner == oldOwner)
+    		{
+    			// strengthen
+    			int oldCount = board.GetHeight(move.To);
+    			newCount += oldCount;
+    		}
+    		else
+    		{
+    			// attack
+    		}
+    		
+    		board.SetSpace(move.To, newOwner, newStone, newCount);
+    		board.ClearSpace(move.From);
+	    }
 	}
+
+    private boolean IsMoveInAllowedList(Move move, int[] allowedMoves)
+    {
+        boolean allowedMove = false;
+        for (int i = 0; i < allowedMoves.length; i++)
+        {
+            if (move.Type == allowedMoves[i])
+            {
+                allowedMove = true;
+                break;
+            }
+        }
+
+        return allowedMove;
+    }
+    
+    private boolean IsMoveValid(IORobot bot, Move move)
+    {
+        if (move.Type == Move.Pass)
+        {
+            return (move.From == null && move.To == null);
+        }
+        else if (move.From == null || move.To == null)
+        {
+            return false;
+        }
+        else
+        {
+            int fromColor = board.GetOwner(move.From);
+            int toColor = board.GetOwner(move.To);
+            
+            int fromHeight = board.GetHeight(move.From);
+            int toHeight = board.GetHeight(move.To);
+            
+            int botColor = (bot == botWhite) ? Board.OwnerWhite : ((bot == botBlack) ? Board.OwnerBlack : Board.OwnerNone);
+
+            if (fromColor != botColor &&             // can only move from places owned by bot
+                toColor != Board.OwnerNone)          // can not move to an empty place
+            {
+                return false;
+            }
+            else if (move.Type == Move.Attack &&
+                    fromColor != toColor &&          // can only attack the other color
+                    fromHeight >= toHeight &&        // can only attack equal or lower stacks
+                    IsValidPath(move.From, move.To))
+            {
+                return true;
+            }
+            else if (move.Type == Move.Strengthen &&
+                    fromColor == toColor &&          // can only strengthen yourself
+                    IsValidPath(move.From, move.To))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+    
+    private boolean IsValidPath(BoardLocation from, BoardLocation to)
+    {
+        boolean movingEast = (from.X < to.X);
+        boolean movingWest = (from.X > to.X);
+        boolean movingSouth = (from.Y < to.Y);
+        boolean movingNorth = (from.Y > to.Y);
+        boolean movingEastOrWest = movingEast || movingWest;
+        boolean movingNorthOrSouth = movingNorth || movingSouth;
+        boolean movingSouthEast = movingEast && movingSouth;
+        boolean movingNorthWest = movingWest && movingNorth;
+
+        int minX = movingEast ? from.X : to.X;
+        int minY = movingSouth ? from.Y : to.Y;
+        int maxX = movingEast ? to.X : from.X;
+        int maxY = movingSouth ? to.Y : from.Y;
+
+        // only allowed to move, N, E, S, W, NW, SE
+
+        boolean movingOnlyEastOrWest = movingEastOrWest && !movingNorthOrSouth;
+        boolean movingOnlyNorthOrSouth = movingNorthOrSouth && !movingEastOrWest;
+        boolean movingDiagonal = (movingSouthEast || movingNorthWest) &&
+                ((maxX - minX) == (maxY - minY));
+        if (!movingOnlyEastOrWest && !movingOnlyNorthOrSouth && !movingDiagonal)
+        {
+            return false;
+        }
+
+        boolean allEmpty;
+        if (movingOnlyEastOrWest)
+        {
+            allEmpty = true;
+            for (int x = minX + 1; x < maxX; x++)
+            {
+                int owner = board.GetOwner(new BoardLocation(x, from.Y));
+                allEmpty &= (owner == Board.OwnerNone);
+            }
+        }
+        else if (movingOnlyNorthOrSouth)
+        {
+            allEmpty = true;
+            for (int y = minY + 1; y < maxY; y++)
+            {
+                int owner = board.GetOwner(new BoardLocation(from.X, y));
+                allEmpty &= (owner == Board.OwnerNone);
+            }
+        }
+        else if (movingDiagonal)
+        {
+            allEmpty = true;
+            for (int x = minX + 1, y = minY + 1; x < maxX && y < maxY; x++, y++)
+            {
+                int owner = board.GetOwner(new BoardLocation(x, y));
+                allEmpty &= (owner == Board.OwnerNone);
+            }
+        }
+        else
+        {
+            allEmpty = false;
+        }
+            
+        return allEmpty;
+    }
 }

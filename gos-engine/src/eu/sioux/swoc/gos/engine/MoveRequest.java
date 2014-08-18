@@ -2,12 +2,12 @@ package eu.sioux.swoc.gos.engine;
 
 public class MoveRequest
 {
-	public MoveRequest(Board board, int[] allowedTypes)
+	public MoveRequest(Board board, int[] allowedMoves)
 	{
 		Board = board;
-		AllowedTypes = allowedTypes;
+		AllowedMoves = allowedMoves;
 	}
 	
 	public final Board Board;
-	public final int[] AllowedTypes;
+	public final int[] AllowedMoves;
 }
