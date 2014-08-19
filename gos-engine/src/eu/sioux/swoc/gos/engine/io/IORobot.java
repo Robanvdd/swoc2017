@@ -27,12 +27,15 @@ public class IORobot implements AutoCloseable
 	private final StringBuilder dump;
 	private final Gson gson;
 
-	public IORobot(String command) throws IOException
+	public IORobot(String command, int player) throws IOException
 	{
 		handler = new IOHandler(command);
 		dump = new StringBuilder();
 		gson = new Gson();
+		Player = player;
 	}
+	
+	public final int Player;
 
 	public void writeMessage(Object message)
 	{

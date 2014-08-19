@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SharpBot
 {
-    class BoardLocation
+    public class BoardLocation
     {
         public BoardLocation(int x, int y)
         {

@@ -51,6 +51,7 @@
     <Compile Include="InitiateRequest.cs" />
     <Compile Include="Move.cs" />
     <Compile Include="MoveRequest.cs" />
+    <Compile Include="ProcessedMove.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StatusResponse.cs" />

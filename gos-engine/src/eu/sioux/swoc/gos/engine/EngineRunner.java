@@ -13,8 +13,8 @@ public class EngineRunner implements AutoCloseable
 	
 	public EngineRunner(String executableWhite, String executableBlack) throws IOException
 	{
-		botWhite = new IORobot(executableWhite);
-		botBlack = new IORobot(executableBlack);
+		botWhite = new IORobot(executableWhite, Board.PlayerWhite);
+		botBlack = new IORobot(executableBlack, Board.PlayerBlack);
 		
 		board = new Board();
 	}
@@ -31,21 +31,32 @@ public class EngineRunner implements AutoCloseable
 			
 			board.Dump();
 
-			NormalRound();
+			int winner = Board.PlayerNone;
+			do
+			{
+			    winner = NormalRound();
+    			        
+    			board.Dump();
+			} while (winner == Board.PlayerNone);
 			
-			board.Dump();
+			System.out.println("Game done. Winner is " + ((winner == Board.PlayerBlack) ? "Black" : "White"));
 		}
 		catch (Exception ex)
 		{
 			System.out.println("Run failed: " + ex.getMessage());
 		}
 
-		System.out.println("---- START OF DUMP WHITE ----");
+		System.out.println("---- WHITE DUMP ----");
 		System.out.println(botWhite.getDump());
-		System.out.println("---- END OF DUMP WHITE ----");
-		System.out.println("---- START OF DUMP BLACK ----");
+        System.out.println("---- WHITE ERROR ----");
+        System.out.println(botWhite.getStderr());
+        System.out.println("--------");
+        System.out.println("");
+		System.out.println("---- BLACK DUMP ----");
 		System.out.println(botBlack.getDump());
-		System.out.println("---- END OF DUMP BLACK ----");
+		System.out.println("---- BLACK ERROR ----");
+		System.out.println(botBlack.getStderr());
+        System.out.println("--------");
 		System.out.println("Game ended");
 	}
 
@@ -67,11 +78,11 @@ public class EngineRunner implements AutoCloseable
 	
 	private void SetupBots()
 	{
-        InitiateRequest initReqW = new InitiateRequest(Board.OwnerWhite);
+        InitiateRequest initReqW = new InitiateRequest(Board.PlayerWhite);
 		StatusResponse statusW = botWhite.writeAndReadMessage(initReqW, StatusResponse.class, SetupTimeOut);
 
-        InitiateRequest initReqB = new InitiateRequest(Board.OwnerBlack);
-        StatusResponse statusB= botBlack.writeAndReadMessage(initReqB, StatusResponse.class, SetupTimeOut);
+        InitiateRequest initReqB = new InitiateRequest(Board.PlayerBlack);
+        StatusResponse statusB = botBlack.writeAndReadMessage(initReqB, StatusResponse.class, SetupTimeOut);
 }
 	
 	private static final int[] AttackOnly = { Move.Attack };
@@ -83,17 +94,37 @@ public class EngineRunner implements AutoCloseable
 		DoOneMove(botWhite, AttackOnly, FirstMoveTimeOut);
 	}
 	
-	private void NormalRound()
+	private int NormalRound()
 	{
+	    int winner;
+	    
 		// First black then white, since white may start the game
-		DoOneMove(botBlack, AttackOnly, NormalRoundTimeOut); 
-		DoOneMove(botBlack, AllMoves, NormalRoundTimeOut); 
+		winner = DoOneMove(botBlack, AttackOnly, NormalRoundTimeOut);
+		if (winner != Board.PlayerNone)
+		{
+		    return winner;
+		}
+		winner = DoOneMove(botBlack, AllMoves, NormalRoundTimeOut); 
+        if (winner != Board.PlayerNone)
+        {
+            return winner;
+        }
 
-		DoOneMove(botWhite, AttackOnly, NormalRoundTimeOut); 
-		DoOneMove(botWhite, AllMoves, NormalRoundTimeOut);
+        winner = DoOneMove(botWhite, AttackOnly, NormalRoundTimeOut); 
+        if (winner != Board.PlayerNone)
+        {
+            return winner;
+        }
+        winner = DoOneMove(botWhite, AllMoves, NormalRoundTimeOut);
+        if (winner != Board.PlayerNone)
+        {
+            return winner;
+        }
+        
+        return Board.PlayerNone;
 	}
 	
-	private void DoOneMove(IORobot bot, int[] allowedMoves, long timeOut)
+	private int DoOneMove(IORobot bot, int[] allowedMoves, long timeOut)
 	{
 		MoveRequest request = new MoveRequest(board, allowedMoves);
 		Move move = bot.writeAndReadMessage(request, Move.class, timeOut);
@@ -103,10 +134,21 @@ public class EngineRunner implements AutoCloseable
 		{
 			ProcessValidatedMove(move);
 			moveProcessed = true;
-		}	
+		}
+		
+		if (!moveProcessed)
+		{
+		    move = new Move(Move.Pass, null, null);
+		}
 
-		StatusResponse status = new StatusResponse(moveProcessed);
-		bot.writeMessage(status);
+		int winner = GetCurrentWinner();
+		
+		// Send result to both bots
+		ProcessedMove processedMove = new ProcessedMove(bot.Player, move, winner);
+		botWhite.writeMessage(processedMove);
+		botBlack.writeMessage(processedMove);
+		
+		return winner;
 	}
 	
 	private void ProcessValidatedMove(Move move)
@@ -167,10 +209,10 @@ public class EngineRunner implements AutoCloseable
             int fromHeight = board.GetHeight(move.From);
             int toHeight = board.GetHeight(move.To);
             
-            int botColor = (bot == botWhite) ? Board.OwnerWhite : ((bot == botBlack) ? Board.OwnerBlack : Board.OwnerNone);
+            int botColor = bot.Player;
 
             if (fromColor != botColor &&             // can only move from places owned by bot
-                toColor != Board.OwnerNone)          // can not move to an empty place
+                toColor != Board.PlayerNone)          // can not move to an empty place
             {
                 return false;
             }
@@ -228,7 +270,7 @@ public class EngineRunner implements AutoCloseable
             for (int x = minX + 1; x < maxX; x++)
             {
                 int owner = board.GetOwner(new BoardLocation(x, from.Y));
-                allEmpty &= (owner == Board.OwnerNone);
+                allEmpty &= (owner == Board.PlayerNone);
             }
         }
         else if (movingOnlyNorthOrSouth)
@@ -237,7 +279,7 @@ public class EngineRunner implements AutoCloseable
             for (int y = minY + 1; y < maxY; y++)
             {
                 int owner = board.GetOwner(new BoardLocation(from.X, y));
-                allEmpty &= (owner == Board.OwnerNone);
+                allEmpty &= (owner == Board.PlayerNone);
             }
         }
         else if (movingDiagonal)
@@ -246,7 +288,7 @@ public class EngineRunner implements AutoCloseable
             for (int x = minX + 1, y = minY + 1; x < maxX && y < maxY; x++, y++)
             {
                 int owner = board.GetOwner(new BoardLocation(x, y));
-                allEmpty &= (owner == Board.OwnerNone);
+                allEmpty &= (owner == Board.PlayerNone);
             }
         }
         else
@@ -256,4 +298,35 @@ public class EngineRunner implements AutoCloseable
             
         return allEmpty;
     }
+    
+    private int GetCurrentWinner()
+    {
+        boolean blackAlive = IsAlive(Board.PlayerBlack);
+        boolean whiteAlive = IsAlive(Board.PlayerWhite);
+        
+        if (blackAlive && whiteAlive)
+        {
+            return Board.PlayerNone;
+        }
+        else if (!blackAlive && whiteAlive)
+        {
+            return Board.PlayerWhite;
+        }
+        else if (blackAlive && !whiteAlive)
+        {
+            return Board.PlayerBlack;
+        }
+        else // (!blackAlive && !whiteAlive)
+        {
+            return Board.PlayerNone;
+        }
+    }
+
+    private boolean IsAlive(int player)
+    {
+        return board.GetTotalCount(player, Board.StoneA) > 0 &&
+                board.GetTotalCount(player, Board.StoneB) > 0 &&
+                board.GetTotalCount(player, Board.StoneC) > 0;
+    }
+
 }

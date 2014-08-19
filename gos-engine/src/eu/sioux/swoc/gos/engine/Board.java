@@ -3,9 +3,9 @@ package eu.sioux.swoc.gos.engine;
 public class Board
 {
 	// owners
-	public static final int OwnerNone = 0;
-	public static final int OwnerWhite = 1;
-	public static final int OwnerBlack = -1;
+	public static final int PlayerNone = 0;
+	public static final int PlayerWhite = 1;
+	public static final int PlayerBlack = -1;
 	
 	// stone types
 	public static final int StoneNone = 0;
@@ -15,14 +15,14 @@ public class Board
 	
 	private final int[][] state;
 
-	private static final int Empty = GetCode(OwnerNone, StoneNone, 0);
+	private static final int Empty = GetCode(PlayerNone, StoneNone, 0);
 
-	private static final int BlackA = GetCode(OwnerBlack, StoneA, 1);
-	private static final int BlackB = GetCode(OwnerBlack, StoneB, 1);
-	private static final int BlackC = GetCode(OwnerBlack, StoneC, 1);
-	private static final int WhiteA = GetCode(OwnerWhite, StoneA, 1);
-	private static final int WhiteB = GetCode(OwnerWhite, StoneB, 1);
-	private static final int WhiteC = GetCode(OwnerWhite, StoneC, 1);
+	private static final int BlackA = GetCode(PlayerBlack, StoneA, 1);
+	private static final int BlackB = GetCode(PlayerBlack, StoneB, 1);
+	private static final int BlackC = GetCode(PlayerBlack, StoneC, 1);
+	private static final int WhiteA = GetCode(PlayerWhite, StoneA, 1);
+	private static final int WhiteB = GetCode(PlayerWhite, StoneB, 1);
+	private static final int WhiteC = GetCode(PlayerWhite, StoneC, 1);
 	
 	private static final int[][] DefaultState = 
 		{ 
@@ -75,15 +75,15 @@ public class Board
 	{
 		if (fieldCode == 0)
 		{
-			return OwnerNone;
+			return PlayerNone;
 		}
 		else if (fieldCode > 0)
 		{
-			return OwnerWhite;
+			return PlayerWhite;
 		}
 		else
 		{
-			return OwnerBlack;
+			return PlayerBlack;
 		}
 	}
 	
@@ -99,7 +99,7 @@ public class Board
 	
 	public void SetSpace(BoardLocation location, int owner, int stone, int height)
 	{
-		if (owner == OwnerNone)
+		if (owner == PlayerNone)
 		{
 			throw new IllegalArgumentException("owner not specified");
 		}
@@ -120,7 +120,7 @@ public class Board
 		state[location.Y][location.X] = Empty;
 	}
 	
-	public int GetTotalCount(int owner, int stone)
+	public int GetTotalCount(int player, int stone)
 	{
 		int count = 0;
 		
@@ -129,7 +129,7 @@ public class Board
 			for (int x = 0; x < 9; x++)
 			{
 				int code = state[y][x];
-				if (GetOwner(code) == owner && GetStone(code) == stone)
+				if (GetOwner(code) == player && GetStone(code) == stone)
 				{
 					count++;
 				}
@@ -151,8 +151,8 @@ public class Board
 				if (BoardLocation.IsLegal(x, y))
 				{
 					int owner = GetOwner(new BoardLocation(x, y));
-					c = (owner == Board.OwnerBlack) ? 'B' :
-						(owner == Board.OwnerWhite) ? 'W' :
+					c = (owner == Board.PlayerBlack) ? 'B' :
+						(owner == Board.PlayerWhite) ? 'W' :
 						'.';
 				}
 				else
@@ -200,12 +200,12 @@ public class Board
 		System.out.print("------------------  ");
 		System.out.println("---------------------------");
 		System.out.print("White: "
-				+ GetTotalCount(Board.OwnerWhite, Board.StoneA) + " a, "
-				+ GetTotalCount(Board.OwnerWhite, Board.StoneB) + " b, "
-				+ GetTotalCount(Board.OwnerWhite, Board.StoneC) + " c");
+				+ GetTotalCount(Board.PlayerWhite, Board.StoneA) + " a, "
+				+ GetTotalCount(Board.PlayerWhite, Board.StoneB) + " b, "
+				+ GetTotalCount(Board.PlayerWhite, Board.StoneC) + " c");
 		System.out.println("  Black: "
-				+ GetTotalCount(Board.OwnerBlack, Board.StoneA) + " a, "
-				+ GetTotalCount(Board.OwnerBlack, Board.StoneB) + " b, "
-				+ GetTotalCount(Board.OwnerBlack, Board.StoneC) + " c");
+				+ GetTotalCount(Board.PlayerBlack, Board.StoneA) + " a, "
+				+ GetTotalCount(Board.PlayerBlack, Board.StoneB) + " b, "
+				+ GetTotalCount(Board.PlayerBlack, Board.StoneC) + " c");
 	}
 }

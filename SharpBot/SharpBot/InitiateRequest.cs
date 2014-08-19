@@ -7,12 +7,12 @@ namespace SharpBot
 {
     class InitiateRequest
     {
-        public InitiateRequest(Owner color)
+        public InitiateRequest(Player color)
         {
             this.color = color;
         }
 
-        private readonly Owner color;
-        public Owner Color { get { return color; } }
+        private readonly Player color;
+        public Player Color { get { return color; } }
     }
 }

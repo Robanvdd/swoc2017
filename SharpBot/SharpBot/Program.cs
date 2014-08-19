@@ -9,25 +9,39 @@ namespace SharpBot
 {
     class Program
     {
+        private static Player myColor;
+
         static void Main(string[] args)
         {
-            Owner owner;
             {
                 InitiateRequest initRequest = ReadMessage<InitiateRequest>();
                 StatusResponse status = new StatusResponse(true);
                 WriteMessage(status);
 
-                owner = initRequest.Color;
+                myColor = initRequest.Color;
+                Debug.Assert(myColor != Player.None);
             }
 
-            if (owner == Owner.White)
+            if (myColor == Player.White)
             {
                 MoveRequest moveRequest = ReadMessage<MoveRequest>();
                 Move move = new Move(MoveType.Attack, new BoardLocation(1, 0), new BoardLocation(0, 0));
                 WriteMessage(move);
-                StatusResponse status = ReadMessage<StatusResponse>();
 
-                Debug.WriteLine("Move was {0}", status.Ok ? "Ok" : "NOT Ok");
+                ProcessedMove processedMove = ReadMessage<ProcessedMove>();
+                Debug.WriteLine(processedMove.ToString());
+
+                // Wait for first two moves of black
+                ProcessedMove processedMoveB1 = ReadMessage<ProcessedMove>();
+                Debug.WriteLine(processedMoveB1.ToString());
+                ProcessedMove processedMoveB2 = ReadMessage<ProcessedMove>();
+                Debug.WriteLine(processedMoveB1.ToString());
+            }
+            else
+            {
+                // Wait for first white move
+                ProcessedMove processedMoveW = ReadMessage<ProcessedMove>();
+                Debug.WriteLine(processedMoveW.ToString());
             }
 
             while (true)
@@ -35,19 +49,66 @@ namespace SharpBot
                 MoveRequest firstMoveRequest = ReadMessage<MoveRequest>();
                 Move firstMove = new Move(MoveType.Attack, new BoardLocation(0, 0), new BoardLocation(0, 2));
                 WriteMessage(firstMove);
-                StatusResponse firstStatus = ReadMessage<StatusResponse>();
-
-                Debug.WriteLine("First move was {0}", firstStatus.Ok ? "Ok" : "NOT Ok");
+                ProcessedMove firstProcessedMove = ReadMessage<ProcessedMove>();
+                Debug.WriteLine(firstProcessedMove.ToString());
+                if (firstProcessedMove.Winner != Player.None)
+                {
+                    break;
+                }
 
                 MoveRequest secondMoveRequest = ReadMessage<MoveRequest>();
                 Move secondMove = new Move(MoveType.Pass, null, null);
                 WriteMessage(secondMove);
-                StatusResponse secondStatus = ReadMessage<StatusResponse>();
+                ProcessedMove secondProcessedMove = ReadMessage<ProcessedMove>();
+                Debug.WriteLine(secondProcessedMove.ToString());
+                if (secondProcessedMove.Winner != Player.None)
+                {
+                    break;
+                }
 
-                Debug.WriteLine("Second move was {0}", secondStatus.Ok ? "Ok" : "NOT Ok");
+                ProcessedMove moveOther1 = ReadMessage<ProcessedMove>();
+                Debug.WriteLine(moveOther1.ToString());
+                if (moveOther1.Winner != Player.None)
+                {
+                    break;
+                }
+
+                ProcessedMove moveOther2 = ReadMessage<ProcessedMove>();
+                Debug.WriteLine(moveOther2.ToString());
+                if (moveOther2.Winner != Player.None)
+                {
+                    break;
+                }
             }
         }
-        
+
+        private static Random random = new Random();
+
+        private static Move GetRandomMove(Board board)
+        {
+            // find all locations with my pieces
+            var myLocations = AllLegalBoardLocations().Where(l => board.GetOwner(l) == myColor);
+
+            var fromLocation = myLocations.ElementAt(random.Next(myLocations.Count()));
+
+            
+
+            return null;
+        }
+
+        private static IEnumerable<BoardLocation> AllLegalBoardLocations()
+        {
+            for (int y = 0; y < 9; y++)
+            {
+                for (int x = 0; x < 9; x++)
+                {
+                    if (BoardLocation.IsLegal(x, y))
+                    {
+                        yield return new BoardLocation(x, y);
+                    }
+                }
+            }
+        }
 
         private static T ReadMessage<T>()
         {

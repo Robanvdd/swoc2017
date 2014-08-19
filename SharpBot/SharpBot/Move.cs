@@ -5,14 +5,14 @@ using System.Text;
 
 namespace SharpBot
 {
-    enum MoveType : int
+    public enum MoveType : int
     {
         Pass = 0,
         Attack = 1,
         Strengthen = 2,
     };
 
-    class Move
+    public class Move
     {
         public Move(MoveType type, BoardLocation from, BoardLocation to)
         {
