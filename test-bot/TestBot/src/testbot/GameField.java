@@ -6,10 +6,31 @@ package testbot;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 
 /**
- * i is left to right (A to I)
- * j is top to bottom 
+ * j/y is left to right (A to I)
+ * i/x is top to bottom 
+ * 
+ *  Start Board:
+ *  -2   2   2   2   2   x   x   x   x
+ *  -2  -3   3   3   3  -2   x   x   x
+ *  -2  -3  -4   4   4  -3  -2   x   x
+ *  -2  -3  -4  -2   2  -4  -3  -2   x
+ *   2   3   4   2   x  -2  -4  -3  -2
+ *   x   2   3   4  -2   2   4   3   2
+ *   x   x   2   3  -4  -4   4   3   2
+ *   x   x   x   2  -3  -3  -3   3   2
+ *   x   x   x   x  -2  -2  -2  -2   2
+ * 
+ *  Sign gives the player owning the stone (BLACK is negative)
+ *  Stone type can be LOW, MID or HIGH
+ *  With Strengthen move we raise (or lower if BLACK) with 5
  *
  * @author SvZ
  */
@@ -23,24 +44,20 @@ public class GameField {
     static int STONE_LOW = 2;
     static int STRENGTH_VALUE = 5;
     private int[][] field = new int[9][9];
+    private String jsonStartField = "{\"field\":["
+            + "-2,2,2,2,2,999,999,999,999,"
+            + "-2,-3,3,3,3,-2,999,999,999,"
+            + "-2,-3,-4,4,4,-3,-2,999,999,"
+            + "-2,-3,-4,-2,2,-4,-3,-2,999,"
+            + "2,3,4,2,999,-2,4,-3,-2,"
+            + "999,2,3,4,-2,2,4,3,2,"
+            + "999,999,2,3,-4,-4,4,3,2,"
+            + "999,999,999,2,-3,-3,-3,3,2,"
+            + "999,999,999,999,-2,-2,-2,-2,2]}";
     
     public GameField() {
-        initializeField();
+        initializeField(jsonStartField);
         
-    }
-        
-    private void initializeField() {
-        //Todo: Add player stones
-        for (int i=0; i < 9; i++) {
-            for (int j=0; j < 9; j++) {
-                field[i][j] = 0;
-                
-                if (i-j >=5 || j-i >=5) {
-                    field[i][j] = ILLEGAL_FIELD;
-                }
-            }
-        }
-        field[4][4] = ILLEGAL_FIELD;
     }
     
     // Assuming the format gained is same as we use
@@ -53,6 +70,17 @@ public class GameField {
                 field[i][j] = board[i][j];
             }
         }
+    }
+    
+    public boolean initializeField(String jsonString) {
+        JSONParser parser = new JSONParser();
+        try {
+            Object jsonObject = parser.parse(jsonString);
+            return deserializeField((JSONObject) jsonObject);
+        } catch (ParseException ex) {
+            Logger.getLogger(GameField.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
     
     public String printField() {
@@ -70,6 +98,41 @@ public class GameField {
         return sb.toString();
     }
     
+    public JSONObject serializeField() {
+        JSONArray jsonArray = new JSONArray();
+		for (int i = 0; i < 9; i++)
+		{
+			for (int j = 0; j < 9; j++)
+			{
+				jsonArray.add(field[i][j]);
+			}
+		}
+        JSONObject object = new JSONObject();
+		object.put("field", jsonArray);
+        return object;
+    }
+    
+    public boolean deserializeField(JSONObject object) {
+        if (!object.containsKey("field"))   return false;
+        
+        Object jsonArrayObject = object.get("field");
+        if (jsonArrayObject instanceof JSONArray) {
+            JSONArray fieldArray = (JSONArray) jsonArrayObject;
+            for (int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    Object value = fieldArray.get(9*i + j);
+                    //if (value instanceof Integer)
+                    long l = (Long) value;
+                    field[i][j] = (int) l;
+                }
+            }
+        }
+        
+        return true;
+    }
+    
     public boolean isIllegalPosition(Location location) {
         return (field[location.x()][location.y()] == ILLEGAL_FIELD);
     }
@@ -79,10 +142,14 @@ public class GameField {
     }
     
     public int getStoneStrength(Location location) {
-        return (field[location.x()][location.y()] / STRENGTH_VALUE) + 1;
+        int strength = (field[location.x()][location.y()] / STRENGTH_VALUE);
+        if (strength < 0 ) {
+            strength = strength * -1; 
+        } 
+        return strength + 1;
     }
     
-    public int getStoneType(Location location) {
+    public int getNrStonesOfType(Location location) {
         int type = (field[location.x()][location.y()] % STRENGTH_VALUE);
         if (type < 0 ) {
             return type * -1; 
@@ -118,7 +185,7 @@ public class GameField {
      */
     public Location getLocationInDirection(Location location, Direction direction) {
         switch(direction) {
-            case UP:
+            case LEFT:
             {
                 if (location.y() > 0) {
                     Location movedLocation = new Location(location.x(), location.y()-1);
@@ -127,16 +194,16 @@ public class GameField {
                 }
                 return null;
             }
-            case DOWN:
+            case RIGHT:
             {
-                if (location.y() < 9) {
+                if (location.y() < 8) {
                     Location movedLocation = new Location(location.x(), location.y()+1);
                     if (!isIllegalPosition(movedLocation))
                         return movedLocation;
                 }
                 return null;
             }
-            case LEFT:
+            case UP:
             {
                 if (location.x() > 0) {
                     Location movedLocation = new Location(location.x()-1, location.y());
@@ -145,9 +212,9 @@ public class GameField {
                 }
                 return null;
             }
-            case RIGHT:
+            case DOWN:
             {
-                if (location.x() < 9) {
+                if (location.x() < 8) {
                     Location movedLocation = new Location(location.x()+1, location.y());
                     if (!isIllegalPosition(movedLocation))
                         return movedLocation;
@@ -165,7 +232,7 @@ public class GameField {
             }
             case DIAGONAL_DOWN:
             {
-                if (location.y() < 9 && location.x() < 9) {
+                if (location.y() < 8 && location.x() < 8) {
                     Location movedLocation = new Location(location.x()+1, location.y()+1);
                     if (!isIllegalPosition(movedLocation))
                         return movedLocation;
@@ -182,10 +249,14 @@ public class GameField {
             return null;
         }
         
-        Location movedLocation = location;
+        Location movedLocation = getLocationInDirection(location, direction);;
         
         while (movedLocation != null && isEmptyPosition(movedLocation)) {
             movedLocation = getLocationInDirection(movedLocation, direction);
+        }
+        
+        if (movedLocation != null && location.equalsSimple(movedLocation)) {
+            return null;
         }
         
         return movedLocation;
@@ -199,10 +270,12 @@ public class GameField {
     public boolean moveStrengthen(Location from, Location to) {
         if (isOfPlayer(from) != isOfPlayer(to))
             return false;
+        if (from.equalsSimple(to))
+            return false;
         
         int oldFromStrength = getStoneStrength(from);
         int oldToStrength = getStoneStrength(to);
-        int stoneType = getStoneType(from);
+        int stoneType = getNrStonesOfType(from);
         int player = isOfPlayer(to);
         
         field[from.x()][from.y()] = EMPTY_FIELD;
@@ -230,7 +303,7 @@ public class GameField {
      * Returns all possible ATTACK and STRENGTHEN moves from given location
      * returns null if illegal given location
      */
-    public List<Move> getPossibleMovesForLocation(Location from) {
+    public List<Move> getPossibleMovesForLocation(Location from, boolean mustAttack) {
         if (isIllegalPosition(from) || isEmptyPosition(from)) {
             return null;
         }
@@ -245,7 +318,10 @@ public class GameField {
             // If we are positive after multiplication, the fields belonged to the same player
             boolean strengthen = field[from.x()][from.y()] * field[towards.x()][towards.y()] > 0;
             
-            Move move = new Move(from, towards, strengthen ? Move.TYPE.STRENGTHEN : Move.TYPE.ATTACK);
+            if (mustAttack && strengthen)
+                continue;
+            
+            Move move = new Move(from, towards, strengthen ? MoveType.STRENGTHEN : MoveType.ATTACK);
             
             moveList.add(move);    
         }
@@ -258,7 +334,7 @@ public class GameField {
      * +1 = White
      * -1 = Black
      */
-    public List<Move> getPossibleMoves(int player) {
+    public List<Move> getPossibleMoves(int player, boolean mustAttack) {
         List<Move> moveList = new LinkedList<Move>();
         
         for (int i=0; i < 9; i++) {
@@ -271,7 +347,7 @@ public class GameField {
                 if (player != isOfPlayer(location))
                     continue;
                 
-                moveList.addAll(getPossibleMovesForLocation(location));
+                moveList.addAll(getPossibleMovesForLocation(location, mustAttack));
             }
         }
         
