@@ -1,0 +1,34 @@
+<h2>Upload</h2>
+<h3>Upload your latest bot here</h3>
+
+        <h1>
+          Example 3 - Processing Callback Function Contents (requirement: v0.2.0 and above)
+        </h1>Make use of the additional callback status information to decide what to do with the content.<br>
+        <br>
+        <span style="font-size: 15px">Example 3.1: The example below displays all statuses, without inspection.</span><br>
+        <br>
+        <form ng-upload="uploadFile1(content)" action="/api/bot/upload/?delay=yes">
+          <p>
+            <label>Select a file to upload:</label> <input type="file" name="file">
+          </p>
+          <p>
+            <input type="submit" class="btn" value="Submit" ng-disabled="$isUploading">
+          </p>
+        </form>
+        <div class="alert alert-info">
+          Server Response: {{uploadResponse1}}
+        </div><br>
+        <span style="font-size: 15px">Example 3.2: The example below displays only the server response, ignoring other contents</span><br>
+        <br>
+        <form ng-upload="uploadFile2(content)" ng-upload-loading="startUploading()" action="/api/bot/upload/?delay=yes">
+          <p>
+            <label>Select a file to upload:</label> <input type="file" name="file">
+          </p>
+          <p>
+            <input type="submit" class="btn" value="Submit" ng-disabled="$isUploading">
+          </p>
+        </form>
+        <div class="alert alert-info">
+          Server Response: {{uploadResponse2}}
+        </div>
+      </div>

@@ -5,7 +5,8 @@ var application_root = __dirname,
 	url 	= require("url"),
 	request = require("request"),
 	Game 	= require('./routes/game'),
-	exec    = require('child_process').execFile;
+	exec    = require('child_process').execFile,
+	fs      = require('fs');
 
 var app = express();
 
@@ -13,10 +14,42 @@ app.configure(function () {
 	app.use(express.logger('dev'));
 	app.use(express.json());
 	app.use(express.urlencoded());
+	app.use(express.bodyParser({
+        uploadDir: application_root + '/tmp/uploads',
+        keepExtensions: true
+    }))
 	app.use(app.router);
 	app.use(express.static(path.join(application_root, "public")));
 });
 
+//---------------- BOT UPLOAD -------------------
+
+app.post('/api/bot/upload/', function(req, res){
+	console.log("application_root:" + application_root + ", fileName:" + req.files.fileName + ", file:" + req.files.file);
+	setTimeout(
+        function () {
+            res.setHeader('Content-Type', 'text/html');
+            if (req.files.length == 0 || req.files.file.size == 0)
+                res.send({ msg: 'No file uploaded at ' + new Date().toString() });
+            else {
+                var file = req.files.file;
+				var target_path = application_root + '/bots_upload/' + file.name
+				console.log('file.path:' + file.path + ' target_path:' + target_path);
+                fs.rename(file.path, target_path, function(err) {
+					if (err)
+						throw err;
+					// Delete the temporary file, so that the explicitly set temporary upload dir does not get filled with unwanted files.
+					fs.unlink(file.path, function() {
+						if (err)
+							throw err;
+						//
+					});
+				});
+            }
+        },
+        (req.param('delay', 'yes') == 'yes') ? 2000 : -1
+    );
+});
 
 //-------------------- GAME --------------------
 app.post('/api/game/create/', function(req, res){

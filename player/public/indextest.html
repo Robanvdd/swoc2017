@@ -1,39 +1,93 @@
-<!doctype html>
-<html ng-app="app">
-<head>
-  <meta charset="utf-8">
-  <title>Top Animation</title>
-  <script>document.write('<base href="' + document.location + '" />');</script>
-  <link rel="stylesheet" href="styletest.css">
-  <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
-  <script src="http://code.angularjs.org/1.2.6/angular.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular-animate.js"></script>
-</head>
 
-<script>
-var app = angular.module('app', ['ngAnimate']);
+<html ng-app="meanApp">
+	
+	<script src="./bower_components/platform/platform.js"></script>
+	<link rel="import" href="./bower_components/polymer/polymer.html">
+	<link rel="import" href="./bower_components/paper-tabs/paper-tabs.html">
+	<link rel="import" href="./bower_components/paper-tabs/paper-tab.html">
+	<link rel="import" href="./bower_components/core-animated-pages/core-animated-pages.html">
+	<link rel="import" href="./bower_components/core-animated-pages/transitions/hero-transition.html">
+	<link rel="import" href="./bower_components/core-animated-pages/transitions/cross-fade.html">
+	<link rel="import" href="./bower_components/core-animated-pages/transitions/slide-down.html">
+	<link rel="import" href="./bower_components/core-animated-pages/transitions/slide-up.html">
+	<link rel="import" href="./bower_components/core-animated-pages/transitions/tile-cascade.html">
+	
+	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-animate.js"></script>
+  	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-route.js"></script>
+	<script src="app.js"></script>
+	<script src="controller.js"></script>
+<polymer-element name="my-element">
 
-app.controller('Ctrl', function($scope) {
-  $scope.names = ['Igor Minar', 'Brad Green', 'Dave Geddes', 'Naomi Black', 'Greg Weber', 'Dean Sofer', 'Wes Alvaro', 'John Scott', 'Daniel Nadasi'];
-});
+  <template>
+    <style>    
+      :host {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+      }
+      #section {
+        width: 100%;
+        height: 100%;
+        border: 5px solid rgb(204, 204, 204);
+        position: absolute;
+      }
+      #paper_tabs {
+        color: rgb(255, 255, 255);
+        box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 2px;
+        background-color: rgb(0, 188, 212);
+      }
+      #core_animated_pages {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: rgb(238, 238, 238);
+      }
+      #core_card {
+        width: 300px;
+        height: 300px;
+        border-top-left-radius: 2px;
+        border-top-right-radius: 2px;
+        border-bottom-right-radius: 2px;
+        border-bottom-left-radius: 2px;
+        box-shadow: rgba(0, 0, 0, 0.0980392) 0px 2px 4px, rgba(0, 0, 0, 0.0980392) 0px 0px 3px;
+        background-color: rgb(255, 255, 255);
+      }
+    </style>
+    <section id="section" layout vertical>
+      <paper-tabs selected="0" selectedindex="0" id="paper_tabs">
+        <paper-tab id="paper_tab">Home</paper-tab>
+        <paper-tab id="paper_tab1">Play</paper-tab>
+        <paper-tab id="paper_tab2">Upload</paper-tab>
+      </paper-tabs>
+      <section id="section1" flex relative>
+        <core-animated-pages transitions="slide-up slide-down fade"  selected="{{ $.paper_tabs.selected }}" lastselected="0" selectedindex="0" notap id="core_animated_pages">
+          <section id="section2" layout horizontal center center-justified>
+            <core-card id="core_card" slide-up fade layout vertical>
+			Home
+			
+			</core-card>
+          </section>
+          <section id="section3" layout horizontal center center-justified>
+            <core-card id="core_card" slide-up fade layout vertical>Play</core-card>
+          </section>
+		  <section id="section4" layout horizontal center center-justified>
+            <core-card id="core_card" slide-up fade layout vertical> Upload</core-card>
+          </section>
+        </core-animated-pages>
+      </section>
+    </section>
+  </template>
 
-</script>
+  <script>
 
+    Polymer('my-element', {
+      
+    });
 
-<body ng-controller="Ctrl">
-  <div class="well" style="margin-top: 30px; width: 200px; overflow: hidden;">
-    <form class="form-search"> 
-        <div class="input-append">
-          <input type="text" ng-model="search" class="search-query" style="width: 80px">
-          <button type="submit" class="btn">Search</button>
-        </div>
-        <ul class="nav nav-pills nav-stacked">
-          <li class="animate" ng-repeat="name in names | filter:search">
-            <a href="#"> {{name}} </a>
-          </li> 
-      </ul>
-    </form>
-  </div>
-</body>
+  </script>
+
+</polymer-element>
+<my-element></my-element>
 </html>
-

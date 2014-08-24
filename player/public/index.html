@@ -1,30 +1,81 @@
-<!doctype html>
+
 <html ng-app="meanApp">
-<head>
-<!--	<script src="js/angular.js"></script> -->
-<!--	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.9/angular.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.9/angular-animate.js"></script>
-  -->
 	
-	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
+	<script src="./components/platform/platform.js"></script>
+	<link rel="import" href="./components/polymer/polymer.html">
+	<link rel="import" href="./components/paper-tabs/paper-tabs.html">
+	<link rel="import" href="./components/paper-item/paper-item.html">
+	<link rel="import" href="./components/core-animated-pages/core-animated-pages.html">
+	<link rel="import" href="./components/core-animated-pages/transitions/hero-transition.html">
+	<link rel="import" href="./components/core-animated-pages/transitions/cross-fade.html">
+	<link rel="import" href="./components/core-animated-pages/transitions/slide-down.html">
+	<link rel="import" href="./components/core-animated-pages/transitions/slide-up.html">
+	<link rel="import" href="./components/core-animated-pages/transitions/tile-cascade.html">
+	
+
+	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script> 
 	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-animate.js"></script>
   	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-route.js"></script>
 	<script src="app.js"></script>
 	<script src="controller.js"></script>
-	
-	<link href="bootstrap/css/bootstrap.css" rel="stylesheet">
-	<link href="bootstrap/css/animations.css" rel="stylesheet">
-</head>
-<body>
-	<div class="container">
-		
-		<h2><img src="./img/title.png" style="border: none;">SWOC 2014</h2>
-		<a class="btn btn-warning btn-mini" href="#/">Home</a>
-		<a class="btn btn-warning btn-mini" href="#/create">Create</a>
-		<a class="btn btn-warning btn-mini" href="#/play">Play</a>
-		<a class="btn btn-warning btn-mini" href="#/playvcpu">Play v CPU</a>
-		
-		<div ng-view></div>
-	</div>
-</body>
+	<script src="/components/ngUpload/ng-upload.js"></script>
+	<script src="/components/jquery/dist/jquery.js"></script>
+<polymer-element name="my-element">
+
+  <template>
+    <style>    
+      :host {
+        position: absolute;
+        width: 100%;
+        height: 46px;
+        box-sizing: border-box;
+      }
+      #section {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+      }
+      #paper_tabs {
+        color: white;
+        box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 2px;
+      }
+      paper-item {
+      	height: 100%;
+		background: url(/img/paper-tabs-bg.png);
+		text-align: center;
+		margin: 0px 2px;
+      }
+    </style>
+    <section id="section" layout vertical>
+      <paper-tabs selected="0" selectedindex="0" id="paper_tabs">
+        <paper-item label="Home" style="height:100%">
+        	<a href="#/" target="_self"></a>
+        </paper-item>
+		<paper-item label="Play" style="height:100%">
+        	<a href="#/play" target="_self"></a>
+        </paper-item>
+		<paper-item label="Upload" style="height:100%">
+        	<a href="#/upload" target="_self"></a>
+        </paper-item><paper-item label="Game Log" style="height:100%">
+        	<a href="#/game_log" target="_self"></a>
+        </paper-item>
+      </paper-tabs>
+    </section>
+  </template>
+
+  <script>
+
+    Polymer('my-element', {
+      
+    });
+
+  </script>
+
+</polymer-element>
+<div class="container">
+<div>
+<my-element></my-element>
+</div>
+ <div ng-view style="padding:50px 0 0 0"></div>
+</div>
 </html>

@@ -1,10 +1,22 @@
-var meanApp = angular.module('meanApp', ['ngRoute', 'ngAnimate', 'meanControllers']);
+var meanApp = angular.module('meanApp', ['ngRoute', 'ngUpload', 'ngAnimate', 'meanControllers']);
 
 meanApp.config(['$routeProvider', function($routeProvider) {
 	$routeProvider
 		.when('/', {
+			controller:'HomeCtrl',
+			templateUrl:'mod_home.html'
+		})
+		.when('/game_log/', {
 			controller:'ListCtrl',
 			templateUrl:'mod_list.html'
+		})
+		.when('/upload/', {
+			controller:'UploadCtrl',
+			templateUrl:'mod_upload.html'
+		})
+		.when('/indextest.html/', {
+			controller:'ListCtrl',
+			templateUrl:'indextest.html'
 		})
 		.when('/detail/:gameId', {
 			controller:'DetailCtrl',
@@ -29,4 +41,5 @@ meanApp.config(['$routeProvider', function($routeProvider) {
 		.otherwise({
 			redirectTo: '/'
 		});
+		
 }]);
