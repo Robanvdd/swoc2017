@@ -44,6 +44,8 @@ app.post('/api/bot/upload/', function(req, res){
 							throw err;
 						//
 					});
+					res.writeHead('200');
+					res.end();
 				});
             }
         },
