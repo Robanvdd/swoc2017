@@ -10,7 +10,10 @@ import zipfile
 
 codeSubdir = ".\\code"
 javacPath = "\"C:\\Program Files\\Java\jdk1.7.0_45\\bin\\javac\""
-allowedLanguages = ['java', 'python']
+
+class Language:
+    JAVA = 1
+    PYTHON = 2
 
 def chdir_to_bot(botId):
 	if not os.path.isdir(botId):
@@ -67,6 +70,17 @@ def create_ant_run_script():
 	with open("run.sh", "w") as f:
 		f.write("ant run")
 
+def determine_language():
+	language = None
+	os.chdir(codeSubdir)
+
+	# Test for java, which is true when there is a build.xml
+	if os.path.isfile("build.xml"):
+		language = Language.JAVA
+
+	os.chdir("..")
+	return language
+
 def main():
 	p = optparse.OptionParser()
 	p.add_option('--bot', '-b')
@@ -79,8 +93,15 @@ def main():
 	chdir_to_bot(options.bot)
 	remove_old_bot()
 	extract_bot()
-	run_ant_clean_build()
-	create_ant_run_script()
+
+	language = determine_language()
+	if language == Language.JAVA:
+		print("Code language is Java")
+		run_ant_clean_build()
+		create_ant_run_script()
+	else:
+		sys.stderr.write("Error: Code was not written in a valid language")
+		sys.exit(1)
 
 if __name__ == '__main__':
 	main()
