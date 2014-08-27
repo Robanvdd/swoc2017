@@ -1,4 +1,4 @@
-package eu.sioux.swoc.tzaar.engine;
+package eu.sioux.swoc.gos.engine;
 
 public class Main
 {
