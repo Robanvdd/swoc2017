@@ -141,6 +141,11 @@ public class GameField {
         return (field[location.x()][location.y()] == EMPTY_FIELD);
     }
     
+    /**
+     * 
+     * @param location
+     * @return How many stones are on top of each other?
+     */
     public int getStoneStrength(Location location) {
         int strength = (field[location.x()][location.y()] / STRENGTH_VALUE);
         if (strength < 0 ) {
@@ -149,7 +154,12 @@ public class GameField {
         return strength + 1;
     }
     
-    public int getNrStonesOfType(Location location) {
+    /**
+     * 
+     * @param location
+     * @return Get type of stone on this location (Is low/mid/high value)
+     */
+    public int getStoneType(Location location) {
         int type = (field[location.x()][location.y()] % STRENGTH_VALUE);
         if (type < 0 ) {
             return type * -1; 
@@ -166,11 +176,17 @@ public class GameField {
         return 0;
     }
     
-    public int nrOfStones(int player, int stone) {
+    /**
+     * Gives the nr of stones of given type of given player
+     * @param player
+     * @param stoneType
+     * @return 
+     */
+    public int nrOfStonesOfType(int stoneType, int player) {
         int count = 0;
         for (int i=0; i < 9; i++) {
             for (int j=0; j < 9; j++) {
-                if ( (field[i][j] % STRENGTH_VALUE) == (player * stone) ) 
+                if ( (field[i][j] % STRENGTH_VALUE) == (player * stoneType) ) 
                     count ++;
             }
         }
@@ -244,18 +260,25 @@ public class GameField {
         }
     }
     
-    public Location getNonEmptyLocationInDirection(Location location, Direction direction) {
-        if (isIllegalPosition(location) || isEmptyPosition(location)) {
+    /**
+     * 
+     * @param startLocation
+     * @param direction
+     * @return Location in given direction from startLocation which is not empty
+     * returns null if not possible
+     */
+    public Location getNonEmptyLocationInDirection(Location startLocation, Direction direction) {
+        if (isIllegalPosition(startLocation) || isEmptyPosition(startLocation)) {
             return null;
         }
         
-        Location movedLocation = getLocationInDirection(location, direction);;
+        Location movedLocation = getLocationInDirection(startLocation, direction);
         
         while (movedLocation != null && isEmptyPosition(movedLocation)) {
             movedLocation = getLocationInDirection(movedLocation, direction);
         }
         
-        if (movedLocation != null && location.equalsSimple(movedLocation)) {
+        if (movedLocation != null && startLocation.equalsSimple(movedLocation)) {
             return null;
         }
         
@@ -275,7 +298,7 @@ public class GameField {
         
         int oldFromStrength = getStoneStrength(from);
         int oldToStrength = getStoneStrength(to);
-        int stoneType = getNrStonesOfType(from);
+        int stoneType = getStoneType(from);
         int player = isOfPlayer(to);
         
         field[from.x()][from.y()] = EMPTY_FIELD;

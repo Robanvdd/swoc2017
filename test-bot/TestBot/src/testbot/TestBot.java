@@ -128,6 +128,11 @@ public class TestBot {
         return false;
 	}
     
+    /**
+     * 
+     * @param mustAttack Must the returned move be an Attack move?
+     * @return A Move as String
+     */
     public String pickAnyMove(boolean mustAttack) {
         List<Move> moveList = gameField.getPossibleMoves(myPlayer, mustAttack);
         if (moveList.isEmpty())
