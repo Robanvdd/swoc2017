@@ -4,23 +4,26 @@
  */
 package testbot;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Random;
-import testbot.iohandling.IOHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import testbot.iohandling.InStream;
 
 /**
  *
  * @author SvZ
  */
-public class TestBot implements AutoCloseable {
+public class TestBot {
 
-    //IOHandler handler;
-	StringBuilder dump;
-	int errorCounter;
-	final int maxErrors = 2;
-    private GameField gameField = new GameField();
-    static int myPlayer;
+    InStream instream = new InStream(System.in);
+	private GameField gameField = new GameField();
+    private static final String STOP_COMMAND = "STOP";
+    private static int myPlayer;
+    private int activePlayer;
     /**
      * @param args the command line arguments
      */
@@ -28,38 +31,105 @@ public class TestBot implements AutoCloseable {
         // TODO code application logic here
         int player = Integer.parseInt(args[0]);
         myPlayer = player;
+        
+        TestBot bot = new TestBot();
     }
     
-    public TestBot(String command) throws IOException {
-        //handler = new IOHandler(command);
-		dump = new StringBuilder();
-		errorCounter = 0;
+    public TestBot() {
+        runAgainstBot();
     }
     
-    public void readcommandline() {
-        //String line = System.in.;
+    private void runSolo() {
+        System.out.println(gameField.printField());
+        System.out.flush();
+        //System.out.println(gameField.serializeField().toJSONString());
+        //System.out.flush();
+        String move = pickAnyMove(true);
+        System.out.println("Suggested move: " + move);
+        String command = move;
+		while (!command.equals(STOP_COMMAND)) {
+            doMove(gameField, command);
+            System.out.println(gameField.printField());
+            System.out.flush();
+            //System.out.println(gameField.serializeField().toJSONString());
+            //System.out.flush();
+            move = pickAnyMove(false);
+            System.out.println("Suggested move: " + move);
+            command = move;
+            if (command.equals("PASS"))
+                command = STOP_COMMAND;
+        }
     }
     
-    @SuppressWarnings("unchecked")
-	public String doMove(GameField board, long timeOut)
-	{
-		/*JSONObject obj = new JSONObject();
-		obj.put("message", "init");
-		obj.put("boardState", board.Serialize());
-		
-		String output = obj.toString();
-		handler.writeLine(output);
-		
-		String line = handler.readLine(timeOut);
-		
-		dump.append("output: " + output + "\n");
-		dump.append("line: " + line + "\n");
-		return line;*/
-        return "";
+    private void runAgainstBot() {
+        System.out.println(gameField.printField());
+        System.out.flush();
+        System.out.println(gameField.serializeField().toJSONString());
+        //System.out.flush();
+        //System.out.println("Suggested move: " + pickAnyMove(true));
+        String fieldState = readcommandline();
+        String command;
+		while (!fieldState.equals(STOP_COMMAND)) {
+            gameField.initializeField(fieldState);
+            command = pickAnyMove(true);
+            doMove(gameField, command);
+            System.out.println(command);
+            System.out.flush();
+            command = pickAnyMove(false);
+            doMove(gameField, command);
+            System.out.println(command);
+            System.out.flush();
+            System.out.println(gameField.serializeField().toJSONString());
+            fieldState = readcommandline();
+        }
+    }
+    
+    private String readcommandline() {
+        String value = null;
+        InputStreamReader instream = new InputStreamReader(System.in);
+        BufferedReader br = new BufferedReader(instream);
+        while (value == null)
+        {
+            try {
+                String read = br.readLine();
+                if (read != null)
+                    value = read;
+            } catch (IOException ex) {
+                Logger.getLogger(TestBot.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        return value;
+    }
+    
+    /**
+     * 
+     * Does a move, returns true if correctly
+     * @param board
+     * @param move
+     * @return 
+     */
+	public boolean doMove(GameField board, String move) {
+		Move givenMove = Move.parseString(move);
+        if (givenMove == null) return false;
+        if (givenMove.getType() == MoveType.PASS)
+        {
+            activePlayer = activePlayer * -1;
+            return true;
+        }
+        if (givenMove.getType() == MoveType.ATTACK)
+        {
+            return board.moveAttack(givenMove.getFrom(), givenMove.getTo());
+        }
+        if (givenMove.getType() == MoveType.STRENGTHEN)
+        {
+            return board.moveStrengthen(givenMove.getFrom(), givenMove.getTo());
+        }
+        return false;
 	}
     
-    public String pickAnyMove() {
-        List<Move> moveList = gameField.getPossibleMoves(myPlayer);
+    public String pickAnyMove(boolean mustAttack) {
+        List<Move> moveList = gameField.getPossibleMoves(myPlayer, mustAttack);
         if (moveList.isEmpty())
             return "PASS";
         Random randomGen = new Random();
@@ -68,30 +138,4 @@ public class TestBot implements AutoCloseable {
         Move move = moveList.get(pick);
         return move.getMoveAsString();
     }
-    
-    @Override
-	public void close()
-	{
-		handler.close();
-	}
-
-	public String getStdin()
-	{
-		return handler.getStdin();
-	}
-
-	public String getStdout()
-	{
-		return handler.getStdout();
-	}
-
-	public String getStderr()
-	{
-		return handler.getStderr();
-	}
-
-	public String getDump()
-	{
-		return dump.toString();
-	}
 }
