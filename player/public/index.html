@@ -5,6 +5,7 @@
 	<link rel="import" href="./components/polymer/polymer.html">
 	<link rel="import" href="./components/paper-tabs/paper-tabs.html">
 	<link rel="import" href="./components/paper-item/paper-item.html">
+	<link rel="import" href="./components/paper-input/paper-input.html">
 	<link rel="import" href="./components/core-animated-pages/core-animated-pages.html">
 	<link rel="import" href="./components/core-animated-pages/transitions/hero-transition.html">
 	<link rel="import" href="./components/core-animated-pages/transitions/cross-fade.html">
@@ -20,13 +21,15 @@
 	<script src="controller.js"></script>
 	<script src="/components/ngUpload/ng-upload.js"></script>
 	<script src="/components/jquery/dist/jquery.js"></script>
+	<link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+	<link href="bootstrap/css/animations.css" rel="stylesheet">
 <polymer-element name="my-element">
 
   <template>
     <style>    
       :host {
         position: absolute;
-        width: 100%;
+        width: 1000px;
         height: 46px;
         box-sizing: border-box;
       }
