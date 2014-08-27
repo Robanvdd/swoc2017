@@ -78,6 +78,10 @@ def determine_language():
 	if os.path.isfile("build.xml"):
 		language = Language.JAVA
 
+	# Else, test for python, which is true when there is a single .py file in the root directory
+	elif glob.glob("*.py"):
+		language = Language.PYTHON
+
 	os.chdir("..")
 	return language
 
@@ -87,8 +91,7 @@ def main():
 	options, arguments = p.parse_args()
 	
 	if not options.bot:
-		sys.stderr.write("Error: Bot id must be given (-b)")
-		sys.exit(1)
+		p.error('Bot id not given (-b)')
 
 	chdir_to_bot(options.bot)
 	remove_old_bot()
@@ -99,6 +102,9 @@ def main():
 		print("Code language is Java")
 		run_ant_clean_build()
 		create_ant_run_script()
+	elif language == Language.PYTHON:
+		print("Code language is Python")
+		create_pyton_run_script()
 	else:
 		sys.stderr.write("Error: Code was not written in a valid language")
 		sys.exit(1)
