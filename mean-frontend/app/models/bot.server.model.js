@@ -22,10 +22,6 @@ var BotSchema = new Schema({
 		type: Number,	
 		default: 1
 	},
-	executablePath: {
-		type: String,
-		required: 'An executable path must be given'
-	},
 	user: {
 		type: Schema.ObjectId,
 		ref: 'User',

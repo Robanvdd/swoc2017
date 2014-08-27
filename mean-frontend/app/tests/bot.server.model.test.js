@@ -24,13 +24,13 @@ describe('Bot Model Unit Tests:', function() {
 			displayName: 'Full Name',
 			email: 'test@test.com',
 			username: 'username',
-			password: 'password'
+			password: 'password',
+			provider: 'local'
 		});
 
 		user.save(function() {
 			bot = new Bot({
 				name: 'Bot Name',
-				executablePath: 'Bot Path',
 				user: user
 			});
 
@@ -54,16 +54,6 @@ describe('Bot Model Unit Tests:', function() {
 				done();
 			});
 		});
-
-		it('should be able to show an error when try to save without executablePath', function(done) {
-			bot.executablePath = '';
-
-			return bot.save(function(err) {
-				should.exist(err);
-				done();
-			});
-		});
-
 		it('should be able to show an error when try to save without user', function(done) {
 			bot.user = '';
 

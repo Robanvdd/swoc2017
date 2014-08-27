@@ -30,7 +30,6 @@ describe('Match Model Unit Tests:', function() {
 
 		bot = new Bot({
 			name: 'Bot Name',
-			executablePath: 'Bot Path',
 			user: user
 		});
 
@@ -38,8 +37,12 @@ describe('Match Model Unit Tests:', function() {
 			bot.save(function(){
 				match = new Match({
 					startedOn: '2014-01-01 12:00:00',
+					completedOn: '2014-01-01 12:00:01',
 					whiteBot: bot,
-					blackBot: bot
+					blackBot: bot,
+					winnerBot: bot,
+					whiteStdin: 'white stdin',
+					blackStdin: 'black stdin'
 				});
 
 				done();
