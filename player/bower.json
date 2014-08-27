@@ -1,0 +1,26 @@
+{
+  "name": "playerbower",
+  "version": "0.0.1",
+  "homepage": "https://github.com/JaWSnl/swoc2014",
+  "authors": [
+    "Robbert-Jan van der Dennen <robbertjanv@gmail.com>"
+  ],
+  "description": "bower file for player for swoc2014",
+  "main": "bower.main",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#~0.3.5",
+    "paper-elements": "Polymer/paper-elements#~0.3.5",
+    "core-pages": "Polymer/core-pages#~0.3.5",
+    "core-animated-pages": "Polymer/core-animated-pages#~0.3.5",
+    "ngUpload": "~0.5.11",
+    "jquery": "~2.1.1"
+  }
+}

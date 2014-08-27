@@ -1762,3 +1762,25 @@ meanControllers.controller('InsertCtrl', ['$scope', '$http', '$location', functi
 	}
 
 }]);
+
+//CONTROLLER FOR mod_home.html
+meanControllers.controller('HomeCtrl', ['$scope', '$http', '$location', function($scope, $http, $location) {
+}]);
+
+//CONTROLLER FOR mod_upload.html
+meanControllers.controller('UploadCtrl', ['$scope', function($scope) {
+	$scope.startUploading = function() {
+		console.log('uploading....');
+		$scope.uploadResponse2 = "[Status: Uploading] ";
+	};
+
+	$scope.uploadFile1 = function (content, completed) {
+		console.log(content);
+		$scope.uploadResponse1 = content.msg;
+	};
+
+	$scope.uploadFile2 = function (content) {
+		console.log(content);
+		$scope.uploadResponse2 = "[Status: Completed] " + content.msg;
+	};
+}]);
