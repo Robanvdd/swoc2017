@@ -8,12 +8,28 @@ import subprocess
 import sys
 import zipfile
 
-codeSubdir = ".\\code"
-javacPath = "\"C:\\Program Files\\Java\jdk1.7.0_45\\bin\\javac\""
-
 class Language:
     JAVA = 1
     PYTHON = 2
+
+codeSubdir = "/code"
+allowedLanguages = ['java', 'python']
+
+def unzip(path):
+	# unzip a file
+    zfile = zipfile.ZipFile(path)
+    for name in zfile.namelist():
+        (dirname, filename) = os.path.split(name)
+        if filename == '':
+            # directory
+            if not os.path.exists(dirname):
+                os.mkdir(dirname)
+        else:
+            # file
+            fd = open(name, 'wb')
+            fd.write(zfile.read(name))
+            fd.close()
+    zfile.close()
 
 def chdir_to_bot(botId):
 	if not os.path.isdir(botId):
@@ -38,8 +54,12 @@ def extract_bot():
 		sys.stderr.write("Warning: More than 1 zip file found." + zipFileName)
 	print("Using zip file " + zipFileName)
 
-	with zipfile.ZipFile(zipFileName, "r") as z:
-		z.extractall(codeSubdir)
+	zipFilePath = os.getcwd() + "/" + zipFileName
+	print zipFilePath
+	os.mkdir(codeSubdir)
+	os.chdir(codeSubdir)
+	unzip(zipFilePath)
+	os.chdir("..")
 
 def store_compile_output(txt):
 	# Working from bot-id directory
@@ -51,7 +71,7 @@ def run_ant_clean_build():
 	os.chdir(codeSubdir)
 	cwd = os.getcwd()
 	print("Compiling from working directory: " + cwd)
-	p = subprocess.Popen(["D:\\apache-ant-1.9.4\\bin\\ant.bat", "-noinput", "clean-build"], cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	p = subprocess.Popen(["ant", "-noinput", "clean-build"], cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	antStdout = ""
 	while p.returncode == None:
 		antStdout += str(p.communicate()[0])
