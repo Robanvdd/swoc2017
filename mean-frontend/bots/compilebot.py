@@ -23,7 +23,8 @@ def remove_old_bot():
 	if os.path.isdir(codeSubdir):
 		shutil.rmtree(codeSubdir)
 
-def extract_bot_here():
+def extract_bot():
+	# Working from bot-id directory
 	zipFiles = glob.glob("*.zip")
 	if not zipFiles:
 		sys.stderr.write("Error: No zip file found")
@@ -38,10 +39,12 @@ def extract_bot_here():
 		z.extractall(codeSubdir)
 
 def store_compile_output(txt):
+	# Working from bot-id directory
 	with open("compile_output.txt", "w") as f:
 		f.write(txt)
 
 def run_ant_clean_build():
+	# Working from bot-id directory
 	os.chdir(codeSubdir)
 	cwd = os.getcwd()
 	print("Compiling from working directory: " + cwd)
@@ -59,6 +62,10 @@ def run_ant_clean_build():
 		print("Error: Something went wrong during compiling. Check the create file for compile output.")
 		sys.exit(1)
 
+def create_ant_run_script():
+	# Working from bot-id directory
+	with open("run.sh", "w") as f:
+		f.write("ant run")
 
 def main():
 	p = optparse.OptionParser()
@@ -71,8 +78,9 @@ def main():
 
 	chdir_to_bot(options.bot)
 	remove_old_bot()
-	extract_bot_here()
+	extract_bot()
 	run_ant_clean_build()
+	create_ant_run_script()
 
 if __name__ == '__main__':
 	main()
