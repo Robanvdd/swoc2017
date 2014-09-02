@@ -1,6 +1,6 @@
 {
   "name": "playerbower",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "homepage": "https://github.com/JaWSnl/swoc2014",
   "authors": [
     "Robbert-Jan van der Dennen <robbertjanv@gmail.com>"
@@ -22,5 +22,8 @@
     "core-animated-pages": "Polymer/core-animated-pages#~0.3.5",
     "ngUpload": "~0.5.11",
     "jquery": "~2.1.1"
+  },
+  "resolutions": {
+    "polymer": ">=0.4.0 <1.0.0"
   }
 }

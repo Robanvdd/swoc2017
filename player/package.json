@@ -4,12 +4,13 @@
   "description": "belajar MEAN stack",
   "main": "server.js",
   "dependencies": {
-    "express": "~3.5.0",
-    "mongoose": "~3.6.13",
-    "request" : "~2.36.0",
-    "passport": "~0.2.1",
-    "passport-local": "~1.0.0",
-    "bcrypt": "~0.8.0"
+  "express": "~3.5.0",
+  "mongoose": "~3.6.13",
+  "request" : "~2.36.0",
+  "connect-flash": "0.1.x",
+  "passport": ">= 0.0.0",
+  "passport-local": ">= 0.0.0",
+  "bcrypt": ">= 0.0.0"  
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -21,6 +22,6 @@
     "node",
     "express"
   ],
-  "author": "@arisetyo",
+  "author": "@Robanvdd",
   "license": "ISC"
 }
