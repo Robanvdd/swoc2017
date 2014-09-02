@@ -1766,6 +1766,9 @@ meanControllers.controller('InsertCtrl', ['$scope', '$http', '$location', functi
 //CONTROLLER FOR mod_home.html
 meanControllers.controller('HomeCtrl', ['$scope', '$http', '$location', function($scope, $http, $location) {
 }]);
+//CONTROLLER FOR mod_login.html
+meanControllers.controller('LogInCtrl', ['$scope', '$http', '$location', function($scope, $http, $location) {
+}]);
 
 //CONTROLLER FOR mod_upload.html
 meanControllers.controller('UploadCtrl', ['$scope', function($scope) {
@@ -1775,7 +1778,7 @@ meanControllers.controller('UploadCtrl', ['$scope', function($scope) {
 	};
 
 	$scope.uploadFile1 = function (content, completed) {
-		console.log(content);
+		console.log('uploading');
 		$scope.uploadResponse1 = content.msg;
 	};
 

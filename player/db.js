@@ -1,5 +1,5 @@
 var mongoose = require('mongoose'),
-    bcrypt = require('bcrypt'),
+    bcrypt = require('bcryptjs'),
     SALT_WORK_FACTOR = 10;
 var Schema = mongoose.Schema,
 	ObjectId = Schema.ObjectId;
@@ -42,6 +42,17 @@ userSchema.methods.comparePassword = function(candidatePassword, cb) {
 		cb(null, isMatch);
 	});
 };
+
+// Seed a user
+var User = mongoose.model('User', userSchema);
+var user = new User({ username: 'test', email: 'bob@example.com', password: 'test' });
+user.save(function(err) {
+  if(err) {
+    console.log(err);
+  } else {
+    console.log('user: ' + user.username + " saved.");
+  }
+});
 	
 // EXPORTS
 module.exports.mongoose 		= mongoose;

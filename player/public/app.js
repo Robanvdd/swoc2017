@@ -38,6 +38,10 @@ meanApp.config(['$routeProvider', function($routeProvider) {
 			controller:'PlayvCPUCtrl',
 			templateUrl:'mod_play_v_cpu.html'
 		})
+		.when('/login/', {
+			controller:'LogInCtrl',
+			templateUrl:'mod_login.html'
+		})
 		.otherwise({
 			redirectTo: '/'
 		});

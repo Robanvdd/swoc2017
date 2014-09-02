@@ -11,6 +11,7 @@ module.exports.RetrieveAll = RetrieveAll;
 module.exports.RetrieveById = RetrieveById;
 module.exports.UpdateDoc = UpdateDoc;
 module.exports.DeleteDoc = DeleteDoc;
+module.exports.findOne = RetrieveByName;
 
 /* 
 * *********
@@ -19,7 +20,7 @@ module.exports.DeleteDoc = DeleteDoc;
 */
 function CreateDoc(req, callback) {
 	var instance = new ModelUser();
-	instance.fullname = req.body.fullname;
+	instance.username = req.body.username;
 	instance.email	  = req.body.email;
 	instance.password = req.body.password;
 	
@@ -37,9 +38,15 @@ function RetrieveById(id, callback) {
 	ModelUser.findOne({_id:id}, callback);
 }
 
+
+function RetrieveByName(username, callback) {
+	console.log('RetrieveByName, username:' + username.username);
+	ModelUser.findOne({"username":username.username}, callback);
+}
+
 function UpdateDoc(req, callback) {
 	var newValues = {
-					"fullname":	req.body.fullname,
+					"username":	req.body.username,
 					"email":	req.body.email,
 					"password":	req.body.password,
 					};

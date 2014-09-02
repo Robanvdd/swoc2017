@@ -3,11 +3,12 @@ var application_root = __dirname,
 	express = require('express'),
 	passport = require('passport'),
 	LocalStrategy = require('passport-local').Strategy,
-    bcrypt = require('bcrypt'),
+    bcrypt = require('bcryptjs'),
 	path 	= require("path"),
 	url 	= require("url"),
 	request = require("request"),
 	Game 	= require('./routes/game'),
+	User 	= require('./routes/user'),
 	exec    = require('child_process').execFile,
 	fs      = require('fs');
 
@@ -19,11 +20,24 @@ var application_root = __dirname,
 //
 //   Both serializer and deserializer edited for Remember Me functionality
 passport.serializeUser(function(user, done) {
-  done(null, user.email);
+
+  	console.log('serializeUser, username:' + user.username);
+  done(null, user.username);
 });
 
-passport.deserializeUser(function(email, done) {
-  User.findOne( { email: email } , function (err, user) {
+passport.deserializeUser(function(user, done) {
+	console.log('deserializeUser pre, user:' + user);
+  User.findOne( { username: user } , function (err, user) {
+  	if(err) {
+  		console.log('deserializeUser, err:' + err);
+  	} else {
+  		console.log('deserializeUser, no err:');
+  	}
+  	if(user) {
+  		console.log('deserializeUser, username:' + user.username);
+  	} else {
+  		console.log('deserializeUser, no user');
+  	}
     done(err, user);
   });
 });
@@ -53,22 +67,14 @@ var app = express();
 app.configure(function () {
 	app.use(express.logger('dev'));
 	app.use(express.json());
-	app.use(express.urlencoded());
-	app.use(express.bodyParser({
-        uploadDir: application_root + '/tmp/uploads',
-        keepExtensions: true
-    }));
-    app.use( express.cookieParser() );
-	app.use(express.static(path.join(application_root, "public")));
+    app.use(express.cookieParser());
   	app.use(express.session({ secret: 'Valar Morghulis' }));
   // Remember Me middleware
   app.use( function (req, res, next) {
+  	console.log('checking cookie use');
     if ( req.method == 'POST' && req.url == '/login' ) {
-      if ( req.body.rememberme ) {
-        req.session.cookie.maxAge = 2592000000; // 30*24*60*60*1000 Rememeber 'me' for 30 days
-      } else {
-        req.session.cookie.expires = false;
-      }
+    	console.log('setting cookie use!');
+        req.session.cookie.maxAge = 2592000000; // 30*24*60*60*1000 Remember 'me' for 30 days
     }
     next();
   });
@@ -76,9 +82,14 @@ app.configure(function () {
   // persistent login sessions (recommended).
   app.use(passport.initialize());
   app.use(passport.session());
+	app.use(express.urlencoded());
+	app.use(express.bodyParser({
+        uploadDir: application_root + '/tmp/uploads',
+        keepExtensions: true
+    }));
+	app.use(express.static(path.join(application_root, "public")));
 	app.use(app.router);
 });
-
 // POST /login
 //   This is an alternative implementation that uses a custom callback to
 //   acheive the same functionality.
@@ -87,28 +98,36 @@ app.post('/login', function(req, res, next) {
     if (err) { return next(err) }
     if (!user) {
       req.session.messages =  [info.message];
+      console.log('failed to login, user is null' + [info.message]);
       return res.redirect('/login')
     }
     req.logIn(user, function(err) {
       if (err) { return next(err); }
+      console.log('login successful');
       return res.redirect('/');
     });
   })(req, res, next);
 });
 
 app.get('/logout', function(req, res){
+	console.log('logout');
   req.logout();
   res.redirect('/');
 });
 
-app.get('/mod_upload.html', ensureAuthenticated,  function(req, res){
-	console.log('mod_upload');
-});
-
 //---------------- BOT UPLOAD -------------------
 
-app.post('/api/bot/upload/', function(req, res){
-	console.log("application_root:" + application_root + ", fileName:" + req.files.fileName + ", file:" + req.files.file);
+app.post('/api/bot/upload/', ensureAuthenticated, function(req, res) {
+	var target_folder =  application_root + '/bots_upload/' + req.user.username;
+	fs.mkdir(target_folder,function(e){
+    if(!e || (e && e.code === 'EEXIST')){
+        //do something with contents
+    } else {
+        //debug
+        console.log(e);
+    }
+});
+	console.log("Upload from user:" + req.user.username + ", destination folder:" + target_folder + ", fileName:"  + req.files.file.name);
 	setTimeout(
         function () {
             res.setHeader('Content-Type', 'text/html');
@@ -116,7 +135,7 @@ app.post('/api/bot/upload/', function(req, res){
                 res.send({ msg: 'No file uploaded at ' + new Date().toString() });
             else {
                 var file = req.files.file;
-				var target_path = application_root + '/bots_upload/' + file.name
+				var target_path = target_folder + '/' + file.name
 				console.log('file.path:' + file.path + ' target_path:' + target_path);
                 fs.rename(file.path, target_path, function(err) {
 					if (err)
@@ -127,8 +146,7 @@ app.post('/api/bot/upload/', function(req, res){
 							throw err;
 						//
 					});
-					res.writeHead('200');
-					res.end();
+					res.send({ msg: '<b>"' + file.name + '"</b> uploaded to the server at ' + new Date().toString() });
 				});
             }
         },
@@ -297,6 +315,11 @@ console.log('testing server is listening on port 8090...');
 //   the request will proceed.  Otherwise, the user will be redirected to the
 //   login page.
 function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) { return next(); }
-  res.redirect('/login')
+	console.log('ensureAuthenticated');
+  if (req.isAuthenticated()) { 
+  	return next(); 
+  }
+
+	res.status(403);
+	res.send({ msg: '<b> User not authenticated</b>'});
 }
