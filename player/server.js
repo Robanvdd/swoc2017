@@ -34,6 +34,7 @@ passport.deserializeUser(function(user, done) {
   		console.log('deserializeUser, no err:');
   	}
   	if(user) {
+  		
   		console.log('deserializeUser, username:' + user.username);
   	} else {
   		console.log('deserializeUser, no user');
@@ -113,6 +114,10 @@ app.get('/logout', function(req, res){
 	console.log('logout');
   req.logout();
   res.redirect('/');
+});
+
+app.get('/test', function(req, res){
+	res.redirect('/#/game_log/');
 });
 
 //---------------- BOT UPLOAD -------------------
