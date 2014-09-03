@@ -79,23 +79,13 @@ public class IORobot implements AutoCloseable
 		handler.close();
 	}
 
-	public String getStdin()
-	{
-		return handler.getStdin();
-	}
-
-	public String getStdout()
-	{
-		return handler.getStdout();
-	}
-
-	public String getStderr()
-	{
-		return handler.getStderr();
-	}
-
 	public String getDump()
 	{
 		return dump.toString();
+	}
+	
+	public String getErrors()
+	{
+	    return handler.getErrors();
 	}
 }

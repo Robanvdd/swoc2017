@@ -43,19 +43,20 @@ public class EngineRunner implements AutoCloseable
 		}
 		catch (Exception ex)
 		{
-			System.out.println("Run failed: " + ex.getMessage());
+			System.out.println("Run failed: " + ex.toString());
+			ex.printStackTrace();
 		}
 
 		System.out.println("---- WHITE DUMP ----");
 		System.out.println(botWhite.getDump());
         System.out.println("---- WHITE ERROR ----");
-        System.out.println(botWhite.getStderr());
+        System.out.println(botWhite.getErrors());
         System.out.println("--------");
         System.out.println("");
 		System.out.println("---- BLACK DUMP ----");
 		System.out.println(botBlack.getDump());
 		System.out.println("---- BLACK ERROR ----");
-		System.out.println(botBlack.getStderr());
+		System.out.println(botBlack.getErrors());
         System.out.println("--------");
 		System.out.println("Game ended");
 	}
@@ -72,17 +73,16 @@ public class EngineRunner implements AutoCloseable
 		Thread.sleep(200);
 	}
 
-	private static final long SetupTimeOut = 2000;
 	private static final long FirstMoveTimeOut = 2000;
 	private static final long NormalRoundTimeOut = 2000;
 	
 	private void SetupBots()
 	{
         InitiateRequest initReqW = new InitiateRequest(Board.PlayerWhite);
-		StatusResponse statusW = botWhite.writeAndReadMessage(initReqW, StatusResponse.class, SetupTimeOut);
+		botWhite.writeMessage(initReqW);
 
         InitiateRequest initReqB = new InitiateRequest(Board.PlayerBlack);
-        StatusResponse statusB = botBlack.writeAndReadMessage(initReqB, StatusResponse.class, SetupTimeOut);
+        botBlack.writeMessage(initReqB);
 }
 	
 	private static final int[] AttackOnly = { Move.Attack };
@@ -90,6 +90,7 @@ public class EngineRunner implements AutoCloseable
 	
 	private void FirstRound()
 	{
+	    System.out.println("White - first move");
 		// TODO: If bot does not give a valid move, then let it loose immediately
 		DoOneMove(botWhite, AttackOnly, FirstMoveTimeOut);
 	}
@@ -98,23 +99,27 @@ public class EngineRunner implements AutoCloseable
 	{
 	    int winner;
 	    
+        System.out.println("Black - move 1/2");
 		// First black then white, since white may start the game
 		winner = DoOneMove(botBlack, AttackOnly, NormalRoundTimeOut);
 		if (winner != Board.PlayerNone)
 		{
 		    return winner;
 		}
+        System.out.println("Black - move 2/2");
 		winner = DoOneMove(botBlack, AllMoves, NormalRoundTimeOut); 
         if (winner != Board.PlayerNone)
         {
             return winner;
         }
 
+        System.out.println("White - move 1/2");
         winner = DoOneMove(botWhite, AttackOnly, NormalRoundTimeOut); 
         if (winner != Board.PlayerNone)
         {
             return winner;
         }
+        System.out.println("White - move 2/2");
         winner = DoOneMove(botWhite, AllMoves, NormalRoundTimeOut);
         if (winner != Board.PlayerNone)
         {
@@ -124,11 +129,46 @@ public class EngineRunner implements AutoCloseable
         return Board.PlayerNone;
 	}
 	
+	private String MoveToString(Move move)
+	{
+	    if (move == null)
+	    {
+	        return "null";
+	    }
+	    
+	    String moveType = (move.Type == Move.Pass) ? "Pass" :
+	        (move.Type == Move.Attack) ? "Attack" :
+	        (move.Type == Move.Strengthen) ? "Strengthen" :
+	        "Unknown";
+	    
+	    String dump = "move: type = " + moveType + ", from = ";
+	    if (move.From != null)
+	    {
+	        dump += move.From.X + ";" + move.From.Y;
+	    }
+	    else
+	    {
+	        dump += "null";
+	    }
+	    dump +=", to = ";
+        if (move.To != null)
+        {
+            dump += move.To.X + ";" + move.To.Y;
+        }
+        else
+        {
+            dump += "null";
+        }
+        return dump; 
+	}
+	
 	private int DoOneMove(IORobot bot, int[] allowedMoves, long timeOut)
 	{
 		MoveRequest request = new MoveRequest(board, allowedMoves);
 		Move move = bot.writeAndReadMessage(request, Move.class, timeOut);
 
+        System.out.println("received: " + MoveToString(move)); 
+		
 		boolean moveProcessed = false;
 		if (IsMoveInAllowedList(move, allowedMoves) && IsMoveValid(bot, move))
 		{
@@ -143,7 +183,9 @@ public class EngineRunner implements AutoCloseable
 
 		int winner = GetCurrentWinner();
 		
-		// Send result to both bots
+        System.out.println("processed: " + MoveToString(move)); 
+
+        // Send result to both bots
 		ProcessedMove processedMove = new ProcessedMove(bot.Player, move, winner);
 		botWhite.writeMessage(processedMove);
 		botBlack.writeMessage(processedMove);
@@ -168,7 +210,7 @@ public class EngineRunner implements AutoCloseable
     		}
     		else
     		{
-    			// attack
+    			// attack, just overwrite the "to" location
     		}
     		
     		board.SetSpace(move.To, newOwner, newStone, newCount);
