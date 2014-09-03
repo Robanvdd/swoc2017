@@ -91,6 +91,11 @@ app.configure(function () {
 	app.use(express.static(path.join(application_root, "public")));
 	app.use(app.router);
 });
+
+app.get('/user', ensureAuthenticated, function(req, res){
+	console.log('/user: name=' + req.user.username);
+  res.send({user: req.user.username});
+});
 // POST /login
 //   This is an alternative implementation that uses a custom callback to
 //   acheive the same functionality.

@@ -1768,6 +1768,10 @@ meanControllers.controller('HomeCtrl', ['$scope', '$http', '$location', function
 }]);
 //CONTROLLER FOR mod_login.html
 meanControllers.controller('LogInCtrl', ['$scope', '$http', '$location', function($scope, $http, $location) {
+	$scope.user = '';
+	$http.get('/user').success(function(user){
+		$scope.user = user;
+	});
 }]);
 
 //CONTROLLER FOR mod_upload.html
