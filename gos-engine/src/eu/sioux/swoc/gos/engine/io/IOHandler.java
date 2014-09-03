@@ -1,105 +1,148 @@
-// Copyright 2014 theaigames.com (developers@theaigames.com)
-
-//    Licensed under the Apache License, Version 2.0 (the "License");
-//    you may not use this file except in compliance with the License.
-//    You may obtain a copy of the License at
-
-//        http://www.apache.org/licenses/LICENSE-2.0
-
-//    Unless required by applicable law or agreed to in writing, software
-//    distributed under the License is distributed on an "AS IS" BASIS,
-//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//    See the License for the specific language governing permissions and
-//    limitations under the License.
-//	
-//    For the full copyright and license information, please view the LICENSE
-//    file that was distributed with this source code.
-
 package eu.sioux.swoc.gos.engine.io;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 
 public class IOHandler implements AutoCloseable
 {
-	Process child;
-	InStream out, err;
-	OutStream in;
+	private final Process child;
+	private final InputStreamReader inputReader;
+	private final BufferedReader bufferedInputReader;
+	private final OutputStreamWriter outputWriter;
+	private final InputStreamReader errorReader;
+	private final BufferedReader bufferedErrorReader;
 	
 	public IOHandler(String command) throws IOException
 	{
-		System.out.println(command);
 		child = Runtime.getRuntime().exec(command);
-		in = new OutStream(child.getOutputStream());
-		out = new InStream(child.getInputStream());
-		err = new InStream(child.getErrorStream());
-		out.start(); err.start();
+		inputReader = new InputStreamReader(child.getInputStream());
+        bufferedInputReader = new BufferedReader(inputReader);
+        outputWriter = new OutputStreamWriter(child.getOutputStream());
+        errorReader = new InputStreamReader(child.getErrorStream());
+        bufferedErrorReader = new BufferedReader(errorReader);
+        
+        singleLineReader = new SingleLineReader(bufferedInputReader);
 	}
 	
 	@Override
 	public void close()
 	{
-		try { in.close(); } catch(IOException e) {}
+        try { bufferedErrorReader.close(); } catch (IOException e) {}
+	    try { errorReader.close(); } catch (IOException e) {}
+	    try { outputWriter.close(); } catch (IOException e) {}
+	    try { bufferedInputReader.close(); } catch (IOException e) {}
+	    try { inputReader.close(); } catch (IOException e) {}
+	    
 		child.destroy();
-		out.finish();
-		err.finish();
 		
-		if(out.isAlive())
-			out.interrupt();
-		if(err.isAlive())
-			err.interrupt();
-		
-		try {
+		try
+		{
 			child.waitFor();
-			out.join(110);
-			err.join(110);
 		}
-		catch(InterruptedException e) {
+		catch(InterruptedException e)
+		{
 			e.printStackTrace();
 		}
 	}
 	
+	private class SingleLineReader implements Callable<String>
+	{
+	    private final BufferedReader reader;
+	     
+	    public SingleLineReader(BufferedReader reader)
+	    {
+	        this.reader = reader;
+	    }
+	    
+	    @Override
+	    public String call() throws IOException
+	    {
+	        return reader.readLine();
+	    }
+	}
+
+	private final SingleLineReader singleLineReader;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+            
 	public String readLine(long timeOut)
 	{
-		if(!isRunning()) { return null; }
-		try { in.flush(); } catch(IOException e) {}
-		return out.readLine(timeOut);
+		if (!isRunning())
+		{
+		    return null;
+		}
+
+		Future<String> readSingleLine = executor.submit(singleLineReader);
+		try
+        {
+            return readSingleLine.get(timeOut, TimeUnit.MILLISECONDS);
+        }
+        catch (InterruptedException e1)
+        {
+            return null;
+        }
+        catch (ExecutionException e1)
+        {
+            return null;
+        }
+        catch (TimeoutException e1)
+        {
+            readSingleLine.cancel(true);
+            return null;
+        }
 	}
 	
 	public boolean writeLine(String line)
 	{
-		if(!isRunning()) { return false; }
-		try { 
-			in.writeLine(line.trim());
-			return true;
-		} 
-		catch(IOException e) {
-			e.printStackTrace();
-			return false;
-		}
-		
+	    try
+	    {
+    	    outputWriter.write(line.trim());
+    	    outputWriter.write("\n");
+    	    outputWriter.flush();
+            return true;
+	    }
+	    catch (IOException ex)
+	    {
+	        return false;
+	    }
 	}
 	
 	public boolean isRunning()
 	{
-		try {
+		try
+		{
 			child.exitValue();
 			return false;
 		}
-		catch(IllegalThreadStateException ex) {
+		catch(IllegalThreadStateException ex)
+		{
 			return true;
 		}
 	}
 	
-	public String getStdin() {
-		return in.getData();
+	public String getErrors()
+	{
+	    StringBuilder builder = new StringBuilder();
+	    try
+        {
+            while (bufferedErrorReader.ready())
+            {
+                builder.append(bufferedErrorReader.readLine());
+            }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+	    return builder.toString();
 	}
-	
-	public String getStdout() {
-		return out.getData();
-	}
-	
-	public String getStderr() {
-		return err.getData();
-	}
-
 }
