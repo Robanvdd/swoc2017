@@ -70,266 +70,39 @@ app.configure(function () {
 	app.use(express.json());
     app.use(express.cookieParser());
   	app.use(express.session({ secret: 'Valar Morghulis' }));
-  // Remember Me middleware
-  app.use( function (req, res, next) {
-  	console.log('checking cookie use');
-    if ( req.method == 'POST' && req.url == '/login' ) {
-    	console.log('setting cookie use!');
-        req.session.cookie.maxAge = 2592000000; // 30*24*60*60*1000 Remember 'me' for 30 days
-    }
-    next();
-  });
-  // Initialize Passport!  Also use passport.session() middleware, to support
-  // persistent login sessions (recommended).
-  app.use(passport.initialize());
-  app.use(passport.session());
+
+	// Remember Me middleware
+	app.use( function (req, res, next) {
+		console.log('checking cookie use');
+		if ( req.method == 'POST' && req.url == '/login' ) {
+			console.log('setting cookie use!');
+		    req.session.cookie.maxAge = 2592000000; // 30*24*60*60*1000 Remember 'me' for 30 days
+		}
+		next();
+	});
+	
+	// Initialize Passport!  Also use passport.session() middleware, to support
+	// persistent login sessions (recommended).
+	app.use(passport.initialize());
+	app.use(passport.session());
 	app.use(express.urlencoded());
 	app.use(express.bodyParser({
-        uploadDir: application_root + '/tmp/uploads',
-        keepExtensions: true
-    }));
+		uploadDir: application_root + '/tmp/uploads',
+		keepExtensions: true
+	}));
 	app.use(express.static(path.join(application_root, "public")));
 	app.use(app.router);
 });
 
-app.get('/user', ensureAuthenticated, function(req, res){
-	console.log('/user: name=' + req.user.username);
-  res.send({user: req.user.username});
-});
-// POST /login
-//   This is an alternative implementation that uses a custom callback to
-//   acheive the same functionality.
-app.post('/login', function(req, res, next) {
-  passport.authenticate('local', function(err, user, info) {
-    if (err) { return next(err) }
-    if (!user) {
-      req.session.messages =  [info.message];
-      console.log('failed to login, user is null' + [info.message]);
-      return res.redirect('/login')
-    }
-    req.logIn(user, function(err) {
-      if (err) { return next(err); }
-      console.log('login successful');
-      return res.redirect('/');
-    });
-  })(req, res, next);
-});
-
-app.get('/logout', function(req, res){
-	console.log('logout');
-  req.logout();
-  res.redirect('/');
-});
-
-app.get('/test', function(req, res){
-	res.redirect('/#/game_log/');
-});
+//---------------- USER -------------------------
+require('./app/users.routes.server.js');
 
 //---------------- BOT UPLOAD -------------------
+require('./app/bots.routes.server.js')(app)
 
-app.post('/api/bot/upload/', ensureAuthenticated, function(req, res) {
-	var target_folder =  application_root + '/bots_upload/' + req.user.username;
-	fs.mkdir(target_folder,function(e){
-    if(!e || (e && e.code === 'EEXIST')){
-        //do something with contents
-    } else {
-        //debug
-        console.log(e);
-    }
-});
-	console.log("Upload from user:" + req.user.username + ", destination folder:" + target_folder + ", fileName:"  + req.files.file.name);
-	setTimeout(
-        function () {
-            res.setHeader('Content-Type', 'text/html');
-            if (req.files.length == 0 || req.files.file.size == 0)
-                res.send({ msg: 'No file uploaded at ' + new Date().toString() });
-            else {
-                var file = req.files.file;
-				var target_path = target_folder + '/' + file.name
-				console.log('file.path:' + file.path + ' target_path:' + target_path);
-                fs.rename(file.path, target_path, function(err) {
-					if (err)
-						throw err;
-					// Delete the temporary file, so that the explicitly set temporary upload dir does not get filled with unwanted files.
-					fs.unlink(file.path, function() {
-						if (err)
-							throw err;
-						//
-					});
-					res.send({ msg: '<b>"' + file.name + '"</b> uploaded to the server at ' + new Date().toString() });
-				});
-            }
-        },
-        (req.param('delay', 'yes') == 'yes') ? 2000 : -1
-    );
-});
-
-//-------------------- GAME --------------------
-app.post('/api/game/create/', function(req, res){
-	Game.CreateDoc(req, function(err, success) {
-		if(err) throw err;
-		else res.send(success);
-	});
-});
-
-app.get('/api/game/retrieveall/', function(req, res) { 
-	Game.RetrieveAll(function(err, success) {
-		if(err) throw err;
-		else res.send(success);
-	});
-});
-
-app.get('/api/game/retrieveid/:id', function(req, res) { 
-	Game.RetrieveById(req.params.id, function(err, success) {
-		if(err) throw err;
-		else res.send(success);
-	});
-});
-
-app.post('/api/game/update', function(req, res) {
-	Game.UpdateDoc(req, function(err, success) {
-		if(err) throw err;
-		else res.send(success);
-	});
-});
-
-app.post('/api/game/delete', function(req, res) { 
-	Game.DeleteDoc(req.body.id, function(err, success) {
-		if(err) throw err;
-		else res.send(success);
-	});
-});
-
-app.post('/api/game/botmove', function(req, res) {
-	console.log("botmove start on "+ process.platform);
-	console.log("cols: " + req.body.cols);
-	console.log("AI level:" + req.body.AILevel)
-	var AIboard = [ [  0,   0,   0,   0,   0, 100, 100, 100, 100],
-					[  0,   0,   0,   0,   0,   0, 100, 100, 100],
-					[  0,   0,   0,   0,   0,   0,   0, 100, 100],
-					[  0,   0,   0,   0,   0,   0,   0,   0, 100],
-					[  0,   0,   0,   0, 100,   0,   0,   0,   0],
-					[100,   0,   0,   0,   0,   0,   0,   0,   0],
-					[100, 100,   0,   0,   0,   0,   0,   0,   0],
-					[100, 100, 100,   0,   0,   0,   0,   0,   0],
-					[100, 100, 100, 100,   0,   0,   0,   0,   0] ];
-	console.log(AIboard);
-	var AIboardStackHeight = [
-					[  0,   0,   0,   0,   0,   0,   0,   0,   0],
-					[  0,   0,   0,   0,   0,   0,   0,   0,   0],
-					[  0,   0,   0,   0,   0,   0,   0,   0,   0],
-					[  0,   0,   0,   0,   0,   0,   0,   0,   0],
-					[  0,   0,   0,   0,   0,   0,   0,   0,   0],
-					[  0,   0,   0,   0,   0,   0,   0,   0,   0],
-					[  0,   0,   0,   0,   0,   0,   0,   0,   0],
-					[  0,   0,   0,   0,   0,   0,   0,   0,   0],
-					[  0,   0,   0,   0,   0,   0,   0,   0,   0] ];
-	console.log(AIboardStackHeight);
-
-	var startOffset = -4;
-
-	for (var j=0; j <= 8; j++) {
-		var column = req.body.cols[j];
-		for (var i=0; i< column.size; i++) {
-			var stone = column.stones[i];
-			//console.log("stone: " + stone.name +  " color=" + stone.color + " type:" + stone.type);
-			var index = i;
-			if ( startOffset > 0) {	
-				index = i + startOffset;
-			}
-			//console.log("col: " + index + " index:" + j);
-			if ( stone.color == "white") {
-				switch (stone.type) {
-					case "TZAAR"   : AIboard[index][j] = 3; AIboardStackHeight[index][j] = stone.height; break;
-					case "TZARRAS" : AIboard[index][j] = 2; AIboardStackHeight[index][j] = stone.height; break;
-					case "TOTTS"   : AIboard[index][j] = 1; AIboardStackHeight[index][j] = stone.height; break;
-				}
-
-			} else if ( stone.color == "black") {
-				switch (stone.type) {
-					case "TZAAR"   : AIboard[index][j] = -3; AIboardStackHeight[index][j] = stone.height; break;
-					case "TZARRAS" : AIboard[index][j] = -2; AIboardStackHeight[index][j] = stone.height; break;
-					case "TOTTS"   : AIboard[index][j] = -1; AIboardStackHeight[index][j] = stone.height; break;
-				}
-			}
-		}
-		startOffset++;
-	}
-	//console.log(AIboard);
-	//console.log(AIboardStackHeight);
-
-	var fs  = require('fs');
-
-	if ( process.platform == "linux" ) {
-		//newlines are not strictly neccesary but will improve readability
-		var gameText = req.body.CPUcolor;
-		gameText = gameText + '\n';
-		for ( var i = 0; i < 9; i++) {
-			for (var j = 0; j< 9; j++) {
-				gameText = gameText + AIboard[i][j] + ' ';
-			}
-			gameText = gameText + '\n';
-		}
-		gameText = gameText + '\n';
-		for ( var i = 0; i < 9; i++) {
-			for (var j = 0; j< 9; j++) {
-				gameText = gameText + AIboardStackHeight[i][j] + ' ';
-			}
-			gameText = gameText + '\n';
-		}
-
-		fs.writeFile("test", gameText, function(err) {
-			if (err) {
-				console.log(err);
-				res.send({result: "error, Could not write to file"});
-			} else {
-				exec('./tzaar',  ['-b', 'test', '-t', '2', '-a', req.body.AILevel], function(err, data) {  
-					console.log(err)
-					console.log(data.toString());
-					fs.readFile('test', function(err, data){
-						if (err) {							
-							console.log(err);
-							res.send({result: "error, Could not read file"});
-						} else {
-							var lines = String(data).split('\n');
-							var firstMoves = lines[0].split(' ');
-							var firstMove = firstMoves[0] + firstMoves[1];
-							var secondMoves = lines[1].split(' ');
-							var secondMove = '';
-							if (secondMoves.length > 1) {
-								secondMove = secondMoves[1] + secondMoves[2];
-							} else if ( secondMoves[0] == "-1") {
-								secondMove = "PASS";
-							}
-							res.send(firstMove + secondMove);    
-						}
-					});
-				});                
-	    	}
-
-		});
-	} else {
-		console.log( "Windows not implemented yet" )
-		res.send({result: "error, Windows not implemented yet"});
-	}
-});
+//-------------------- GAME ---------------------
+require('./app/games.routes.server.js')(app)
 
 //======================= START SERVER ======================
 app.listen(8090);
 console.log('testing server is listening on port 8090...');
-
-
-// Simple route middleware to ensure user is authenticated.
-//   Use this route middleware on any resource that needs to be protected.  If
-//   the request is authenticated (typically via a persistent login session),
-//   the request will proceed.  Otherwise, the user will be redirected to the
-//   login page.
-function ensureAuthenticated(req, res, next) {
-	console.log('ensureAuthenticated');
-  if (req.isAuthenticated()) { 
-  	return next(); 
-  }
-
-	res.status(403);
-	res.send({ msg: '<b> User not authenticated</b>'});
-}
