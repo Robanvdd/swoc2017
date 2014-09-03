@@ -14,16 +14,16 @@
         <javac srcdir="src" destdir="build/classes" classpathref="classpath" includeantruntime="false"/>
     </target>
 
-    <!--target name="jar">
+    <target name="jar">
         <mkdir dir="build/jar"/>
-        <jar destfile="build/jar/HelloWorld.jar" basedir="build/classes">
+        <jar destfile="build/jar/gos-engine.jar" basedir="build/classes">
             <manifest>
-                <attribute name="Main-Class" value="oata.HelloWorld"/>
+                <attribute name="Main-Class" value="eu.sioux.swoc.gos.engine.Main"/>
             </manifest>
         </jar>
     </target>
 
     <target name="run">
-        <java jar="build/jar/HelloWorld.jar" fork="true"/>
-    </target-->
+        <java jar="build/jar/gos-engine.jar" fork="true"/>
+    </target>
 </project>
