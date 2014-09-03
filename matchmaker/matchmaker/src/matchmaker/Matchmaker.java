@@ -148,7 +148,7 @@ public class Matchmaker {
         String lastLine = "";
         try {
             String line;
-            Process p = Runtime.getRuntime().exec("gos-engine " + botId1 + " " + botId2);
+            Process p = Runtime.getRuntime().exec("java -jar gos-engine " + botId1 + " " + botId2);
             p.waitFor();
             BufferedReader input =
                 new BufferedReader(new InputStreamReader(p.getInputStream()));
