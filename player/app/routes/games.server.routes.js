@@ -1,5 +1,10 @@
+/**
+ * Module dependencies.
+ */
+var Game 	= require('../models/game');
+
 module.exports = function(app) {
-	
+
 	app.post('/api/game/create/', function(req, res){
 		Game.CreateDoc(req, function(err, success) {
 			if(err) throw err;
