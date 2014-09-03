@@ -1,7 +1,7 @@
 /**
  * Module dependencies.
  */
-var users = require('./users.server.js');
+var users = require('../controllers/users.server.controller');
 
 module.exports = function(app) {
 

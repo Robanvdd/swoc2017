@@ -1,7 +1,7 @@
 /**
  * Module dependencies.
  */
-var users = require('./users.server.js');
+var users = require('../controllers/users.server.controller');
 
 module.exports = function(app) {
 
@@ -14,9 +14,9 @@ module.exports = function(app) {
   app.get('/test', function(req, res){
     res.redirect('/#/game_log/');
   });
-  
+
   app.get('/user', users.requiresLogin, function(req, res){
-  	console.log('/user: name=' + req.user.username);
+    console.log('/user: name=' + req.user.username);
     res.send({user: req.user.username});
   });
 
