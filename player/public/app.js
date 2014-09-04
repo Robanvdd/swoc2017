@@ -14,21 +14,9 @@ meanApp.config(['$routeProvider', function($routeProvider) {
 			controller:'UploadCtrl',
 			templateUrl:'mod_upload.html'
 		})
-		.when('/indextest.html/', {
-			controller:'ListCtrl',
-			templateUrl:'indextest.html'
-		})
 		.when('/detail/:gameId', {
 			controller:'DetailCtrl',
 			templateUrl:'mod_detail.html'
-		})
-		.when('/create/', {
-			controller:'InsertCtrl',
-			templateUrl:'mod_insert.html'
-		})
-		.when('/delete/:gameId', {
-			controller:'DeleteCtrl',
-			templateUrl:'mod_delete.html'
 		})
 		.when('/play/', {
 			controller:'PlayCtrl',
