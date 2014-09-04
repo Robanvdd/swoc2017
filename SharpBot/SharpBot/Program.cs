@@ -86,11 +86,11 @@ namespace SharpBot
 
             var fromLocation = myLocations.ElementAt(random.Next(myLocations.Count()));
 
-            var possibleToLocations = GetNeighbors(board, fromLocation);
+            var possibleToLocations = GetPossibleToLocations(board, fromLocation);
 
             var toLocation = possibleToLocations.ElementAt(random.Next(possibleToLocations.Count));
 
-            if (toLocation == null)
+            if (toLocation == fromLocation)
             {
                 return new Move(MoveType.Pass, null, null);
             }
@@ -125,9 +125,13 @@ namespace SharpBot
             return move;
         }
 
-        private static List<BoardLocation> GetNeighbors(Board board, BoardLocation fromLocation)
+        private static List<BoardLocation> GetPossibleToLocations(Board board, BoardLocation fromLocation)
         {
             List<BoardLocation> possibleToLocations = new List<BoardLocation>();
+
+            // always possible to pass
+            possibleToLocations.Add(fromLocation);
+
             var north = GetFirstNonEmptyInDirection(board, fromLocation, 0, -1);
             if (north != null && IsValidMove(board, fromLocation, north)) possibleToLocations.Add(north);
 
