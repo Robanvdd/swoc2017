@@ -2,10 +2,10 @@ package gos.engine;
 
 public class StatusResponse
 {
-	public StatusResponse(boolean ok)
-	{
-		Ok = ok;
-	}
+    public StatusResponse(boolean ok)
+    {
+        Ok = ok;
+    }
 
-	public final boolean Ok;
+    public final boolean Ok;
 }
