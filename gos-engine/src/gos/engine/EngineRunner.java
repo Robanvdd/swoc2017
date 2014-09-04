@@ -1,6 +1,7 @@
 package gos.engine;
 
 import java.io.IOException;
+import java.util.List;
 
 import gos.engine.io.Bot;
 
@@ -11,13 +12,24 @@ public class EngineRunner implements AutoCloseable
 
 	private final Board board;
 	
-	public EngineRunner(String executableWhite, String executableBlack) throws IOException
-	{
-		botWhite = new Bot(executableWhite, Board.PlayerWhite);
-		botBlack = new Bot(executableBlack, Board.PlayerBlack);
-		
-		board = new Board();
-	}
+    private final Database database;
+
+    public EngineRunner(String executableWhite, String executableBlack)
+            throws IOException
+    {
+        database = new Database("localhost", "test");
+
+        List<Double> botIds = database.GetAllBots();
+        for (Double botId : botIds)
+        {
+            System.out.println("bot: " + botId);
+        }
+
+        botWhite = new Bot(executableWhite, Board.PlayerWhite);
+        botBlack = new Bot(executableBlack, Board.PlayerBlack);
+
+        board = new Board();
+    }
 
 	public void run()
 	{
