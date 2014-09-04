@@ -2,10 +2,10 @@ package gos.engine;
 
 public class InitiateRequest
 {
-	public InitiateRequest(int color)
-	{
-		Color = color;
-	}
+    public InitiateRequest(int color)
+    {
+        Color = color;
+    }
 
-	public final int Color;
+    public final int Color;
 }

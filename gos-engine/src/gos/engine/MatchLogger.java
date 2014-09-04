@@ -6,16 +6,16 @@ import java.util.List;
 public class MatchLogger
 {
     private final List<Move> moves = new ArrayList<Move>();
-    
+
     public MatchLogger()
     {
     }
-    
+
     public void AddMove(Move move)
     {
         moves.add(move);
     }
-    
+
     public String GetLog()
     {
         StringBuilder sb = new StringBuilder();
@@ -35,7 +35,7 @@ public class MatchLogger
         }
         return sb.toString();
     }
-    
+
     private static String BoardLocationToString(BoardLocation location)
     {
         char x = (char)('A' + location.X);
