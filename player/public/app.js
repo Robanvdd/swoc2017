@@ -42,6 +42,14 @@ meanApp.config(['$routeProvider', function($routeProvider) {
 			controller:'LogInCtrl',
 			templateUrl:'mod_login.html'
 		})
+		.when('/rules/', {
+			controller:'RulesCtrl',
+			templateUrl:'mod_rules.html'
+		})
+		.when('/leaderboard/', {
+			controller:'LeaderboardCtrl',
+			templateUrl:'mod_leaderboard.html'
+		})
 		.otherwise({
 			redirectTo: '/'
 		});
