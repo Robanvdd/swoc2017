@@ -1,0 +1,11 @@
+<svg height="60" width="160">
+<circle cx="30" cy="30" r="20" stroke="#D0D0D0" stroke-width="3" fill="#FFFFFF" /> 
+  
+<circle cx="80" cy="30" r="20" stroke="#D0D0D0" stroke-width="3" fill="#FFFFFF" />   
+<circle cx="80" cy="30" r="8" stroke="none" stroke-width="3" fill="#D0D0D0" />
+   
+<circle cx="130" cy="30" r="20" stroke="#D0D0D0" stroke-width="3" fill="#FFFFFF" />   
+<circle cx="130" cy="30" r="14" stroke="none" stroke-width="3" fill="#D0D0D0" />   
+<circle cx="130" cy="30" r="10" stroke="none" stroke-width="3" fill="#FFFFFF" />   
+<circle cx="130" cy="30" r="6" stroke="none" stroke-width="3" fill="#D0D0D0" />   
+</svg>

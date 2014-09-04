@@ -1766,6 +1766,15 @@ meanControllers.controller('InsertCtrl', ['$scope', '$http', '$location', functi
 //CONTROLLER FOR mod_home.html
 meanControllers.controller('HomeCtrl', ['$scope', '$http', '$location', function($scope, $http, $location) {
 }]);
+
+//CONTROLLER FOR mod_rules.html
+meanControllers.controller('RulesCtrl', ['$scope', '$http', '$location', function($scope, $http, $location) {
+}]);
+
+//CONTROLLER FOR mod_leaderboard.html
+meanControllers.controller('LeaderboardCtrl', ['$scope', '$http', '$location', function($scope, $http, $location) {
+}]);
+
 //CONTROLLER FOR mod_login.html
 meanControllers.controller('LogInCtrl', ['$scope', '$http', '$location', function($scope, $http, $location) {
 	$scope.user = '';
