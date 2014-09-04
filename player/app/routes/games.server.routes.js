@@ -5,13 +5,6 @@ var games = require('../../app/controllers/games');
 
 module.exports = function(app) {
 
-	app.post('/api/game/create/', function(req, res){
-		games.createDoc(req, function(err, success) {
-			if(err) throw err;
-			else res.send(success);
-		});
-	});
-
 	app.get('/api/game/retrieveall/', function(req, res) { 
 		games.retrieveAll(function(err, success) {
 			if(err) throw err;
@@ -21,20 +14,6 @@ module.exports = function(app) {
 
 	app.get('/api/game/retrieveid/:id', function(req, res) { 
 		games.retrieveById(req.params.id, function(err, success) {
-			if(err) throw err;
-			else res.send(success);
-		});
-	});
-
-	app.post('/api/game/update', function(req, res) {
-		games.updateDoc(req, function(err, success) {
-			if(err) throw err;
-			else res.send(success);
-		});
-	});
-
-	app.post('/api/game/delete', function(req, res) { 
-		games.deleteDoc(req.body.id, function(err, success) {
 			if(err) throw err;
 			else res.send(success);
 		});

@@ -1,4 +1,4 @@
-package eu.sioux.swoc.gos.engine;
+package gos.engine;
 
 public class InitiateRequest
 {
