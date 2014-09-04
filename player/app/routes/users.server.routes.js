@@ -6,7 +6,7 @@ var users = require('../../app/controllers/users'),
 
 module.exports = function(app) {
 
-  app.get('/logout', function(req, res){
+  app.get('/logout', users.requiresLogin, function(req, res){
     console.log('logout');
     req.logout();
     res.redirect('/');
