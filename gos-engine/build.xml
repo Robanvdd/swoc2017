@@ -1,9 +1,14 @@
 <project>
+    <property name="build.dir" value="."/>
     <property name="lib.dir" value="lib"/>
 
     <path id="classpath">
         <fileset dir="${lib.dir}" includes="**/*.jar"/>
     </path>
+
+    <manifestclasspath property="lib.list" jarfile="${build.dir}/${jar.file}">
+        <classpath refid="classpath" />
+    </manifestclasspath>
 
     <target name="clean">
         <delete dir="build"/>
@@ -19,6 +24,7 @@
         <jar destfile="build/jar/gos-engine.jar" basedir="build/classes">
             <manifest>
                 <attribute name="Main-Class" value="eu.sioux.swoc.gos.engine.Main"/>
+                <attribute name="Class-Path" value=". ${lib.list}"/>
             </manifest>
         </jar>
     </target>
