@@ -23,7 +23,7 @@
         <mkdir dir="build/jar"/>
         <jar destfile="build/jar/gos-engine.jar" basedir="build/classes">
             <manifest>
-                <attribute name="Main-Class" value="eu.sioux.swoc.gos.engine.Main"/>
+                <attribute name="Main-Class" value="gos.engine.Main"/>
                 <attribute name="Class-Path" value=". ${lib.list}"/>
             </manifest>
         </jar>
