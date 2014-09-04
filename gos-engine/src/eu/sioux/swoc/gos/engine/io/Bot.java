@@ -1,33 +1,16 @@
-// Copyright 2014 theaigames.com (developers@theaigames.com)
-
-//    Licensed under the Apache License, Version 2.0 (the "License");
-//    you may not use this file except in compliance with the License.
-//    You may obtain a copy of the License at
-
-//        http://www.apache.org/licenses/LICENSE-2.0
-
-//    Unless required by applicable law or agreed to in writing, software
-//    distributed under the License is distributed on an "AS IS" BASIS,
-//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//    See the License for the specific language governing permissions and
-//    limitations under the License.
-//	
-//    For the full copyright and license information, please view the LICENSE
-//    file that was distributed with this source code.
-
 package eu.sioux.swoc.gos.engine.io;
 
 import java.io.IOException;
 
 import com.google.gson.Gson;
 
-public class IORobot implements AutoCloseable
+public class Bot implements AutoCloseable
 {
 	private final IOHandler handler;
 	private final StringBuilder dump;
 	private final Gson gson;
 
-	public IORobot(String command, int player) throws IOException
+	public Bot(String command, int player) throws IOException
 	{
 		handler = new IOHandler(command);
 		dump = new StringBuilder();
@@ -49,7 +32,7 @@ public class IORobot implements AutoCloseable
 
 	public <T> T readMessage(Class<T> classOfT)
 	{
-		return readMessage(classOfT, 2000);
+        return readMessage(classOfT, 2000);
 	}
 
 	public <T> T readMessage(Class<T> classOfT, long timeOut)
@@ -57,6 +40,10 @@ public class IORobot implements AutoCloseable
 		// Read
 		String message = handler.readLine(timeOut);
 		dump.append("<" + message + "\n");
+        if (message == null)
+        {
+            return null;
+        }
 		
 		// Deserialize
 		return gson.fromJson(message, classOfT);

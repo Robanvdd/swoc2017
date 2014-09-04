@@ -2,19 +2,19 @@ package eu.sioux.swoc.gos.engine;
 
 import java.io.IOException;
 
-import eu.sioux.swoc.gos.engine.io.IORobot;
+import eu.sioux.swoc.gos.engine.io.Bot;
 
 public class EngineRunner implements AutoCloseable
 {
-	private final IORobot botWhite;
-	private final IORobot botBlack;
+	private final Bot botWhite;
+	private final Bot botBlack;
 
 	private final Board board;
 	
 	public EngineRunner(String executableWhite, String executableBlack) throws IOException
 	{
-		botWhite = new IORobot(executableWhite, Board.PlayerWhite);
-		botBlack = new IORobot(executableBlack, Board.PlayerBlack);
+		botWhite = new Bot(executableWhite, Board.PlayerWhite);
+		botBlack = new Bot(executableBlack, Board.PlayerBlack);
 		
 		board = new Board();
 	}
@@ -29,14 +29,10 @@ public class EngineRunner implements AutoCloseable
 			
 			FirstRound();
 			
-			board.Dump();
-
 			int winner = Board.PlayerNone;
 			do
 			{
 			    winner = NormalRound();
-    			        
-    			board.Dump();
 			} while (winner == Board.PlayerNone);
 			
 			System.out.println("Game done. Winner is " + ((winner == Board.PlayerBlack) ? "Black" : "White"));
@@ -93,6 +89,7 @@ public class EngineRunner implements AutoCloseable
 	    System.out.println("White - first move");
 		// TODO: If bot does not give a valid move, then let it loose immediately
 		DoOneMove(botWhite, AttackOnly, FirstMoveTimeOut);
+        board.Dump();
 	}
 	
 	private int NormalRound()
@@ -102,12 +99,15 @@ public class EngineRunner implements AutoCloseable
         System.out.println("Black - move 1/2");
 		// First black then white, since white may start the game
 		winner = DoOneMove(botBlack, AttackOnly, NormalRoundTimeOut);
+        board.Dump();
 		if (winner != Board.PlayerNone)
 		{
 		    return winner;
 		}
+
         System.out.println("Black - move 2/2");
 		winner = DoOneMove(botBlack, AllMoves, NormalRoundTimeOut); 
+        board.Dump();
         if (winner != Board.PlayerNone)
         {
             return winner;
@@ -115,17 +115,20 @@ public class EngineRunner implements AutoCloseable
 
         System.out.println("White - move 1/2");
         winner = DoOneMove(botWhite, AttackOnly, NormalRoundTimeOut); 
+        board.Dump();
         if (winner != Board.PlayerNone)
         {
             return winner;
         }
+
         System.out.println("White - move 2/2");
         winner = DoOneMove(botWhite, AllMoves, NormalRoundTimeOut);
+        board.Dump();
         if (winner != Board.PlayerNone)
         {
             return winner;
         }
-        
+
         return Board.PlayerNone;
 	}
 	
@@ -162,24 +165,43 @@ public class EngineRunner implements AutoCloseable
         return dump; 
 	}
 	
-	private int DoOneMove(IORobot bot, int[] allowedMoves, long timeOut)
+	private static int GetOtherPlayer(int player)
+	{
+	    if (player == Board.PlayerBlack)
+	    {
+	        return Board.PlayerWhite;
+	    }
+	    else if (player == Board.PlayerWhite)
+	    {
+	        return Board.PlayerBlack;
+	    }
+	    else
+	    {
+	        return Board.PlayerNone;
+	    }
+	}
+	
+	private int DoOneMove(Bot bot, int[] allowedMoves, long timeOut)
 	{
 		MoveRequest request = new MoveRequest(board, allowedMoves);
 		Move move = bot.writeAndReadMessage(request, Move.class, timeOut);
+		if (move == null)
+		{
+            System.out.println("No response received. Other bot wins.");
+		    // No response. Bot looses.
+		    return GetOtherPlayer(bot.Player);
+		}
 
         System.out.println("received: " + MoveToString(move)); 
 		
-		boolean moveProcessed = false;
-		if (IsMoveInAllowedList(move, allowedMoves) && IsMoveValid(bot, move))
+		if (!IsMoveInAllowedList(move, allowedMoves) || !IsMoveValid(bot, move))
 		{
-			ProcessValidatedMove(move);
-			moveProcessed = true;
+		    System.out.println("Illegal move. Other bot wins.");
+            // Illegal move. Bot looses.
+            return GetOtherPlayer(bot.Player);
 		}
-		
-		if (!moveProcessed)
-		{
-		    move = new Move(Move.Pass, null, null);
-		}
+
+		ProcessValidatedMove(move);
 
 		int winner = GetCurrentWinner();
 		
@@ -191,31 +213,6 @@ public class EngineRunner implements AutoCloseable
 		botBlack.writeMessage(processedMove);
 		
 		return winner;
-	}
-	
-	private void ProcessValidatedMove(Move move)
-	{
-	    if (move.Type != Move.Pass)
-	    {
-    		int newOwner = board.GetOwner(move.From);
-    		int newStone = board.GetStone(move.From);
-    		int newCount = board.GetHeight(move.From);
-    
-    		int oldOwner = board.GetOwner(move.To);
-    		if (newOwner == oldOwner)
-    		{
-    			// strengthen
-    			int oldCount = board.GetHeight(move.To);
-    			newCount += oldCount;
-    		}
-    		else
-    		{
-    			// attack, just overwrite the "to" location
-    		}
-    		
-    		board.SetSpace(move.To, newOwner, newStone, newCount);
-    		board.ClearSpace(move.From);
-	    }
 	}
 
     private boolean IsMoveInAllowedList(Move move, int[] allowedMoves)
@@ -233,7 +230,7 @@ public class EngineRunner implements AutoCloseable
         return allowedMove;
     }
     
-    private boolean IsMoveValid(IORobot bot, Move move)
+    private boolean IsMoveValid(Bot bot, Move move)
     {
         if (move.Type == Move.Pass)
         {
@@ -256,6 +253,7 @@ public class EngineRunner implements AutoCloseable
             if (fromColor != botColor &&             // can only move from places owned by bot
                 toColor != Board.PlayerNone)          // can not move to an empty place
             {
+                System.out.println("not owned by bot or moving to empty place");
                 return false;
             }
             else if (move.Type == Move.Attack &&
@@ -273,6 +271,7 @@ public class EngineRunner implements AutoCloseable
             }
             else
             {
+                System.out.println("fromColor = " + fromColor + ", toColor = " + toColor + ", fromHeight = " + fromHeight + ", toHeight = " + toHeight);
                 return false;
             }
         }
@@ -341,6 +340,31 @@ public class EngineRunner implements AutoCloseable
         return allEmpty;
     }
     
+    private void ProcessValidatedMove(Move move)
+    {
+        if (move.Type != Move.Pass)
+        {
+            int newOwner = board.GetOwner(move.From);
+            int newStone = board.GetStone(move.From);
+            int newCount = board.GetHeight(move.From);
+    
+            int oldOwner = board.GetOwner(move.To);
+            if (newOwner == oldOwner)
+            {
+                // strengthen
+                int oldCount = board.GetHeight(move.To);
+                newCount += oldCount;
+            }
+            else
+            {
+                // attack, just overwrite the "to" location
+            }
+            
+            board.SetSpace(move.To, newOwner, newStone, newCount);
+            board.ClearSpace(move.From);
+        }
+    }
+
     private int GetCurrentWinner()
     {
         boolean blackAlive = IsAlive(Board.PlayerBlack);
