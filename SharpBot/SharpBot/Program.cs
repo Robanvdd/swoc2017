@@ -104,6 +104,17 @@ namespace SharpBot
             }
         }
 
+        private static bool IsValidMove(Board board, BoardLocation from, BoardLocation to)
+        {
+            Player fromOwner = board.GetOwner(from);
+            Player toOwner = board.GetOwner(to);
+            int fromHeight = board.GetHeight(from);
+            int toHeight = board.GetHeight(to);
+            return (fromOwner != Player.None) &&
+                (toOwner != Player.None) &&
+                (fromOwner == toOwner || fromHeight >= toHeight);
+        }
+
         private static Move GetRandomAttack(Board board)
         {
             Move move = GetRandomMove(board);
@@ -118,22 +129,22 @@ namespace SharpBot
         {
             List<BoardLocation> possibleToLocations = new List<BoardLocation>();
             var north = GetFirstNonEmptyInDirection(board, fromLocation, 0, -1);
-            if (north != null) possibleToLocations.Add(north);
+            if (north != null && IsValidMove(board, fromLocation, north)) possibleToLocations.Add(north);
 
             var south = GetFirstNonEmptyInDirection(board, fromLocation, 0, 1);
-            if (south != null) possibleToLocations.Add(south);
+            if (south != null && IsValidMove(board, fromLocation, south)) possibleToLocations.Add(south);
 
             var east = GetFirstNonEmptyInDirection(board, fromLocation, 1, 0);
-            if (east != null) possibleToLocations.Add(east);
+            if (east != null && IsValidMove(board, fromLocation, east)) possibleToLocations.Add(east);
 
             var west = GetFirstNonEmptyInDirection(board, fromLocation, -1, 0);
-            if (west != null) possibleToLocations.Add(west);
+            if (west != null && IsValidMove(board, fromLocation, west)) possibleToLocations.Add(west);
 
             var northWest = GetFirstNonEmptyInDirection(board, fromLocation, -1, -1);
-            if (northWest != null) possibleToLocations.Add(northWest);
+            if (northWest != null && IsValidMove(board, fromLocation, northWest)) possibleToLocations.Add(northWest);
 
             var southEast = GetFirstNonEmptyInDirection(board, fromLocation, 1, 1);
-            if (southEast != null) possibleToLocations.Add(southEast);
+            if (southEast != null && IsValidMove(board, fromLocation, southEast)) possibleToLocations.Add(southEast);
             return possibleToLocations;
         }
 
