@@ -15,10 +15,10 @@ public class Database
 {
     private final MongoClient client;
     private final DB db;
-    
+
     private static final String MatchTableName = "Match";
     private static final String BotTableName = "Bot";
-    
+
     public Database(String dbHost, String dbName) throws UnknownHostException
     {
         client = new MongoClient(dbHost);
@@ -29,18 +29,18 @@ public class Database
     {
         return db.getCollection(MatchTableName);
     }
-    
+
     private DBCollection GetBotTable()
     {
         return db.getCollection(BotTableName);
     }
-    
+
     public DBObject GetBotExecutable(int botId)
     {
         DBCollection coll = GetBotTable();
 
         BasicDBObject query = new BasicDBObject("_id", botId);
-        
+
         DBCursor cursor = coll.find(query);
         DBObject object = null;
         if (coll.count() > 1 || coll.count() < 1)
@@ -60,11 +60,11 @@ public class Database
         }
         return object;
     }
-    
+
     public List<Double> GetAllBots()
     {
         DBCollection coll = GetBotTable();
-        
+
         DBObject object = null;
         List<Double> botList = new LinkedList<Double>();
         try (DBCursor cursor = coll.find())
