@@ -58,5 +58,3 @@ user.save(function(err) {
 module.exports.mongoose 		= mongoose;
 module.exports.SchemaGame 		= Game;
 module.exports.SchemaUser		= userSchema;
-
-mongoose.connect('mongodb://localhost/belajarnode');

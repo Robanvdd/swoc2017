@@ -1,0 +1,25 @@
+Dit is de EV3, ook wel de 'brick' genoemd. Dat is het hart van elke robot.
+
+Je hebt ook motors, waarmee de robot kan bewegen. Er zijn 3 motoren: 2 grote, oftewel L-motoren en 1 kleine, oftewel de M-motor.
+
+Je hebt ook sensoren, waarmee je robot kan zien en kan voelen. Dit is bijvoorbeeld een kleurensensor, die een kleur kan herkennen. Dit is een druksensor, die kan waarnemen of er iets wordt ingedrukt. Dit is een afstandssensor, maar hij kan nog wat anders. "Weet 1 van jullie dat?" 
+Dit aparte apparaatje is een infraroodzender die je bijvoorbeeld als afstandsbediening kan gebruiken. De infraroodsensor kan signalen hiervan opvangen, bijvoorbeeld om te zien waar hij is, of om een opdracht te krijgen.
+
+Een EV3 kan niks zo lang je hem niet verteld wat hij precies moet doen. Hiervoor maak je een programma. Een programma is een aantal stappen die de robot moet uitvoeren. Eigenlijk net zoals het bouwen van lego. "Wie heeft er wel eens lego gebouwd?" - Het boekje dat verteld hoe jij de lego moet bouwen, is dan het programma. Jij bent dan de robot die doet wat er in het boekje staat. 
+
+Er is wel een groot verschil: Een robot maakt geen fouten. Dus als er iets gebeurd wat niet klopt, dan is het programma verkeerd.
+
+Een programma maak je met de EV3 sofware, die staat al open op je computer. Op het beginscherm zie je allemaal robots. Omdat we vandaag zelf een programma gaan schrijven, openen we een nieuw project. Dit project bevat 1 programma dat nog helemaal leeg is.
+
+Een programma maak je door een aantal bouwblokken achter elkaar te slepen. Als we een robot vooruit willen laten rijden, moeten we dat achter het startblok zetten. 
+Let op: Hier onder staan alle blokjes waarmee we een actie kunnen uitvoeren, de groene blokjes. Als ik een motor wil aansturen, kies ik hier een blokje en zet ik die achter het startblock [sleep sleep]. Die motor kun je vervolgens instellen: Hoe hard gaat hij, welke kant moet hij op, hoe lang moet hij draaien. Ook moet je kiezen op welke poort hij zit aangesloten.
+
+Als ik wil dat de robot pas gaat rijden als ik op een knopje druk, dan kies ik voor een oranje blokje, de zandloper. Dat is het wachtblokje. Die stel ik zo in dat hij wacht op een knopje op de EV3, bijvoorbeeld de middelste knop. Ik kies ervoor om te wachten tot de knop ingedrukt is en ook weer is losgelaten.
+
+Nu wil ik dat dit constant herhaald wordt. Als de knop ingedrukt wordt, gaat hij een stukje rijden. Vervolgens moet hij weer wachten tot ik de knop indruk en vervolgens gaat hij weer rijden. Dit kan ik doen door een lus toe te voegen en de andere blokjes daar in te zetten. [Sleep sleep] "Kent iemand die 8 die op zijn kant ligt"? - Dat betekend dat hij oneindig door gaat. Dus het programma gaat nu elke keer opnieuw wachten en rijden.
+
+Je kunt de robot ook nog keuzes laten maken met het switch blok. Dus bijvoorbeeld: Als ik groen zie, dan zeg ik groen, maar als ik rood zie, dan zeg ik rood. 
+
+Nu heb ik een programma geschreven maar moet het nog naar de robot. Om een EV3 een programma te kunnen sturen, sluit je hem aan op de computer. Dat is het makkelijkst met een USB kabel. Rechtsonder kun je vervolgens zien of hij verbonden is. Daarna kun je op de download knop drukken, die het programma naar de robot stuurt. Of je kunt op de play knop drukken, zodat het programma ook nog meteen wordt gestart.
+
+

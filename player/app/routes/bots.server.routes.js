@@ -1,12 +1,14 @@
 /**
  * Module dependencies.
  */
-var users = require('../controllers/users.server.controller');
+var users = require('../controllers/users.server.controller'),
+	path = require('path')
+	fs = require('fs');
 
 module.exports = function(app) {
 
 	app.post('/api/bot/upload/', users.requiresLogin, function(req, res) {
-		var target_folder =  application_root + '/bots_upload/' + req.user.username;
+		var target_folder = path.resolve('./bots_upload/' + req.user.username);
 			fs.mkdir(target_folder,function(e){
 		    if(!e || (e && e.code === 'EEXIST')){
 		        //do something with contents
