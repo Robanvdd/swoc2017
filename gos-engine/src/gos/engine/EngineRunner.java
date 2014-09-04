@@ -7,23 +7,18 @@ import gos.engine.io.Bot;
 
 public class EngineRunner implements AutoCloseable
 {
-	private final Bot botWhite;
+    private final MatchLogger logger;
+
+    private final Bot botWhite;
 	private final Bot botBlack;
 
 	private final Board board;
 	
-    private final Database database;
 
     public EngineRunner(String executableWhite, String executableBlack)
             throws IOException
     {
-        database = new Database("localhost", "test");
-
-        List<Double> botIds = database.GetAllBots();
-        for (Double botId : botIds)
-        {
-            System.out.println("bot: " + botId);
-        }
+        logger = new MatchLogger();
 
         botWhite = new Bot(executableWhite, Board.PlayerWhite);
         botBlack = new Bot(executableBlack, Board.PlayerBlack);
@@ -66,6 +61,7 @@ public class EngineRunner implements AutoCloseable
 		System.out.println("---- BLACK ERROR ----");
 		System.out.println(botBlack.getErrors());
         System.out.println("--------");
+        System.out.println("log: " + logger.GetLog());
 		System.out.println("Game ended");
 	}
 
@@ -219,13 +215,17 @@ public class EngineRunner implements AutoCloseable
 		
         System.out.println("processed: " + MoveToString(move)); 
 
-        // Send result to both bots
-		ProcessedMove processedMove = new ProcessedMove(bot.Player, move, winner);
-		botWhite.writeMessage(processedMove);
-		botBlack.writeMessage(processedMove);
+		SendMoveToAllBots(bot.Player, move, winner);
 		
 		return winner;
 	}
+
+    private void SendMoveToAllBots(int player, Move move, int winner)
+    {
+        ProcessedMove processedMove = new ProcessedMove(player, move, winner);
+		botWhite.writeMessage(processedMove);
+		botBlack.writeMessage(processedMove);
+    }
 
     private boolean IsMoveInAllowedList(Move move, int[] allowedMoves)
     {
@@ -375,6 +375,7 @@ public class EngineRunner implements AutoCloseable
             board.SetSpace(move.To, newOwner, newStone, newCount);
             board.ClearSpace(move.From);
         }
+        logger.AddMove(move);
     }
 
     private int GetCurrentWinner()
