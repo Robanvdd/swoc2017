@@ -21,6 +21,7 @@ namespace SharpBot
     }
     public class Board
     {
+        [Newtonsoft.Json.JsonProperty]
         private readonly int[][] state;
 
         private static readonly int Empty = GetCode(Player.None, Stone.None, 0);

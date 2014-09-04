@@ -1,5 +1,5 @@
-var db = require('../db');
-var ModelUser = db.mongoose.model('User', db.SchemaUser);
+var db = require('./db');
+var ModelGame = db.mongoose.model('Game', db.SchemaGame);
 
 /* 
 * *****************
@@ -11,7 +11,6 @@ module.exports.RetrieveAll = RetrieveAll;
 module.exports.RetrieveById = RetrieveById;
 module.exports.UpdateDoc = UpdateDoc;
 module.exports.DeleteDoc = DeleteDoc;
-module.exports.findOne = RetrieveByName;
 
 /* 
 * *********
@@ -19,10 +18,12 @@ module.exports.findOne = RetrieveByName;
 * *********
 */
 function CreateDoc(req, callback) {
-	var instance = new ModelUser();
-	instance.username = req.body.username;
-	instance.email	  = req.body.email;
-	instance.password = req.body.password;
+	var instance = new ModelGame();
+	instance.name = req.body.name;
+	instance.bot1 = req.body.bot1;
+	instance.bot2 = req.body.bot2;
+	instance.startstate = req.body.startstate;
+	instance.moves = req.body.moves;
 	
 	instance.save(function (err,doc) {
 		if(err) callback(err);
@@ -31,34 +32,30 @@ function CreateDoc(req, callback) {
 }
 
 function RetrieveAll(callback) {
-	ModelUser.find({}, callback);
+	ModelGame.find({}, callback);
 }
 
 function RetrieveById(id, callback) {
-	ModelUser.findOne({_id:id}, callback);
-}
-
-
-function RetrieveByName(username, callback) {
-	console.log('RetrieveByName, username:' + username.username);
-	ModelUser.findOne({"username":username.username}, callback);
+	ModelGame.findOne({_id:id}, callback);
 }
 
 function UpdateDoc(req, callback) {
 	var newValues = {
-					"username":	req.body.username,
-					"email":	req.body.email,
-					"password":	req.body.password,
+					"name":	req.body.name,
+					"bot1":	req.body.bot1,
+					"bot2":	req.body.bot2,
+					"startstate":	req.body.startstate,
+					"moves":	req.body.moves,
 					};
 	
-	ModelUser.update( {_id:req.body.id}, {"$set":newValues}, function (err) {
+	ModelGame.update( {_id:req.body.id}, {"$set":newValues}, function (err) {
 		if(err) callback(err);
 		else callback(null, {"status":"OK"});
 	});
 }
 
 function DeleteDoc(id, callback) {
-	ModelUser.remove( {_id:id}, function (err) {
+	ModelGame.remove( {_id:id}, function (err) {
 		if(err) callback(err);
 		else callback(null, {"status":"OK"});
 	});

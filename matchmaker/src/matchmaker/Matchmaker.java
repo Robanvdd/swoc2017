@@ -22,15 +22,20 @@ import java.util.logging.Logger;
  * @author SvZ
  */
 public class Matchmaker {
-    Map<String, Integer> scoreMap = new HashMap<String, Integer>();
+    Map<Double, Integer> scoreMap = new HashMap<Double, Integer>();
     MongoClient mongoClient;
+    private final String BOTTABLE = "Bot";
+    private final String MATCHTABLE = "Match";
+    private final String WINNERFIELDNAME = "winnerBot";
+    private final String RANKINGFIELDNAME = "ranking";
+    DB db = null;
 
     /**
-     * TODO: Test with database, attach Engine and test it
+     * TODO: attach Engine and test it
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        String dbName = "mean-dev";
+        String dbName = "test";
         if (args.length > 0)
             dbName = args[0];
         
@@ -38,7 +43,7 @@ public class Matchmaker {
     }
     
     public Matchmaker(String dbName) {
-        DB db = createDBConnection(dbName);
+        db = createDBConnection(dbName);
         if (db != null) {
             makeMatches(getAllBots(db));
             updateBotScores(db);
@@ -51,7 +56,7 @@ public class Matchmaker {
         try {
             mongoClient = new MongoClient( "localhost" );
             DB db = mongoClient.getDB( dbName );
-            
+            System.out.println("DB connection made");
             return db;
         } catch (UnknownHostException ex) {
             Logger.getLogger(Matchmaker.class.getName()).log(Level.SEVERE, null, ex);
@@ -59,19 +64,19 @@ public class Matchmaker {
         }
         return null;
     }
-    /*
+    
     private DBCollection getMatchTable(DB database) {
-        DBCollection coll = database.getCollection("matches");
+        DBCollection coll = database.getCollection(MATCHTABLE);
         return coll;
     }
     
     private DBCollection getBotTable(DB database) {
-        DBCollection coll = database.getCollection("bot");
+        DBCollection coll = database.getCollection(BOTTABLE);
         return coll;
     }
     
-    private DBObject getMatchfromTable(DBCollection table, String matchId) {
-        BasicDBObject query = new BasicDBObject("matchId", matchId);
+    private DBObject getMatchfromTable(DBCollection table, Double matchId) {
+        BasicDBObject query = new BasicDBObject("_id", matchId);
         
         DBCursor cursor = table.find(query);
         DBObject object = null;
@@ -85,8 +90,16 @@ public class Matchmaker {
         return object;
     }
     
-    private DBObject getBotData(DB database, String botId) {
-        DBCollection coll = database.getCollection("bot");
+    private Double getWinnerOfMatch(DBCollection coll, Double matchId) {
+        DBObject match = getMatchfromTable(coll, matchId);
+        if (!match.containsField(WINNERFIELDNAME)) {
+            throw new IllegalArgumentException("No winnerBot field in this match entry!");
+        }
+        return (Double)match.get(WINNERFIELDNAME);
+    }
+    
+    private DBObject getBotData(DB database, Double botId) {
+        DBCollection coll = getBotTable(database);
         
         BasicDBObject query = new BasicDBObject("_id", botId); // Hope this is the way to get the id of a row
         
@@ -104,26 +117,26 @@ public class Matchmaker {
         }
         return object;
     }
-    */
     
-    private List<String> getAllBotsOffline() {
-        List<String> botList = new ArrayList<String>();
-        String[] bots = {"bot1","bot2","bot3","bot4","bot5","bot6"};
+    
+    private List<Double> getAllBotsOffline() {
+        List<Double> botList = new ArrayList<Double>();
+        Double[] bots = {1D,2D,3D,4D,5D,6D};
         botList.addAll(Arrays.asList(bots));
         
         return botList;
     }
     
-    private List<String> getAllBots(DB database) {
-        DBCollection coll = database.getCollection("bots");
+    private List<Double> getAllBots(DB database) {
+        DBCollection coll = getBotTable(database);
         
         DBCursor cursor = coll.find();
         DBObject object = null;
-        List<String> botList = new LinkedList<String>();
+        List<Double> botList = new LinkedList<Double>();
         try {
             while (cursor.hasNext()) {
                 object = cursor.next();
-                botList.add((String)object.get("_id")); // Hope this is the way to get the id of a row
+                botList.add((Double)object.get("_id")); // Hope this is the way to get the id of a row
             }
         } finally {
             cursor.close();
@@ -131,11 +144,11 @@ public class Matchmaker {
         return botList;
     }
     
-    private String runMatch(String botId1, String botId2) {
+    private Double runMatch(Double botId1, Double botId2) {
         String lastLine = "";
         try {
             String line;
-            Process p = Runtime.getRuntime().exec("Engine " + botId1 + " " + botId2);
+            Process p = Runtime.getRuntime().exec("java -jar gos-engine " + botId1 + " " + botId2);
             p.waitFor();
             BufferedReader input =
                 new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -147,14 +160,16 @@ public class Matchmaker {
         catch (Exception err) {
             err.printStackTrace();
         }
-        return lastLine;
+        return Double.parseDouble(lastLine);
     }
     
-    private void makeAMatch(String botId1, String botId2) {
+    private void makeAMatch(Double botId1, Double botId2) {
         //Start Engine with two given bots: bot1 as white, 2 as black
-        String winner1 = runMatch(botId1, botId2);
+        Double matchId1 = runMatch(botId1, botId2);
+        Double winner1 = getWinnerOfMatch(getMatchTable(db), matchId1);
         //Start Engine with two given bots: bot1 as black, 2 as white
-        String winner2 = runMatch(botId2, botId1);;
+        Double matchId2 = runMatch(botId2, botId1);
+        Double winner2 = getWinnerOfMatch(getMatchTable(db), matchId2);
         
         //Update score
         if (winner1.equals(winner2)) {
@@ -186,7 +201,7 @@ public class Matchmaker {
      * Let every bot first against each other bot once
      * @param coll List of botIds
      */
-    private void makeMatches(List<String> botIdList) {
+    private void makeMatches(List<Double> botIdList) {
         long count = botIdList.size();
         if (count < 2) {
             return; // We do not make a match with less then 2 bots
@@ -199,8 +214,8 @@ public class Matchmaker {
         System.out.println("Made all matches between "+ count +" bots");
     }
     
-    private boolean updateBotData(DB database, String botId, int score) {
-        DBCollection coll = database.getCollection("bot");
+    private boolean updateBotData(DB database, Double botId, int score) {
+        DBCollection coll = getBotTable(database);
         
         BasicDBObject query = new BasicDBObject("_id", botId); // Hope this is the way to get the id of a row
         
@@ -217,13 +232,13 @@ public class Matchmaker {
             cursor.close();
         }
         
-        object.put("ranking", score);
+        object.put(RANKINGFIELDNAME, score);
         coll.update(query, object);
         return true;
     }
     
     private void updateBotScores(DB db) {
-        for (String key : scoreMap.keySet()) {
+        for (Double key : scoreMap.keySet()) {
             updateBotData(db, key, scoreMap.get(key));
         }
     }
