@@ -1,7 +1,7 @@
 /**
  * Module dependencies.
  */
-var users = require('../controllers/users.server.controller'),
+var users = require('../../app/controllers/users'),
 	path = require('path')
 	fs = require('fs');
 

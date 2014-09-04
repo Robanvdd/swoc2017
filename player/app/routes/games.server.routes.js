@@ -1,40 +1,40 @@
 /**
  * Module dependencies.
  */
-var Game 	= require('../models/game');
+var games = require('../../app/controllers/games');
 
 module.exports = function(app) {
 
 	app.post('/api/game/create/', function(req, res){
-		Game.CreateDoc(req, function(err, success) {
+		games.createDoc(req, function(err, success) {
 			if(err) throw err;
 			else res.send(success);
 		});
 	});
 
 	app.get('/api/game/retrieveall/', function(req, res) { 
-		Game.RetrieveAll(function(err, success) {
+		games.retrieveAll(function(err, success) {
 			if(err) throw err;
 			else res.send(success);
 		});
 	});
 
 	app.get('/api/game/retrieveid/:id', function(req, res) { 
-		Game.RetrieveById(req.params.id, function(err, success) {
+		games.retrieveById(req.params.id, function(err, success) {
 			if(err) throw err;
 			else res.send(success);
 		});
 	});
 
 	app.post('/api/game/update', function(req, res) {
-		Game.UpdateDoc(req, function(err, success) {
+		games.updateDoc(req, function(err, success) {
 			if(err) throw err;
 			else res.send(success);
 		});
 	});
 
 	app.post('/api/game/delete', function(req, res) { 
-		Game.DeleteDoc(req.body.id, function(err, success) {
+		games.deleteDoc(req.body.id, function(err, success) {
 			if(err) throw err;
 			else res.send(success);
 		});

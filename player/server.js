@@ -24,7 +24,6 @@ var app = require('./config/express')(db);
 // Bootstrap passport config
 require('./config/passport')();
 
-
 // Start the app by listening on <port>
 app.listen(config.port);
 
@@ -33,3 +32,16 @@ exports = module.exports = app;
 
 // Logging initialization
 console.log('testing server is listening on port ' + config.port);
+
+
+
+// Seed a user
+User = mongoose.model('User');
+var user = new User({ username: 'test', email: 'bob@example.com', password: 'test' });
+user.save(function(err) {
+  if(err) {
+    console.log(err);
+  } else {
+    console.log('user: ' + user.username + " saved.");
+  }
+});

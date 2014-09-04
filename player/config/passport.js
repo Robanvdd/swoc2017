@@ -1,6 +1,7 @@
 var passport = require('passport'),
-	User 	 = require('../app/models/user'),
-	LocalStrategy = require('passport-local').Strategy;
+	LocalStrategy = require('passport-local').Strategy,
+	mongoose = require('mongoose'),
+	User = mongoose.model('User');
 
 
 module.exports = function() {
@@ -19,20 +20,20 @@ module.exports = function() {
 
 	passport.deserializeUser(function(user, done) {
 		console.log('deserializeUser pre, user:' + user);
-	  User.findOne( { username: user } , function (err, user) {
-	  	if(err) {
-	  		console.log('deserializeUser, err:' + err);
-	  	} else {
-	  		console.log('deserializeUser, no err:');
-	  	}
-	  	if(user) {
-	  		
-	  		console.log('deserializeUser, username:' + user.username);
-	  	} else {
-	  		console.log('deserializeUser, no user');
-	  	}
-	    done(err, user);
-	  });
+		User.findOne( { username: user } , function (err, user) {
+			if(err) {
+				console.log('deserializeUser, err:' + err);
+			} else {
+				console.log('deserializeUser, no err:');
+			}
+			if(user) {
+				
+				console.log('deserializeUser, username:' + user.username);
+			} else {
+				console.log('deserializeUser, no user');
+			}
+		done(err, user);
+		});
 	});
 
 	// Use the LocalStrategy within Passport.
