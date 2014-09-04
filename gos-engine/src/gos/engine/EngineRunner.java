@@ -1,8 +1,8 @@
-package eu.sioux.swoc.gos.engine;
+package gos.engine;
 
 import java.io.IOException;
 
-import eu.sioux.swoc.gos.engine.io.Bot;
+import gos.engine.io.Bot;
 
 public class EngineRunner implements AutoCloseable
 {

@@ -1,4 +1,4 @@
-package eu.sioux.swoc.gos.engine.io;
+package gos.engine.io;
 
 import java.io.BufferedReader;
 import java.io.IOException;
