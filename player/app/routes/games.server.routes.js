@@ -1,19 +1,19 @@
 /**
  * Module dependencies.
  */
-var Game 	= require('../models/game');
+var games = require('../../app/controllers/games');
 
 module.exports = function(app) {
 
 	app.get('/api/game/retrieveall/', function(req, res) { 
-		Game.RetrieveAll(function(err, success) {
+		games.retrieveAll(function(err, success) {
 			if(err) throw err;
 			else res.send(success);
 		});
 	});
 
 	app.get('/api/game/retrieveid/:id', function(req, res) { 
-		Game.RetrieveById(req.params.id, function(err, success) {
+		games.retrieveById(req.params.id, function(err, success) {
 			if(err) throw err;
 			else res.send(success);
 		});

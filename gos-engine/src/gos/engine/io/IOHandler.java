@@ -1,4 +1,4 @@
-package eu.sioux.swoc.gos.engine.io;
+package gos.engine.io;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,7 +11,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
 
 public class IOHandler implements AutoCloseable
 {
