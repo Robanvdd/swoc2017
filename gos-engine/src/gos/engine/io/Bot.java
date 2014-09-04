@@ -6,13 +6,13 @@ import com.google.gson.Gson;
 
 public class Bot implements AutoCloseable
 {
-	private final IOHandler handler;
+	private final BotProcess handler;
 	private final StringBuilder dump;
 	private final Gson gson;
 
 	public Bot(String command, int player) throws IOException
 	{
-		handler = new IOHandler(command);
+		handler = new BotProcess(command);
 		dump = new StringBuilder();
 		gson = new Gson();
 		Player = player;

@@ -12,7 +12,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class IOHandler implements AutoCloseable
+public class BotProcess implements AutoCloseable
 {
 	private final Process child;
 	private final InputStreamReader inputReader;
@@ -21,7 +21,7 @@ public class IOHandler implements AutoCloseable
 	private final InputStreamReader errorReader;
 	private final BufferedReader bufferedErrorReader;
 	
-	public IOHandler(String command) throws IOException
+	public BotProcess(String command) throws IOException
 	{
 		child = Runtime.getRuntime().exec(command);
 		inputReader = new InputStreamReader(child.getInputStream());
@@ -52,6 +52,8 @@ public class IOHandler implements AutoCloseable
 		{
 			e.printStackTrace();
 		}
+		
+		executor.shutdown();
 	}
 	
 	private class SingleLineReader implements Callable<String>

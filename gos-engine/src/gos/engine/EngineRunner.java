@@ -69,12 +69,7 @@ public class EngineRunner implements AutoCloseable
     public void close() throws Exception
     {
         botWhite.close();
-        Thread.sleep(200);
-
         botBlack.close();
-        Thread.sleep(200);
-
-        Thread.sleep(200);
     }
 
     private static final long FirstMoveTimeOut = 2000;
