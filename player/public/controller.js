@@ -925,17 +925,6 @@ meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', function
 				console.log(data);
 			});
 	}
-	$scope.deleteSubmit = function($id) {
-                console.log($id);
-                var data = { id : $id};
-		$http.post('/api/game/delete/', data).success(function(){
-			$location.path("/");
-			$scope.getAll();
-		})
-		.error(function(data) {
-			console.log(data);
-		});
-	}
 	$scope.getAll();
 }]);
 
@@ -1743,24 +1732,6 @@ $scope.animate = function( startTime) {
 	}
       }
 //////////////////////////////////////////ANIMATION /////////////////////////////////////////
-}]);
-
-//CONTROLLER FOR mod_insert.html
-meanControllers.controller('InsertCtrl', ['$scope', '$http', '$location', function($scope, $http, $location) {
-	$scope.newStartstate = "oOOOOozZZZooztTTzooztoOtzoOZTO otzoOZToOTZOOZttTZOOzzzZOooooO"
-	$scope.insertSubmit = function() {
-		var data = {
-			'name' : $scope.newName, 
-			'bot1' : $scope.newBot1, 
-			'bot2' : $scope.newBot2, 
-			'startstate' : $scope.newStartstate, 
-			'moves' : $scope.newMoves, 
-		};
-		$http.post('/api/game/create/', data).success(function(){
-			$location.path("/");
-		});
-	}
-
 }]);
 
 //CONTROLLER FOR mod_home.html
