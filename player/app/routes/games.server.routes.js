@@ -97,15 +97,15 @@ module.exports = function(app) {
 				gameText = gameText + '\n';
 			}
 
-			fs.writeFile("test", gameText, function(err) {
+			fs.writeFile("./tmp/test", gameText, function(err) {
 				if (err) {
 					console.log(err);
 					res.send({result: "error, Could not write to file"});
 				} else {
-					exec('./tzaar',  ['-b', 'test', '-t', '2', '-a', req.body.AILevel], function(err, data) {  
+					exec('./tzaar',  ['-b', './tmp/test', '-t', '2', '-a', req.body.AILevel], function(err, data) {  
 						console.log(err)
 						console.log(data.toString());
-						fs.readFile('test', function(err, data){
+						fs.readFile('./tmp/test', function(err, data){
 							if (err) {							
 								console.log(err);
 								res.send({result: "error, Could not read file"});
