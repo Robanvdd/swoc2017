@@ -8,9 +8,6 @@ public class Main
 
     public static void main(String[] args)
     {
-        String executableWhite;
-        String executableBlack;
-
         if (args.length != 2)
         {
             System.err.println("no bots given");
@@ -31,21 +28,7 @@ public class Main
             return;
         }
 
-        executableWhite = database.GetBotExecutable(botIdWhite);
-        if (executableWhite == null)
-        {
-            System.err.println("White bot could not be found");
-            return;
-        }
-
-        executableBlack = database.GetBotExecutable(botIdBlack);
-        if (executableBlack == null)
-        {
-            System.err.println("Black bot could not be found");
-            return;
-        }
-
-        try (EngineRunner runner = new EngineRunner(executableWhite, executableBlack))
+        try (EngineRunner runner = new EngineRunner(database, botIdWhite, botIdBlack))
         {
             runner.run();
         }
