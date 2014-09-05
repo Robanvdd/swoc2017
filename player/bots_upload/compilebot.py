@@ -28,7 +28,7 @@ class Language:
     JAVA = 1
     PYTHON = 2
 
-codeSubdir = "/code"
+codeSubdir = "code"
 allowedLanguages = ['java', 'python']
 
 def touch(path):
@@ -80,7 +80,7 @@ def extract_bot():
         sys.stderr.write("Warning: More than 1 zip file found, using first: " + zipFileName)
     print("Using zip file " + zipFileName)
 
-    zipFilePath = os.getcwd() + "/" + zipFileName
+    zipFilePath = os.path.join(os.getcwd(), zipFileName)
     print zipFilePath
     os.mkdir(codeSubdir)
     os.chdir(codeSubdir)
