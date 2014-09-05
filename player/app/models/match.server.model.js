@@ -59,7 +59,7 @@ var MatchSchema = new Schema({
 	},
 	moves: {
 		type: String,
-		required: 'The game mvoes must be given'
+		required: 'The game moves must be given'
 	}
 });
 
