@@ -5,7 +5,9 @@ var mongoose = require('mongoose'),
 	Bot = mongoose.model('Bot'),
 	path = require('path'),
 	upload_folder_base = path.resolve('./bots_upload'),
-	run_script = 'run.sh';
+	run_script = 'run.sh',
+	execFile = require('child_process').execFile,
+	compile_script_path = path.join(upload_folder_base, 'compilebot.py');
 
 
 function findLastUserBot(user) {
@@ -52,7 +54,7 @@ function createTargetFolder(user, bot, callback) {
 	});
 }
 
-function moveUploadToTargetFolder(file, user, bot, callback) {
+function moveUploadToBotFolder(file, user, bot, callback) {
 	createTargetFolder(user, bot, function(err, target_folder) {
 		if (err) {
 			callback(err);
@@ -61,19 +63,31 @@ function moveUploadToTargetFolder(file, user, bot, callback) {
 			console.log('file.path:' + file.path + ' --> target_path:' + target_path);				
 			fs.rename(file.path, target_path, function(err) {
 				if (err) {
-					callback(err);
+					// Delete the temporary file, so that the explicitly set temporary upload dir does not get filled with unwanted files.
+					fs.unlink(file.path, function(err) {
+						if (err) {
+							callback(err);
+						} else {
+							callback(null, target_folder);
+						}
+					});
+				} else {
+					callback(null, target_folder);
 				}
-				// Delete the temporary file, so that the explicitly set temporary upload dir does not get filled with unwanted files.
-				fs.unlink(file.path, function() {
-					if (err) {
-						callback(err);
-					} else {
-						callback();
-					}
-				});
 			});
 		}
 	});
+}
+
+function runCompileScript(bot_folder, callback) {
+	console.log('Compiling bot in folder ' + bot_folder);
+	execFile(compile_script_path, ['-p', bot_folder], function(error, stdout, stderr) {
+		if (error) {
+			callback(new Error('Could not compile bot. Errors: ' + stderr));
+		} else {
+			callback();
+		}
+	})
 }
 
 function createBot(user, file, callback) {
@@ -83,7 +97,13 @@ function createBot(user, file, callback) {
 			callback(err)
 		} else {
 			console.log('Bot entry created in database. Version: ' + bot.version + ', ExecutablePath: ' + bot.executablePath);
-			moveUploadToTargetFolder(file, user, bot, callback);
+			moveUploadToBotFolder(file, user, bot, function(err, bot_folder) {
+				if (err) {
+					callback(err);
+				} else {
+					runCompileScript(bot_folder, callback);
+				}
+			});
 		}
 	});
 }
@@ -96,13 +116,15 @@ exports.upload = function(req, res) {
 	res.setHeader('Content-Type', 'text/html');
 	if (req.files.length == 0 || req.files.file.size == 0) {
 		res.send({ msg: 'No file uploaded at ' + new Date().toString() });
-	}
-	else {
+	} else {
 		createBot(req.user, req.files.file, function(err) {
-			if (err)
-				return res.status(400).send({ msg: 'Bot upload failed, details: ' + err });
+			if (err) {
+				console.log(err.message);
+				console.log(err.stack);
+				return res.status(400).send({ msg: 'Bot upload failed' });
+			}
 			else
-				return res.send({ msg: 'File uploaded to the server at ' + new Date().toString() });
+				return res.send({ msg: 'File uploaded to the server and bot compiled at ' + new Date().toString() });
 		});
 	}
 };
