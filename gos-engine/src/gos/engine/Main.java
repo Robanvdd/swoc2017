@@ -1,5 +1,6 @@
 package gos.engine;
 
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Set;
@@ -23,14 +24,32 @@ public class Main
 
             DumpAllTables(db);
 
-            DBObject bot0 = FindBotByName(db, "Bot One");
-            System.out.println("bot0 = " + bot0);
-
-            DBObject bot1 = FindBotByName(db, "Bot Two");
+            DBObject bot1 = FindBotByName(db, "Bot One");
             System.out.println("bot1 = " + bot1);
 
+            DBObject bot2 = FindBotByName(db, "Bot Two");
+            System.out.println("bot2 = " + bot2);
+
+            if (bot1 == null || bot2 == null)
+            {
+                System.err.println("Bots not found");
+                return;
+            }
+
             client.close();
-        } catch (UnknownHostException ex)
+
+            String excutable1 = (String)bot1.get("executablePath");
+            String excutable2 = (String)bot2.get("executablePath");
+
+            EngineRunner runner = new EngineRunner(excutable1, excutable2);
+            
+            runner.run();
+        }
+        catch (UnknownHostException ex)
+        {
+            ex.printStackTrace();
+        }
+        catch (IOException ex)
         {
             ex.printStackTrace();
         }
