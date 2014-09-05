@@ -33,4 +33,4 @@ var BotSchema = new Schema({
 	}
 });
 
-mongoose.model('Bot', BotSchema); // creates a collection called 'bot'
+mongoose.model('Bot', BotSchema); // uses a collection called 'bot'
