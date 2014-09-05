@@ -1,4 +1,5 @@
 var mongoose = require('mongoose'),
+	passport = require('passport'),
 	User = mongoose.model('User');
 	
 /**
@@ -32,6 +33,35 @@ exports.hasAuthorization = function(roles) {
 		});
 	};
 };
+
+exports.signin = function(req, res, next) {
+    passport.authenticate('local', function(err, user, info) {
+      if (err) { return next(err) }
+      if (!user) {
+        req.session.messages =  [info.message];
+        return res.redirect('/login')
+      }
+      req.logIn(user, function(err) {
+        if (err) { return next(err); }
+        return res.redirect('/');
+      });
+    })(req, res, next);
+}
+
+exports.signout = function(req, res) {
+    req.logout();
+    res.redirect('/');
+}
+
+/**
+ * Send User
+ */
+exports.me = function(req, res) {
+    console.log('/user: name=' + req.user.username);
+    res.send({user: req.user.username});
+}
+
+
 
 exports.createDoc = function(req, res) {
 	var instance = new User();

@@ -13,27 +13,11 @@ module.exports = function() {
 	//
 	//   Both serializer and deserializer edited for Remember Me functionality
 	passport.serializeUser(function(user, done) {
-
-	  	console.log('serializeUser, username:' + user.username);
-	  done(null, user.username);
+		done(null, user.username);
 	});
 
 	passport.deserializeUser(function(user, done) {
-		console.log('deserializeUser pre, user:' + user);
-		User.findOne( { username: user } , function (err, user) {
-			if(err) {
-				console.log('deserializeUser, err:' + err);
-			} else {
-				console.log('deserializeUser, no err:');
-			}
-			if(user) {
-				
-				console.log('deserializeUser, username:' + user.username);
-			} else {
-				console.log('deserializeUser, no user');
-			}
-		done(err, user);
-		});
+		User.findOne( { username: user }, done);
 	});
 
 	// Use the LocalStrategy within Passport.
