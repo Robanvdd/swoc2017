@@ -5,6 +5,7 @@ import optparse
 import os
 import platform
 import shutil
+import stat
 import subprocess
 import sys
 import zipfile
@@ -116,6 +117,8 @@ def create_ant_run_script():
     # Working from bot-id directory
     with open("run.sh", "w") as f:
         f.write("ant run")
+    st = os.stat("run.sh")
+    os.chmod("run.sh", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
 def determine_language():
     language = None
