@@ -79,7 +79,7 @@ public class Database
         match.put("blackStdin", black.GetInputLog());
         match.put("blackStdOut", black.GetOutputLog());
         match.put("blackStdErr", black.getErrors());
-        match.put("boardState", log);
+        match.put("moves", log);
         
         matches.insert(match);
         
