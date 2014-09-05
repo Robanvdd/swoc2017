@@ -2,6 +2,7 @@ package gos.engine;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class EngineRunner implements AutoCloseable
 {
@@ -13,9 +14,6 @@ public class EngineRunner implements AutoCloseable
 
     private final Board board;
     
-    private Date startDate;
-    private Date endDate;
-
     public EngineRunner(Database database, String idWhite, String idBlack) throws IOException
     {
         this.database = database;
@@ -41,14 +39,14 @@ public class EngineRunner implements AutoCloseable
 
     public void run()
     {
-        System.out.println("Game started");
-        
-        startDate = new Date();
-
-        int winner = Board.PlayerNone;
-
         try
         {
+            System.out.println("Starting match between " + botWhite.Id + " and " + botBlack.Id);
+
+            int winner = Board.PlayerNone;
+
+            Date startDate = new Date();
+
             SetupBots();
 
             FirstRound();
@@ -59,17 +57,22 @@ public class EngineRunner implements AutoCloseable
             }
             while (winner == Board.PlayerNone);
 
-            System.out.println("Game done. Winner is " + ((winner == Board.PlayerBlack) ? "Black" : "White"));
+            Date endDate = new Date();
 
-            endDate = new Date();
+            long diff = endDate.getTime() - startDate.getTime();
+            long matchTimeInSeconds = TimeUnit.MILLISECONDS.toSeconds(diff);
+            
+            System.out.println("Match done in " + matchTimeInSeconds + " second(s)");
+            System.out.println("Winner is " + ((winner == Board.PlayerBlack) ? "Black" : "White"));
 
             String matchId = database.StoreMatch(logger.GetLog(), botWhite, botBlack, winner, startDate, endDate);
             
-            System.out.println("Match Id = " + matchId);
+            System.out.println("Match id:");
+            System.out.println(matchId);
         }
         catch (Exception ex)
         {
-            System.out.println("Run failed: " + ex.toString());
+            System.out.println("Match failed: " + ex.toString());
             ex.printStackTrace();
         }
 }
@@ -98,44 +101,33 @@ public class EngineRunner implements AutoCloseable
 
     private void FirstRound()
     {
-        //System.out.println("White - first move");
-        // TODO: If bot does not give a valid move, then let it loose immediately
         DoOneMove(botWhite, AttackOnly, FirstMoveTimeOut);
-        //board.Dump();
     }
 
     private int NormalRound()
     {
         int winner;
 
-        //System.out.println("Black - move 1/2");
         // First black then white, since white may start the game
         winner = DoOneMove(botBlack, AttackOnly, NormalRoundTimeOut);
-        //board.Dump();
         if (winner != Board.PlayerNone)
         {
             return winner;
         }
 
-        //System.out.println("Black - move 2/2");
         winner = DoOneMove(botBlack, AllMoves, NormalRoundTimeOut);
-        //board.Dump();
         if (winner != Board.PlayerNone)
         {
             return winner;
         }
 
-        //System.out.println("White - move 1/2");
         winner = DoOneMove(botWhite, AttackOnly, NormalRoundTimeOut);
-        //board.Dump();
         if (winner != Board.PlayerNone)
         {
             return winner;
         }
 
-        //System.out.println("White - move 2/2");
         winner = DoOneMove(botWhite, AllMoves, NormalRoundTimeOut);
-        //board.Dump();
         if (winner != Board.PlayerNone)
         {
             return winner;
@@ -201,8 +193,6 @@ public class EngineRunner implements AutoCloseable
             return GetOtherPlayer(bot.Player);
         }
 
-        //System.out.println("received: " + MoveToString(move));
-
         if (!IsMoveInAllowedList(move, allowedMoves) || !IsMoveValid(bot, move))
         {
             System.out.println("Illegal move. Other bot wins.");
@@ -213,8 +203,6 @@ public class EngineRunner implements AutoCloseable
         ProcessValidatedMove(move);
 
         int winner = GetCurrentWinner();
-
-        //System.out.println("processed: " + MoveToString(move));
 
         SendMoveToAllBots(bot.Player, move, winner);
 
@@ -393,8 +381,7 @@ public class EngineRunner implements AutoCloseable
         {
             return Board.PlayerBlack;
         }
-        else
-        // (!blackAlive && !whiteAlive)
+        else // (!blackAlive && !whiteAlive)
         {
             return Board.PlayerNone;
         }
@@ -404,5 +391,4 @@ public class EngineRunner implements AutoCloseable
     {
         return board.GetTotalCount(player, Board.StoneA) > 0 && board.GetTotalCount(player, Board.StoneB) > 0 && board.GetTotalCount(player, Board.StoneC) > 0;
     }
-
 }
