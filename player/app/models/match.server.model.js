@@ -57,9 +57,9 @@ var MatchSchema = new Schema({
 		type: String,
 		required: 'StdErr from white bot must be given'
 	},
-	boardState: {
+	moves: {
 		type: String,
-		required: 'A final board state must be set'
+		required: 'The game mvoes must be given'
 	}
 });
 
