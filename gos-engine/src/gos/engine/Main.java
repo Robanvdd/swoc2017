@@ -14,16 +14,22 @@ public class Main
         try
         {
             MongoClient client = new MongoClient("localhost");
-            DB db = client.getDB("swoc-dev");
 
-            Set<String> tables = db.getCollectionNames();
-            System.out.println(tables.size() + " tables");
-
-            for (String coll : tables)
+            List<String> dbNames = client.getDatabaseNames();
+            System.out.println(dbNames.size() + " databases");
+            for (String dbName : dbNames)
             {
-                System.out.println(coll);
-            }
+                System.out.println(dbName);
 
+                DB db = client.getDB(dbName);
+                Set<String> tables = db.getCollectionNames();
+                System.out.println("  " + tables.size() + " tables");
+
+                for (String coll : tables)
+                {
+                    System.out.println("    " + coll);
+                }
+            }
             client.close();
         } catch (UnknownHostException ex)
         {
