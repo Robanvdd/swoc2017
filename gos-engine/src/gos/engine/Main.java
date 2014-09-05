@@ -7,6 +7,8 @@ import java.util.Set;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
 public class Main
@@ -21,14 +23,28 @@ public class Main
             
             DumpAllTables(db);
             
-//            MakeABot(db, "Bot One");
-//            MakeABot(db, "Bot Two");
+            DBObject bot0 = FindBot(db, 0.0);
+            System.out.println("bot0 = " + bot0);
+            
+            DBObject bot1 = FindBot(db, 1.0);
+            System.out.println("bot1 = " + bot1);
+            
             
             client.close();
         } catch (UnknownHostException ex)
         {
             ex.printStackTrace();
         }
+    }
+    
+    private static DBObject FindBot(DB db, Double id)
+    {
+        DBCollection table = db.getCollection("Bot");
+        BasicDBObject query = new BasicDBObject();
+        query.put("_id", id);
+        
+        DBCursor cursor = table.find(query);
+        return cursor.one();
     }
     
     private static void MakeABot(DB db, String botName)
