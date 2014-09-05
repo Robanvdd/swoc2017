@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package matchmaker;
 
 import com.mongodb.MongoClient;
@@ -178,20 +174,12 @@ public class Matchmaker {
         System.out.println("Made all matches between "+ count +" bots");
     }
     
-    private boolean updateBotData(DB database, ObjectId botId, int score) {
+    private void updateBotData(DB database, ObjectId botId, int score) {
         DBCollection coll = getBotTable(database);
         
         BasicDBObject query = new BasicDBObject("_id", botId); // Hope this is the way to get the id of a row
-        
-        DBObject object = coll.findOne(query);
-        if (object == null) {
-            return false;
-        }
-        
-        object.put(RANKINGFIELDNAME, score);
-
+        BasicDBObject object = new BasicDBObject(RANKINGFIELDNAME, score);
         coll.update(query, object);
-        return true;
     }
     
     private void updateBotScores(DB db) {
