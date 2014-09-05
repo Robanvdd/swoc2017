@@ -1,11 +1,11 @@
 package gos.engine;
 
 import java.io.IOException;
-
-import gos.engine.io.Bot;
+import java.util.Date;
 
 public class EngineRunner implements AutoCloseable
 {
+    private final Database database;
     private final MatchLogger logger;
 
     private final Bot botWhite;
@@ -13,13 +13,28 @@ public class EngineRunner implements AutoCloseable
 
     private final Board board;
     
-    public EngineRunner(String executableWhite, String executableBlack)
-            throws IOException
+    private Date startDate;
+    private Date endDate;
+
+    public EngineRunner(Database database, String idWhite, String idBlack) throws IOException
     {
+        this.database = database;
         logger = new MatchLogger();
 
-        botWhite = new Bot(executableWhite, Board.PlayerWhite);
-        botBlack = new Bot(executableBlack, Board.PlayerBlack);
+        String executableWhite = database.GetBotExecutable(idWhite);
+        if (executableWhite == null)
+        {
+            throw new IllegalArgumentException("White bot could not be found");
+        }
+
+        botWhite = new Bot(executableWhite, Board.PlayerWhite, idWhite);
+
+        String executableBlack = database.GetBotExecutable(idBlack);
+        if (executableBlack == null)
+        {
+            throw new IllegalArgumentException("Black bot could not be found");
+        }
+        botBlack = new Bot(executableBlack, Board.PlayerBlack, idBlack);
 
         board = new Board();
     }
@@ -27,6 +42,10 @@ public class EngineRunner implements AutoCloseable
     public void run()
     {
         System.out.println("Game started");
+        
+        startDate = new Date();
+
+        int winner = Board.PlayerNone;
 
         try
         {
@@ -34,34 +53,26 @@ public class EngineRunner implements AutoCloseable
 
             FirstRound();
 
-            int winner = Board.PlayerNone;
             do
             {
                 winner = NormalRound();
-            } while (winner == Board.PlayerNone);
+            }
+            while (winner == Board.PlayerNone);
 
             System.out.println("Game done. Winner is " + ((winner == Board.PlayerBlack) ? "Black" : "White"));
+
+            endDate = new Date();
+
+            String matchId = database.StoreMatch(logger.GetLog(), botWhite, botBlack, winner, startDate, endDate);
+            
+            System.out.println("Match Id = " + matchId);
         }
         catch (Exception ex)
         {
             System.out.println("Run failed: " + ex.toString());
             ex.printStackTrace();
         }
-
-        System.out.println("---- WHITE DUMP ----");
-        System.out.println(botWhite.getDump());
-        System.out.println("---- WHITE ERROR ----");
-        System.out.println(botWhite.getErrors());
-        System.out.println("--------");
-        System.out.println("");
-        System.out.println("---- BLACK DUMP ----");
-        System.out.println(botBlack.getDump());
-        System.out.println("---- BLACK ERROR ----");
-        System.out.println(botBlack.getErrors());
-        System.out.println("--------");
-        System.out.println("log: " + logger.GetLog());
-        System.out.println("Game ended");
-    }
+}
 
     @Override
     public void close() throws Exception
@@ -80,51 +91,51 @@ public class EngineRunner implements AutoCloseable
 
         InitiateRequest initReqB = new InitiateRequest(Board.PlayerBlack);
         botBlack.writeMessage(initReqB);
-}
+    }
 
     private static final int[] AttackOnly = { Move.Attack };
     private static final int[] AllMoves = { Move.Pass, Move.Attack, Move.Strengthen };
 
     private void FirstRound()
     {
-        System.out.println("White - first move");
+        //System.out.println("White - first move");
         // TODO: If bot does not give a valid move, then let it loose immediately
         DoOneMove(botWhite, AttackOnly, FirstMoveTimeOut);
-        board.Dump();
+        //board.Dump();
     }
 
     private int NormalRound()
     {
         int winner;
 
-        System.out.println("Black - move 1/2");
+        //System.out.println("Black - move 1/2");
         // First black then white, since white may start the game
         winner = DoOneMove(botBlack, AttackOnly, NormalRoundTimeOut);
-        board.Dump();
+        //board.Dump();
         if (winner != Board.PlayerNone)
         {
             return winner;
         }
 
-        System.out.println("Black - move 2/2");
+        //System.out.println("Black - move 2/2");
         winner = DoOneMove(botBlack, AllMoves, NormalRoundTimeOut);
-        board.Dump();
+        //board.Dump();
         if (winner != Board.PlayerNone)
         {
             return winner;
         }
 
-        System.out.println("White - move 1/2");
+        //System.out.println("White - move 1/2");
         winner = DoOneMove(botWhite, AttackOnly, NormalRoundTimeOut);
-        board.Dump();
+        //board.Dump();
         if (winner != Board.PlayerNone)
         {
             return winner;
         }
 
-        System.out.println("White - move 2/2");
+        //System.out.println("White - move 2/2");
         winner = DoOneMove(botWhite, AllMoves, NormalRoundTimeOut);
-        board.Dump();
+        //board.Dump();
         if (winner != Board.PlayerNone)
         {
             return winner;
@@ -140,10 +151,7 @@ public class EngineRunner implements AutoCloseable
             return "null";
         }
 
-        String moveType = (move.Type == Move.Pass) ? "Pass" :
-            (move.Type == Move.Attack) ? "Attack" :
-            (move.Type == Move.Strengthen) ? "Strengthen" :
-            "Unknown";
+        String moveType = (move.Type == Move.Pass) ? "Pass" : (move.Type == Move.Attack) ? "Attack" : (move.Type == Move.Strengthen) ? "Strengthen" : "Unknown";
 
         String dump = "move: type = " + moveType + ", from = ";
         if (move.From != null)
@@ -154,7 +162,7 @@ public class EngineRunner implements AutoCloseable
         {
             dump += "null";
         }
-        dump +=", to = ";
+        dump += ", to = ";
         if (move.To != null)
         {
             dump += move.To.X + ";" + move.To.Y;
@@ -193,7 +201,7 @@ public class EngineRunner implements AutoCloseable
             return GetOtherPlayer(bot.Player);
         }
 
-        System.out.println("received: " + MoveToString(move));
+        //System.out.println("received: " + MoveToString(move));
 
         if (!IsMoveInAllowedList(move, allowedMoves) || !IsMoveValid(bot, move))
         {
@@ -206,7 +214,7 @@ public class EngineRunner implements AutoCloseable
 
         int winner = GetCurrentWinner();
 
-        System.out.println("processed: " + MoveToString(move));
+        //System.out.println("processed: " + MoveToString(move));
 
         SendMoveToAllBots(bot.Player, move, winner);
 
@@ -255,21 +263,19 @@ public class EngineRunner implements AutoCloseable
 
             int botColor = bot.Player;
 
-            if (fromColor != botColor &&             // can only move from places owned by bot
-                toColor != Board.PlayerNone)          // can not move to an empty place
+            if (fromColor != botColor && // can only move from places owned by bot
+                    toColor != Board.PlayerNone) // can not move to an empty place
             {
                 System.out.println("not owned by bot or moving to empty place");
                 return false;
             }
-            else if (move.Type == Move.Attack &&
-                    fromColor != toColor &&          // can only attack the other color
-                    fromHeight >= toHeight &&        // can only attack equal or lower stacks
+            else if (move.Type == Move.Attack && fromColor != toColor && // can only attack the other color
+                    fromHeight >= toHeight && // can only attack equal or lower stacks
                     IsValidPath(move.From, move.To))
             {
                 return true;
             }
-            else if (move.Type == Move.Strengthen &&
-                    fromColor == toColor &&          // can only strengthen yourself
+            else if (move.Type == Move.Strengthen && fromColor == toColor && // can only strengthen yourself
                     IsValidPath(move.From, move.To))
             {
                 return true;
@@ -302,8 +308,7 @@ public class EngineRunner implements AutoCloseable
 
         boolean movingOnlyEastOrWest = movingEastOrWest && !movingNorthOrSouth;
         boolean movingOnlyNorthOrSouth = movingNorthOrSouth && !movingEastOrWest;
-        boolean movingDiagonal = (movingSouthEast || movingNorthWest) &&
-                ((maxX - minX) == (maxY - minY));
+        boolean movingDiagonal = (movingSouthEast || movingNorthWest) && ((maxX - minX) == (maxY - minY));
         if (!movingOnlyEastOrWest && !movingOnlyNorthOrSouth && !movingDiagonal)
         {
             return false;
@@ -388,7 +393,8 @@ public class EngineRunner implements AutoCloseable
         {
             return Board.PlayerBlack;
         }
-        else // (!blackAlive && !whiteAlive)
+        else
+        // (!blackAlive && !whiteAlive)
         {
             return Board.PlayerNone;
         }
@@ -396,9 +402,7 @@ public class EngineRunner implements AutoCloseable
 
     private boolean IsAlive(int player)
     {
-        return board.GetTotalCount(player, Board.StoneA) > 0 &&
-                board.GetTotalCount(player, Board.StoneB) > 0 &&
-                board.GetTotalCount(player, Board.StoneC) > 0;
+        return board.GetTotalCount(player, Board.StoneA) > 0 && board.GetTotalCount(player, Board.StoneB) > 0 && board.GetTotalCount(player, Board.StoneC) > 0;
     }
 
 }
