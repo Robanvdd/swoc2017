@@ -20,33 +20,42 @@ public class Main
             MongoClient client = new MongoClient("localhost");
 
             DB db = client.getDB("swoc-dev");
-            
+
             DumpAllTables(db);
-            
-            DBObject bot0 = FindBot(db, 0.0);
+
+            DBObject bot0 = FindBotByName(db, "Bot One");
             System.out.println("bot0 = " + bot0);
-            
-            DBObject bot1 = FindBot(db, 1.0);
+
+            DBObject bot1 = FindBotByName(db, "Bot Two");
             System.out.println("bot1 = " + bot1);
-            
-            
+
             client.close();
         } catch (UnknownHostException ex)
         {
             ex.printStackTrace();
         }
     }
-    
-    private static DBObject FindBot(DB db, Double id)
+
+    private static DBObject FindBotByName(DB db, String name)
+    {
+        DBCollection table = db.getCollection("Bot");
+        BasicDBObject query = new BasicDBObject();
+        query.put("Name", name);
+
+        DBCursor cursor = table.find(query);
+        return cursor.one();
+    }
+
+    private static DBObject FindBotById(DB db, Double id)
     {
         DBCollection table = db.getCollection("Bot");
         BasicDBObject query = new BasicDBObject();
         query.put("_id", id);
-        
+
         DBCursor cursor = table.find(query);
         return cursor.one();
     }
-    
+
     private static void MakeABot(DB db, String botName)
     {
         DBCollection table = db.getCollection("Bot");
@@ -54,7 +63,8 @@ public class Main
         document.put("name", botName);
         document.put("ranking", 0);
         document.put("version", 1);
-        document.put("executablePath", "/home/swocslave/test/swoc2014/SharpBot/Bin/SharpBot.exe");
+        document.put("executablePath",
+                "/home/swocslave/test/swoc2014/SharpBot/Bin/SharpBot.exe");
         table.insert(document);
     }
 
