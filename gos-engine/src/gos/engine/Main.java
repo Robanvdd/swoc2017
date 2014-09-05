@@ -21,8 +21,8 @@ public class Main
             
             DumpAllTables(db);
             
-            MakeABot(db, "Bot One");
-            MakeABot(db, "Bot Two");
+//            MakeABot(db, "Bot One");
+//            MakeABot(db, "Bot Two");
             
             client.close();
         } catch (UnknownHostException ex)
