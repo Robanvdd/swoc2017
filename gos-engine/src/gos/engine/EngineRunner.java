@@ -72,7 +72,7 @@ public class EngineRunner implements AutoCloseable
         }
         catch (Exception ex)
         {
-            System.out.println("Match failed: " + ex.toString());
+            System.err.println("Match failed: " + ex.toString());
             ex.printStackTrace();
         }
 }
@@ -185,18 +185,26 @@ public class EngineRunner implements AutoCloseable
     private int DoOneMove(Bot bot, int[] allowedMoves, long timeOut)
     {
         MoveRequest request = new MoveRequest(board, allowedMoves);
-        Move move = bot.writeAndReadMessage(request, Move.class, timeOut);
+        Move move = null;
+        try
+        {
+            move = bot.writeAndReadMessage(request, Move.class, timeOut);
+        }
+        catch (Exception ex)
+        {
+            System.err.println("Exception occurred with move request.");
+            ex.printStackTrace();
+        }
+
         if (move == null)
         {
-            System.out.println("No response received. Other bot wins.");
-            // No response. Bot looses.
+            System.err.println("No response received. Other bot wins.");
             return GetOtherPlayer(bot.Player);
         }
 
         if (!IsMoveInAllowedList(move, allowedMoves) || !IsMoveValid(bot, move))
         {
-            System.out.println("Illegal move. Other bot wins.");
-            // Illegal move. Bot looses.
+            System.err.println("Illegal move. Other bot wins.");
             return GetOtherPlayer(bot.Player);
         }
 
@@ -254,7 +262,7 @@ public class EngineRunner implements AutoCloseable
             if (fromColor != botColor && // can only move from places owned by bot
                     toColor != Board.PlayerNone) // can not move to an empty place
             {
-                System.out.println("not owned by bot or moving to empty place");
+                System.err.println("not owned by bot or moving to empty place");
                 return false;
             }
             else if (move.Type == Move.Attack && fromColor != toColor && // can only attack the other color
@@ -270,7 +278,7 @@ public class EngineRunner implements AutoCloseable
             }
             else
             {
-                System.out.println("fromColor = " + fromColor + ", toColor = " + toColor + ", fromHeight = " + fromHeight + ", toHeight = " + toHeight);
+                System.err.println("fromColor = " + fromColor + ", toColor = " + toColor + ", fromHeight = " + fromHeight + ", toHeight = " + toHeight);
                 return false;
             }
         }
