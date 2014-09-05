@@ -6,7 +6,7 @@ var mongoose = require('mongoose'),
 	path = require('path'),
 	upload_folder_base = path.resolve('./bots_upload'),
 	run_script = 'run.sh',
-	execFile = require('child_process').execFile,
+	child_process = require('child_process'),
 	compile_script_path = path.join(upload_folder_base, 'compilebot.py');
 
 
@@ -80,10 +80,11 @@ function moveUploadToBotFolder(file, user, bot, callback) {
 }
 
 function runCompileScript(bot_folder, callback) {
-	console.log('Compiling bot in folder ' + bot_folder);
-	execFile(compile_script_path, ['-p', bot_folder], function(error, stdout, stderr) {
+	var command = 'python ' + compile_script_path + ' -p ' + bot_folder;
+	console.log('Compiling bot with command: ' + command);
+	child_process.exec(command, function(error, stdout, stderr) {
 		if (error) {
-			callback(new Error('Could not compile bot. Errors: ' + stderr));
+			callback(new Error('Could not compile bot. Error: ' + error));
 		} else {
 			callback();
 		}

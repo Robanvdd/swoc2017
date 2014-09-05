@@ -173,6 +173,7 @@ def main():
                     sys.stderr.write("Error: Code was not written in a valid language")
                     sys.exit(1)
 
+    # If this is reached: success
     remove(os.path.join(os.getcwd(), 'COMPILE_FAILED'))
     touch(os.path.join(os.getcwd(), 'COMPILE_SUCCESS'))
 
