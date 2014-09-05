@@ -25,7 +25,7 @@ public class Main
 
             try
             {
-                database = new Database("locahost", "swoc-dev");
+                database = new Database("localhost", "swoc-dev");
             }
             catch (UnknownHostException ex)
             {
