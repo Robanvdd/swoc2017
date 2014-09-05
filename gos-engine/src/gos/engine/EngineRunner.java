@@ -98,44 +98,44 @@ public class EngineRunner implements AutoCloseable
 
     private void FirstRound()
     {
-        System.out.println("White - first move");
+        //System.out.println("White - first move");
         // TODO: If bot does not give a valid move, then let it loose immediately
         DoOneMove(botWhite, AttackOnly, FirstMoveTimeOut);
-        board.Dump();
+        //board.Dump();
     }
 
     private int NormalRound()
     {
         int winner;
 
-        System.out.println("Black - move 1/2");
+        //System.out.println("Black - move 1/2");
         // First black then white, since white may start the game
         winner = DoOneMove(botBlack, AttackOnly, NormalRoundTimeOut);
-        board.Dump();
+        //board.Dump();
         if (winner != Board.PlayerNone)
         {
             return winner;
         }
 
-        System.out.println("Black - move 2/2");
+        //System.out.println("Black - move 2/2");
         winner = DoOneMove(botBlack, AllMoves, NormalRoundTimeOut);
-        board.Dump();
+        //board.Dump();
         if (winner != Board.PlayerNone)
         {
             return winner;
         }
 
-        System.out.println("White - move 1/2");
+        //System.out.println("White - move 1/2");
         winner = DoOneMove(botWhite, AttackOnly, NormalRoundTimeOut);
-        board.Dump();
+        //board.Dump();
         if (winner != Board.PlayerNone)
         {
             return winner;
         }
 
-        System.out.println("White - move 2/2");
+        //System.out.println("White - move 2/2");
         winner = DoOneMove(botWhite, AllMoves, NormalRoundTimeOut);
-        board.Dump();
+        //board.Dump();
         if (winner != Board.PlayerNone)
         {
             return winner;
@@ -201,7 +201,7 @@ public class EngineRunner implements AutoCloseable
             return GetOtherPlayer(bot.Player);
         }
 
-        System.out.println("received: " + MoveToString(move));
+        //System.out.println("received: " + MoveToString(move));
 
         if (!IsMoveInAllowedList(move, allowedMoves) || !IsMoveValid(bot, move))
         {
@@ -214,7 +214,7 @@ public class EngineRunner implements AutoCloseable
 
         int winner = GetCurrentWinner();
 
-        System.out.println("processed: " + MoveToString(move));
+        //System.out.println("processed: " + MoveToString(move));
 
         SendMoveToAllBots(bot.Player, move, winner);
 
