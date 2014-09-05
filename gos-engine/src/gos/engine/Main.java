@@ -1,19 +1,30 @@
 package gos.engine;
 
+import java.net.UnknownHostException;
+import java.util.List;
+
+import com.mongodb.DB;
+import com.mongodb.MongoClient;
+
 public class Main
 {
     public static void main(String[] args)
     {
-        String bot1Executable = args[0];
-        String bot2Executable = args[1];
+        try
+        {
+            MongoClient client = new MongoClient("localhost");
 
-        try (EngineRunner runner = new EngineRunner(bot1Executable, bot2Executable))
+            List<String> dbs = client.getDatabaseNames();
+            System.out.println(dbs.size() + " databases");
+            for(String db : dbs)
+            {
+                System.out.println(db);
+            }            
+            client.close();
+        } 
+        catch (UnknownHostException ex)
         {
-            runner.run();
-        }
-        catch (Exception ex)
-        {
-            System.out.println("Error: " + ex.getMessage());
+            ex.printStackTrace();
         }
     }
 
