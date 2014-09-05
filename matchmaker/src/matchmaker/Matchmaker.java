@@ -177,8 +177,11 @@ public class Matchmaker {
     private void updateBotData(DB database, ObjectId botId, int score) {
         DBCollection coll = getBotTable(database);
         
-        BasicDBObject query = new BasicDBObject("_id", botId); // Hope this is the way to get the id of a row
-        BasicDBObject object = new BasicDBObject(RANKINGFIELDNAME, score);
+        BasicDBObject object = new BasicDBObject();
+        object.append("$set", new BasicDBObject(RANKINGFIELDNAME, score));
+
+        BasicDBObject query = new BasicDBObject("_id", botId);
+
         coll.update(query, object);
     }
     
