@@ -134,25 +134,25 @@ public class Matchmaker {
         //Update score
         if (winner1.equals(winner2)) {
             // One bot won both games
+            int oldScore = 0;
             if (scoreMap.containsKey(winner1)) {
-                scoreMap.put(winner1, scoreMap.get(winner1) + 3);
-                System.out.println("The result of the match: " + botId1 + " vs " + botId2 + " : " + winner1 + " won!");
-            } else {
-                scoreMap.put(winner1, 3);
+                oldScore = scoreMap.get(winner1);
             }
+            scoreMap.put(winner1, oldScore + 3);
             System.out.println("The result of the match: " + botId1 + " vs " + botId2 + " : " + winner1 + " WON!");
         } else {
             // Each bot won one each
+            int oldScore1 = 0;
             if (scoreMap.containsKey(botId1)) {
-                scoreMap.put(botId1, scoreMap.get(botId1) + 1);
-            } else {
-                scoreMap.put(botId1, 1);
+                oldScore1 = scoreMap.get(botId1);
             }
+            scoreMap.put(botId1, oldScore1 + 1);
+
+            int oldScore2 = 0;
             if (scoreMap.containsKey(botId2)) {
-                scoreMap.put(botId2, scoreMap.get(botId2) + 1);
-            } else {
-                scoreMap.put(botId2, 1);
+                oldScore2 = scoreMap.get(botId2);
             }
+            scoreMap.put(botId2, oldScore2 + 1);
             System.out.println("The result of the match: " + botId1 + " vs " + botId2 + " : DRAW!");
         }
     }
@@ -176,13 +176,21 @@ public class Matchmaker {
     
     private void updateBotData(DB database, ObjectId botId, int score) {
         DBCollection coll = getBotTable(database);
-        
-        BasicDBObject object = new BasicDBObject();
-        object.append("$set", new BasicDBObject(RANKINGFIELDNAME, score));
 
         BasicDBObject query = new BasicDBObject("_id", botId);
 
-        coll.update(query, object);
+        DBObject currentObject = coll.findOne(query);
+        if (currentObject == null)
+        {
+            throw new IllegalArgumentException("Invalid bot id");
+        }
+
+        Integer currentRanking = (Integer)currentObject.get(RANKINGFIELDNAME);
+
+        BasicDBObject updateObject = new BasicDBObject();
+        updateObject.append("$set", new BasicDBObject(RANKINGFIELDNAME, currentRanking + score));
+
+        coll.update(query, updateObject);
     }
     
     private void updateBotScores(DB db) {
