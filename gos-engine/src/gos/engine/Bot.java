@@ -1,4 +1,4 @@
-package gos.engine.io;
+package gos.engine;
 
 import java.io.IOException;
 

@@ -2,7 +2,6 @@ package gos.engine;
 
 import java.io.IOException;
 
-import gos.engine.io.Bot;
 
 public class EngineRunner implements AutoCloseable
 {
