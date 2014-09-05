@@ -2,6 +2,7 @@ package gos.engine;
 
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.Set;
 
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
@@ -13,16 +14,18 @@ public class Main
         try
         {
             MongoClient client = new MongoClient("localhost");
+            DB db = client.getDB("swoc-dev");
 
-            List<String> dbs = client.getDatabaseNames();
-            System.out.println(dbs.size() + " databases");
-            for(String db : dbs)
+            Set<String> tables = db.getCollectionNames();
+            System.out.println(tables.size() + " tables");
+
+            for (String coll : tables)
             {
-                System.out.println(db);
-            }            
+                System.out.println(coll);
+            }
+
             client.close();
-        } 
-        catch (UnknownHostException ex)
+        } catch (UnknownHostException ex)
         {
             ex.printStackTrace();
         }
