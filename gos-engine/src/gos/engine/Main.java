@@ -40,7 +40,7 @@ public class Main
     {
         DBCollection table = db.getCollection("Bot");
         BasicDBObject query = new BasicDBObject();
-        query.put("Name", name);
+        query.put("name", name);
 
         DBCursor cursor = table.find(query);
         return cursor.one();
