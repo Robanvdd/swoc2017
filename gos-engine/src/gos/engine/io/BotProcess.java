@@ -53,7 +53,7 @@ public class BotProcess implements AutoCloseable
 			e.printStackTrace();
 		}
 		
-		executor.shutdown();
+		executor.shutdownNow();
 	}
 	
 	private class SingleLineReader implements Callable<String>

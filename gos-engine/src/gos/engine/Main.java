@@ -21,14 +21,15 @@ public class Main
 
     public static void main(String[] args)
     {
-        try
+        if (args.length != 2)
         {
-            if (args.length != 2)
-            {
-                System.err.println("no bots given");
-                return; 
-            }
-
+            System.err.println("no bots given");
+            //executableWhite = "C:\\Users\\Ralph\\Documents\\Sioux\\swoc\\swoc2014\\SharpBot\\Bin\\SharpBot.exe";
+            //executableBlack = "C:\\Users\\Ralph\\Documents\\Sioux\\swoc\\swoc2014\\SharpBot\\Bin\\SharpBot.exe";
+            return;
+        }
+        else
+        {
             String botIdWhite = args[0];
             String botIdBlack = args[1];
 
@@ -38,14 +39,15 @@ public class Main
             {
                 return;
             }
+        }
 
-            EngineRunner runner = new EngineRunner(executableWhite, executableBlack);
-            
+        try (EngineRunner runner = new EngineRunner(executableWhite, executableBlack))
+        {
             runner.run();
         }
-        catch (IOException ex)
+        catch (Exception e)
         {
-            ex.printStackTrace();
+            e.printStackTrace();
         }
     }
 
