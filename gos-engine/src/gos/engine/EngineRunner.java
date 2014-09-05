@@ -1,7 +1,6 @@
 package gos.engine;
 
 import java.io.IOException;
-import java.util.List;
 
 import gos.engine.io.Bot;
 
@@ -13,8 +12,7 @@ public class EngineRunner implements AutoCloseable
     private final Bot botBlack;
 
     private final Board board;
-
-
+    
     public EngineRunner(String executableWhite, String executableBlack)
             throws IOException
     {
@@ -69,12 +67,7 @@ public class EngineRunner implements AutoCloseable
     public void close() throws Exception
     {
         botWhite.close();
-        Thread.sleep(200);
-
         botBlack.close();
-        Thread.sleep(200);
-
-        Thread.sleep(200);
     }
 
     private static final long FirstMoveTimeOut = 2000;
