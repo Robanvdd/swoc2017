@@ -47,7 +47,7 @@ public class EngineRunner implements AutoCloseable
 
             Date startDate = new Date();
 
-            SetupBots();
+            InitializeBots();
 
             FirstRound();
 
@@ -87,7 +87,7 @@ public class EngineRunner implements AutoCloseable
     private static final long FirstMoveTimeOut = 2000;
     private static final long NormalRoundTimeOut = 2000;
 
-    private void SetupBots()
+    private void InitializeBots()
     {
         InitiateRequest initReqW = new InitiateRequest(Board.PlayerWhite);
         botWhite.writeMessage(initReqW);
