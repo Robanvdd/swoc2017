@@ -5,6 +5,8 @@ import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Set;
 
+import org.bson.types.ObjectId;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -14,7 +16,40 @@ import com.mongodb.MongoClient;
 
 public class Main
 {
+    private static String executableWhite = null;
+    private static String executableBlack = null;
+
     public static void main(String[] args)
+    {
+        try
+        {
+            if (args.length != 2)
+            {
+                System.err.println("no bots given");
+                return; 
+            }
+
+            String botIdWhite = args[0];
+            String botIdBlack = args[1];
+
+            GetBotsFromDatabase(botIdWhite, botIdBlack);
+            
+            if (executableWhite == null || executableBlack == null)
+            {
+                return;
+            }
+
+            EngineRunner runner = new EngineRunner(executableWhite, executableBlack);
+            
+            runner.run();
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
+    }
+
+    private static void GetBotsFromDatabase(String botIdWhite, String botIdBlack)
     {
         try
         {
@@ -22,34 +57,25 @@ public class Main
 
             DB db = client.getDB("swoc-dev");
 
-            DumpAllTables(db);
-
-            DBObject bot1 = FindBotByName(db, "Bot One");
-            System.out.println("bot1 = " + bot1);
-
-            DBObject bot2 = FindBotByName(db, "Bot Two");
-            System.out.println("bot2 = " + bot2);
-
-            if (bot1 == null || bot2 == null)
+            DBObject botWhite = FindBotById(db, botIdWhite);
+            if (botWhite == null)
             {
-                System.err.println("Bots not found");
+                System.err.println("White bot could not be found");
+                return;
+            }
+            DBObject botBlack = FindBotById(db, botIdBlack);
+            if (botBlack == null)
+            {
+                System.err.println("Black bot could not be found");
                 return;
             }
 
             client.close();
 
-            String excutable1 = (String)bot1.get("executablePath");
-            String excutable2 = (String)bot2.get("executablePath");
-
-            EngineRunner runner = new EngineRunner(excutable1, excutable2);
-            
-            runner.run();
+            executableWhite = (String)botWhite.get("executablePath");
+            executableBlack = (String)botBlack.get("executablePath");
         }
         catch (UnknownHostException ex)
-        {
-            ex.printStackTrace();
-        }
-        catch (IOException ex)
         {
             ex.printStackTrace();
         }
@@ -65,11 +91,11 @@ public class Main
         return cursor.one();
     }
 
-    private static DBObject FindBotById(DB db, Double id)
+    private static DBObject FindBotById(DB db, String id)
     {
         DBCollection table = db.getCollection("Bot");
         BasicDBObject query = new BasicDBObject();
-        query.put("_id", id);
+        query.put("_id", new ObjectId(id));
 
         DBCursor cursor = table.find(query);
         return cursor.one();
