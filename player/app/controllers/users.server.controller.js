@@ -34,7 +34,7 @@ exports.hasAuthorization = function(roles) {
 };
 
 exports.createDoc = function(req, res) {
-	var instance = new ModelUser();
+	var instance = new User();
 	instance.username = req.body.username;
 	instance.email	  = req.body.email;
 	instance.password = req.body.password;
@@ -46,17 +46,17 @@ exports.createDoc = function(req, res) {
 }
 
 exports.retrieveAll = function(res) {
-	ModelUser.find({}, res);
+	User.find({}, res);
 }
 
 exports.retrieveById = function(id, res) {
-	ModelUser.findOne({_id:id}, res);
+	User.findOne({_id:id}, res);
 }
 
 
 exports.retrieveByName = function(username, res) {
 	console.log('RetrieveByName, username:' + username.username);
-	ModelUser.findOne({"username":username.username}, res);
+	User.findOne({"username":username.username}, res);
 }
 
 exports.updateDoc = function(req, res) {
@@ -66,14 +66,14 @@ exports.updateDoc = function(req, res) {
 					"password":	req.body.password,
 					};
 	
-	ModelUser.update( {_id:req.body.id}, {"$set":newValues}, function (err) {
+	User.update( {_id:req.body.id}, {"$set":newValues}, function (err) {
 		if(err) res(err);
 		else res(null, {"status":"OK"});
 	});
 }
 
 exports.deleteDoc = function(id, res) {
-	ModelUser.remove( {_id:id}, function (err) {
+	User.remove( {_id:id}, function (err) {
 		if(err) res(err);
 		else res(null, {"status":"OK"});
 	});
