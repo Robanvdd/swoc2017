@@ -20,34 +20,48 @@ import org.bson.types.ObjectId;
  *
  * @author SvZ
  */
-public class Matchmaker {
+public class Matchmaker implements AutoCloseable {
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args)
+    {
+        String dbName = "test";
+        if (args.length > 0)
+        {
+            dbName = args[0];
+        }
+        
+        try (Matchmaker mm = new Matchmaker(dbName))
+        {
+            mm.run();
+        }
+    }
+    
     private MongoClient mongoClient;
-    private DB db = null;
+    private final DB db;
 
-    private final Map<ObjectId, Integer> scoreMap = new HashMap<ObjectId, Integer>();
     private final String BOTTABLE = "bots";
     private final String MATCHTABLE = "matches";
     private final String WINNERFIELDNAME = "winnerBot";
     private final String RANKINGFIELDNAME = "ranking";
 
-    /**
-     * TODO: attach Engine and test it
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        String dbName = "test";
-        if (args.length > 0)
-            dbName = args[0];
-        
-        Matchmaker mm = new Matchmaker(dbName);
+    public Matchmaker(String dbName)
+    {
+        db = createDBConnection(dbName);
     }
     
-    public Matchmaker(String dbName) {
-        db = createDBConnection(dbName);
-        if (db != null) {
+    @Override
+    public void close()
+    {
+        mongoClient.close();
+    }
+    
+    public void run()
+    {
+        if (db != null)
+        {
             makeMatches(getAllBots(db));
-            updateBotScores(db);
-            mongoClient.close();
         }
         System.out.println("Matchmaker done");
     }
@@ -111,8 +125,8 @@ public class Matchmaker {
             System.out.println("running match " + botId1 + " vs " + botId2);
             Process p = Runtime.getRuntime().exec("java -jar gos-engine.jar " + botId1 + " " + botId2);
             p.waitFor();
-            BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
+            BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String lastLine = "";
             String line;
             while ((line = input.readLine()) != null) {
@@ -121,6 +135,7 @@ public class Matchmaker {
                 lastLine = line;
             }
             input.close();
+            
             matchId = new ObjectId(lastLine);
         }
         catch (Exception err) {
@@ -133,6 +148,15 @@ public class Matchmaker {
     }
     
     private void makeAMatch(ObjectId botId1, ObjectId botId2) {
+        DBObject botData1 = getBotData(db, botId1);
+        DBObject botData2 = getBotData(db, botId2);
+        
+        double currentRanking1 = (Double)botData1.get(RANKINGFIELDNAME);
+        double currentRanking2 = (Double)botData2.get(RANKINGFIELDNAME);
+        
+        double expectedResult1 = calculateExpectedResult(currentRanking1, currentRanking2);
+        double expectedResult2 = 1 - expectedResult1;
+        
         //Start Engine with two given bots: bot1 as white, 2 as black
         ObjectId matchId1 = runMatch(botId1, botId2);
         ObjectId winner1 = getWinnerOfMatch(getMatchTable(db), matchId1);
@@ -140,30 +164,23 @@ public class Matchmaker {
         ObjectId matchId2 = runMatch(botId2, botId1);
         ObjectId winner2 = getWinnerOfMatch(getMatchTable(db), matchId2);
         
-        //Update score
-        if (winner1.equals(winner2)) {
-            // One bot won both games
-            int oldScore = 0;
-            if (scoreMap.containsKey(winner1)) {
-                oldScore = scoreMap.get(winner1);
-            }
-            scoreMap.put(winner1, oldScore + 3);
-            System.out.println("The result of the match: " + botId1 + " vs " + botId2 + " : " + winner1 + " WON!");
-        } else {
-            // Each bot won one each
-            int oldScore1 = 0;
-            if (scoreMap.containsKey(botId1)) {
-                oldScore1 = scoreMap.get(botId1);
-            }
-            scoreMap.put(botId1, oldScore1 + 1);
+        double actualScore1 = (winner1.equals(botId1) ? 1 : 0) + (winner2.equals(botId1) ? 1 : 0);
+        double actualScore2 = (winner1.equals(botId2) ? 1 : 0) + (winner2.equals(botId2) ? 1 : 0);
+        
+        double actualResult1 = actualScore1 / 2;
+        double actualResult2 = actualScore2 / 2;
+        
+        double newRanking1 = calculateNewRanking(currentRanking1, expectedResult1, actualResult1); 
+        double newRanking2 = calculateNewRanking(currentRanking2, expectedResult2, actualResult2); 
 
-            int oldScore2 = 0;
-            if (scoreMap.containsKey(botId2)) {
-                oldScore2 = scoreMap.get(botId2);
-            }
-            scoreMap.put(botId2, oldScore2 + 1);
-            System.out.println("The result of the match: " + botId1 + " vs " + botId2 + " : DRAW!");
-        }
+        // round rankings to integers
+        newRanking1 = Math.round(newRanking1);
+        newRanking2 = Math.round(newRanking2);
+
+        updateBotData(db, botId1, newRanking1);
+        updateBotData(db, botId2, newRanking2);
+        
+        System.out.println("The result of the match " + botId1 + " vs " + botId2 + ": " + actualScore1 + " - " + actualScore2);
     }
     
     /**
@@ -183,28 +200,37 @@ public class Matchmaker {
         System.out.println("Made all matches between "+ count +" bots");
     }
     
-    private void updateBotData(DB database, ObjectId botId, int score) {
+    private DBObject getBotData(DB database, ObjectId botId)
+    {
+        DBCollection coll = getBotTable(database);
+        BasicDBObject query = new BasicDBObject("_id", botId);
+        return coll.findOne(query);
+    }
+    
+    private void updateBotData(DB database, ObjectId botId, double newRanking)
+    {
         DBCollection coll = getBotTable(database);
 
         BasicDBObject query = new BasicDBObject("_id", botId);
 
-        DBObject currentObject = coll.findOne(query);
-        if (currentObject == null)
-        {
-            throw new IllegalArgumentException("Invalid bot id");
-        }
-
-        Double currentRanking = (Double)currentObject.get(RANKINGFIELDNAME);
-
         BasicDBObject updateObject = new BasicDBObject();
-        updateObject.append("$set", new BasicDBObject(RANKINGFIELDNAME, currentRanking + score));
+        updateObject.append("$set", new BasicDBObject(RANKINGFIELDNAME, newRanking));
 
         coll.update(query, updateObject);
     }
     
-    private void updateBotScores(DB db) {
-        for (ObjectId key : scoreMap.keySet()) {
-            updateBotData(db, key, scoreMap.get(key));
-        }
+    private double calculateExpectedResult(double rankingA, double rankingB)
+    {
+        double qa = Math.pow(10, rankingA / 400);
+        double qb = Math.pow(10, rankingB / 400);
+        
+        return qa / (qa + qb);
+    }
+    
+    private static final double EloK = 16;
+    
+    private double calculateNewRanking(double oldRanking, double expectedResult, double actualResult)
+    {
+        return  oldRanking + EloK * (actualResult - expectedResult);
     }
 }
