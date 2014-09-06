@@ -108,12 +108,13 @@ public class Matchmaker {
         ObjectId matchId = null;
         StringBuilder sb = new StringBuilder();
         try {
-            String line;
+            System.out.println("running match " + botId1 + " vs " + botId2);
             Process p = Runtime.getRuntime().exec("java -jar gos-engine.jar " + botId1 + " " + botId2);
             p.waitFor();
             BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
             String lastLine = "";
+            String line;
             while ((line = input.readLine()) != null) {
                 sb.append(line);
                 sb.append('\n');
