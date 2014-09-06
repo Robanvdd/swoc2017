@@ -105,22 +105,30 @@ public class Matchmaker {
     }
     
     private ObjectId runMatch(ObjectId botId1, ObjectId botId2) {
-        String lastLine = "";
+        ObjectId matchId = null;
+        StringBuilder sb = new StringBuilder();
         try {
             String line;
             Process p = Runtime.getRuntime().exec("java -jar gos-engine.jar " + botId1 + " " + botId2);
             p.waitFor();
-            BufferedReader input =
-                new BufferedReader(new InputStreamReader(p.getInputStream()));
+            BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+            String lastLine = "";
             while ((line = input.readLine()) != null) {
+                sb.append(line);
+                sb.append('\n');
                 lastLine = line;
             }
             input.close();
+            matchId = new ObjectId(lastLine);
         }
         catch (Exception err) {
+            System.err.println("Exception when running match.");
             err.printStackTrace();
+            System.err.println("Output of engine was:");
+            System.err.print(sb.toString());
         }
-        return new ObjectId(lastLine);
+        return matchId;
     }
     
     private void makeAMatch(ObjectId botId1, ObjectId botId2) {
