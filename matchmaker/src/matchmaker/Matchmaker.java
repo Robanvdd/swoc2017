@@ -194,7 +194,7 @@ public class Matchmaker {
             throw new IllegalArgumentException("Invalid bot id");
         }
 
-        Integer currentRanking = (Integer)currentObject.get(RANKINGFIELDNAME);
+        Double currentRanking = (Double)currentObject.get(RANKINGFIELDNAME);
 
         BasicDBObject updateObject = new BasicDBObject();
         updateObject.append("$set", new BasicDBObject(RANKINGFIELDNAME, currentRanking + score));
