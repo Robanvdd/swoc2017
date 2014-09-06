@@ -26,15 +26,15 @@ public class Board
 
     private static final int[][] DefaultState =
         {
-            { BlackA, WhiteA, WhiteA, WhiteA, WhiteA,  Empty,  Empty,  Empty,  Empty },
-            { BlackA, BlackB, WhiteB, WhiteB, WhiteB, BlackA,  Empty,  Empty,  Empty },
-            { BlackA, BlackB, BlackC, WhiteC, WhiteC, BlackB, BlackA,  Empty,  Empty },
-            { BlackA, BlackB, BlackC, BlackA, WhiteA, BlackC, BlackB, BlackA,  Empty },
-            { WhiteA, WhiteB, WhiteC, WhiteA,  Empty, BlackA, BlackC, BlackB, BlackA },
-            {  Empty, WhiteA, WhiteB, WhiteC, BlackA, WhiteA, WhiteC, WhiteB, WhiteA },
-            {  Empty,  Empty, WhiteA, WhiteB, BlackC, BlackC, WhiteC, WhiteB, WhiteA },
-            {  Empty,  Empty,  Empty, WhiteA, BlackB, BlackB, BlackB, WhiteB, WhiteA },
-            {  Empty,  Empty,  Empty,  Empty, BlackA, BlackA, BlackA, BlackA, WhiteA },
+            { WhiteA, WhiteA, WhiteA, WhiteA, BlackA,  Empty,  Empty,  Empty,  Empty },
+            { BlackA, WhiteB, WhiteB, WhiteB, BlackB, BlackA,  Empty,  Empty,  Empty },
+            { BlackA, BlackB, WhiteC, WhiteC, BlackC, BlackB, BlackA,  Empty,  Empty },
+            { BlackA, BlackB, BlackC, WhiteA, BlackA, BlackC, BlackB, BlackA,  Empty },
+            { BlackA, BlackB, BlackC, BlackA,  Empty, WhiteA, WhiteC, WhiteB, WhiteA },
+            {  Empty, WhiteA, WhiteB, WhiteC, WhiteA, BlackA, WhiteC, WhiteB, WhiteA },
+            {  Empty,  Empty, WhiteA, WhiteB, WhiteC, BlackC, BlackC, WhiteB, WhiteA },
+            {  Empty,  Empty,  Empty, WhiteA, WhiteB, BlackB, BlackB, BlackB, WhiteA },
+            {  Empty,  Empty,  Empty,  Empty, WhiteA, BlackA, BlackA, BlackA, BlackA },
         };
 
     public Board()
