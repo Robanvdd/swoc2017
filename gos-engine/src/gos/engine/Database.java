@@ -18,8 +18,8 @@ public class Database
     private final MongoClient client;
     private final DB db;
 
-    private static final String MatchTableName = "Match";
-    private static final String BotTableName = "Bot";
+    private static final String MatchTableName = "matches";
+    private static final String BotTableName = "bots";
     private static final String ExecutablePathFieldName = "executablePath";
 
     public Database(String dbHost, String dbName) throws UnknownHostException

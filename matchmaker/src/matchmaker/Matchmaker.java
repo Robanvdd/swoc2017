@@ -25,8 +25,8 @@ public class Matchmaker {
     private DB db = null;
 
     private final Map<ObjectId, Integer> scoreMap = new HashMap<ObjectId, Integer>();
-    private final String BOTTABLE = "Bot";
-    private final String MATCHTABLE = "Match";
+    private final String BOTTABLE = "bots";
+    private final String MATCHTABLE = "matches";
     private final String WINNERFIELDNAME = "winnerBot";
     private final String RANKINGFIELDNAME = "ranking";
 
