@@ -2,7 +2,7 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
-	Game = mongoose.model('Match');
+	Match = mongoose.model('Match');
 
 exports.retrieveAll = function(callback) {
 	Match.find({}, callback);
