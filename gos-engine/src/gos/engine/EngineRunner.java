@@ -49,13 +49,12 @@ public class EngineRunner implements AutoCloseable
 
             InitializeBots();
 
-            FirstRound();
+            winner = FirstRound();
 
-            do
+            while (winner == Board.PlayerNone)
             {
                 winner = NormalRound();
             }
-            while (winner == Board.PlayerNone);
 
             Date endDate = new Date();
 
@@ -99,9 +98,9 @@ public class EngineRunner implements AutoCloseable
     private static final int[] AttackOnly = { Move.Attack };
     private static final int[] AllMoves = { Move.Pass, Move.Attack, Move.Strengthen };
 
-    private void FirstRound()
+    private int FirstRound()
     {
-        DoOneMove(botWhite, AttackOnly, FirstMoveTimeOut);
+        return DoOneMove(botWhite, AttackOnly, FirstMoveTimeOut);
     }
 
     private int NormalRound()
