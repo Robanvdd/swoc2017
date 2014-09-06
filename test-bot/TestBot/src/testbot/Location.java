@@ -4,6 +4,7 @@
  */
 package testbot;
 
+import org.json.simple.JSONObject;
 /**
  *
  * @author SvZ
@@ -13,8 +14,8 @@ public class Location {
     private int _x;
     private int _y;
     
-    public Location(int x, int y) {
-        if (x < 0 || x > 9 || y < 0 || y > 9) {
+    public Location(int y, int x) {
+        if (x < 0 || x > 8 || y < 0 || y > 8) {
             throw new IllegalArgumentException("Creating Location object with illegal value");
         }
         _x = x;
@@ -28,6 +29,22 @@ public class Location {
         String[] stringArray = inputString.split("-");
         int x = Integer.parseInt(stringArray[0]);
         int y = Integer.parseInt(stringArray[1]);
+        _x = x;
+        _y = y;
+    }
+    
+    public Location(JSONObject jsonObject) {
+        int x = -1; 
+        int y = -1;
+        if (jsonObject.containsKey("X")) {
+            x = Integer.valueOf((String)jsonObject.get("X"));
+        }
+        if (jsonObject.containsKey("Y")) {
+            y = Integer.valueOf((String)jsonObject.get("Y"));
+        }
+        if (x < 0 || x > 9 || y < 0 || y > 9) {
+            throw new IllegalArgumentException("Creating Location object with illegal value");
+        }
         _x = x;
         _y = y;
     }
@@ -48,6 +65,13 @@ public class Location {
     @Override
     public String toString() {
         return _x + "-" + _y;
+    }
+    
+    public JSONObject asJsonObject() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("X", x());
+        jsonObject.put("Y", y());
+        return jsonObject;
     }
     
 }

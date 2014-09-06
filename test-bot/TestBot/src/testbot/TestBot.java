@@ -11,6 +11,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import testbot.iohandling.InStream;
 
 /**
@@ -36,7 +40,7 @@ public class TestBot {
     }
     
     public TestBot() {
-        runAgainstBot();
+        runWithEngine();
     }
     
     private void runSolo() {
@@ -44,7 +48,7 @@ public class TestBot {
         System.out.flush();
         //System.out.println(gameField.serializeField().toJSONString());
         //System.out.flush();
-        String move = pickAnyMove(true);
+        String move = pickAnyMove(true).getMoveAsString();
         System.out.println("Suggested move: " + move);
         String command = move;
 		while (!command.equals(STOP_COMMAND)) {
@@ -53,7 +57,7 @@ public class TestBot {
             System.out.flush();
             //System.out.println(gameField.serializeField().toJSONString());
             //System.out.flush();
-            move = pickAnyMove(false);
+            move = pickAnyMove(false).getMoveAsString();
             System.out.println("Suggested move: " + move);
             command = move;
             if (command.equals("PASS"))
@@ -64,24 +68,48 @@ public class TestBot {
     private void runAgainstBot() {
         System.out.println(gameField.printField());
         System.out.flush();
-        System.out.println(gameField.serializeField().toJSONString());
-        //System.out.flush();
         //System.out.println("Suggested move: " + pickAnyMove(true));
         String fieldState = readcommandline();
         String command;
 		while (!fieldState.equals(STOP_COMMAND)) {
             gameField.initializeField(fieldState);
-            command = pickAnyMove(true);
+            command = pickAnyMove(true).getMoveAsString();
             doMove(gameField, command);
             System.out.println(command);
             System.out.flush();
-            command = pickAnyMove(false);
+            command = pickAnyMove(false).getMoveAsString();
             doMove(gameField, command);
             System.out.println(command);
             System.out.flush();
-            System.out.println(gameField.serializeField().toJSONString());
             fieldState = readcommandline();
         }
+    }
+    
+    private void runWithEngine() {
+        
+        String command = "";
+        while (true) {
+            command = readcommandline();
+            if (command.equals(STOP_COMMAND))
+                break;
+            JSONObject jsonObject = parseJsonString(command);
+            if (jsonObject.containsKey("Board")) {
+                // Our move
+                parseMoveRequest(jsonObject);
+            }
+        }
+    }
+    
+    private JSONObject parseJsonString(String jsonString) {
+        JSONParser parser = new JSONParser();
+        try {
+            Object object = parser.parse(jsonString);
+            if (object instanceof JSONObject)
+                return (JSONObject)object;
+        } catch (ParseException ex) {
+            Logger.getLogger(GameField.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        throw new IllegalArgumentException("Illegal jsonString");
     }
     
     private String readcommandline() {
@@ -100,6 +128,26 @@ public class TestBot {
         }
         
         return value;
+    }
+    
+    private void parseMoveRequest(JSONObject jsonObject) {
+        if (jsonObject.containsKey("Board")) {
+            if (!gameField.deserializeField((JSONObject) jsonObject.get("Board"))) {
+                throw new IllegalArgumentException("Board::state was not correct");
+            }
+        }
+        if (jsonObject.containsKey("AllowedMoves")) {
+            JSONArray moves = (JSONArray) jsonObject.get("AllowedMoves");
+            if (moves.size() == 1) {
+                // Assume attack is only move
+                JSONObject move = Move.serializeMove(pickAnyMove(true));
+                System.out.println(move.toJSONString());
+            } else {
+                // Assume we can do any move now
+                JSONObject move = Move.serializeMove(pickAnyMove(false));
+                System.out.println(move.toJSONString());
+            }
+        }
     }
     
     /**
@@ -133,14 +181,14 @@ public class TestBot {
      * @param mustAttack Must the returned move be an Attack move?
      * @return A Move as String
      */
-    public String pickAnyMove(boolean mustAttack) {
+    public Move pickAnyMove(boolean mustAttack) {
         List<Move> moveList = gameField.getPossibleMoves(myPlayer, mustAttack);
         if (moveList.isEmpty())
-            return "PASS";
+            return new Move();
         Random randomGen = new Random();
         int pick = randomGen.nextInt(moveList.size());
         
         Move move = moveList.get(pick);
-        return move.getMoveAsString();
+        return move;
     }
 }

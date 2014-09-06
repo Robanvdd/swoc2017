@@ -14,10 +14,11 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 /**
- * j/y is left to right (A to I)
- * i/x is top to bottom 
+ * i/x is left to right (A to I)
+ * j/y is top to bottom 
  * 
  *  Start Board:
+ *   A   B   C   D   E   F   G   H   I
  *  -2   2   2   2   2   x   x   x   x
  *  -2  -3   3   3   3  -2   x   x   x
  *  -2  -3  -4   4   4  -3  -2   x   x
@@ -35,39 +36,28 @@ import org.json.simple.parser.ParseException;
  * @author SvZ
  */
 public class GameField {
-    static int ILLEGAL_FIELD = 999;
     static int EMPTY_FIELD = 0;
     static int PLAYER_WHITE = 1;
     static int PLAYER_BLACK = -1;
-    static int STONE_HIGH = 4;
-    static int STONE_MID = 3;
-    static int STONE_LOW = 2;
-    static int STRENGTH_VALUE = 5;
+    static int STONE_HIGH = 3;
+    static int STONE_MID = 2;
+    static int STONE_LOW = 1;
+    static int STRENGTH_VALUE = 4;
     private int[][] field = new int[9][9];
-    private String jsonStartField = "{\"field\":["
-            + "-2,2,2,2,2,999,999,999,999,"
-            + "-2,-3,3,3,3,-2,999,999,999,"
-            + "-2,-3,-4,4,4,-3,-2,999,999,"
-            + "-2,-3,-4,-2,2,-4,-3,-2,999,"
-            + "2,3,4,2,999,-2,4,-3,-2,"
-            + "999,2,3,4,-2,2,4,3,2,"
-            + "999,999,2,3,-4,-4,4,3,2,"
-            + "999,999,999,2,-3,-3,-3,3,2,"
-            + "999,999,999,999,-2,-2,-2,-2,2]}";
     
     public GameField() {
-        initializeField(jsonStartField);
-        
+               
     }
     
-    // Assuming the format gained is same as we use
-    public void initializeField(int[][] board) {
-        if (board.length != 9 || board[0].length != 9) {
+    public void initializeField(JSONArray board) {
+        if (board.size() != 9) {
             throw new IllegalArgumentException("Field is not 9x9!");
         }
-        for (int i=0; i < 9; i++) {
-            for (int j=0; j < 9; j++) {
-                field[i][j] = board[i][j];
+        for (int j=0; j < 9; j++) {
+            JSONArray line = (JSONArray) board.get(j);
+            for (int i=0; i < 9; i++) {
+                 Long value = (Long)line.get(i);
+                 field[j][i] = value.intValue();
             }
         }
     }
@@ -86,10 +76,10 @@ public class GameField {
     public String printField() {
         StringBuilder sb = new StringBuilder();
         
-        for (int i=0; i < 9; i++) {
-            for (int j=0; j < 9; j++) {
+        for (int j=0; j < 9; j++) {
+            for (int i=0; i < 9; i++) {
                 
-                sb.append(field[i][j]);
+                sb.append(field[j][i]);
                 sb.append(' ');
             }
             sb.append('\n');
@@ -97,7 +87,7 @@ public class GameField {
         
         return sb.toString();
     }
-    
+    /* Old convention
     public JSONObject serializeField() {
         JSONArray jsonArray = new JSONArray();
 		for (int i = 0; i < 9; i++)
@@ -110,35 +100,21 @@ public class GameField {
         JSONObject object = new JSONObject();
 		object.put("field", jsonArray);
         return object;
-    }
+    }*/
     
-    public boolean deserializeField(JSONObject object) {
-        if (!object.containsKey("field"))   return false;
+    public boolean deserializeField(JSONObject boardObject) {
+        if (!boardObject.containsKey("state"))   return false;
         
-        Object jsonArrayObject = object.get("field");
-        if (jsonArrayObject instanceof JSONArray) {
-            JSONArray fieldArray = (JSONArray) jsonArrayObject;
-            for (int i = 0; i < 9; i++)
-            {
-                for (int j = 0; j < 9; j++)
-                {
-                    Object value = fieldArray.get(9*i + j);
-                    //if (value instanceof Integer)
-                    long l = (Long) value;
-                    field[i][j] = (int) l;
-                }
-            }
+        Object stateObject = boardObject.get("state");
+        if (stateObject instanceof JSONArray) {
+            initializeField((JSONArray) stateObject);
         }
         
         return true;
     }
     
-    public boolean isIllegalPosition(Location location) {
-        return (field[location.x()][location.y()] == ILLEGAL_FIELD);
-    }
-    
     public boolean isEmptyPosition(Location location) {
-        return (field[location.x()][location.y()] == EMPTY_FIELD);
+        return (field[location.y()][location.x()] == EMPTY_FIELD);
     }
     
     /**
@@ -147,7 +123,7 @@ public class GameField {
      * @return How many stones are on top of each other?
      */
     public int getStoneStrength(Location location) {
-        int strength = (field[location.x()][location.y()] / STRENGTH_VALUE);
+        int strength = (field[location.y()][location.x()] / STRENGTH_VALUE);
         if (strength < 0 ) {
             strength = strength * -1; 
         } 
@@ -160,7 +136,7 @@ public class GameField {
      * @return Get type of stone on this location (Is low/mid/high value)
      */
     public int getStoneType(Location location) {
-        int type = (field[location.x()][location.y()] % STRENGTH_VALUE);
+        int type = (field[location.y()][location.x()] % STRENGTH_VALUE);
         if (type < 0 ) {
             return type * -1; 
         } else {            
@@ -169,9 +145,9 @@ public class GameField {
     }
     
     public int isOfPlayer(Location location) {
-        if (field[location.x()][location.y()] > 0)
+        if (field[location.y()][location.x()] > 0)
             return PLAYER_WHITE;
-        if (field[location.x()][location.y()] < 0)
+        if (field[location.y()][location.x()] < 0)
             return PLAYER_BLACK;
         return 0;
     }
@@ -186,7 +162,7 @@ public class GameField {
         int count = 0;
         for (int i=0; i < 9; i++) {
             for (int j=0; j < 9; j++) {
-                if ( (field[i][j] % STRENGTH_VALUE) == (player * stoneType) ) 
+                if ( (field[j][i] % STRENGTH_VALUE) == (player * stoneType) ) 
                     count ++;
             }
         }
@@ -203,55 +179,49 @@ public class GameField {
         switch(direction) {
             case LEFT:
             {
-                if (location.y() > 0) {
-                    Location movedLocation = new Location(location.x(), location.y()-1);
-                    if (!isIllegalPosition(movedLocation))
-                        return movedLocation;
+                if (location.x() > 0) {
+                    Location movedLocation = new Location(location.y(), location.x()-1);
+                    return movedLocation;
                 }
                 return null;
             }
             case RIGHT:
             {
-                if (location.y() < 8) {
-                    Location movedLocation = new Location(location.x(), location.y()+1);
-                    if (!isIllegalPosition(movedLocation))
-                        return movedLocation;
+                if (location.x() < 8) {
+                    Location movedLocation = new Location(location.y(), location.x()+1);
+                    return movedLocation;
                 }
                 return null;
             }
             case UP:
             {
-                if (location.x() > 0) {
-                    Location movedLocation = new Location(location.x()-1, location.y());
-                    if (!isIllegalPosition(movedLocation))
-                        return movedLocation;
+                if (location.y() > 0) {
+                    Location movedLocation = new Location(location.y()-1, location.x());
+                    return movedLocation;
                 }
                 return null;
             }
             case DOWN:
             {
-                if (location.x() < 8) {
-                    Location movedLocation = new Location(location.x()+1, location.y());
-                    if (!isIllegalPosition(movedLocation))
-                        return movedLocation;
+                if (location.y() < 8) {
+                    Location movedLocation = new Location(location.y()+1, location.x());
+                    return movedLocation;
                 }
                 return null;
             }
             case DIAGONAL_UP:
             {
-                if (location.y() > 0 && location.x() > 0) {
-                    Location movedLocation = new Location(location.x()-1, location.y()-1);
-                    if (!isIllegalPosition(movedLocation))
-                        return movedLocation;
+                if (location.x() > 0 && location.y() > 0) {
+                    Location movedLocation = new Location(location.y()-1, location.x()-1);
+                    return movedLocation;
                 }
                 return null;
             }
             case DIAGONAL_DOWN:
             {
-                if (location.y() < 8 && location.x() < 8) {
-                    Location movedLocation = new Location(location.x()+1, location.y()+1);
-                    if (!isIllegalPosition(movedLocation))
-                        return movedLocation;
+                if (location.x() < 8 && location.y() < 8) {
+                    Location movedLocation = new Location(location.y()+1, location.x()+1);
+                    return movedLocation;
                 }
                 return null;
             }
@@ -268,7 +238,7 @@ public class GameField {
      * returns null if not possible
      */
     public Location getNonEmptyLocationInDirection(Location startLocation, Direction direction) {
-        if (isIllegalPosition(startLocation) || isEmptyPosition(startLocation)) {
+        if (isEmptyPosition(startLocation)) {
             return null;
         }
         
@@ -301,8 +271,8 @@ public class GameField {
         int stoneType = getStoneType(from);
         int player = isOfPlayer(to);
         
-        field[from.x()][from.y()] = EMPTY_FIELD;
-        field[to.x()][to.y()] = (stoneType + ((oldFromStrength + oldToStrength - 1)*STRENGTH_VALUE) ) * player;
+        field[from.y()][from.x()] = EMPTY_FIELD;
+        field[to.y()][to.x()] = (stoneType + ((oldFromStrength + oldToStrength - 1)*STRENGTH_VALUE) ) * player;
         return true;
     }
     
@@ -315,10 +285,10 @@ public class GameField {
         if (isOfPlayer(from) == isOfPlayer(to))
             return false;
         
-        int oldValue = field[from.x()][from.y()];
+        int oldValue = field[from.y()][from.x()];
         
-        field[from.x()][from.y()] = EMPTY_FIELD;
-        field[to.x()][to.y()] = oldValue;
+        field[from.y()][from.x()] = EMPTY_FIELD;
+        field[to.y()][to.x()] = oldValue;
         return true;
     }
     
@@ -327,7 +297,7 @@ public class GameField {
      * returns null if illegal given location
      */
     public List<Move> getPossibleMovesForLocation(Location from, boolean mustAttack) {
-        if (isIllegalPosition(from) || isEmptyPosition(from)) {
+        if (isEmptyPosition(from)) {
             return null;
         }
         List<Move> moveList = new LinkedList<Move>();
@@ -339,7 +309,7 @@ public class GameField {
                 continue;
             
             // If we are positive after multiplication, the fields belonged to the same player
-            boolean strengthen = field[from.x()][from.y()] * field[towards.x()][towards.y()] > 0;
+            boolean strengthen = field[from.y()][from.x()] * field[towards.y()][towards.x()] > 0;
             
             if (mustAttack && strengthen)
                 continue;
@@ -362,9 +332,9 @@ public class GameField {
         
         for (int i=0; i < 9; i++) {
             for (int j=0; j < 9; j++) {
-                Location location = new Location(i,j);
+                Location location = new Location(j,i);
                 
-                if (isIllegalPosition(location) || isEmptyPosition(location)) 
+                if (isEmptyPosition(location)) 
                     continue;
                                 
                 if (player != isOfPlayer(location))
