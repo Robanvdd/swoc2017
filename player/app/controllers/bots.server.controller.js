@@ -129,3 +129,7 @@ exports.upload = function(req, res) {
 		});
 	}
 };
+
+exports.retrieveAll = function(callback) {
+	Bot.find({}, callback);
+}

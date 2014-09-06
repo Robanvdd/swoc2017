@@ -1744,6 +1744,16 @@ meanControllers.controller('RulesCtrl', ['$scope', '$http', '$location', functio
 
 //CONTROLLER FOR mod_leaderboard.html
 meanControllers.controller('LeaderboardCtrl', ['$scope', '$http', '$location', function($scope, $http, $location) {
+	$scope.getAll = function() {
+		$http.get('/api/bot/retrieveall/')
+			.success(function(data){
+				$scope.bots = data;
+			})
+			.error(function(data) {
+				console.log(data);
+			});
+	}
+	$scope.getAll();
 }]);
 
 //CONTROLLER FOR mod_login.html

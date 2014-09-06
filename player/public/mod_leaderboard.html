@@ -1,2 +1,25 @@
 <h2>Leaderboard</h2>
 <h3>In the Game of Stones you win or you FATAL_EXCEPTION...</h3>
+
+<table width="100%" class="table table-hover">
+	<thead>
+		<tr>
+			<th width="50px">Ranking</th><th>Name</th><th>Version</th><th>User</th>
+		</tr>
+	</thead>
+		<tr ng-repeat="bot in bots | orderBy:'ranking'">
+			<td>
+				Rank: <span>{{bot.rank}}</span>
+			</td>
+			<td>
+				Name: <span>{{bot.name}}</span>
+			</td>
+			<td>
+				Version: <span>{{bot.version}}</span>
+			</td>
+			<td>
+				User: <span>{{bot.user}}</span>
+			</td>
+		</tr>
+	</tbody>
+</table>
