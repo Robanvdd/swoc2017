@@ -25,7 +25,7 @@ public class BoardLocation
     public String ToLabel()
     {
         char x = (char)('A' + X);
-        char y = (char)('1' + Y);
+        char y = (char)('1' + (Y - Math.max(X - 4, 0)));
         return new String(new char[] { x, y });
     }
 }
