@@ -987,8 +987,9 @@ meanControllers.controller('PlayCtrl', ['$scope', '$http', '$location', 'GameLib
  
 //CONTROLLER FOR mod_detail.html
 meanControllers.controller('DetailCtrl', ['$scope', '$http', '$routeParams', function($scope, $http, $routeParams) {
-	$http.get('/api/game/retrieveid/'+$routeParams.gameId).success(function(data){
+	$http.get('/api/match/retrieveid/'+$routeParams.gameId).success(function(data){
 		$scope.game = data;		
+		$scope.game.startstate = "oOOOOozZZZooztTTzooztoOtzoOZTO otzoOZToOTZOOZttTZOOzzzZOooooO";
 		$scope.game.whiteTzaarCount = 6;
 		$scope.game.whiteTzarrasCount = 9;
 		$scope.game.whiteTottsCount = 15;

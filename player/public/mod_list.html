@@ -4,16 +4,19 @@
 <table width="100%" class="table table-hover">
 	<thead>
 		<tr>
-			<th width="50px">No</th><th>Data</th><th>Detail</th>
+			<th>Time</th><th>Bots</th><th>Winner</th><th></th>
 		</tr>
 	</thead>
-		<tr ng-repeat="game in games | orderBy:'name'">
-			<td>{{$index+1}}</td>
+		<tr ng-repeat="match in matches | orderBy:'completedOn'">
+			<td>{{completedOn}}</td>
 			<td>
-				Name: <span>{{game.name}}</span>
+				<span>{{match.whiteBot}} vs {{match.whiteBot}}</span>
 			</td>
 			<td>
-				<a class="btn btn-primary btn-mini" href="#/detail/{{game._id}}">Detail <b class="glyphicon glyphicon-search"></b></a>
+				<span>{{match.winnerBot}}</span>
+			</td>
+			<td>
+				<a class="btn btn-primary btn-mini" href="#/detail/{{match._id}}">Show <b class="glyphicon glyphicon-search"></b></a>
 			</td>
 		</tr>
 	</tbody>
