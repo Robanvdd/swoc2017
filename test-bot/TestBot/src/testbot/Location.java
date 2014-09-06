@@ -29,6 +29,9 @@ public class Location {
         String[] stringArray = inputString.split("-");
         int x = Integer.parseInt(stringArray[0]);
         int y = Integer.parseInt(stringArray[1]);
+        if (x < 0 || x > 8 || y < 0 || y > 8) {
+            throw new IllegalArgumentException("Creating Location object with illegal value");
+        }
         _x = x;
         _y = y;
     }

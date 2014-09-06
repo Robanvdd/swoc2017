@@ -19,19 +19,19 @@ import org.json.simple.parser.ParseException;
  * 
  *  Start Board:
  *   A   B   C   D   E   F   G   H   I
- *  -2   2   2   2   2   x   x   x   x
- *  -2  -3   3   3   3  -2   x   x   x
- *  -2  -3  -4   4   4  -3  -2   x   x
- *  -2  -3  -4  -2   2  -4  -3  -2   x
- *   2   3   4   2   x  -2  -4  -3  -2
- *   x   2   3   4  -2   2   4   3   2
- *   x   x   2   3  -4  -4   4   3   2
- *   x   x   x   2  -3  -3  -3   3   2
- *   x   x   x   x  -2  -2  -2  -2   2
+ *  -1   1   1   1   1   x   x   x   x
+ *  -1  -2   2   2   2  -1   x   x   x
+ *  -1  -2  -3   3   3  -2  -1   x   x
+ *  -1  -2  -3  -1   1  -3  -2  -1   x
+ *   1   2   3   1   x  -1  -3  -2  -1
+ *   x   1   2   3  -1   1   3   2   1
+ *   x   x   1   2  -3  -3   3   3   1
+ *   x   x   x   1  -2  -2  -2   2   1
+ *   x   x   x   x  -1  -1  -1  -1   1
  * 
  *  Sign gives the player owning the stone (BLACK is negative)
  *  Stone type can be LOW, MID or HIGH
- *  With Strengthen move we raise (or lower if BLACK) with 5
+ *  With Strengthen move we raise (or lower if BLACK) with STRENGTH_VALUE
  *
  * @author SvZ
  */
@@ -87,20 +87,6 @@ public class GameField {
         
         return sb.toString();
     }
-    /* Old convention
-    public JSONObject serializeField() {
-        JSONArray jsonArray = new JSONArray();
-		for (int i = 0; i < 9; i++)
-		{
-			for (int j = 0; j < 9; j++)
-			{
-				jsonArray.add(field[i][j]);
-			}
-		}
-        JSONObject object = new JSONObject();
-		object.put("field", jsonArray);
-        return object;
-    }*/
     
     public boolean deserializeField(JSONObject boardObject) {
         if (!boardObject.containsKey("state"))   return false;
