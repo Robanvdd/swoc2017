@@ -27,7 +27,6 @@ public class TestBot {
 	private GameField gameField = new GameField();
     private static final String STOP_COMMAND = "STOP";
     private static int myPlayer;
-    private int activePlayer;
     /**
      * @param args the command line arguments
      */
@@ -43,6 +42,10 @@ public class TestBot {
         runWithEngine();
     }
     
+    /*
+     * Keep doing moves for one player till no longer possible
+     * NOTE! Uses the Move-string convention, no JSON!
+     */
     private void runSolo() {
         System.out.println(gameField.printField());
         System.out.flush();
@@ -52,7 +55,7 @@ public class TestBot {
         System.out.println("Suggested move: " + move);
         String command = move;
 		while (!command.equals(STOP_COMMAND)) {
-            doMove(gameField, command);
+            doMove(gameField, Move.parseString(command));
             System.out.println(gameField.printField());
             System.out.flush();
             //System.out.println(gameField.serializeField().toJSONString());
@@ -65,26 +68,33 @@ public class TestBot {
         }
     }
     
+    /*
+     * Given a valid JSON Board state, do two moves.
+     * NOTE! Uses the Move-string convention, no JSON!
+     */
     private void runAgainstBot() {
         System.out.println(gameField.printField());
         System.out.flush();
         //System.out.println("Suggested move: " + pickAnyMove(true));
         String fieldState = readcommandline();
-        String command;
+        Move command;
 		while (!fieldState.equals(STOP_COMMAND)) {
             gameField.initializeField(fieldState);
-            command = pickAnyMove(true).getMoveAsString();
+            command = pickAnyMove(true);
             doMove(gameField, command);
-            System.out.println(command);
+            System.out.println(command.getMoveAsString());
             System.out.flush();
-            command = pickAnyMove(false).getMoveAsString();
+            command = pickAnyMove(false);
             doMove(gameField, command);
-            System.out.println(command);
+            System.out.println(command.getMoveAsString());
             System.out.flush();
             fieldState = readcommandline();
         }
     }
     
+    /*
+     * Run against the Engine
+     */
     private void runWithEngine() {
         
         String command = "";
@@ -96,6 +106,10 @@ public class TestBot {
             if (jsonObject.containsKey("Board")) {
                 // Our move
                 parseMoveRequest(jsonObject);
+            }
+            if (jsonObject.containsKey("Winner")) {
+                // AI might want to use this information
+                parseProcessedMove(jsonObject);
             }
         }
     }
@@ -150,6 +164,27 @@ public class TestBot {
         }
     }
     
+    /*
+     * Bot currently doesn't need this feedback
+     * AI might want it, so we provide parser
+     */
+    private void parseProcessedMove(JSONObject jsonObject) {
+        int playerOfThisMove;
+        Move givenMove = null;
+        int winner;
+        if (jsonObject.containsKey("Player")) {
+            Double d = (Double) jsonObject.get("Player");
+            playerOfThisMove = d.intValue();
+        }
+        if (jsonObject.containsKey("Move")) {
+            givenMove = Move.deserializeMove((JSONObject)jsonObject.get("Move"));
+        }
+        if (jsonObject.containsKey("Winner")) {
+            Double d = (Double) jsonObject.get("Winner");
+            winner = d.intValue();
+        }
+    }
+    
     /**
      * 
      * Does a move, returns true if correctly
@@ -157,12 +192,10 @@ public class TestBot {
      * @param move
      * @return 
      */
-	public boolean doMove(GameField board, String move) {
-		Move givenMove = Move.parseString(move);
-        if (givenMove == null) return false;
+	public boolean doMove(GameField board, Move givenMove) {
+		if (givenMove == null) return false;
         if (givenMove.getType() == MoveType.PASS)
         {
-            activePlayer = activePlayer * -1;
             return true;
         }
         if (givenMove.getType() == MoveType.ATTACK)

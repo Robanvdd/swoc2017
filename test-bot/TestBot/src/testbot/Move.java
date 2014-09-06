@@ -57,7 +57,10 @@ public class Move {
         }
     }
     
-    // TODO: Convert to actual move-convention 
+    /**
+     * NOTE! String-convention is not the JSON convention!
+     * @return 
+     */
     public String getMoveAsString() {
         switch (_type) {
             case PASS:
@@ -70,6 +73,10 @@ public class Move {
         return "";
     }
     
+    /**
+     * NOTE! String-convention is not the JSON convention!
+     * @return 
+     */
     public static Move parseString(String input) {
         if (input == null || input.trim().equals("")) return null;
         
