@@ -2,7 +2,7 @@
 
 import optparse
 import os
-#import bcrypt
+import bcrypt
 import subprocess
 
 def main():
@@ -16,7 +16,7 @@ def main():
     if not options.password:
         p.error('Password not given (-p)')
 
-    hashed = 'test' #bcrypt.hashpw(options.password, bcrypt.gensalt(10))
+    hashed = bcrypt.hashpw(options.password, bcrypt.gensalt(10))
 
     addUserString = "db.users.insert({username: '" + options.username + "', email: '', password: '" + hashed + "', roles: ['user']})"
 
