@@ -21,4 +21,11 @@ public class BoardLocation
         return x >= 0 && x < 9 && y >= 0 && y < 9 &&
                 (x - y) < 5 && (y - x) < 5 && (x != 4 || y != 4);
     }
+
+    public String ToLabel()
+    {
+        char x = (char)('A' + X);
+        char y = (char)('1' + Y);
+        return new String(new char[] { x, y });
+    }
 }

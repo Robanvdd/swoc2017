@@ -28,18 +28,11 @@ public class MatchLogger
                 break;
             case Move.Attack:
             case Move.Strengthen:
-                sb.append(BoardLocationToString(move.From));
-                sb.append(BoardLocationToString(move.To));
+                sb.append(move.From.ToLabel());
+                sb.append(move.To.ToLabel());
                 break;
             }
         }
         return sb.toString();
-    }
-
-    private static String BoardLocationToString(BoardLocation location)
-    {
-        char x = (char)('A' + location.X);
-        char y = (char)('0' + location.Y);
-        return new String(new char[] { x, y });
     }
 }
