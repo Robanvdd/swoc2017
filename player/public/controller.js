@@ -917,9 +917,9 @@ meanControllers.controller('PlayvCPUCtrl', ['$scope', '$http', '$location', 'Gam
 //CONTROLLER FOR mod_list.html
 meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', function ($scope, $http, $location) {
 	$scope.getAll = function() {
-		$http.get('/api/game/retrieveall/')
+		$http.get('/api/match/retrieveall/')
 			.success(function(data){
-				$scope.games = data;
+				$scope.matches = data;
 			})
 			.error(function(data) {
 				console.log(data);
