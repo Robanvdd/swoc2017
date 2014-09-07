@@ -1747,8 +1747,13 @@ meanControllers.controller('RulesCtrl', ['$scope', '$http', '$location', functio
 meanControllers.controller('LeaderboardCtrl', ['$scope', '$http', '$location', function($scope, $http, $location) {
 	$scope.getAll = function() {
 		$http.get('/api/bot/retrieveall/')
-			.success(function(data){
-				$scope.bots = data;
+			.success(function(botsdata){
+				angular.forEach(botsdata.bots, function(bot, key) {
+					$http.get('/api/user/retrieveid/' + bot.user).success(function(user){
+						bot.username = user.username;
+					});	
+				});
+				$scope.bots = botsdata;
 			})
 			.error(function(data) {
 				console.log(data);
