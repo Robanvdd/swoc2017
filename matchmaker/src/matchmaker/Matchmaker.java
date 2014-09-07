@@ -61,7 +61,7 @@ public class Matchmaker implements AutoCloseable {
     {
         if (db != null)
         {
-            makeMatches(getAllBots(db));
+            makeMatches(getHighestVersionBots(db));
         }
         System.out.println("Matchmaker done");
     }
@@ -114,6 +114,30 @@ public class Matchmaker implements AutoCloseable {
             }
         } finally {
             cursor.close();
+        }
+        return botList;
+    }
+    
+    private List<ObjectId> getHighestVersionBots(DB database) {
+        DBCollection allBotsColl = getBotTable(database);
+        
+        List<String> userList = allBotsColl.distinct("user"); 
+        
+        List<ObjectId> botList = new LinkedList<ObjectId>();
+        for (String user: userList) {
+            DBCollection coll = getBotTable(database);
+            BasicDBObject query = new BasicDBObject("user", user);
+            
+            DBCursor cursor = coll.find(query);
+            cursor.sort(new BasicDBObject("version", -1));
+            try {
+                if (cursor.hasNext()) {
+                    DBObject object = cursor.next();
+                    botList.add((ObjectId)object.get("_id"));
+                }
+            } finally {
+                cursor.close();
+            }
         }
         return botList;
     }
