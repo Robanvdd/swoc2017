@@ -121,10 +121,10 @@ public class Matchmaker implements AutoCloseable {
     private List<ObjectId> getHighestVersionBots(DB database) {
         DBCollection allBotsColl = getBotTable(database);
         
-        List<String> userList = allBotsColl.distinct("user"); 
+        List<ObjectId> userList = allBotsColl.distinct("user");
         
         List<ObjectId> botList = new LinkedList<ObjectId>();
-        for (String user: userList) {
+        for (ObjectId user: userList) {
             DBCollection coll = getBotTable(database);
             BasicDBObject query = new BasicDBObject("user", user);
             
