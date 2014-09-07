@@ -1,9 +1,9 @@
 <header>
-	<div class="player1-active" ng-if="'white' == activeColor" style="width:45%">{{game.whiteBot}}</div>
-	<div class="player1-inactive" ng-if="'white' != activeColor" style="width:45%">{{game.whiteBot}}</div>
+	<div class="player1-active" ng-if="'white' == activeColor" style="width:45%">{{game.whiteBot.name}}</div>
+	<div class="player1-inactive" ng-if="'white' != activeColor" style="width:45%">{{game.whiteBot.name}}</div>
 	<div class="VS">VS</div>
-	<div class="player2-active" ng-if="'black' == activeColor" style="width:45%">{{game.blackBot}}</div>
-	<div class="player2-inactive" ng-if="'black' != activeColor" style="width:45%">{{game.blackBot}}</div>
+	<div class="player2-active" ng-if="'black' == activeColor" style="width:45%">{{game.blackBot.name}}</div>
+	<div class="player2-inactive" ng-if="'black' != activeColor" style="width:45%">{{game.blackBot.name}}</div>
 </header>
 
 <section>

@@ -10,10 +10,10 @@
 		<tr ng-repeat="match in matches | orderBy:'completedOn'">
 			<td>{{completedOn}}</td>
 			<td>
-				<span>{{match.whiteBot}} vs {{match.whiteBot}}</span>
+				<span>{{match.whiteBot.name}} vs {{match.blackBot.name}}</span>
 			</td>
 			<td>
-				<span>{{match.winnerBot}}</span>
+				<span>{{match.winnerBot.name}}</span>
 			</td>
 			<td>
 				<a class="btn btn-primary btn-mini" href="#/detail/{{match._id}}">Show <b class="glyphicon glyphicon-search"></b></a>
