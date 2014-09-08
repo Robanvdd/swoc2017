@@ -1,28 +1,18 @@
-package gos.engine;
+package gos.engine.protocol;
+
 
 public class Board
 {
-    // owners
-    public static final int PlayerNone = 0;
-    public static final int PlayerWhite = 1;
-    public static final int PlayerBlack = -1;
-
-    // stone types
-    public static final int StoneNone = 0;
-    public static final int StoneA = 1;
-    public static final int StoneB = 2;
-    public static final int StoneC = 3;
-
     private final int[][] state;
 
-    private static final int Empty = GetCode(PlayerNone, StoneNone, 0);
+    private static final int Empty = GetCode(Player.None, Stone.None, 0);
 
-    private static final int BlackA = GetCode(PlayerBlack, StoneA, 1);
-    private static final int BlackB = GetCode(PlayerBlack, StoneB, 1);
-    private static final int BlackC = GetCode(PlayerBlack, StoneC, 1);
-    private static final int WhiteA = GetCode(PlayerWhite, StoneA, 1);
-    private static final int WhiteB = GetCode(PlayerWhite, StoneB, 1);
-    private static final int WhiteC = GetCode(PlayerWhite, StoneC, 1);
+    private static final int BlackA = GetCode(Player.Black, Stone.A, 1);
+    private static final int BlackB = GetCode(Player.Black, Stone.B, 1);
+    private static final int BlackC = GetCode(Player.Black, Stone.C, 1);
+    private static final int WhiteA = GetCode(Player.White, Stone.A, 1);
+    private static final int WhiteB = GetCode(Player.White, Stone.B, 1);
+    private static final int WhiteC = GetCode(Player.White, Stone.C, 1);
 
     private static final int[][] DefaultState =
         {
@@ -47,12 +37,12 @@ public class Board
         state = initialState;
     }
 
-    public int GetOwner(BoardLocation location)
+    public Player GetOwner(BoardLocation location)
     {
         return GetOwner(state[location.Y][location.X]);
     }
 
-    public int GetStone(BoardLocation location)
+    public Stone GetStone(BoardLocation location)
     {
         return GetStone(state[location.Y][location.X]);
     }
@@ -62,34 +52,32 @@ public class Board
         return GetHeight(state[location.Y][location.X]);
     }
 
-    private static int GetCode(int owner, int stone, int height)
+    private static int GetCode(Player owner, Stone stone, int height)
     {
-        assert (-1 <= owner && owner <= 1);
-        assert (0 <= stone && stone <= 3);
-        assert ((owner != 0 && stone != 0 && height > 0) ||
-                (owner == 0 && stone == 0 && height == 0));
-        return owner * (height * 4 + stone);
+        assert((owner != Player.None && stone != Stone.None && height > 0) ||
+            (owner == Player.None && stone == Stone.None && height == 0));
+        return owner.value * (height * 4 + stone.value);
     }
 
-    private static int GetOwner(int fieldCode)
+    private static Player GetOwner(int fieldCode)
     {
         if (fieldCode == 0)
         {
-            return PlayerNone;
+            return Player.None;
         }
         else if (fieldCode > 0)
         {
-            return PlayerWhite;
+            return Player.White;
         }
         else
         {
-            return PlayerBlack;
+            return Player.Black;
         }
     }
 
-    private static int GetStone(int fieldCode)
+    private static Stone GetStone(int fieldCode)
     {
-        return Math.abs(fieldCode) % 4;
+        return Stone.fromInt(Math.abs(fieldCode) % 4);
     }
 
     private static int GetHeight(int fieldCode)
@@ -97,13 +85,13 @@ public class Board
         return Math.abs(fieldCode) / 4;
     }
 
-    public void SetSpace(BoardLocation location, int owner, int stone, int height)
+    public void SetSpace(BoardLocation location, Player owner, Stone stone, int height)
     {
-        if (owner == PlayerNone)
+        if (owner == Player.None)
         {
             throw new IllegalArgumentException("owner not specified");
         }
-        if (stone == StoneNone)
+        if (stone == Stone.None)
         {
             throw new IllegalArgumentException("stone not specified");
         }
@@ -120,7 +108,7 @@ public class Board
         state[location.Y][location.X] = Empty;
     }
 
-    public int GetTotalCount(int player, int stone)
+    public int GetTotalCount(Player player, Stone stone)
     {
         int count = 0;
 
@@ -150,9 +138,9 @@ public class Board
                 char c;
                 if (BoardLocation.IsLegal(x, y))
                 {
-                    int owner = GetOwner(new BoardLocation(x, y));
-                    c = (owner == Board.PlayerBlack) ? 'B' :
-                        (owner == Board.PlayerWhite) ? 'W' :
+                    Player owner = GetOwner(new BoardLocation(x, y));
+                    c = (owner == Player.Black) ? 'B' :
+                        (owner == Player.White) ? 'W' :
                         '.';
                 }
                 else
@@ -167,10 +155,10 @@ public class Board
                 char c;
                 if (BoardLocation.IsLegal(x, y))
                 {
-                    int stone = GetStone(new BoardLocation(x, y));
-                    c = (stone == Board.StoneA) ? 'a' :
-                        (stone == Board.StoneB) ? 'b' :
-                        (stone == Board.StoneC) ? 'c' :
+                    Stone stone = GetStone(new BoardLocation(x, y));
+                    c = (stone == Stone.A) ? 'a' :
+                        (stone == Stone.B) ? 'b' :
+                        (stone == Stone.C) ? 'c' :
                         '.';
                 }
                 else
@@ -200,12 +188,12 @@ public class Board
         System.out.print("------------------  ");
         System.out.println("---------------------------");
         System.out.print("White: "
-                + GetTotalCount(Board.PlayerWhite, Board.StoneA) + " a, "
-                + GetTotalCount(Board.PlayerWhite, Board.StoneB) + " b, "
-                + GetTotalCount(Board.PlayerWhite, Board.StoneC) + " c");
+                + GetTotalCount(Player.White, Stone.A) + " a, "
+                + GetTotalCount(Player.White, Stone.B) + " b, "
+                + GetTotalCount(Player.White, Stone.C) + " c");
         System.out.println("  Black: "
-                + GetTotalCount(Board.PlayerBlack, Board.StoneA) + " a, "
-                + GetTotalCount(Board.PlayerBlack, Board.StoneB) + " b, "
-                + GetTotalCount(Board.PlayerBlack, Board.StoneC) + " c");
+                + GetTotalCount(Player.Black, Stone.A) + " a, "
+                + GetTotalCount(Player.Black, Stone.B) + " b, "
+                + GetTotalCount(Player.Black, Stone.C) + " c");
     }
 }
