@@ -94,29 +94,14 @@ def store_compile_output(txt):
     with open("compile_output.txt", "w") as f:
         f.write(txt)
 
-def run_ant_clean_build():
-    # Working from bot-id directory
-    os.chdir(codeSubdir)
-    cwd = os.getcwd()
-    print("Compiling from working directory: " + cwd)
-    p = subprocess.Popen(["ant", "-noinput", "clean-build"], cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    antStdout = ""
-    while p.returncode == None:
-        antStdout += str(p.communicate()[0])
+def get_first_jar_name():
+    return glob.glob("*.jar")[0]
 
-    os.chdir("..")
-    store_compile_output(antStdout)
 
-    if p.returncode == 0:
-        print("Compilation succesfull")
-    else:
-        sys.stderr.write("Error: Something went wrong during compiling. Check the create file for compile output.")
-        sys.exit(1)
-
-def create_ant_run_script():
+def create_jar_run_script(jarName):
     # Working from bot-id directory
     with open("run.sh", "w") as f:
-        f.write("ant -buildfile code/build.xml run")
+        f.write("java -jar " + jarName)
     st = os.stat("run.sh")
     os.chmod("run.sh", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
@@ -124,8 +109,11 @@ def determine_language():
     language = None
     os.chdir(codeSubdir)
 
-    # Test for java, which is true when there is a build.xml
-    if os.path.isfile("build.xml"):
+    # Test for Java, which is true when there is a single .jar file in the root directory
+    if glob.glob("*.jar"):
+        if len(glob.glob("*.jar")) > 1:
+            sys.stderr.write("Error: Invalid java bot. The top level directory can only contain one jar file.")
+            sys.exit(1)
         language = Language.JAVA
 
     # Else, test for python, which is true when there is a single .py file in the root directory
@@ -167,8 +155,8 @@ def main():
 
                 if language == Language.JAVA:
                     print("Detected language is Java")
-                    run_ant_clean_build()
-                    create_ant_run_script()
+                    jarName = get_first_jar_name()
+                    create_jar_run_script(jarName)
                 elif language == Language.PYTHON:
                     print("Detected language is Python")
                     create_pyton_run_script()

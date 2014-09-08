@@ -7,8 +7,8 @@
 			<th>Time</th><th>Bots</th><th>Winner</th><th></th>
 		</tr>
 	</thead>
-		<tr ng-repeat="match in matches | orderBy:'completedOn'">
-			<td>{{completedOn}}</td>
+		<tr ng-repeat="match in matches | orderBy:'completedOn':'true'">
+			<td>{{match.completedOn}}</td>
 			<td>
 				<span>{{match.whiteBot.name}} vs {{match.blackBot.name}}</span>
 			</td>
