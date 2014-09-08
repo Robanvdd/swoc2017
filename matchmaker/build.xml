@@ -16,7 +16,7 @@
 
     <target name="compile">
         <mkdir dir="build/classes"/>
-        <javac srcdir="src" destdir="build/classes" classpathref="classpath" includeantruntime="false"/>
+        <javac debug="true" srcdir="src" destdir="build/classes" classpathref="classpath" includeantruntime="false"/>
     </target>
 
     <target name="jar" depends="compile">
