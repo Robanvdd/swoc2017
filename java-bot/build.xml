@@ -10,8 +10,11 @@
         <classpath refid="classpath" />
     </manifestclasspath>
 
-    <target name="clean">
+    <target name="clean-build">
         <delete dir="build"/>
+    </target>
+
+    <target name="clean" depends="clean-build">
     </target>
 
     <target name="compile">
