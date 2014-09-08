@@ -1,3 +1,7 @@
+
+	  
+
+
 <header>
 	<div class="player1-active" ng-if="'white' == activeColor" style="width:45%">{{game.whiteBot.name}}</div>
 	<div class="player1-inactive" ng-if="'white' != activeColor" style="width:45%">{{game.whiteBot.name}}</div>
@@ -22,8 +26,6 @@
 	<article>
 		<input type="checkbox" ng-model="printlabels"> 
 		Show labels <br/>
-		<caption><strong>Game Moves<strong></caption>
-		<textarea readonly style="width: 100%; resize: vertical">{{game.moves}}</textarea>
 	</article>
 
 </section>
@@ -106,3 +108,19 @@
 		<img ng-repeat="moveString in game.moveStrings" class="moveTypeAnimation" ng-if="moveString.index == currentmoveIndex" src="{{moveString.move_img}}" height="250" width="250" style="clear:both;"></img>
 	</div>
 </aside>
+<section style="width:100%">
+		moves:<br/>
+		<textarea readonly style="width: 100%; resize: vertical">{{game.moves}}</textarea>
+		White in:<br/>
+		<textarea readonly style="width: 100%; resize: vertical">{{game.whiteStdin}}</textarea>
+		White out:<br/>
+		<textarea readonly style="width: 100%; resize: vertical">{{game.whiteStdOut}}</textarea>
+		White err:<br/>
+		<textarea readonly style="width: 100%; resize: vertical">{{game.whiteStdErr}}</textarea>
+		Black in:<br/>
+		<textarea readonly style="width: 100%; resize: vertical">{{game.blackStdin}}</textarea>
+		Black out:<br/>
+		<textarea readonly style="width: 100%; resize: vertical">{{game.blackStdOut}}</textarea>
+		Black err:<br/>
+		<textarea readonly style="width: 100%; resize: vertical">{{game.blackStdErr}}</textarea>
+</section>
