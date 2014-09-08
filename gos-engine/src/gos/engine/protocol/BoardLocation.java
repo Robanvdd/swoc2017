@@ -1,4 +1,4 @@
-package gos.engine;
+package gos.engine.protocol;
 
 public class BoardLocation
 {

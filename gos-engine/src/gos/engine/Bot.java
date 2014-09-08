@@ -1,5 +1,7 @@
 package gos.engine;
 
+import gos.engine.protocol.Player;
+
 import java.io.IOException;
 
 import com.google.gson.Gson;
@@ -11,7 +13,7 @@ public class Bot implements AutoCloseable
 	private final StringBuilder botOutputLog = new StringBuilder();
 	private final Gson gson;
 
-	public Bot(String command, int player, String id) throws IOException
+	public Bot(String command, Player player, String id) throws IOException
 	{
         Player = player;
         Id = id;
@@ -20,7 +22,7 @@ public class Bot implements AutoCloseable
 		gson = new Gson();
 	}
 	
-	public final int Player;
+	public final Player Player;
 	public final String Id;
 
 	public void writeMessage(Object message)

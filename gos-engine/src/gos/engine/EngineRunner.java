@@ -1,5 +1,15 @@
 package gos.engine;
 
+import gos.engine.protocol.Board;
+import gos.engine.protocol.BoardLocation;
+import gos.engine.protocol.InitiateRequest;
+import gos.engine.protocol.Move;
+import gos.engine.protocol.MoveRequest;
+import gos.engine.protocol.MoveType;
+import gos.engine.protocol.Player;
+import gos.engine.protocol.ProcessedMove;
+import gos.engine.protocol.Stone;
+
 import java.io.IOException;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -25,14 +35,14 @@ public class EngineRunner implements AutoCloseable
             throw new IllegalArgumentException("White bot could not be found");
         }
 
-        botWhite = new Bot(executableWhite, Board.PlayerWhite, idWhite);
+        botWhite = new Bot(executableWhite, Player.White, idWhite);
 
         String executableBlack = database.GetBotExecutable(idBlack);
         if (executableBlack == null)
         {
             throw new IllegalArgumentException("Black bot could not be found");
         }
-        botBlack = new Bot(executableBlack, Board.PlayerBlack, idBlack);
+        botBlack = new Bot(executableBlack, Player.Black, idBlack);
 
         board = new Board();
     }
@@ -43,7 +53,7 @@ public class EngineRunner implements AutoCloseable
         {
             System.out.println("Starting match between " + botWhite.Id + " and " + botBlack.Id);
 
-            int winner = Board.PlayerNone;
+            Player winner = Player.None;
 
             Date startDate = new Date();
 
@@ -51,7 +61,7 @@ public class EngineRunner implements AutoCloseable
 
             winner = FirstRound();
 
-            while (winner == Board.PlayerNone)
+            while (winner == Player.None)
             {
                 winner = NormalRound();
             }
@@ -62,7 +72,7 @@ public class EngineRunner implements AutoCloseable
             long matchTimeInSeconds = TimeUnit.MILLISECONDS.toSeconds(diff);
             
             System.out.println("Match done in " + matchTimeInSeconds + " second(s)");
-            System.out.println("Winner is " + ((winner == Board.PlayerBlack) ? "Black" : "White"));
+            System.out.println("Winner is " + ((winner == Player.Black) ? "Black" : "White"));
 
             String matchId = database.StoreMatch(logger.GetLog(), botWhite, botBlack, winner, startDate, endDate);
             
@@ -88,51 +98,51 @@ public class EngineRunner implements AutoCloseable
 
     private void InitializeBots()
     {
-        InitiateRequest initReqW = new InitiateRequest(Board.PlayerWhite);
+        InitiateRequest initReqW = new InitiateRequest(Player.White);
         botWhite.writeMessage(initReqW);
 
-        InitiateRequest initReqB = new InitiateRequest(Board.PlayerBlack);
+        InitiateRequest initReqB = new InitiateRequest(Player.Black);
         botBlack.writeMessage(initReqB);
     }
 
-    private static final int[] AttackOnly = { Move.Attack };
-    private static final int[] AllMoves = { Move.Pass, Move.Attack, Move.Strengthen };
+    private static final MoveType[] AttackOnly = { MoveType.Attack };
+    private static final MoveType[] AllMoves = { MoveType.Pass, MoveType.Attack, MoveType.Strengthen };
 
-    private int FirstRound()
+    private Player FirstRound()
     {
         return DoOneMove(botWhite, AttackOnly, FirstMoveTimeOut);
     }
 
-    private int NormalRound()
+    private Player NormalRound()
     {
-        int winner;
+        Player winner;
 
         // First black then white, since white may start the game
         winner = DoOneMove(botBlack, AttackOnly, NormalRoundTimeOut);
-        if (winner != Board.PlayerNone)
+        if (winner != Player.None)
         {
             return winner;
         }
 
         winner = DoOneMove(botBlack, AllMoves, NormalRoundTimeOut);
-        if (winner != Board.PlayerNone)
+        if (winner != Player.None)
         {
             return winner;
         }
 
         winner = DoOneMove(botWhite, AttackOnly, NormalRoundTimeOut);
-        if (winner != Board.PlayerNone)
+        if (winner != Player.None)
         {
             return winner;
         }
 
         winner = DoOneMove(botWhite, AllMoves, NormalRoundTimeOut);
-        if (winner != Board.PlayerNone)
+        if (winner != Player.None)
         {
             return winner;
         }
 
-        return Board.PlayerNone;
+        return Player.None;
     }
 
     private String MoveToString(Move move)
@@ -142,7 +152,7 @@ public class EngineRunner implements AutoCloseable
             return "null";
         }
 
-        String moveType = (move.Type == Move.Pass) ? "Pass" : (move.Type == Move.Attack) ? "Attack" : (move.Type == Move.Strengthen) ? "Strengthen" : "Unknown";
+        String moveType = (move.Type == MoveType.Pass) ? "Pass" : (move.Type == MoveType.Attack) ? "Attack" : (move.Type == MoveType.Strengthen) ? "Strengthen" : "Unknown";
 
         String dump = "move: type = " + moveType + ", from = ";
         if (move.From != null)
@@ -165,23 +175,23 @@ public class EngineRunner implements AutoCloseable
         return dump;
     }
 
-    private static int GetOtherPlayer(int player)
+    private static Player GetOtherPlayer(Player player)
     {
-        if (player == Board.PlayerBlack)
+        if (player == Player.Black)
         {
-            return Board.PlayerWhite;
+            return Player.White;
         }
-        else if (player == Board.PlayerWhite)
+        else if (player == Player.White)
         {
-            return Board.PlayerBlack;
+            return Player.Black;
         }
         else
         {
-            return Board.PlayerNone;
+            return Player.None;
         }
     }
 
-    private int DoOneMove(Bot bot, int[] allowedMoves, long timeOut)
+    private Player DoOneMove(Bot bot, MoveType[] allowedMoves, long timeOut)
     {
         MoveRequest request = new MoveRequest(board, allowedMoves);
         Move move = null;
@@ -209,21 +219,21 @@ public class EngineRunner implements AutoCloseable
 
         ProcessValidatedMove(move);
 
-        int winner = GetCurrentWinner();
+        Player winner = GetCurrentWinner();
 
         SendMoveToAllBots(bot.Player, move, winner);
 
         return winner;
     }
 
-    private void SendMoveToAllBots(int player, Move move, int winner)
+    private void SendMoveToAllBots(Player player, Move move, Player winner)
     {
         ProcessedMove processedMove = new ProcessedMove(player, move, winner);
         botWhite.writeMessage(processedMove);
         botBlack.writeMessage(processedMove);
     }
 
-    private boolean IsMoveInAllowedList(Move move, int[] allowedMoves)
+    private boolean IsMoveInAllowedList(Move move, MoveType[] allowedMoves)
     {
         boolean allowedMove = false;
         for (int i = 0; i < allowedMoves.length; i++)
@@ -240,7 +250,7 @@ public class EngineRunner implements AutoCloseable
 
     private boolean IsMoveValid(Bot bot, Move move)
     {
-        if (move.Type == Move.Pass)
+        if (move.Type == MoveType.Pass)
         {
             return (move.From == null && move.To == null);
         }
@@ -250,27 +260,27 @@ public class EngineRunner implements AutoCloseable
         }
         else
         {
-            int fromColor = board.GetOwner(move.From);
-            int toColor = board.GetOwner(move.To);
+            Player fromColor = board.GetOwner(move.From);
+            Player toColor = board.GetOwner(move.To);
 
             int fromHeight = board.GetHeight(move.From);
             int toHeight = board.GetHeight(move.To);
 
-            int botColor = bot.Player;
+            Player botColor = bot.Player;
 
             if (fromColor != botColor && // can only move from places owned by bot
-                    toColor != Board.PlayerNone) // can not move to an empty place
+                    toColor != Player.None) // can not move to an empty place
             {
                 System.err.println("not owned by bot or moving to empty place");
                 return false;
             }
-            else if (move.Type == Move.Attack && fromColor != toColor && // can only attack the other color
+            else if (move.Type == MoveType.Attack && fromColor != toColor && // can only attack the other color
                     fromHeight >= toHeight && // can only attack equal or lower stacks
                     IsValidPath(move.From, move.To))
             {
                 return true;
             }
-            else if (move.Type == Move.Strengthen && fromColor == toColor && // can only strengthen yourself
+            else if (move.Type == MoveType.Strengthen && fromColor == toColor && // can only strengthen yourself
                     IsValidPath(move.From, move.To))
             {
                 return true;
@@ -315,8 +325,8 @@ public class EngineRunner implements AutoCloseable
             allEmpty = true;
             for (int x = minX + 1; x < maxX; x++)
             {
-                int owner = board.GetOwner(new BoardLocation(x, from.Y));
-                allEmpty &= (owner == Board.PlayerNone);
+                Player owner = board.GetOwner(new BoardLocation(x, from.Y));
+                allEmpty &= (owner == Player.None);
             }
         }
         else if (movingOnlyNorthOrSouth)
@@ -324,8 +334,8 @@ public class EngineRunner implements AutoCloseable
             allEmpty = true;
             for (int y = minY + 1; y < maxY; y++)
             {
-                int owner = board.GetOwner(new BoardLocation(from.X, y));
-                allEmpty &= (owner == Board.PlayerNone);
+                Player owner = board.GetOwner(new BoardLocation(from.X, y));
+                allEmpty &= (owner == Player.None);
             }
         }
         else if (movingDiagonal)
@@ -333,8 +343,8 @@ public class EngineRunner implements AutoCloseable
             allEmpty = true;
             for (int x = minX + 1, y = minY + 1; x < maxX && y < maxY; x++, y++)
             {
-                int owner = board.GetOwner(new BoardLocation(x, y));
-                allEmpty &= (owner == Board.PlayerNone);
+                Player owner = board.GetOwner(new BoardLocation(x, y));
+                allEmpty &= (owner == Player.None);
             }
         }
         else
@@ -347,13 +357,13 @@ public class EngineRunner implements AutoCloseable
 
     private void ProcessValidatedMove(Move move)
     {
-        if (move.Type != Move.Pass)
+        if (move.Type != MoveType.Pass)
         {
-            int newOwner = board.GetOwner(move.From);
-            int newStone = board.GetStone(move.From);
+            Player newOwner = board.GetOwner(move.From);
+            Stone newStone = board.GetStone(move.From);
             int newCount = board.GetHeight(move.From);
 
-            int oldOwner = board.GetOwner(move.To);
+            Player oldOwner = board.GetOwner(move.To);
             if (newOwner == oldOwner)
             {
                 // strengthen
@@ -371,31 +381,31 @@ public class EngineRunner implements AutoCloseable
         logger.AddMove(move);
     }
 
-    private int GetCurrentWinner()
+    private Player GetCurrentWinner()
     {
-        boolean blackAlive = IsAlive(Board.PlayerBlack);
-        boolean whiteAlive = IsAlive(Board.PlayerWhite);
+        boolean blackAlive = IsAlive(Player.Black);
+        boolean whiteAlive = IsAlive(Player.White);
 
         if (blackAlive && whiteAlive)
         {
-            return Board.PlayerNone;
+            return Player.None;
         }
         else if (!blackAlive && whiteAlive)
         {
-            return Board.PlayerWhite;
+            return Player.White;
         }
         else if (blackAlive && !whiteAlive)
         {
-            return Board.PlayerBlack;
+            return Player.Black;
         }
         else // (!blackAlive && !whiteAlive)
         {
-            return Board.PlayerNone;
+            return Player.None;
         }
     }
 
-    private boolean IsAlive(int player)
+    private boolean IsAlive(Player player)
     {
-        return board.GetTotalCount(player, Board.StoneA) > 0 && board.GetTotalCount(player, Board.StoneB) > 0 && board.GetTotalCount(player, Board.StoneC) > 0;
+        return board.GetTotalCount(player, Stone.A) > 0 && board.GetTotalCount(player, Stone.B) > 0 && board.GetTotalCount(player, Stone.C) > 0;
     }
 }

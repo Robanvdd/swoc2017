@@ -1,5 +1,7 @@
 package gos.engine;
 
+import gos.engine.protocol.Move;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,11 +25,11 @@ public class MatchLogger
         {
             switch (move.Type)
             {
-            case Move.Pass:
+            case Pass:
                 sb.append("PASS");
                 break;
-            case Move.Attack:
-            case Move.Strengthen:
+            case Attack:
+            case Strengthen:
                 sb.append(move.From.ToLabel());
                 sb.append(move.To.ToLabel());
                 break;

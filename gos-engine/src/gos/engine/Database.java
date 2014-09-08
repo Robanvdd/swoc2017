@@ -1,6 +1,8 @@
 package gos.engine;
 
 
+import gos.engine.protocol.Player;
+
 import java.net.UnknownHostException;
 import java.util.Date;
 
@@ -49,7 +51,7 @@ public class Database
         return cursor.one();
     }
     
-    public String StoreMatch(String log, Bot white, Bot black, int winner, Date startedOn, Date completedOn)
+    public String StoreMatch(String log, Bot white, Bot black, Player winner, Date startedOn, Date completedOn)
     {
         DBCollection matches = db.getCollection(MatchTableName);
         
