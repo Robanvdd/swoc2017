@@ -198,8 +198,8 @@ public class Matchmaker implements AutoCloseable {
         double newRanking2 = calculateNewRanking(currentRanking2, expectedResult2, actualResult2); 
 
         // round rankings to integers
-        newRanking1 = Math.round(newRanking1);
-        newRanking2 = Math.round(newRanking2);
+        newRanking1 = (double)Math.round(newRanking1);
+        newRanking2 = (double)Math.round(newRanking2);
 
         updateBotData(db, botId1, newRanking1);
         updateBotData(db, botId2, newRanking2);
