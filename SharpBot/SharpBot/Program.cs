@@ -104,17 +104,6 @@ namespace SharpBot
             }
         }
 
-        private static bool IsValidMove(Board board, BoardLocation from, BoardLocation to)
-        {
-            Player fromOwner = board.GetOwner(from);
-            Player toOwner = board.GetOwner(to);
-            int fromHeight = board.GetHeight(from);
-            int toHeight = board.GetHeight(to);
-            return (fromOwner != Player.None) &&
-                (toOwner != Player.None) &&
-                (fromOwner == toOwner || fromHeight >= toHeight);
-        }
-
         private static Move GetRandomAttack(Board board)
         {
             Move move = GetRandomMove(board);
@@ -178,6 +167,17 @@ namespace SharpBot
             {
                 return newLocation;
             }
+        }
+
+        private static bool IsValidMove(Board board, BoardLocation from, BoardLocation to)
+        {
+            Player fromOwner = board.GetOwner(from);
+            Player toOwner = board.GetOwner(to);
+            int fromHeight = board.GetHeight(from);
+            int toHeight = board.GetHeight(to);
+            return (fromOwner != Player.None) &&
+                (toOwner != Player.None) &&
+                (fromOwner == toOwner || fromHeight >= toHeight);
         }
 
         private static IEnumerable<BoardLocation> AllLegalBoardLocations()

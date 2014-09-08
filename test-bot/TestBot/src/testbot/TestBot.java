@@ -32,9 +32,7 @@ public class TestBot {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        int player = Integer.parseInt(args[0]);
-        myPlayer = player;
-        
+                
         TestBot bot = new TestBot();
     }
     
@@ -98,11 +96,21 @@ public class TestBot {
     private void runWithEngine() {
         
         String command = "";
+        command = readcommandline();
+        if (command.equals(STOP_COMMAND))
+            return;
+        JSONObject jsonObject = parseJsonString(command);
+        if (jsonObject.containsKey("Color")) {
+            Long color = (Long)jsonObject.get("Color"); 
+            myPlayer = color.intValue();
+        } else {
+            throw new IllegalArgumentException("First message no Color message!");
+        }
         while (true) {
             command = readcommandline();
             if (command.equals(STOP_COMMAND))
                 break;
-            JSONObject jsonObject = parseJsonString(command);
+            jsonObject = parseJsonString(command);
             if (jsonObject.containsKey("Board")) {
                 // Our move
                 parseMoveRequest(jsonObject);

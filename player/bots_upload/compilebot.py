@@ -116,7 +116,7 @@ def run_ant_clean_build():
 def create_ant_run_script():
     # Working from bot-id directory
     with open("run.sh", "w") as f:
-        f.write("ant run")
+        f.write("ant -buildfile code/build.xml run")
     st = os.stat("run.sh")
     os.chmod("run.sh", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 

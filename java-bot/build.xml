@@ -10,26 +10,31 @@
         <classpath refid="classpath" />
     </manifestclasspath>
 
-    <target name="clean">
+    <target name="clean-build">
         <delete dir="build"/>
+    </target>
+
+    <target name="clean" depends="clean-build">
     </target>
 
     <target name="compile">
         <mkdir dir="build/classes"/>
-        <javac debug="true" srcdir="src" destdir="build/classes" classpathref="classpath" includeantruntime="false"/>
+        <javac srcdir="src" destdir="build/classes" classpathref="classpath" includeantruntime="false"/>
     </target>
 
     <target name="jar" depends="compile">
         <mkdir dir="build/jar"/>
-        <jar destfile="build/jar/matchmaker.jar" basedir="build/classes">
+        <jar destfile="build/jar/java-bot.jar" basedir="build/classes">
             <manifest>
-                <attribute name="Main-Class" value="matchmaker.Matchmaker"/>
+                <attribute name="Main-Class" value="gos.bot.Main"/>
                 <attribute name="Class-Path" value=". ${lib.list}"/>
             </manifest>
+            <fileset dir="build/classes" includes="**/*.class" />
+            <zipgroupfileset dir="${lib.dir}" includes="**/*.jar" />
         </jar>
     </target>
 
-    <target name="run">
-        <java jar="build/jar/matchmaker.jar" fork="true"/>
+    <target name="run" depends="jar">
+        <java jar="build/jar/java-bot.jar" fork="true"/>
     </target>
 </project>

@@ -61,7 +61,7 @@ public class Matchmaker implements AutoCloseable {
     {
         if (db != null)
         {
-            makeMatches(getAllBots(db));
+            makeMatches(getHighestVersionBots(db));
         }
         System.out.println("Matchmaker done");
     }
@@ -118,6 +118,30 @@ public class Matchmaker implements AutoCloseable {
         return botList;
     }
     
+    private List<ObjectId> getHighestVersionBots(DB database) {
+        DBCollection allBotsColl = getBotTable(database);
+        
+        List<ObjectId> userList = allBotsColl.distinct("user");
+        
+        List<ObjectId> botList = new LinkedList<ObjectId>();
+        for (ObjectId user: userList) {
+            DBCollection coll = getBotTable(database);
+            BasicDBObject query = new BasicDBObject("user", user);
+            
+            DBCursor cursor = coll.find(query);
+            cursor.sort(new BasicDBObject("version", -1));
+            try {
+                if (cursor.hasNext()) {
+                    DBObject object = cursor.next();
+                    botList.add((ObjectId)object.get("_id"));
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        return botList;
+    }
+    
     private ObjectId runMatch(ObjectId botId1, ObjectId botId2) {
         ObjectId matchId = null;
         StringBuilder sb = new StringBuilder();
@@ -151,11 +175,11 @@ public class Matchmaker implements AutoCloseable {
         DBObject botData1 = getBotData(db, botId1);
         DBObject botData2 = getBotData(db, botId2);
         
-        double currentRanking1 = (Double)botData1.get(RANKINGFIELDNAME);
-        double currentRanking2 = (Double)botData2.get(RANKINGFIELDNAME);
+        int currentRanking1 = (Integer)botData1.get(RANKINGFIELDNAME);
+        int currentRanking2 = (Integer)botData2.get(RANKINGFIELDNAME);
         
         double expectedResult1 = calculateExpectedResult(currentRanking1, currentRanking2);
-        double expectedResult2 = 1 - expectedResult1;
+        double expectedResult2 = 1.0 - expectedResult1;
         
         //Start Engine with two given bots: bot1 as white, 2 as black
         ObjectId matchId1 = runMatch(botId1, botId2);
@@ -164,11 +188,11 @@ public class Matchmaker implements AutoCloseable {
         ObjectId matchId2 = runMatch(botId2, botId1);
         ObjectId winner2 = getWinnerOfMatch(getMatchTable(db), matchId2);
         
-        double actualScore1 = (winner1.equals(botId1) ? 1 : 0) + (winner2.equals(botId1) ? 1 : 0);
-        double actualScore2 = (winner1.equals(botId2) ? 1 : 0) + (winner2.equals(botId2) ? 1 : 0);
+        double actualScore1 = (winner1.equals(botId1) ? 1.0 : 0.0) + (winner2.equals(botId1) ? 1.0 : 0.0);
+        double actualScore2 = (winner1.equals(botId2) ? 1.0 : 0.0) + (winner2.equals(botId2) ? 1.0 : 0.0);
         
-        double actualResult1 = actualScore1 / 2;
-        double actualResult2 = actualScore2 / 2;
+        double actualResult1 = actualScore1 / 2.0;
+        double actualResult2 = actualScore2 / 2.0;
         
         double newRanking1 = calculateNewRanking(currentRanking1, expectedResult1, actualResult1); 
         double newRanking2 = calculateNewRanking(currentRanking2, expectedResult2, actualResult2); 
