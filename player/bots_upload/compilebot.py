@@ -95,7 +95,11 @@ def store_compile_output(txt):
         f.write(txt)
 
 def get_first_jar_name():
-    return glob.glob("*.jar")[0]
+    os.chdir(codeSubdir)
+    jar = glob.glob("*.jar")[0]
+    os.chdir("..")
+    return jar
+#    return glob.glob("*.jar")[0]
 
 
 def create_jar_run_script(jarName):
@@ -148,10 +152,6 @@ def main():
                 extract_bot()
 
                 language = determine_language()
-
-                if platform.system() is "Windows":
-                    sys.stderr.write('Error: Compiling not supported on windows.')
-                    sys.exit(1)
 
                 if language == Language.JAVA:
                     print("Detected language is Java")
