@@ -119,6 +119,12 @@ public class Engine implements AutoCloseable
     {
         // process first move
         MoveRequest moveRequest = readMessage(MoveRequest.class);
+        if (moveRequest == null)
+        {
+            System.err.println("Unexpected message received. Expected MoveRequest.");
+            return;
+        }
+
         Move move = bot.HandleMove(moveRequest);
         writeMessage(move);
     }
@@ -126,6 +132,12 @@ public class Engine implements AutoCloseable
     private Player HandleProcessedMove()
     {
         ProcessedMove processedMove = readMessage(ProcessedMove.class);
+        if (processedMove == null)
+        {
+            System.err.println("Unexpected message received. Expected ProcessedMove.");
+            return Player.None;
+        }
+
         bot.HandleProcessedMove(processedMove);
         return processedMove.Winner;
     }
