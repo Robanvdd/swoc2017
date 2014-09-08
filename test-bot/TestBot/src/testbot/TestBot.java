@@ -15,7 +15,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import testbot.iohandling.InStream;
 
 /**
  *
@@ -23,7 +22,6 @@ import testbot.iohandling.InStream;
  */
 public class TestBot {
 
-    InStream instream = new InStream(System.in);
 	private GameField gameField = new GameField();
     private static final String STOP_COMMAND = "STOP";
     private static int myPlayer;
@@ -43,8 +41,10 @@ public class TestBot {
     /*
      * Keep doing moves for one player till no longer possible
      * NOTE! Uses the Move-string convention, no JSON!
+     * TODO: Needs a initial field!
      */
     private void runSolo() {
+        myPlayer = 1;
         System.out.println(gameField.printField());
         System.out.flush();
         //System.out.println(gameField.serializeField().toJSONString());
@@ -69,8 +69,10 @@ public class TestBot {
     /*
      * Given a valid JSON Board state, do two moves.
      * NOTE! Uses the Move-string convention, no JSON!
+     * TODO: Needs an initial field!
      */
     private void runAgainstBot() {
+        myPlayer = 1; 
         System.out.println(gameField.printField());
         System.out.flush();
         //System.out.println("Suggested move: " + pickAnyMove(true));
