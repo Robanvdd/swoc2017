@@ -93,7 +93,7 @@
  <div style="padding:50px 0 0 0" ng-controller="LogInCtrl">
           <a href="#/login" target="_self" style="float:right" ng-hide="user" >Log in {{user}}</a>
           <div ng-show="user" style="float:right">
-            <span> Logged in as: {{user}}. </span>
+            <span> Logged in as: {{user.user}}. </span>
             <a href="#/logout" target="_self">Log out</a>
           </div>
   </div>
