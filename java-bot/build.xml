@@ -1,0 +1,37 @@
+<project>
+    <property name="build.dir" value="."/>
+    <property name="lib.dir" value="lib"/>
+
+    <path id="classpath">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    </path>
+
+    <manifestclasspath property="lib.list" jarfile="${build.dir}/${jar.file}">
+        <classpath refid="classpath" />
+    </manifestclasspath>
+
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="build/classes"/>
+        <javac srcdir="src" destdir="build/classes" classpathref="classpath" includeantruntime="false"/>
+    </target>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="build/jar"/>
+        <jar destfile="build/jar/java-bot.jar" basedir="build/classes">
+            <manifest>
+                <attribute name="Main-Class" value="gos.bot.Main"/>
+                <attribute name="Class-Path" value=". ${lib.list}"/>
+            </manifest>
+            <fileset dir="build/classes" includes="**/*.class" />
+            <zipgroupfileset dir="${lib.dir}" includes="**/*.jar" />
+        </jar>
+    </target>
+
+    <target name="run" depends="jar">
+        <java jar="build/jar/java-bot.jar" fork="true"/>
+    </target>
+</project>
