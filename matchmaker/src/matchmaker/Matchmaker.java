@@ -175,8 +175,8 @@ public class Matchmaker implements AutoCloseable {
         DBObject botData1 = getBotData(db, botId1);
         DBObject botData2 = getBotData(db, botId2);
         
-        double currentRanking1 = (double)botData1.get(RANKINGFIELDNAME);
-        double currentRanking2 = (double)botData2.get(RANKINGFIELDNAME);
+        int currentRanking1 = (Integer)botData1.get(RANKINGFIELDNAME);
+        int currentRanking2 = (Integer)botData2.get(RANKINGFIELDNAME);
         
         double expectedResult1 = calculateExpectedResult(currentRanking1, currentRanking2);
         double expectedResult2 = 1.0 - expectedResult1;
