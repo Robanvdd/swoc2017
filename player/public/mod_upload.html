@@ -1,15 +1,27 @@
 <h2>Upload</h2>
 <h3>Upload your latest bot here</h3>
 
-        
-        <form ng-upload="uploadFile1(content)" action="/api/bot/upload/?delay=yes">
-		  <p>
-            <label>Select a file to upload:</label> <input type="file" name="file">
-		  </P>
-          <p>
-            <input type="submit" class="btn" value="Submit" ng-disabled="$isUploading">
-          </p>
-        </form>
-        <div class="alert alert-info">
-          Server Response: {{uploadResponse1}}
-        </div><br>
+<form ng-upload="uploadFile(content)" action="/api/bot/upload/?delay=yes">
+    <p>
+        <label>Select a file to upload:</label> <input type="file" name="file">
+    </P>
+    <p>
+        <input type="submit" class="btn" value="Submit" ng-disabled="$isUploading">
+    </p>
+</form>
+
+<div ng-show="result">
+    <h3>Upload result</h3>
+    <p>Status: {{result}}</p>
+    <p ng-show="msg">{{msg}}</p>
+    <div ng-show="stdout">
+        <br>
+        <p>Compiler stdout:</p>
+        <p>{{stdout}}</p>
+    </div>
+    <div ng-show="stderr">
+        <br>
+        <p>Compiler stderr:</p>
+        <p>{{stderr}}</p>
+    </div>
+</div>

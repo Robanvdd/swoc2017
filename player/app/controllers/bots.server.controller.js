@@ -7,7 +7,8 @@ var mongoose = require('mongoose'),
 	upload_folder_base = path.resolve('./bots_upload'),
 	run_script = 'run.sh',
 	child_process = require('child_process'),
-	compile_script_path = path.join(upload_folder_base, 'compilebot.py');
+	compile_script_path = path.join(upload_folder_base, 'compilebot.py'),
+	fs = require('fs');
 
 
 function findLastUserBot(user) {
@@ -84,9 +85,11 @@ function runCompileScript(bot_folder, callback) {
 	console.log('Compiling bot with command: ' + command);
 	child_process.exec(command, function(error, stdout, stderr) {
 		if (error) {
-			callback(new Error('Could not compile bot. Error: ' + error));
+			console.log('Running compile script failed: ' + error);
+			callback(new Error('Could not compile bot. Error: ' + error), bot_folder);
 		} else {
-			callback();
+			console.log('Running compile script succeeded');
+			callback(null, bot_folder);
 		}
 	})
 }
@@ -109,6 +112,33 @@ function createBot(user, file, callback) {
 	});
 }
 
+function readStdoutFile(bot_folder, callback) {
+	var filename = path.join(bot_folder, 'compiler_stdout.txt')
+	fs.readFile(filename, 'utf8', callback)
+}
+
+function readStderrFile(bot_folder, callback) {
+	var filename = path.join(bot_folder, 'compiler_stderr.txt')
+	fs.readFile(filename, 'utf8', callback)
+}
+
+function getBotStdoutStderr(bot_folder, callback) {
+	readStdoutFile(bot_folder, function(err, stdout) {
+		if (err) {
+			callback(null, 'Could not find compiler stdout file.', err)
+		} else {
+			readStderrFile(bot_folder, function(err, stderr) {
+				if (err) {
+					callback(null, 'Could not find compiler stderr file.', err)
+				} else {
+					callback(null, stdout, stderr)
+				}
+			});
+		}
+	});
+}
+
+
 /**
  * Exported methods
  */
@@ -116,16 +146,13 @@ function createBot(user, file, callback) {
 exports.upload = function(req, res) {
 	res.setHeader('Content-Type', 'text/html');
 	if (req.files.length == 0 || req.files.file.size == 0) {
-		res.send({ msg: 'No file uploaded at ' + new Date().toString() });
+		res.send({ result: 'Failed', msg: 'No file given' });
 	} else {
-		createBot(req.user, req.files.file, function(err) {
-			if (err) {
-				console.log(err.message);
-				console.log(err.stack);
-				return res.status(400).send({ msg: 'Bot upload failed' });
-			}
-			else
-				return res.send({ msg: 'File uploaded to the server and bot compiled at ' + new Date().toString() });
+		createBot(req.user, req.files.file, function(err, bot_folder) {
+			result = (err) ? 'Failed' : 'Success';
+			getBotStdoutStderr(bot_folder, function(err, stdout, stderr){
+				return res.send({ result: result, msg: '', stdout: stdout, stderr: stderr });
+			})
 		});
 	}
 };
