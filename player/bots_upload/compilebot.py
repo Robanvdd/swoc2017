@@ -95,7 +95,7 @@ def store_compile_output(txt):
         f.write(txt)
 
 def get_first_jar_name():
-    return glob.glob("*.jar")[0]:
+    return glob.glob("*.jar")[0]
 
 
 def create_jar_run_script(jarName):
