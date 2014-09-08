@@ -2,14 +2,14 @@ package gos.bot.protocol;
 
 public class ProcessedMove
 {
-    public ProcessedMove(int player, Move move, int winner)
+    public ProcessedMove(Player player, Move move, Player winner)
     {
         Player = player;
         Move = move;
         Winner = winner;
     }
     
-    public final int Player;
+    public final Player Player;
     public final Move Move;
-    public final int Winner;
+    public final Player Winner;
 }

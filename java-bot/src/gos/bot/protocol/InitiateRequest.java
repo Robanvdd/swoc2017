@@ -2,10 +2,10 @@ package gos.bot.protocol;
 
 public class InitiateRequest
 {
-    public InitiateRequest(int color)
+    public InitiateRequest(Player color)
     {
         Color = color;
     }
 
-    public final int Color;
+    public final Player Color;
 }
