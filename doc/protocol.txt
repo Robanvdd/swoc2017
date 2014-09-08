@@ -151,7 +151,7 @@ Example
         "To": {"X":4, "Y":1}
     }
 
-* The engine then responds with the followin processed move.
+* The engine then responds with the following processed move.
     
     {
         "Player": -1,
