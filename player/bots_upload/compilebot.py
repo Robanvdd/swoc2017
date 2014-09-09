@@ -184,7 +184,7 @@ def main():
                     print("Detected language is Java")
                     jarName = get_first_jar_name()
                     create_jar_run_script(jarName)
-                elif language == Language.PYTHON:
+                elif language == Language.CSHARP:
                     print("Detected language is C#")
                     exeName = get_first_exe_name()
                     create_csharp_run_script(exeName)
