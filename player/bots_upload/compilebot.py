@@ -125,8 +125,12 @@ def create_csharp_run_script(exeName):
     # Working from bot-id directory
     with open("run.sh", "w") as f:
         f.write(exeName)
+    
     st = os.stat("run.sh")
     os.chmod("run.sh", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+
+    st = os.stat(exeName)
+    os.chmod(exeName, st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
 #
 # Language determination
