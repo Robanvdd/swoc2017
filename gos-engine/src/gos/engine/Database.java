@@ -15,7 +15,7 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
-public class Database
+public class Database implements IDatabase
 {
     private final MongoClient client;
     private final DB db;

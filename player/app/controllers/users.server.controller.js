@@ -49,8 +49,9 @@ exports.signin = function(req, res, next) {
 }
 
 exports.signout = function(req, res) {
-    req.logout();
-    res.redirect('/');
+    req.session.destroy(function (err) {
+    res.redirect('/'); //Inside a callback… bulletproof!
+  });
 }
 
 /**

@@ -16,98 +16,66 @@ import java.util.concurrent.TimeoutException;
 public class BotProcess implements AutoCloseable
 {
 	private final Process child;
-	private final InputStreamReader inputReader;
-	private final BufferedReader bufferedInputReader;
-	private final OutputStreamWriter outputWriter;
-	private final InputStreamReader errorReader;
-	private final BufferedReader bufferedErrorReader;
-	
-	public BotProcess(String command) throws IOException
-	{
-	    File file = new File(command);
-	    if (!file.exists() || !file.canExecute())
-	    {
-	        throw new IllegalArgumentException("File does not exist or is not executable.");
-	    }
-	    File parent = file.getParentFile();
-		child = Runtime.getRuntime().exec(command, null, parent);
-		
-		inputReader = new InputStreamReader(child.getInputStream());
-        bufferedInputReader = new BufferedReader(inputReader);
-        outputWriter = new OutputStreamWriter(child.getOutputStream());
-        errorReader = new InputStreamReader(child.getErrorStream());
-        bufferedErrorReader = new BufferedReader(errorReader);
-        
-        singleLineReader = new SingleLineReader(bufferedInputReader);
-	}
-	
-	@Override
-	public void close()
-	{
-        try { bufferedErrorReader.close(); } catch (IOException e) {}
-	    try { errorReader.close(); } catch (IOException e) {}
-	    try { outputWriter.close(); } catch (IOException e) {}
-	    try { bufferedInputReader.close(); } catch (IOException e) {}
-	    try { inputReader.close(); } catch (IOException e) {}
-	    
-		child.destroy();
-		
-		try
-		{
-			child.waitFor();
-		}
-		catch(InterruptedException e)
-		{
-			e.printStackTrace();
-		}
-		
-		executor.shutdownNow();
-	}
-	
-	private class SingleLineReader implements Callable<String>
-	{
-	    private final BufferedReader reader;
-	     
-	    public SingleLineReader(BufferedReader reader)
-	    {
-	        this.reader = reader;
-	    }
-	    
-	    @Override
-	    public String call() throws IOException
-	    {
-	        return reader.readLine();
-	    }
-	}
 
-	private final SingleLineReader singleLineReader;
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-            
+	private final OutputStreamWriter outputWriter;
+	
+	private final StreamGobbler inputReader;
+	private final StreamGobbler errorReader;
+
+    public BotProcess(String command) throws IOException
+    {
+        File file = new File(command);
+        if (!file.exists() || !file.canExecute())
+        {
+            throw new IllegalArgumentException("File does not exist or is not executable.");
+        }
+        File parent = file.getParentFile();
+        
+        System.out.println("Starting new bot process " + command + " in " + parent);
+        
+        child = Runtime.getRuntime().exec(command, null, parent);
+
+        inputReader = new StreamGobbler(child.getInputStream());
+        errorReader = new StreamGobbler(child.getErrorStream());
+        outputWriter = new OutputStreamWriter(child.getOutputStream());
+        
+        inputReader.start();
+        errorReader.start();
+    }
+
+    @Override
+    public void close()
+    {
+        child.destroy();
+
+        try
+        {
+            child.waitFor();
+            inputReader.join();
+            errorReader.join();
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+
+        try
+        {
+            outputWriter.close();
+        }
+        catch (IOException e)
+        {
+        }
+    }
+
 	public String readLine(long timeOut)
 	{
 		if (!isRunning())
 		{
 		    return null;
 		}
-
-		Future<String> readSingleLine = executor.submit(singleLineReader);
-		try
-        {
-            return readSingleLine.get(timeOut, TimeUnit.MILLISECONDS);
-        }
-        catch (InterruptedException e1)
-        {
-            return null;
-        }
-        catch (ExecutionException e1)
-        {
-            return null;
-        }
-        catch (TimeoutException e1)
-        {
-            readSingleLine.cancel(true);
-            return null;
-        }
+		
+		return inputReader.readLine(timeOut, TimeUnit.MILLISECONDS);
 	}
 	
 	public boolean writeLine(String line)
@@ -141,17 +109,14 @@ public class BotProcess implements AutoCloseable
 	public String getErrors()
 	{
 	    StringBuilder builder = new StringBuilder();
-	    try
+
+        String line;
+        while ((line = errorReader.readLine(0, TimeUnit.SECONDS)) != null)
         {
-            while (bufferedErrorReader.ready())
-            {
-                builder.append(bufferedErrorReader.readLine());
-            }
+            builder.append(line);
+            builder.append('\n');
         }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        
 	    return builder.toString();
 	}
 }

@@ -4,7 +4,7 @@ import java.net.UnknownHostException;
 
 public class Main
 {
-    private static Database database;
+    private static IDatabase database;
 
     public static void main(String[] args)
     {
@@ -17,6 +17,7 @@ public class Main
         String botIdWhite = args[0];
         String botIdBlack = args[1];
 
+        //database = new DummyDatabase();
         try
         {
             database = new Database("localhost", "swoc-dev");
