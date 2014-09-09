@@ -198,11 +198,11 @@ public class Matchmaker implements AutoCloseable {
         double newRanking2 = calculateNewRanking(currentRanking2, expectedResult2, actualResult2); 
 
         // round rankings to integers
-        newRanking1 = Math.round(newRanking1);
-        newRanking2 = Math.round(newRanking2);
+        int newRankingInt1 = (int)Math.round(newRanking1);
+        int newRankingInt2 = (int)Math.round(newRanking2);
 
-        updateBotData(db, botId1, newRanking1);
-        updateBotData(db, botId2, newRanking2);
+        updateBotData(db, botId1, newRankingInt1);
+        updateBotData(db, botId2, newRankingInt2);
         
         System.out.println("The result of the match " + botId1 + " vs " + botId2 + ": " + actualScore1 + " - " + actualScore2);
     }
@@ -231,7 +231,7 @@ public class Matchmaker implements AutoCloseable {
         return coll.findOne(query);
     }
     
-    private void updateBotData(DB database, ObjectId botId, double newRanking)
+    private void updateBotData(DB database, ObjectId botId, int newRanking)
     {
         DBCollection coll = getBotTable(database);
 
