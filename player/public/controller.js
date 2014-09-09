@@ -1749,7 +1749,7 @@ meanControllers.controller('LeaderboardCtrl', ['$scope', '$http', '$location', f
 		$http.get('/api/user/retrieveall/')
 			.success(function(user){
 				angular.forEach(user, function(user, key) {
-					$http.get('/api/bot/retrievelatest/' + user.id).success(function(bot){
+					$http.get('/api/bot/retrievelatest/' + user._id).success(function(bot){
 						bot.username = user.username;
 						$scope.bots.push(bot);
 					});	
