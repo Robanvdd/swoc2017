@@ -27,10 +27,10 @@ class RedirectStdStreams(object):
 
 class Language:
     JAVA = 1
-    PYTHON = 2
+    CSHARP = 2
 
 codeSubdir = "code"
-allowedLanguages = ['java', 'python']
+allowedLanguages = ['java', 'csharp']
 
 def touch(path):
     with open(path, 'a'):
@@ -41,6 +41,10 @@ def remove(path):
         os.remove(path)
     except OSError:
         pass
+
+#
+# Extraction methods
+#
 
 def unzip(path):
     # unzip a file
@@ -89,18 +93,15 @@ def extract_bot():
     print("Unzip succesfull")
     os.chdir("..")
 
-def store_compile_output(txt):
-    # Working from bot-id directory
-    with open("compile_output.txt", "w") as f:
-        f.write(txt)
+#
+# Java methods
+#
 
 def get_first_jar_name():
     os.chdir(codeSubdir)
     jar = glob.glob("*.jar")[0]
     os.chdir("..")
     return jar
-#    return glob.glob("*.jar")[0]
-
 
 def create_jar_run_script(jarName):
     # Working from bot-id directory
@@ -108,6 +109,28 @@ def create_jar_run_script(jarName):
         f.write("java -jar " + jarName)
     st = os.stat("run.sh")
     os.chmod("run.sh", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+
+
+#
+# C-Sharp methods
+#
+
+def get_first_exe_name():
+    os.chdir(codeSubdir)
+    exe = glob.glob("*.exe")[0]
+    os.chdir("..")
+    return exe
+
+def create_csharp_run_script(exeName):
+    # Working from bot-id directory
+    with open("run.sh", "w") as f:
+        f.write(exeName)
+    st = os.stat("run.sh")
+    os.chmod("run.sh", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+
+#
+# Language determination
+#
 
 def determine_language():
     language = None
@@ -120,12 +143,16 @@ def determine_language():
             sys.exit(1)
         language = Language.JAVA
 
-    # Else, test for python, which is true when there is a single .py file in the root directory
-    elif glob.glob("*.py"):
-        language = Language.PYTHON
+    # Else, test for csharp, which is true when there is a single .exe file in the root directory
+    elif glob.glob("*.exe"):
+        language = Language.CSHARP
 
     os.chdir("..")
     return language
+
+#
+# Main
+#
 
 def main():
     p = optparse.OptionParser()
@@ -158,8 +185,9 @@ def main():
                     jarName = get_first_jar_name()
                     create_jar_run_script(jarName)
                 elif language == Language.PYTHON:
-                    print("Detected language is Python")
-                    create_pyton_run_script()
+                    print("Detected language is C#")
+                    exeName = get_first_exe_name()
+                    create_csharp_run_script(exeName)
                 else:
                     sys.stderr.write("Error: Code was not written in a valid language")
                     sys.exit(1)
