@@ -9,11 +9,10 @@ var users = require('../../app/controllers/users'),
 module.exports = function(app) {
 
 	app.post('/api/bot/upload/', users.requiresLogin, bots.upload);
-	app.get('/api/bot/retrieveall/', function(req, res) { 
-		bots.retrieveAll(function(err, success) {
+	app.get('/api/bot/retrievelatest/:id', function(req, res) { 
+		bots.retrieveLatest(req.params.id, function(err, success) {
 			if(err) throw err;
 			else res.send(success);
 		});
 	});
-	
 }
