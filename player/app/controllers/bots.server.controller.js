@@ -12,7 +12,7 @@ var mongoose = require('mongoose'),
 
 
 function findLastUserBot(user) {
-	return Bot.findOne().sort({version: -1});
+	return Bot.findOne({user: user._id}).sort({version: -1});
 }
 
 function addNewBotVersionToDatabase(user, callback) {
@@ -86,7 +86,7 @@ function runCompileScript(bot_folder, callback) {
 	child_process.exec(command, function(error, stdout, stderr) {
 		if (error) {
 			console.log('Running compile script failed: ' + error);
-			callback(new Error('Could not compile bot. Error: ' + error), bot_folder);
+			callback(new Error('Could not compile bot. ' + error), bot_folder);
 		} else {
 			console.log('Running compile script succeeded');
 			callback(null, bot_folder);
@@ -159,4 +159,8 @@ exports.upload = function(req, res) {
 
 exports.retrieveAll = function(callback) {
 	Bot.find({}, callback);
+}
+
+exports.retrieveLatest = function(id, callback) {
+	Bot.findOne({user: id}).sort('-version').exec(callback);
 }
