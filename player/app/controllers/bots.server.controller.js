@@ -161,6 +161,6 @@ exports.retrieveAll = function(callback) {
 	Bot.find({}, callback);
 }
 
-exports.retrievelatest = function(id, callback) {
+exports.retrieveLatest = function(id, callback) {
 	Bot.findOne({user: id}).sort('-version').exec(callback);
 }
