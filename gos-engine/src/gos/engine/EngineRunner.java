@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 public class EngineRunner implements AutoCloseable
 {
-    private final Database database;
+    private final IDatabase database;
     private final MatchLogger logger;
 
     private final Bot botWhite;
@@ -24,7 +24,7 @@ public class EngineRunner implements AutoCloseable
 
     private final Board board;
     
-    public EngineRunner(Database database, String idWhite, String idBlack) throws IOException
+    public EngineRunner(IDatabase database, String idWhite, String idBlack) throws IOException
     {
         this.database = database;
         logger = new MatchLogger();
