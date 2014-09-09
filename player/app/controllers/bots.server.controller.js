@@ -160,3 +160,7 @@ exports.upload = function(req, res) {
 exports.retrieveAll = function(callback) {
 	Bot.find({}, callback);
 }
+
+exports.retrieveLatest = function(id, callback) {
+	Bot.findOne({user: id}).sort('-version').exec(callback);
+}

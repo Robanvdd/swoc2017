@@ -1746,19 +1746,20 @@ meanControllers.controller('RulesCtrl', ['$scope', '$http', '$location', functio
 //CONTROLLER FOR mod_leaderboard.html
 meanControllers.controller('LeaderboardCtrl', ['$scope', '$http', '$location', function($scope, $http, $location) {
 	$scope.getAll = function() {
-		$http.get('/api/bot/retrieveall/')
-			.success(function(botsdata){
-				angular.forEach(botsdata, function(bot, key) {
-					$http.get('/api/user/retrieveid/' + bot.user).success(function(user){
+		$http.get('/api/user/retrieveall/')
+			.success(function(user){
+				angular.forEach(user, function(user, key) {
+					$http.get('/api/bot/retrievelatest/' + user._id).success(function(bot){
 						bot.username = user.username;
+						$scope.bots.push(bot);
 					});	
 				});
-				$scope.bots = botsdata;
 			})
 			.error(function(data) {
 				console.log(data);
 			});
 	}
+	$scope.bots = [];
 	$scope.getAll();
 }]);
 

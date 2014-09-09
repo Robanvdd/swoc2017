@@ -14,4 +14,10 @@ module.exports = function(app) {
 			else res.send(success);
 		});
 	});
+	app.get('/api/user/retrieveall/', function(req, res) { 
+		users.retrieveAll(function(err, success) {
+			if(err) throw err;
+			else res.send(success);
+		});
+	});
 };

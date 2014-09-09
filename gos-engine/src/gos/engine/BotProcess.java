@@ -1,6 +1,7 @@
 package gos.engine;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -23,7 +24,14 @@ public class BotProcess implements AutoCloseable
 	
 	public BotProcess(String command) throws IOException
 	{
-		child = Runtime.getRuntime().exec(command);
+	    File file = new File(command);
+	    if (!file.exists() || !file.canExecute())
+	    {
+	        throw new IllegalArgumentException("File does not exist or is not executable.");
+	    }
+	    File parent = file.getParentFile();
+		child = Runtime.getRuntime().exec(command, null, parent);
+		
 		inputReader = new InputStreamReader(child.getInputStream());
         bufferedInputReader = new BufferedReader(inputReader);
         outputWriter = new OutputStreamWriter(child.getOutputStream());
