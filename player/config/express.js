@@ -45,9 +45,10 @@ module.exports = function(db) {
 	// Disable views cache (SHOULD BE CHANGED IN PRODUCTION)
 	app.set('view cache', false);
 
-
 	// CookieParser should be above session
 	app.use(cookieParser());
+
+	app.use(express.limit('10mb'))
 
 	// app.use(session({ secret: config.sessionSecret }));
 
