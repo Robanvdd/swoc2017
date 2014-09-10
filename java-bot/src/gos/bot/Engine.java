@@ -36,7 +36,7 @@ public class Engine implements AutoCloseable
         DoInitiateRequest();
 
         Player winner = DoFirstRound();
-        while (winner != Player.None)
+        while (winner == Player.None)
         {
             winner = DoNormalRound();
         }
@@ -159,22 +159,22 @@ public class Engine implements AutoCloseable
 
     private <T> T readMessage(Class<T> classOfT)
     {
-        String line = null;
+        String messageStr = null;
         try
         {
-            line = inReader.readLine();
+            messageStr = inReader.readLine();
         }
         catch (IOException e)
         {
             return null;
         }
 
-        if (line == null || line.isEmpty())
+        if (messageStr == null || messageStr.isEmpty())
         {
             return null;
         }
 
-        return gson.fromJson(line, classOfT);
+        return gson.fromJson(messageStr, classOfT);
     }
 
     private <T> void writeMessage(T message)
