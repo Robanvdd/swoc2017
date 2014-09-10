@@ -3,6 +3,7 @@
  */
 var mongoose = require('mongoose'),
 	Bot = mongoose.model('Bot'),
+	User = mongoose.model('User'),
 	path = require('path'),
 	upload_folder_base = path.resolve('./bots_upload'),
 	run_script = 'run.sh',
@@ -161,6 +162,38 @@ exports.retrieveAll = function(callback) {
 	Bot.find({}, callback);
 }
 
-exports.retrieveLatest = function(id, callback) {
-	Bot.findOne({user: id}).sort('-version').exec(callback);
+
+exports.retrieveAllLatest = function(req, res) {
+	User.find({}, function(err, users) {
+		console.log('Getting bots for ' + users.length + ' users');
+		function asyncLoop( index, foundBots, callback ) {
+		    if (index != users.length) {
+		    	var user = users[index];
+				console.log('Getting first bot for user ' + user.username);
+		    	Bot.findOne({user: user._id}).sort('-version').limit(1).exec(function(err, bot){
+		    		if (err) {
+		    			console.log('Error finding bot. ' + err);
+		    			callback(err, foundBots);
+		    		} else {
+		    			if (bot) {
+		    				console.log('Bot found')
+		    				foundBots.push({ranking: bot.ranking, version: bot.version, name: bot.name, username: user.username});
+		    			} else {
+		    				console.log('No bot found');
+		    			}
+		    			asyncLoop(index + 1, foundBots, callback);
+		    		}
+		    	});
+		    } else {
+		        callback(null, foundBots);
+		    }
+		}
+		asyncLoop(0, [], function(err, bots) {
+			if (err) {
+				res.status(400).send(err);
+			} else {
+			    res.send(bots);
+			}
+		});
+	});
 }
