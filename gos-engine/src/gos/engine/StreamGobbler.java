@@ -8,13 +8,15 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-class StreamGobbler extends Thread
+class StreamGobbler implements Runnable
 {
-    private InputStream is;
+    private final InputStream is;
+    private final String name;
 
-    StreamGobbler(InputStream is)
+    StreamGobbler(InputStream is, String name)
     {
         this.is = is;
+        this.name = name;
     }
     
     private final BlockingQueue<String> lines = new LinkedBlockingQueue<String>();
@@ -38,6 +40,7 @@ class StreamGobbler extends Thread
     
     public void run()
     {
+        System.err.println("[gobbler " + name + "] running");
         try
         {
             InputStreamReader isr = new InputStreamReader(is);
@@ -45,11 +48,14 @@ class StreamGobbler extends Thread
             String line;
             while ((line = br.readLine()) != null)
             {
+                System.err.println("[gobbler " + name + "] " + line);
                 lines.put(line);
             }
+            System.err.println("[gobbler " + name + "] done");
         }
         catch (IOException | InterruptedException ioe)
         {
+            System.err.println("[gobbler " + name + "] exception");
             ioe.printStackTrace();
         }
     }

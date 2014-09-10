@@ -21,6 +21,9 @@ public class BotProcess implements AutoCloseable
 	
 	private final StreamGobbler inputReader;
 	private final StreamGobbler errorReader;
+	
+	private final Thread inputThread;
+	private final Thread errorThread;
 
     public BotProcess(String command) throws IOException
     {
@@ -35,12 +38,14 @@ public class BotProcess implements AutoCloseable
         
         child = Runtime.getRuntime().exec(command, null, parent);
 
-        inputReader = new StreamGobbler(child.getInputStream());
-        errorReader = new StreamGobbler(child.getErrorStream());
+        inputReader = new StreamGobbler(child.getInputStream(), "in");
+        errorReader = new StreamGobbler(child.getErrorStream(), "err");
         outputWriter = new OutputStreamWriter(child.getOutputStream());
         
-        inputReader.start();
-        errorReader.start();
+        inputThread = new Thread(inputReader);
+        errorThread = new Thread(errorReader);
+        inputThread.start();
+        errorThread.start();
     }
 
     @Override
@@ -51,8 +56,6 @@ public class BotProcess implements AutoCloseable
         try
         {
             child.waitFor();
-            inputReader.join();
-            errorReader.join();
         }
         catch (InterruptedException e)
         {

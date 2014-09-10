@@ -33,6 +33,7 @@ public class Bot implements AutoCloseable
 		// Write
 		botInputLog.append(messageStr);
         botInputLog.append('\n');
+        System.err.println("engine out>" + messageStr);
 		handler.writeLine(messageStr);
 	}
 
@@ -45,6 +46,7 @@ public class Bot implements AutoCloseable
 	{
 		// Read
 		String messageStr = handler.readLine(timeOut);
+        System.err.println("engine in>" + messageStr);
 		botOutputLog.append(messageStr);
         botOutputLog.append('\n');
         if (messageStr == null)
