@@ -106,7 +106,7 @@ def get_first_jar_name():
 def create_jar_run_script(jarName):
     # Working from bot-id directory
     with open("run.sh", "w") as f:
-        f.write("java -jar " + jarName)
+        f.write("java -jar code/" + jarName)
     st = os.stat("run.sh")
     os.chmod("run.sh", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
@@ -124,7 +124,7 @@ def get_first_exe_name():
 def create_csharp_run_script(exeName):
     # Working from bot-id directory
     with open("run.sh", "w") as f:
-        f.write(exeName)
+        f.write("code/" + exeName)
     
     st = os.stat("run.sh")
     os.chmod("run.sh", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
