@@ -927,7 +927,7 @@ meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', '$routeP
 	}
 	$scope.getAll();
 	$scope.index = $routeParams.index;
-	$scope.newer = Math.min($scope.index - 20, );
+	$scope.newer = Math.min($scope.index - 20, 0);
 	$scope.older = $scope.index + 20;
 }]);
 
