@@ -34,32 +34,3 @@ exports = module.exports = app;
 
 // Logging initialization
 console.log('testing server is listening on port ' + config.port);
-
-
-
-// TEST CODE
-var User = mongoose.model('User'),
-    user1 = new User({username: 'Dumb', password: 'Dumb'}),
-    user2 = new User({username: 'Dumber', password: 'Dumber'});
-    user3 = new User({username: 'Dumbest', password: 'Dumbest'});
-user1.save(function(err) {
-    if (err) {
-        console.log('Create Dumb failed. ' + err);
-    } else {
-        console.log('User Dumb created');
-    }
-})
-user2.save(function(err) {
-    if (err) {
-        console.log('Create Dumber failed. ' + err);
-    } else {
-        console.log('User Dumber created');
-    }
-})
-user3.save(function(err) {
-    if (err) {
-        console.log('Create Dumbest failed. ' + err);
-    } else {
-        console.log('User Dumbest created');
-    }
-})
