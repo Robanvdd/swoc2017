@@ -926,6 +926,9 @@ meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', '$routeP
 			});
 	}
 	$scope.getAll();
+	$scope.index = $routeParams.index;
+	$scope.newer = Math.min($scope.index - 20, );
+	$scope.older = $scope.index + 20;
 }]);
 
 //CONTROLLER FOR mod_play.html
