@@ -915,7 +915,7 @@ meanControllers.controller('PlayvCPUCtrl', ['$scope', '$http', '$location', 'Gam
 }]);
 
 //CONTROLLER FOR mod_list.html
-meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', function ($scope, $http, $location) {
+meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', '$routeParams', function ($scope, $http, $location, $routeParams) {
 	$scope.getAll = function() {
 		$http.get('/api/match/retrievelatest/' + $routeParams.index)
 			.success(function(data){
