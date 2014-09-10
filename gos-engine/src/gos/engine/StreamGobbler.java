@@ -40,7 +40,6 @@ class StreamGobbler implements Runnable
     
     public void run()
     {
-        System.err.println("[gobbler " + name + "] running");
         try
         {
             InputStreamReader isr = new InputStreamReader(is);
@@ -48,14 +47,11 @@ class StreamGobbler implements Runnable
             String line;
             while ((line = br.readLine()) != null)
             {
-                System.err.println("[gobbler " + name + "] " + line);
                 lines.put(line);
             }
-            System.err.println("[gobbler " + name + "] done");
         }
         catch (IOException | InterruptedException ioe)
         {
-            System.err.println("[gobbler " + name + "] exception");
             ioe.printStackTrace();
         }
     }
