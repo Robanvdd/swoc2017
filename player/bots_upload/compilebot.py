@@ -129,8 +129,8 @@ def create_csharp_run_script(exeName):
     st = os.stat("run.sh")
     os.chmod("run.sh", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
-    st = os.stat(exeName)
-    os.chmod(exeName, st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+    st = os.stat("code/" + exeName)
+    os.chmod("code/" + exeName, st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
 #
 # Language determination
