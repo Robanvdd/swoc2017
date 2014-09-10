@@ -915,9 +915,9 @@ meanControllers.controller('PlayvCPUCtrl', ['$scope', '$http', '$location', 'Gam
 }]);
 
 //CONTROLLER FOR mod_list.html
-meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', function ($scope, $http, $location) {
+meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', '$routeParams', function ($scope, $http, $location, $routeParams) {
 	$scope.getAll = function() {
-		$http.get('/api/match/retrieveall/')
+		$http.get('/api/match/retrievelatest/' + $routeParams.index)
 			.success(function(data){
 				$scope.matches = data;
 			})
@@ -926,6 +926,9 @@ meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', function
 			});
 	}
 	$scope.getAll();
+	$scope.index = $routeParams.index;
+	$scope.newer = Math.min($scope.index - 20, );
+	$scope.older = $scope.index + 20;
 }]);
 
 //CONTROLLER FOR mod_play.html

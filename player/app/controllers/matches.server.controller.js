@@ -4,8 +4,8 @@
 var mongoose = require('mongoose'),
 	Match = mongoose.model('Match');
 
-exports.retrieveAll = function(callback) {
-	Match.find({}).populate('blackBot', 'name').populate('whiteBot', 'name').populate('winnerBot', 'name').exec(callback);
+exports.retrieveLatest = function(skip, callback) {
+	Match.find({}).populate('blackBot', 'name').sort('-completedOn').skip(skip).limit(20).populate('whiteBot', 'name').populate('winnerBot', 'name').exec(callback);
 }
 
 exports.retrieveById = function(id, callback) {

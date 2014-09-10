@@ -4,13 +4,17 @@
 <table width="100%" class="table table-hover">
 	<thead>
 		<tr>
-			<th>Time</th><th>Bots</th><th>Winner</th><th></th>
+			<th>Time</th><th>White</th><th>Black</th><th>Winner</th><th></th>
 		</tr>
 	</thead>
+	<tbody>
 		<tr ng-repeat="match in matches | orderBy:'completedOn':'true'">
 			<td>{{match.completedOn}}</td>
 			<td>
-				<span>{{match.whiteBot.name}} vs {{match.blackBot.name}}</span>
+				<span>{{match.whiteBot.name}}</span>
+			</td>
+			<td>
+				<span>{{match.blackBot.name}}</span>
 			</td>
 			<td>
 				<span>{{match.winnerBot.name}}</span>
@@ -21,3 +25,5 @@
 		</tr>
 	</tbody>
 </table>
+<a class="btn btn-primary btn-mini" href="#/game_log/{{newer}}">Show newer matches <b class="glyphicon glyphicon-minus"></b></a>
+<a class="btn btn-primary btn-mini" href="#/game_log/{{older}}">Show older matches <b class="glyphicon glyphicon-plus"></b></a>

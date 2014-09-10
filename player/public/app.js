@@ -6,7 +6,7 @@ meanApp.config(['$routeProvider', function($routeProvider) {
 			controller:'HomeCtrl',
 			templateUrl:'mod_home.html'
 		})
-		.when('/game_log/', {
+		.when('/game_log/:index', {
 			controller:'ListCtrl',
 			templateUrl:'mod_list.html'
 		})
