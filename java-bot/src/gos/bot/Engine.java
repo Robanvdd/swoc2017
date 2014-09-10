@@ -33,23 +33,30 @@ public class Engine implements AutoCloseable
     
     public void run()
     {
-        DoInitiateRequest();
-
-        Player winner = DoFirstRound();
-        while (winner == Player.None)
+        try
         {
-            winner = DoNormalRound();
+            DoInitiateRequest();
+
+            Player winner = DoFirstRound();
+            while (winner == Player.None)
+            {
+                winner = DoNormalRound();
+            }
+            System.err.println("bot " + botColor + " done. winner = " + winner);
         }
-        System.err.println("bot " + botColor + " done. winner = " + winner);
+        catch (Exception ex)
+        {
+            System.err.println("Exception. Bailing out.");
+            ex.printStackTrace(System.err);
+        }
     }
 
-    private void DoInitiateRequest()
+    private void DoInitiateRequest() throws InvalidMessageException
     {
         InitiateRequest initRequest = readMessage(InitiateRequest.class);
         if (initRequest == null)
         {
-            System.err.println("Unexpected message received. Expected InitiateRequest.");
-            return;
+            throw new InvalidMessageException("Unexpected message received. Expected InitiateRequest.");
         }
         
         botColor = initRequest.Color;
@@ -57,7 +64,7 @@ public class Engine implements AutoCloseable
         bot.HandleInitiate(initRequest);
     }
     
-    private Player DoFirstRound()
+    private Player DoFirstRound() throws InvalidMessageException
     {
         Player winner;
         if (botColor == Player.White)
@@ -94,7 +101,7 @@ public class Engine implements AutoCloseable
         return winner;
     }
     
-    private Player DoNormalRound()
+    private Player DoNormalRound() throws InvalidMessageException
     {
         Player winner;
         
@@ -133,27 +140,25 @@ public class Engine implements AutoCloseable
         return winner;
     }
 
-    private void HandleMoveRequest()
+    private void HandleMoveRequest() throws InvalidMessageException
     {
         // process first move
         MoveRequest moveRequest = readMessage(MoveRequest.class);
         if (moveRequest == null)
         {
-            System.err.println("Unexpected message received. Expected MoveRequest.");
-            return;
+            throw new InvalidMessageException("Unexpected message received. Expected MoveRequest.");
         }
 
         Move move = bot.HandleMove(moveRequest);
         writeMessage(move);
     }
 
-    private Player HandleProcessedMove()
+    private Player HandleProcessedMove() throws InvalidMessageException
     {
         ProcessedMove processedMove = readMessage(ProcessedMove.class);
         if (processedMove == null)
         {
-            System.err.println("Unexpected message received. Expected ProcessedMove.");
-            return Player.None;
+            throw new InvalidMessageException("Unexpected message received. Expected ProcessedMove.");
         }
 
         bot.HandleProcessedMove(processedMove);
