@@ -25,17 +25,6 @@ function getNewBotVersion(user) {
 	}
 }
 
-function addNewBotToDatabase(user, version, callback) {
-		var executable_path = path.join(upload_folder_base, user.username, version.toString(), run_script);
-		var newBot = new Bot({
-			name: user.username + '.' + version.toString(),
-			version: version,
-			executablePath: executable_path,
-			user: user
-		});
-		newBot.save(callback);
-}
-
 function createTargetFolder(user, botVersion, callback) {
 	var target_folder = path.join(upload_folder_base, user.username);
 	fs.mkdir(target_folder, function(err){
@@ -59,8 +48,7 @@ function moveUploadToBotFolder(file, user, botVersion, callback) {
 		if (err) {
 			callback(err);
 		} else {
-			var target_path = path.join(target_folder, file.name);
-			console.log('file.path:' + file.path + ' --> target_path:' + target_path);				
+			var target_path = path.join(target_folder, file.name);		
 			fs.rename(file.path, target_path, function(err) {
 				if (err) {
 					// Delete the temporary file, so that the explicitly set temporary upload dir does not get filled with unwanted files.
@@ -81,34 +69,45 @@ function moveUploadToBotFolder(file, user, botVersion, callback) {
 
 function runCompileScript(bot_folder, callback) {
 	var command = 'python ' + compile_script_path + ' -p ' + bot_folder;
-	console.log('Compiling bot with command: ' + command);
 	child_process.exec(command, function(error, stdout, stderr) {
 		if (error) {
-			console.log('Running compile script failed: ' + error);
-			callback(new Error('Could not compile bot. ' + error), bot_folder);
+			callback(new Error('Could not compile bot. ' + error));
 		} else {
-			console.log('Running compile script succeeded');
-			callback(null, bot_folder);
+			callback(null);
 		}
 	})
+}
+
+function addNewBotToDatabase(user, version, callback) {
+	var executable_path = path.join(upload_folder_base, user.username, version.toString(), run_script);
+	var newBot = new Bot({
+		name: user.username + '.' + version.toString(),
+		version: version,
+		executablePath: executable_path,
+		user: user
+	});
+	newBot.save(callback);
 }
 
 function createBot(user, file, callback) {
 	console.log("Upload from user:" + user.username + ", fileName:"  + file.name);
 	var newVersion = getNewBotVersion(user);
 	moveUploadToBotFolder(file, user, newVersion, function(err, bot_folder) {
+		console.log('Moving upload to bot folder with version ' + newVersion.toString() + ' ...');
 		if (err) {
 			callback(err);
 		} else {
+			console.log('Running compile script ...');
 			runCompileScript(bot_folder, function(err) {
 				if (err) {
 					callback(err);
 				} else {
+					console.log('Adding new bot to database ...');
 					addNewBotToDatabase(user, newVersion, function(err, bot) { 
 						if (err) {
 							callback(err)
 						} else {
-							console.log('Bot entry created in database. Version: ' + newVersion + ', ExecutablePath: ' + bot.executablePath);
+							console.log('Bot record created with version ' + newVersion.toString());
 							callback(err, bot_folder);
 						}
 					});		
