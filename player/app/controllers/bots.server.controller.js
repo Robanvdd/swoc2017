@@ -177,7 +177,7 @@ exports.retrieveAllLatest = function(req, res) {
 		    		} else {
 		    			if (bot) {
 		    				console.log('Bot found')
-		    				foundBots.push(bot);
+		    				foundBots.push({ranking: bot.ranking, version: bot.version, name: bot.name, username: user.username});
 		    			} else {
 		    				console.log('No bot found');
 		    			}
