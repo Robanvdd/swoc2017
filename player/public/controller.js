@@ -927,8 +927,8 @@ meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', '$routeP
 	}
 	$scope.getAll();
 	$scope.index = $routeParams.index;
-	$scope.newer = Math.min($scope.index - 20, 0);
-	$scope.older = $scope.index + 20;
+	$scope.newer = Math.max($scope.index - 20, 0);
+	$scope.older = Number ($scope.index) + 20;
 }]);
 
 //CONTROLLER FOR mod_play.html
@@ -1752,7 +1752,7 @@ meanControllers.controller('LeaderboardCtrl', ['$scope', '$http', '$location', f
 		$http.get('/api/user/retrieveall/')
 			.success(function(user){
 				angular.forEach(user, function(user, key) {
-					$http.get('/api/bot/retrievelatest/' + user._id).success(function(bot){
+					$http.get('/api/bot/retrievelatest/' + user._id).success(function(bot) {
 						bot.username = user.username;
 						$scope.bots.push(bot);
 					});	
