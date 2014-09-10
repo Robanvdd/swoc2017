@@ -4,7 +4,6 @@
   "description": "belajar MEAN stack",
   "main": "server.js",
   "dependencies": {
-    "bcryptjs": "^2.0.2",
     "connect-flash": "0.1.x",
     "express": "~3.5.0",
     "mongoose": "~3.6.13",
@@ -16,7 +15,8 @@
     "morgan": "~1.2.2",
     "cookie-parser": "~1.3.2",
     "express-session": "~1.7.2",
-    "connect-mongo": "~0.4.1"
+    "connect-mongo": "~0.4.1",
+    "crypto": "~0.0.3"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
