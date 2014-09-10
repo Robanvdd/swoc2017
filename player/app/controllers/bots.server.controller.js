@@ -16,35 +16,33 @@ function findLastUserBot(user) {
 	return Bot.findOne({user: user._id}).sort({version: -1});
 }
 
-function addNewBotVersionToDatabase(user, callback) {
-	findLastUserBot(user).exec(function(err, bot) {
-		if (err) {
-			callback(err, bot);
-		} else {
-			var version = 1;
-			if (bot) {
-				version = bot.version + 1; 
-			}
-			var executable_path = path.join(upload_folder_base, user.username, version.toString(), run_script);
-
-			var newBot = new Bot({
-				name: user.username + '.' + version.toString(),
-				version: version,
-				executablePath: executable_path,
-				user: user
-			});
-			newBot.save(callback);
-		}
-	});
+function getNewBotVersion(user) {
+	var lastBot = findLastUserBot(user);
+	if (lastBot) {
+		return lastBot.version + 1;
+	} else {
+		return 1;
+	}
 }
 
-function createTargetFolder(user, bot, callback) {
+function addNewBotToDatabase(user, version, callback) {
+		var executable_path = path.join(upload_folder_base, user.username, version.toString(), run_script);
+		var newBot = new Bot({
+			name: user.username + '.' + version.toString(),
+			version: version,
+			executablePath: executable_path,
+			user: user
+		});
+		newBot.save(callback);
+}
+
+function createTargetFolder(user, botVersion, callback) {
 	var target_folder = path.join(upload_folder_base, user.username);
 	fs.mkdir(target_folder, function(err){
 		if (err && err.code !== 'EEXIST') {
 			callback(err);
 		} else {
-			var version_folder = path.join(target_folder, bot.version.toString());
+			var version_folder = path.join(target_folder, botVersion.toString());
 			fs.mkdir(version_folder, function(err) {
 				if(err && err.code !== 'EEXIST'){
 					callback(err); 
@@ -56,8 +54,8 @@ function createTargetFolder(user, bot, callback) {
 	});
 }
 
-function moveUploadToBotFolder(file, user, bot, callback) {
-	createTargetFolder(user, bot, function(err, target_folder) {
+function moveUploadToBotFolder(file, user, botVersion, callback) {
+	createTargetFolder(user, botVersion, function(err, target_folder) {
 		if (err) {
 			callback(err);
 		} else {
@@ -97,17 +95,24 @@ function runCompileScript(bot_folder, callback) {
 
 function createBot(user, file, callback) {
 	console.log("Upload from user:" + user.username + ", fileName:"  + file.name);
-	addNewBotVersionToDatabase(user, function(err, bot) { 
+	var newVersion = getNewBotVersion(user);
+	moveUploadToBotFolder(file, user, newVersion, function(err, bot_folder) {
 		if (err) {
-			callback(err)
+			callback(err);
 		} else {
-			console.log('Bot entry created in database. Version: ' + bot.version + ', ExecutablePath: ' + bot.executablePath);
-			moveUploadToBotFolder(file, user, bot, function(err, bot_folder) {
+			runCompileScript(bot_folder, function(err) {
 				if (err) {
 					callback(err);
 				} else {
-					runCompileScript(bot_folder, callback);
-				}
+					addNewBotToDatabase(user, newVersion, function(err, bot) { 
+						if (err) {
+							callback(err)
+						} else {
+							console.log('Bot entry created in database. Version: ' + newVersion + ', ExecutablePath: ' + bot.executablePath);
+							callback(err, bot_folder);
+						}
+					});		
+				}		
 			});
 		}
 	});
@@ -150,7 +155,15 @@ exports.upload = function(req, res) {
 		res.send({ result: 'Failed', msg: 'No file given' });
 	} else {
 		createBot(req.user, req.files.file, function(err, bot_folder) {
-			result = (err) ? 'Failed' : 'Success';
+			if (err) {
+				console.log(err);
+				result = 'Failed';
+			} else {
+				result = 'Success';
+			}
+			if (!bot_folder) {
+				bot_folder = '';
+			}
 			getBotStdoutStderr(bot_folder, function(err, stdout, stderr){
 				return res.send({ result: result, msg: '', stdout: stdout, stderr: stderr });
 			})
