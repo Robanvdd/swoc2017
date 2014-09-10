@@ -16,13 +16,16 @@ function findLastUserBot(user) {
 	return Bot.findOne({user: user._id}).sort({version: -1});
 }
 
-function getNewBotVersion(user) {
-	var lastBot = findLastUserBot(user);
-	if (lastBot) {
-		return lastBot.version + 1;
-	} else {
-		return 1;
-	}
+function getNewBotVersion(user, callback) {
+	findLastUserBot(user).exec(function(err, lastBot) {
+		if (err) {
+			callback(err);
+		} else if (!lastBot) {
+			callback(null, 1); // first bot
+		} else {
+			callback(null, lastBot + 1);
+		}
+	});
 }
 
 function createTargetFolder(user, botVersion, callback) {
@@ -91,27 +94,33 @@ function addNewBotToDatabase(user, version, callback) {
 
 function createBot(user, file, callback) {
 	console.log("Upload from user:" + user.username + ", fileName:"  + file.name);
-	var newVersion = getNewBotVersion(user);
-	moveUploadToBotFolder(file, user, newVersion, function(err, bot_folder) {
-		console.log('Moving upload to bot folder with version ' + newVersion.toString() + ' ...');
+	getNewBotVersion(user, function(err, newVersion){
+		console.log('Retrieving new bot version number ...');
 		if (err) {
-			callback(err);
+			callback(err)
 		} else {
-			console.log('Running compile script ...');
-			runCompileScript(bot_folder, function(err) {
+			moveUploadToBotFolder(file, user, newVersion, function(err, bot_folder) {
+				console.log('Moving upload to bot folder with version ' + newVersion.toString() + ' ...');
 				if (err) {
 					callback(err);
 				} else {
-					console.log('Adding new bot to database ...');
-					addNewBotToDatabase(user, newVersion, function(err, bot) { 
+					console.log('Running compile script ...');
+					runCompileScript(bot_folder, function(err) {
 						if (err) {
-							callback(err)
+							callback(err);
 						} else {
-							console.log('Bot record created with version ' + newVersion.toString());
-							callback(err, bot_folder);
-						}
-					});		
-				}		
+							console.log('Adding new bot to database ...');
+							addNewBotToDatabase(user, newVersion, function(err, bot) { 
+								if (err) {
+									callback(err)
+								} else {
+									console.log('Bot record created with version ' + newVersion.toString());
+									callback(err, bot_folder);
+								}
+							});		
+						}		
+					});
+				}
 			});
 		}
 	});
