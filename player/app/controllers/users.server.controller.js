@@ -50,6 +50,7 @@ exports.signin = function(req, res, next) {
 
 exports.signout = function(req, res) {
     req.session.destroy(function (err) {
+    res.clearCookie('swoc.jdub.nl');
     res.redirect('/'); //Inside a callback… bulletproof!
   });
 }
