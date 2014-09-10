@@ -3,9 +3,8 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
-    bcrypt = require('bcryptjs'),
 	Schema = mongoose.Schema,
-    SALT_WORK_FACTOR = 10;
+	crypto = require('crypto');
 
 /**
  * User Schema
@@ -18,39 +17,45 @@ var UserSchema = new Schema({
 	},
 	email: { 
 		type: String,
-		required: true, 
 		unique: true 
 	},
 	password: { 
 		type: String, 
 		required: true
-	}
+	},
+	salt: {
+		type: String
+	},
 });
 
-
-// Bcrypt middleware
+/**
+ * Hook a pre save method to hash the password
+ */
 UserSchema.pre('save', function(next) {
-	var user = this;
+	if (this.password && this.password.length > 6) {
+		this.salt = new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');
+		this.password = this.hashPassword(this.password);
+	}
 
-	if(!user.isModified('password')) return next();
-
-	bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
-		if(err) return next(err);
-
-		bcrypt.hash(user.password, salt, function(err, hash) {
-			if(err) return next(err);
-			user.password = hash;
-			next();
-		});
-	});
+	next();
 });
 
-// Password verification
-UserSchema.methods.comparePassword = function(candidatePassword, cb) {
-	bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
-		if(err) return cb(err);
-		cb(null, isMatch);
-	});
+/**
+ * Create instance method for hashing a password
+ */
+UserSchema.methods.hashPassword = function(password) {
+	if (this.salt && password) {
+		return crypto.pbkdf2Sync(password, this.salt, 10000, 64).toString('base64');
+	} else {
+		return password;
+	}
+};
+
+/**
+ * Create instance method for authenticating user
+ */
+UserSchema.methods.authenticate = function(password) {
+	return this.password === this.hashPassword(password);
 };
 
 mongoose.model('User', UserSchema);
