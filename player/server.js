@@ -3,7 +3,8 @@
  */
 var init = require('./config/init')(),
 	config = require('./config/config'),
-	mongoose = require('mongoose');
+	mongoose = require('mongoose'),
+    users = require('./app/controllers/users');;
 
 /**
  * Main application entry file.
