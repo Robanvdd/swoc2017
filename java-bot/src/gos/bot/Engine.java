@@ -15,22 +15,22 @@ import com.google.gson.Gson;
 public class Engine implements AutoCloseable
 {
     private final IBot bot;
-    
+
     private final InputStreamReader inStreamReader;
     private final BufferedReader inReader;
     private final Gson gson;
-    
+
     private Player botColor;
-    
+
     public Engine(IBot bot)
     {
         this.bot = bot;
-        
+
         inStreamReader = new InputStreamReader(System.in);
         inReader = new BufferedReader(inStreamReader);
         gson = new Gson();
     }
-    
+
     public void run()
     {
         try
@@ -42,7 +42,6 @@ public class Engine implements AutoCloseable
             {
                 winner = DoNormalRound();
             }
-            System.err.println("bot " + botColor + " done. winner = " + winner);
         }
         catch (Exception ex)
         {
@@ -58,21 +57,19 @@ public class Engine implements AutoCloseable
         {
             throw new InvalidMessageException("Unexpected message received. Expected InitiateRequest.");
         }
-        
+
         botColor = initRequest.Color;
 
         bot.HandleInitiate(initRequest);
     }
-    
+
     private Player DoFirstRound() throws InvalidMessageException
     {
         Player winner;
         if (botColor == Player.White)
         {
-            System.err.println("bot white first round wait for move request");
             // Do the first move
             HandleMoveRequest();
-            System.err.println("bot white first round wait processed move");
             // and wait for the engine to acknowledge
             winner = HandleProcessedMove();
             if (winner != Player.None)
@@ -81,62 +78,47 @@ public class Engine implements AutoCloseable
             }
 
             // Wait for first two moves of black
-            System.err.println("bot white first round wait processed move of black");
             winner = HandleProcessedMove();
             if (winner != Player.None)
             {
                 return winner;
             }
-            System.err.println("bot white first round wait processed move of black");
             winner = HandleProcessedMove();
-            System.err.println("bot white first round done, winner = " + winner);
         }
         else
         {
-            System.err.println("bot black first round wait processed move of white");
             // Wait for first white move
             winner = HandleProcessedMove();
-            System.err.println("bot black first round done, winner = " + winner);
         }
         return winner;
     }
-    
+
     private Player DoNormalRound() throws InvalidMessageException
     {
         Player winner;
-        
-        System.err.println("bot " + botColor + " normal round wait for first move request");
+
         HandleMoveRequest();
-        System.err.println("bot " + botColor + " normal round wait for first processed move");
         winner = HandleProcessedMove();
         if (winner != Player.None)
         {
-            System.err.println("bot " + botColor + " normal round done. winner = " + winner);
             return winner;
         }
 
-        System.err.println("bot " + botColor + " normal round wait for second move request");
         HandleMoveRequest();
-        System.err.println("bot " + botColor + " normal round wait for second processed move");
         winner = HandleProcessedMove();
         if (winner != Player.None)
         {
-            System.err.println("bot " + botColor + " normal round done. winner = " + winner);
             return winner;
         }
 
-        System.err.println("bot " + botColor + " normal round wait for first other processed move");
         winner = HandleProcessedMove();
         if (winner != Player.None)
         {
-            System.err.println("bot " + botColor + " normal round done. winner = " + winner);
             return winner;
         }
 
-        System.err.println("bot " + botColor + " normal round wait for second other processed move");
         winner = HandleProcessedMove();
-        
-        System.err.println("bot " + botColor + " normal round done. winner = " + winner);
+
         return winner;
     }
 
@@ -178,7 +160,6 @@ public class Engine implements AutoCloseable
             e.printStackTrace();
         }
     }
-    
 
     private <T> T readMessage(Class<T> classOfT)
     {
@@ -186,7 +167,6 @@ public class Engine implements AutoCloseable
         try
         {
             messageStr = inReader.readLine();
-            System.err.println("bot in>" + messageStr);
         }
         catch (IOException e)
         {
@@ -204,7 +184,6 @@ public class Engine implements AutoCloseable
     private <T> void writeMessage(T message)
     {
         String messageStr = gson.toJson(message);
-        System.err.println("bot out>" + messageStr);
         System.out.println(messageStr);
     }
 }
