@@ -13,7 +13,7 @@ var _ = require('lodash'),
 exports.signin = function(req, res, next) {
     passport.authenticate('local', function(err, user, info) {
         if (err || !user) {
-            res.status(400).send(info);
+            res.redirect('/#/login');
         } else {
             // Remove sensitive data before login
             user.password = undefined;
@@ -21,7 +21,7 @@ exports.signin = function(req, res, next) {
 
             req.login(user, function(err) {
                 if (err) {
-                    res.status(400).send(err);
+                    res.redirect('/#/login');
                 } else {
                     res.redirect('/');
                 }
