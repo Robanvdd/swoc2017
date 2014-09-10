@@ -148,7 +148,6 @@ public class Matchmaker implements AutoCloseable {
         try {
             System.out.println("running match " + botId1 + " vs " + botId2);
             Process p = Runtime.getRuntime().exec("java -jar gos-engine.jar " + botId1 + " " + botId2);
-            p.waitFor();
 
             BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String lastLine = "";
@@ -158,6 +157,7 @@ public class Matchmaker implements AutoCloseable {
                 sb.append('\n');
                 lastLine = line;
             }
+            p.waitFor();
             input.close();
             
             matchId = new ObjectId(lastLine);
@@ -183,9 +183,16 @@ public class Matchmaker implements AutoCloseable {
         
         //Start Engine with two given bots: bot1 as white, 2 as black
         ObjectId matchId1 = runMatch(botId1, botId2);
-        ObjectId winner1 = getWinnerOfMatch(getMatchTable(db), matchId1);
         //Start Engine with two given bots: bot1 as black, 2 as white
         ObjectId matchId2 = runMatch(botId2, botId1);
+
+        if (matchId1 == null || matchId2 == null)
+        {
+            System.out.println("The result of the match " + botId1 + " vs " + botId2 + ": no matches stored");
+            return;
+        }
+        
+        ObjectId winner1 = getWinnerOfMatch(getMatchTable(db), matchId1);
         ObjectId winner2 = getWinnerOfMatch(getMatchTable(db), matchId2);
         
         double actualScore1 = (winner1.equals(botId1) ? 1.0 : 0.0) + (winner2.equals(botId1) ? 1.0 : 0.0);
