@@ -103,7 +103,7 @@ module.exports = function(app) {
 					console.log(err);
 					res.send({result: "error, Could not write to file"});
 				} else {
-					execFile('./tzaar',  ['-b', './tmp/test', '-t', '2', '-a', req.body.AILevel], function(err, data) {  
+					execFile('./cpubot',  ['-b', './tmp/test', '-t', '2', '-a', req.body.AILevel], function(err, data) {  
 						console.log(err)
 						console.log(data.toString());
 						fs.readFile('./tmp/test', function(err, data){
