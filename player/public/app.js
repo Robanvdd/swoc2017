@@ -38,6 +38,10 @@ meanApp.config(['$routeProvider', function($routeProvider) {
 			controller:'LeaderboardCtrl',
 			templateUrl:'mod_leaderboard.html'
 		})
+		.when('/createuser/', {
+			controller:'CreateUserCtrl',
+			templateUrl:'mod_createuser.html'
+		})
 		.otherwise({
 			redirectTo: '/'
 		});

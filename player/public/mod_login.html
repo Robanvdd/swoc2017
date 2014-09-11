@@ -1,14 +1,29 @@
+<style>
+.padded-section {
+    padding: 10px 30px;
+}
+.center-section {
+    margin-left: auto; 
+    margin-right: auto; 
+    float: none;
+}
+</style>
+
 <h2> User login </h2>
 <h3> Enter your credentials </h3>
 
-        <form action="/login" method="post" enctype="multipart/form-data">
-		  <p>
-            <label>Username:</label> <input type="text" name="username">
-		  </P>
-		  <p>
-            <label>Password:</label> <input type="password" name="password">
-		  </P>
-          <p>
-            <input type="submit" class="btn" value="Submit">
-          </p>
-        </form>
+<section class="row padded-section center-section" style="width: 300px;">
+    <form action="/login" class="signin form-horizontal" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" class="form-control" placeholder="Username">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" class="form-control" dplaceholder="Password">
+        </div>
+        <div class="text-center form-group">
+            <input type="submit" class="btn btn-large btn-primary" value="Sign in">
+        </div>
+    </form>
+</section>

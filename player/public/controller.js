@@ -1786,3 +1786,17 @@ meanControllers.controller('UploadCtrl', ['$scope', function($scope) {
 		$scope.stdout = content.stdout;
 	};
 }]);
+
+//CONTROLLER FOR mod_createuser.html
+meanControllers.controller('CreateUserCtrl', ['$scope', '$http', '$location', function($scope, $http, $location) {
+	$scope.createUser = function() {
+		console.log('Creating user');
+		$http.post('/createuser', $scope.credentials).success(function(response) {
+			$scope.error = null;
+			$scope.success = response.message;
+		}).error(function(response) {
+			$scope.success = null;
+			$scope.error = response.message;
+		});
+	};
+}]);
