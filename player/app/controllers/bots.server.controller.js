@@ -81,12 +81,18 @@ function runCompileScript(bot_folder, callback) {
 	})
 }
 
-function addNewBotToDatabase(user, version, callback) {
+function readRunCommand(bot_folder, callback) {
+	var runShellScript = path.join(bot_folder, 'run.sh');
+	fs.readFile(runShellScript, 'utf8', callback)
+}
+
+function addNewBotToDatabase(user, version, bot_folder, run_command, callback) {
 	var executable_path = path.join(upload_folder_base, user.username, version.toString(), run_script);
 	var newBot = new Bot({
 		name: user.username + '.' + version.toString(),
 		version: version,
-		executablePath: executable_path,
+		workingDirectory: path.resolve(bot_folder),
+		runCommand: run_command,
 		user: user
 	});
 	newBot.save(callback);
@@ -109,15 +115,22 @@ function createBot(user, file, callback) {
 						if (err) {
 							callback(err);
 						} else {
-							console.log('Adding new bot to database ...');
-							addNewBotToDatabase(user, newVersion, function(err, bot) { 
+							console.log('Reading command from run.sh ...');
+							readRunCommand(bot_folder, function(err, run_command){
 								if (err) {
-									callback(err)
+									callback(err);
 								} else {
-									console.log('Bot record created with version ' + newVersion.toString());
-									callback(err, bot_folder);
+									console.log('Adding new bot to database ...');
+									addNewBotToDatabase(user, newVersion, bot_folder, run_command, function(err, bot) { 
+										if (err) {
+											callback(err)
+										} else {
+											console.log('Bot record created with version ' + newVersion.toString());
+											callback(err, bot_folder);
+										}
+									});	
 								}
-							});		
+							})	
 						}		
 					});
 				}

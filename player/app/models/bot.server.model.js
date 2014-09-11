@@ -23,9 +23,13 @@ var BotSchema = new Schema({
 		type: Number,	
 		default: 1
 	},
-	executablePath: {
+	workingDirectory: {
 		type: String,
-		required: 'An executable path must be given'
+		required: 'A working directory must be given'
+	},
+	runCommand: {
+		type: String,
+		required: 'A run command must be given'
 	},
 	user: {
 		type: Schema.ObjectId,
