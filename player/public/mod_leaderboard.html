@@ -7,7 +7,7 @@
 			<th width="50px">Rank</th><th>Name</th><th>Version</th><th>User</th>
 		</tr>
 	</thead>
-		<tr ng-repeat="bot in getOldBots() | orderBy:'ranking':'true'">
+		<tr ng-repeat="bot in bots | orderBy:'ranking':'true'">
 			<td>
 				<span>{{bot.ranking}}</span>
 			</td>
