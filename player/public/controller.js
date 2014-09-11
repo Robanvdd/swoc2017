@@ -1772,7 +1772,7 @@ meanControllers.controller('LogInCtrl', ['$scope', '$http', '$location', functio
 }]);
 
 //CONTROLLER FOR mod_upload.html
-meanControllers.controller('UploadCtrl', ['$scope', function($scope) {
+meanControllers.controller('UploadCtrl', ['$scope', '$http', function($scope, $http) {
 	$scope.startUploading = function() {
 		console.log('uploading....');
 		$scope.hasResult = false;
@@ -1785,6 +1785,28 @@ meanControllers.controller('UploadCtrl', ['$scope', function($scope) {
 		$scope.stderr = content.stderr;
 		$scope.stdout = content.stdout;
 	};
+
+	$scope.getOldBots = function() {
+		$http.get('/api/bot/getoldbots').success(function(oldBots){
+			angular.forEach(oldBots, function(oldBot, key) {
+				oldBot.rankdiff = (oldBot.finalrank - oldBot.startrank);
+				if (oldBot.rankdiff > 0) {
+					oldBot.performance = 'improved';
+				} else if (oldBot.rankdiff == 0) {
+					oldBot.performance = 'notchanged';
+				} else {
+					oldBot.performance = 'degraded';
+				}
+				$scope.oldBots.push(oldBot)
+			})
+		})
+		.error(function(data) {
+			console.log(data);
+		});
+	}
+
+	$scope.oldBots = [];
+	$scope.getOldBots();
 }]);
 
 //CONTROLLER FOR mod_createuser.html

@@ -87,3 +87,34 @@
         </div>
     </div>
 </section>
+
+<br><br>
+<h2>Your old bots</h2>
+
+<table width="100%" class="table table-hover">
+    <thead>
+        <tr>
+            <th>Version</th><th>Performance</th><th>Start Rank</th><th>Final Rank</th><th># of Matches</th>
+        </tr>
+    </thead>
+        <tr ng-repeat="bot in oldBots">
+            <td>
+                <span>{{bot.version}}</span>
+            </td>
+            <td ng-switch on="bot.performance">
+                <span ng-switch-when="improved" class="text-success">{{ '+' + bot.rankdiff.toString() }}</span>
+                <span ng-switch-when="notchanged">No change</span>
+                <span ng-switch-when="degraded" class="text-danger" >{{ bot.rankdiff.toString() }}</span>
+            </td>
+            <td>
+                <span>{{bot.startrank}}</span>
+            </td>
+            <td>
+                <span>{{bot.finalrank}}</span>
+            </td>
+            <td>
+                <span>{{bot.matchcount}}</span>
+            </td>
+        </tr>
+    </tbody>
+</table>
