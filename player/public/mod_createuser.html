@@ -1,18 +1,9 @@
-<style>
-.padded-section {
-    padding: 10px 30px;
-}
-.center-section {
-    margin-left: auto; 
-    margin-right: auto; 
-    float: none;
-}
-</style>
-
 <h2>Create a user</h2>
+
+
 <section class="row padded-section center-section" style="width: 400px;" ng-controller="CreateUserCtrl" >
 
-    <form name="createUserForm" ng-submit="createUser()" class="signin form-horizontal" novalidate autocomplete="off">
+    <form name="createUserForm" ng-submit="createUser()" class="form-horizontal" novalidate autocomplete="off">
         <div class="form-group">
             <label for="username">Username</label>
             <input type="text" id="username" name="username" class="form-control" data-ng-model="credentials.username" placeholder="Username">

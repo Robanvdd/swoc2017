@@ -6,3 +6,12 @@
 h1, h2, h3 {
 	text-align: center;
 }
+
+.padded-section {
+    padding: 10px 30px;
+}
+.center-section {
+    margin-left: auto; 
+    margin-right: auto; 
+    float: none;
+}
