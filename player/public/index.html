@@ -92,7 +92,7 @@
         <div style="padding:50px 0 0 0" ng-controller="LogInCtrl">
             <a href="#/login" target="_self" style="float:right" ng-hide="user" >Log in</a>
             <div ng-show="user" style="float:right">
-                <span> Logged in as: {{user.user}}. </span>
+                <span> Hello {{user.user}}! </span>
                 <span ng-show="user && user.user == 'admin'">
                     <a href="#/createuser" target="_self">Create a user</a>
                     &nbsp;or&nbsp;
