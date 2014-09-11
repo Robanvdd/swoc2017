@@ -1,7 +1,8 @@
 /**
  * Module dependencies.
  */
-var games = require('../../app/controllers/games');
+var games = require('../../app/controllers/games'),
+	execFile = require('child_process').execFile;
 
 module.exports = function(app) {
 
@@ -102,7 +103,7 @@ module.exports = function(app) {
 					console.log(err);
 					res.send({result: "error, Could not write to file"});
 				} else {
-					exec('./tzaar',  ['-b', './tmp/test', '-t', '2', '-a', req.body.AILevel], function(err, data) {  
+					execFile('./tzaar',  ['-b', './tmp/test', '-t', '2', '-a', req.body.AILevel], function(err, data) {  
 						console.log(err)
 						console.log(data.toString());
 						fs.readFile('./tmp/test', function(err, data){
