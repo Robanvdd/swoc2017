@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SharpBot
+namespace SharpBot.Protocol
 {
-    class InitiateRequest
+    public class InitiateRequest
     {
         public InitiateRequest(Player color)
         {

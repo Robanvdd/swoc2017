@@ -46,21 +46,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Board.cs" />
-    <Compile Include="BoardLocation.cs" />
-    <Compile Include="InitiateRequest.cs" />
-    <Compile Include="Move.cs" />
-    <Compile Include="MoveRequest.cs" />
-    <Compile Include="MoveType.cs" />
-    <Compile Include="Player.cs" />
-    <Compile Include="ProcessedMove.cs" />
+    <Compile Include="Bot.cs" />
+    <Compile Include="Engine.cs" />
+    <Compile Include="IBot.cs" />
+    <Compile Include="InvalidMessageException.cs" />
+    <Compile Include="Protocol\Board.cs" />
+    <Compile Include="Protocol\BoardLocation.cs" />
+    <Compile Include="Protocol\InitiateRequest.cs" />
+    <Compile Include="Protocol\Move.cs" />
+    <Compile Include="Protocol\MoveRequest.cs" />
+    <Compile Include="Protocol\MoveType.cs" />
+    <Compile Include="Protocol\Player.cs" />
+    <Compile Include="Protocol\ProcessedMove.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StatusResponse.cs" />
+    <Compile Include="Protocol\Stone.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Protocol\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

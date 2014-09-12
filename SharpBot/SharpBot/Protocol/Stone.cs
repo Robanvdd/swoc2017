@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SharpBot
+namespace SharpBot.Protocol
 {
-    public enum Player : int
+    public enum Stone : int
     {
         None = 0,
-        White = 1,
-        Black = -1,
+        A = 1,
+        B = 2,
+        C = 3,
     }
 }

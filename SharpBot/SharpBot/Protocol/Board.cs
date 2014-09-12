@@ -4,21 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 
-namespace SharpBot
+namespace SharpBot.Protocol
 {
-    public enum Player : int
-    {
-        None = 0,
-        White = 1,
-        Black = -1,
-    }
-    public enum Stone : int
-    {
-        None = 0,
-        A = 1,
-        B = 2,
-        C = 3,
-    }
     public class Board
     {
         [Newtonsoft.Json.JsonProperty]

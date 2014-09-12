@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SharpBot
+namespace SharpBot.Protocol
 {
     public enum MoveType : int
     {
