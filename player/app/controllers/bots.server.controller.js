@@ -245,8 +245,7 @@ exports.retrieveOldBots = function(req, res) {
 				oldBots.push({
 					version: bot.version,
 					startrank: prevRanking,
-					finalrank: bot.ranking,
-					matchcount: -1 // TODO
+					finalrank: bot.ranking
 				});
 			}
 			res.send(oldBots);
