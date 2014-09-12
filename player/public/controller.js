@@ -1788,17 +1788,7 @@ meanControllers.controller('UploadCtrl', ['$scope', '$http', function($scope, $h
 
 	$scope.getOldBots = function() {
 		$http.get('/api/bot/getoldbots').success(function(oldBots){
-			angular.forEach(oldBots, function(oldBot, key) {
-				oldBot.rankdiff = (oldBot.finalrank - oldBot.startrank);
-				if (oldBot.rankdiff > 0) {
-					oldBot.performance = 'improved';
-				} else if (oldBot.rankdiff == 0) {
-					oldBot.performance = 'notchanged';
-				} else {
-					oldBot.performance = 'degraded';
-				}
-				$scope.oldBots.push(oldBot)
-			})
+			$scope.oldBots = oldBots;
 		})
 		.error(function(data) {
 			console.log(data);

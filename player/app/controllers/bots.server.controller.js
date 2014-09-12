@@ -254,19 +254,28 @@ exports.retrieveAllLatest = function(req, res) {
 
 exports.retrieveOldBots = function(req, res) {
 	var user = req.user;
-	Bot.find({user: user._id}).sort('version').exec(function(err, bots) {
+	Bot.find({user: user._id}, 'version ranking').sort('version').exec(function(err, bots) {
 		if (err) {
 			res.status(400).send('Could not retrieve bots');
 		} else {
-			var oldBots = []
+			var oldBots = [];
 			var prevRanking = 1000;
 			for (var i = 0; i < bots.length; i++) {
-				var bot = bots[i];
+				var performance;
+				if (bot.ranking > prevRanking) {
+					performance = 'improved';
+				} else if (bot.ranking == prevRanking) {
+					performance = 'notchanged';
+				} else {
+					performance = 'degraded';
+				}
 				oldBots.push({
 					version: bot.version,
-					startrank: prevRanking,
-					finalrank: bot.ranking
+					ranking: bot.ranking,
+					performance: performance,
+					rankdiff: bot.ranking - prevRanking
 				});
+				prevRanking = bot.ranking;
 			}
 			res.send(oldBots);
 		}
