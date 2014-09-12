@@ -90,6 +90,7 @@ function addNewBotToDatabase(user, old_bot, version, bot_folder, run_command, ca
 	var executable_path = path.join(upload_folder_base, user.username, version.toString(), run_script);
 	var oldRanking = (old_bot) ? old_bot.ranking : 1000;
 	var newBot = new Bot({
+		name: user.username + ' v' + version.toString(),
 		version: version,
 		ranking: oldRanking,
 		workingDirectory: path.resolve(bot_folder),
