@@ -29,88 +29,96 @@
     </div>
 </div>
 
-<h2>What is acceptable to upload?</h2>
+<div class="row">
+    <div class="col-md-8">
 
-<section style="margin-left: auto; margin-right: auto; float: none;">
-    <p style="font-weight: bold; text-align: center;">Zip it, before you ship it!</p>
-    <div class="row">
-        <div class="col-md-2">
-            <img src="./img/zipper_animated.gif" align="left" width="64px" height="64px" hspace="12">
-        </div>
-        <div class="col-md-9">
-            <p>Every uploaded bot must be zipped.</p>
-        </div>
+        <h2>What is acceptable to upload?</h2>
+
+        <section style="margin-left: auto; margin-right: auto; float: none;">
+            <p style="font-weight: bold; text-align: center;">Zip it, before you ship it!</p>
+            <div class="row">
+                <div class="col-md-2">
+                    <img src="./img/zipper_animated.gif" align="left" width="64px" height="64px" hspace="12">
+                </div>
+                <div class="col-md-9">
+                    <p>Every uploaded bot must be zipped.</p>
+                </div>
+            </div>
+        </section>
+
+        <section style="margin-left: auto; margin-right: auto; float: none;">
+            <p style="font-weight: bold; text-align: center;">Java</p>
+            <div class="row">
+                <div class="col-md-2">
+                    <img src="./img/java.png" align="left" width="64px" height="64px" hspace="12">
+                </div>
+                <div class="col-md-9">
+                    Java is a supported language. Installed version is OpenJDK-7. <br> The uploaded (zipped) directory structure must obey the following rules:
+                    <ul>
+                        <li>Only one jar in the top-level directory of the zip</li>
+                        <li>Everything else in a subdirectory</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section style="margin-left: auto; margin-right: auto; float: none;">
+            <p style="font-weight: bold; text-align: center;">Scala</p>
+            <div class="row">
+                <div class="col-md-2">
+                    <img src="./img/scala.png" align="left" width="64px" height="64px" hspace="12">
+                </div>
+                <div class="col-md-9">
+                    Scala is a supported language. Installed version is 2.11.2. The uploaded (zipped) directory structure must obey the following rules:
+                    <ul>
+                        <li>Only one jar in the top-level directory of the zip</li>
+                        <li>Everything else in a subdirectory</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section style="margin-left: auto; margin-right: auto; float: none;">
+            <p style="font-weight: bold; text-align: center;">C# (mono)</p>
+            <div class="row">
+                <div class="col-md-2">
+                    <img src="./img/csharp.png" align="left" width="64px" height="64px" hspace="12">
+                </div>
+                <div class="col-md-9">
+                    C# is a supported language. Installed mono version is 3.2.8. The uploaded (zipped) directory structure must obey the following rules:
+                    <ul>
+                        <li>Only one exe in the top-level directory of the zip</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
     </div>
-</section>
+    <div class="col-md-4">
 
-<section style="margin-left: auto; margin-right: auto; float: none;">
-    <p style="font-weight: bold; text-align: center;">Java</p>
-    <div class="row">
-        <div class="col-md-2">
-            <img src="./img/java.png" align="left" width="64px" height="64px" hspace="12">
-        </div>
-        <div class="col-md-9">
-            Java is a supported language. Installed version is OpenJDK-7. <br> The uploaded (zipped) directory structure must obey the following rules:
-            <ul>
-                <li>Only one jar in the top-level directory of the zip</li>
-                <li>Everything else in a subdirectory</li>
-            </ul>
-        </div>
+        <h2>Your old bots</h2>
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Version</th><th>Performance</th><th>Final Rank</th>
+                </tr>
+            </thead>
+                <tr ng-repeat="bot in oldBots">
+                    <td>
+                        <span>{{bot.version}}</span>
+                    </td>
+                    <td ng-switch on="bot.performance">
+                        <span ng-switch-when="improved" class="text-success">{{ '+' + bot.rankdiff.toString() }}</span>
+                        <span ng-switch-when="notchanged">No change</span>
+                        <span ng-switch-when="degraded" class="text-danger" >{{ bot.rankdiff.toString() }}</span>
+                    </td>
+                    <td>
+                        <span>{{bot.ranking}}</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
     </div>
-</section>
-
-<section style="margin-left: auto; margin-right: auto; float: none;">
-    <p style="font-weight: bold; text-align: center;">Scala</p>
-    <div class="row">
-        <div class="col-md-2">
-            <img src="./img/scala.png" align="left" width="64px" height="64px" hspace="12">
-        </div>
-        <div class="col-md-9">
-            Scala is a supported language. Installed version is 2.11.2. The uploaded (zipped) directory structure must obey the following rules:
-            <ul>
-                <li>Only one jar in the top-level directory of the zip</li>
-                <li>Everything else in a subdirectory</li>
-            </ul>
-        </div>
-    </div>
-</section>
-
-<section style="margin-left: auto; margin-right: auto; float: none;">
-    <p style="font-weight: bold; text-align: center;">C# (mono)</p>
-    <div class="row">
-        <div class="col-md-2">
-            <img src="./img/csharp.png" align="left" width="64px" height="64px" hspace="12">
-        </div>
-        <div class="col-md-9">
-            C# is a supported language. Installed mono version is 3.2.8. The uploaded (zipped) directory structure must obey the following rules:
-            <ul>
-                <li>Only one exe in the top-level directory of the zip</li>
-            </ul>
-        </div>
-    </div>
-</section>
-
-<br><br>
-<h2>Your old bots</h2>
-
-<table width="100%" class="table table-hover">
-    <thead>
-        <tr>
-            <th>Version</th><th>Performance</th><th>Final Rank</th>
-        </tr>
-    </thead>
-        <tr ng-repeat="bot in oldBots">
-            <td>
-                <span>{{bot.version}}</span>
-            </td>
-            <td ng-switch on="bot.performance">
-                <span ng-switch-when="improved" class="text-success">{{ '+' + bot.rankdiff.toString() }}</span>
-                <span ng-switch-when="notchanged">No change</span>
-                <span ng-switch-when="degraded" class="text-danger" >{{ bot.rankdiff.toString() }}</span>
-            </td>
-            <td>
-                <span>{{bot.ranking}}</span>
-            </td>
-        </tr>
-    </tbody>
-</table>
+</div>
