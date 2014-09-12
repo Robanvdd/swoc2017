@@ -21,9 +21,9 @@ function getNewBotVersion(user, callback) {
 		if (err) {
 			callback(err);
 		} else if (!lastBot) {
-			callback(null, 1); // first bot
+			callback(null, 1, lastBot); // first bot
 		} else {
-			callback(null, lastBot.version + 1);
+			callback(null, lastBot.version + 1, lastBot);
 		}
 	});
 }
@@ -86,11 +86,12 @@ function readRunCommand(bot_folder, callback) {
 	fs.readFile(runShellScript, 'utf8', callback)
 }
 
-function addNewBotToDatabase(user, version, bot_folder, run_command, callback) {
+function addNewBotToDatabase(user, old_bot, version, bot_folder, run_command, callback) {
 	var executable_path = path.join(upload_folder_base, user.username, version.toString(), run_script);
 	var newBot = new Bot({
 		name: user.username + '.' + version.toString(),
 		version: version,
+		ranking: old_bot.ranking,
 		workingDirectory: path.resolve(bot_folder),
 		runCommand: run_command,
 		user: user
@@ -101,7 +102,7 @@ function addNewBotToDatabase(user, version, bot_folder, run_command, callback) {
 function createBot(user, file, callback) {
 	console.log("Upload from user:" + user.username + ", fileName:"  + file.name);
 	console.log('Retrieving new bot version number ...');
-	getNewBotVersion(user, function(err, newVersion){
+	getNewBotVersion(user, function(err, newVersion, oldBot){
 		if (err) {
 			callback(err)
 		} else {
@@ -121,7 +122,7 @@ function createBot(user, file, callback) {
 									callback(err, bot_folder);
 								} else {
 									console.log('Adding new bot to database ...');
-									addNewBotToDatabase(user, newVersion, bot_folder, run_command, function(err, bot) { 
+									addNewBotToDatabase(user, oldBot, newVersion, bot_folder, run_command, function(err, bot) { 
 										if (err) {
 											callback(err, bot_folder)
 										} else {
