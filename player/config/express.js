@@ -48,7 +48,7 @@ module.exports = function(db) {
 	// CookieParser should be above session
 	app.use(cookieParser());
 
-	app.use(express.limit('10mb'))
+	app.use(express.limit('20mb'))
 
 	// app.use(session({ secret: config.sessionSecret }));
 
