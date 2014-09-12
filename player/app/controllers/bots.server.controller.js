@@ -100,13 +100,13 @@ function addNewBotToDatabase(user, version, bot_folder, run_command, callback) {
 
 function createBot(user, file, callback) {
 	console.log("Upload from user:" + user.username + ", fileName:"  + file.name);
+	console.log('Retrieving new bot version number ...');
 	getNewBotVersion(user, function(err, newVersion){
-		console.log('Retrieving new bot version number ...');
 		if (err) {
 			callback(err)
 		} else {
+			console.log('Moving upload to bot folder with version ' + newVersion.toString() + ' ...');
 			moveUploadToBotFolder(file, user, newVersion, function(err, bot_folder) {
-				console.log('Moving upload to bot folder with version ' + newVersion.toString() + ' ...');
 				if (err) {
 					callback(err);
 				} else {
