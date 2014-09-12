@@ -23,7 +23,7 @@ function getNewBotVersion(user, callback) {
 		} else if (!lastBot) {
 			callback(null, 1); // first bot
 		} else {
-			callback(null, lastBot + 1);
+			callback(null, lastBot.version + 1);
 		}
 	});
 }
