@@ -848,9 +848,9 @@ meanControllers.controller('PlayvCPUCtrl', ['$scope', '$http', '$location', 'Gam
 			case "23" : CPUname = "DFPNS_EVAL_BASED"; break;
 			case "24" : CPUname = "DFPNS_WEAK_EPS_EVAL"; break;
 			case "25" : CPUname = "DFPNS_DYNAMIC_WIDENING_EPS_EVAL"; break;
-			case "40" : CPUname = "BEGINNERS_AI"; break;
-			case "41" : CPUname = "INTERMEDIATE_AI"; break;
-			case "42" : CPUname = "AICOMBI_RANDOM_AB_PNS"; break;
+			case "40" : CPUname = "BEGINNER"; break;
+			case "41" : CPUname = "INTERMEDIATE"; break;
+			case "42" : CPUname = "GODLIKE"; break;
 		}
 		if ( $scope.CPUcolor == 1) {
 			$scope.game.bot1 = CPUname;

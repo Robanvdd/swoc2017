@@ -1,34 +1,20 @@
 <header ng-hide="CPUSelected">
+	<h2>Choose your color</h2>
 	<div class="player1-active" ng-if="CPUcolor == -1" style="width:45%" ng-click="selectCPUColor(-1)">White</div>
 	<div class="player1-inactive" ng-if="CPUcolor != -1" style="width:45%" ng-click="selectCPUColor(-1)">White</div>
-	<div class="VS">Choose your color</div>
+	<div class="VS">VS</div>
 	<div class="player2-active" ng-if="CPUcolor == 1" style="width:45%" ng-click="selectCPUColor(1)">Black</div>
 	<div class="player2-inactive" ng-if="CPUcolor != 1" style="width:45%" ng-click="selectCPUColor(1)">Black</div>
 	<br/>
-	<h2>
-	<br/>
-	Choose AI level
-  	</h2>
-	<select ng-model="AILevel">
-	    <option value="1">AIALPHABETA</option>
-	    <option value="2">AIALPHABETA_ID</option>
-	    <option value="3">AIALPHABETA_ID_PV</option>
-	    <option value="4">AIALPHABETA_ID_PV_MO</option>
-	    <option value="5">AIALPHABETA_ID_MO</option>
-	    <option value="6">AIALPHABETA_RANDOM</option>
-	    <option value="7">AIALPHABETA_ID_PV_MO_SCOUT</option>
-	    <option value="8">AIALPHABETA_ID_PV_MO_HISTORY</option>
-	    <option value="9">AIALPHABETA_MAX</option>
-	    <option value="20">DFPNS</option>
-	    <option value="21">DFPNS_EPS_TRICK</option>
-	    <option value="22">WEAK_PNS</option>
-	    <option value="23">DFPNS_EVAL_BASED</option>
-	    <option value="24">DFPNS_WEAK_EPS_EVAL</option>
-	    <option value="25">DFPNS_DYNAMIC_WIDENING_EPS_EVAL</option>
-	    <option value="40">BEGINNERS_AI</option>
-	    <option value="41">INTERMEDIATE_AI</option>
-	    <option value="42">AICOMBI_RANDOM_AB_PNS</option>
-  	</select> 
+	<div ng-show="CPUcolor">
+		<h2>Choose AI level</h2>
+		<select ng-model="AILevel">
+		    <option value="40">BEGINNER</option>
+		    <option value="41">INTERMEDIATE</option>
+		    <option value="42">GODLIKE</option>
+	  	</select> 
+  	</div>
+  	<br/>
   	<br/>
     <button ng-click="selectCPU()" ng-show="CPUcolor && AILevel" > Select </button>
 </header>
