@@ -261,6 +261,7 @@ exports.retrieveOldBots = function(req, res) {
 			var oldBots = [];
 			var prevRanking = 1000;
 			for (var i = 0; i < bots.length; i++) {
+				var bot = bots[i];
 				var performance;
 				if (bot.ranking > prevRanking) {
 					performance = 'improved';
