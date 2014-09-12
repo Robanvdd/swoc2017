@@ -108,25 +108,25 @@ function createBot(user, file, callback) {
 			console.log('Moving upload to bot folder with version ' + newVersion.toString() + ' ...');
 			moveUploadToBotFolder(file, user, newVersion, function(err, bot_folder) {
 				if (err) {
-					callback(err);
+					callback(err, bot_folder);
 				} else {
 					console.log('Running compile script ...');
 					runCompileScript(bot_folder, function(err) {
 						if (err) {
-							callback(err);
+							callback(err, bot_folder);
 						} else {
 							console.log('Reading command from run.sh ...');
 							readRunCommand(bot_folder, function(err, run_command){
 								if (err) {
-									callback(err);
+									callback(err, bot_folder);
 								} else {
 									console.log('Adding new bot to database ...');
 									addNewBotToDatabase(user, newVersion, bot_folder, run_command, function(err, bot) { 
 										if (err) {
-											callback(err)
+											callback(err, bot_folder)
 										} else {
 											console.log('Bot record created with version ' + newVersion.toString());
-											callback(err, bot_folder);
+											callback(null, bot_folder); // success
 										}
 									});	
 								}
@@ -165,6 +165,20 @@ function getBotStdoutStderr(bot_folder, callback) {
 	});
 }
 
+var deleteFolderRecursive = function(path) {
+  if( fs.existsSync(path) ) {
+    fs.readdirSync(path).forEach(function(file,index){
+      var curPath = path + "/" + file;
+      if(fs.lstatSync(curPath).isDirectory()) { // recurse
+        deleteFolderRecursive(curPath);
+      } else { // delete file
+        fs.unlinkSync(curPath);
+      }
+    });
+    fs.rmdirSync(path);
+  }
+};
+
 
 /**
  * Exported methods
@@ -182,12 +196,18 @@ exports.upload = function(req, res) {
 			} else {
 				result = 'Success';
 			}
-			if (!bot_folder) {
-				bot_folder = '';
+			if (bot_folder) {
+				getBotStdoutStderr(bot_folder, function(err, stdout, stderr){
+					if (err && bot_folder) {
+						// if compile fails, remove the bot version folder
+						console.log('Removing bot folder ...');
+						deleteFolderRecursive(bot_folder);
+					}
+					return res.send({ result: result, msg: '', stdout: stdout, stderr: stderr });
+				})
+			} else {
+				return res.send({ result: result, msg: 'Something went wrong, ask an admin', stdout: '', stderr: '' });
 			}
-			getBotStdoutStderr(bot_folder, function(err, stdout, stderr){
-				return res.send({ result: result, msg: '', stdout: stdout, stderr: stderr });
-			})
 		});
 	}
 };
