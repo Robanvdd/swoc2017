@@ -22,25 +22,27 @@ public class Database implements IDatabase
 
     private static final String MatchTableName = "matches";
     private static final String BotTableName = "bots";
-    private static final String ExecutablePathFieldName = "executablePath";
-
+    private static final String RunCommandFieldName = "runCommand";
+    private static final String WorkingDirectoryPathFieldName = "workingDirectory";
+    
     public Database(String dbHost, String dbName) throws UnknownHostException
     {
         client = new MongoClient(dbHost);
         db = client.getDB(dbName);
     }
 
-    public String GetBotExecutable(String botId)
+    public String GetRunCommand(String botId)
     {
         DBObject object = FindBotById(botId);
-        if (object == null)
-        {
-            return null;
-        }
-        
-        return (String)object.get(ExecutablePathFieldName);
+        return (object != null) ? (String) object.get(RunCommandFieldName) : null;
     }
 
+    public String GetWorkingDirectory(String botId)
+    {
+        DBObject object = FindBotById(botId);
+        return (object != null) ? (String) object.get(WorkingDirectoryPathFieldName) : null;
+    }
+    
     private DBObject FindBotById(String id)
     {
         DBCollection table = db.getCollection(BotTableName);

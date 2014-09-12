@@ -25,14 +25,13 @@ public class BotProcess implements AutoCloseable
 	private final Thread inputThread;
 	private final Thread errorThread;
 
-    public BotProcess(String command) throws IOException
+    public BotProcess(String workingDir, String command) throws IOException
     {
-        File file = new File(command);
-        if (!file.exists() || !file.canExecute())
+        File parent = new File(workingDir);
+        if (!parent.exists())
         {
-            throw new IllegalArgumentException("File does not exist or is not executable.");
+            throw new IllegalArgumentException("Working directory does not exist");
         }
-        File parent = file.getParentFile();
         
         System.out.println("Starting new bot process " + command + " in " + parent);
         

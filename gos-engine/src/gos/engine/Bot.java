@@ -13,12 +13,12 @@ public class Bot implements AutoCloseable
 	private final StringBuilder botOutputLog = new StringBuilder();
 	private final Gson gson;
 
-	public Bot(String command, Player player, String id) throws IOException
+	public Bot(String workingDir, String command, Player player, String id) throws IOException
 	{
         Player = player;
         Id = id;
 
-        handler = new BotProcess(command);
+        handler = new BotProcess(workingDir, command);
 		gson = new Gson();
 	}
 	

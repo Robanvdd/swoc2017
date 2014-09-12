@@ -29,20 +29,21 @@ public class EngineRunner implements AutoCloseable
         this.database = database;
         logger = new MatchLogger();
 
-        String executableWhite = database.GetBotExecutable(idWhite);
-        if (executableWhite == null)
+        String workingDirWhite = database.GetWorkingDirectory(idWhite);
+        String runCommandWhite = database.GetRunCommand(idWhite);
+        if (workingDirWhite == null || runCommandWhite == null)
         {
             throw new IllegalArgumentException("White bot could not be found");
         }
+        botWhite = new Bot(workingDirWhite, runCommandWhite, Player.White, idWhite);
 
-        botWhite = new Bot(executableWhite, Player.White, idWhite);
-
-        String executableBlack = database.GetBotExecutable(idBlack);
-        if (executableBlack == null)
+        String workingDirBlack = database.GetWorkingDirectory(idBlack);
+        String runCommandBlack = database.GetRunCommand(idBlack);
+        if (workingDirBlack == null || runCommandBlack == null)
         {
             throw new IllegalArgumentException("Black bot could not be found");
         }
-        botBlack = new Bot(executableBlack, Player.Black, idBlack);
+        botBlack = new Bot(workingDirBlack, runCommandBlack, Player.Black, idBlack);
 
         board = new Board();
     }
