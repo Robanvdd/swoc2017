@@ -48,7 +48,7 @@ public class EngineRunner implements AutoCloseable
         board = new Board();
     }
 
-    public String run()
+    public void run()
     {
         try
         {
@@ -79,13 +79,11 @@ public class EngineRunner implements AutoCloseable
             
             System.out.println("Match id:");
             System.out.println(matchId);
-            return matchId;
         }
         catch (Exception ex)
         {
             System.err.println("Match failed: " + ex.toString());
             ex.printStackTrace();
-            return null;
         }
 }
 
