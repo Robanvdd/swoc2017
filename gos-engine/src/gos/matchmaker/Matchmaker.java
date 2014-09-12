@@ -1,4 +1,4 @@
-package matchmaker;
+package gos.matchmaker;
 
 import com.mongodb.MongoClient;
 import com.mongodb.DB;
@@ -6,6 +6,10 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+
+import gos.engine.Database;
+import gos.engine.EngineRunner;
+import gos.engine.IDatabase;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -36,6 +40,11 @@ public class Matchmaker implements AutoCloseable {
         {
             mm.run();
         }
+        catch (UnknownHostException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
     
     private MongoClient mongoClient;
@@ -46,9 +55,13 @@ public class Matchmaker implements AutoCloseable {
     private final String WINNERFIELDNAME = "winnerBot";
     private final String RANKINGFIELDNAME = "ranking";
 
-    public Matchmaker(String dbName)
+    private final IDatabase database;
+
+    public Matchmaker(String dbName) throws UnknownHostException
     {
         db = createDBConnection(dbName);
+
+        database = new Database("localhost", dbName);
     }
     
     @Override
@@ -144,29 +157,26 @@ public class Matchmaker implements AutoCloseable {
     
     private ObjectId runMatch(ObjectId botId1, ObjectId botId2) {
         ObjectId matchId = null;
-        StringBuilder sb = new StringBuilder();
         try {
             System.out.println("running match " + botId1 + " vs " + botId2);
-            Process p = Runtime.getRuntime().exec("java -jar gos-engine.jar " + botId1 + " " + botId2);
 
-            BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            String lastLine = "";
-            String line;
-            while ((line = input.readLine()) != null) {
-                sb.append(line);
-                sb.append('\n');
-                lastLine = line;
+            try (EngineRunner runner = new EngineRunner(database, botId1.toString(), botId2.toString()))
+            {
+                String matchIdStr = runner.run();
+                if (matchIdStr != null)
+                {
+                    matchId = new ObjectId(matchIdStr);
+                }
             }
-            p.waitFor();
-            input.close();
-            
-            matchId = new ObjectId(lastLine);
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
         }
-        catch (Exception err) {
+        catch (Exception err)
+        {
             System.err.println("Exception when running match.");
             err.printStackTrace();
-            System.err.println("Output of engine was:");
-            System.err.print(sb.toString());
         }
         return matchId;
     }

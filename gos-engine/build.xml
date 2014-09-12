@@ -10,8 +10,11 @@
         <classpath refid="classpath" />
     </manifestclasspath>
 
-    <target name="clean">
+    <target name="clean-build">
         <delete dir="build"/>
+    </target>
+
+    <target name="clean" depends="clean-build">
     </target>
 
     <target name="compile">
@@ -23,9 +26,11 @@
         <mkdir dir="build/jar"/>
         <jar destfile="build/jar/gos-engine.jar" basedir="build/classes">
             <manifest>
-                <attribute name="Main-Class" value="gos.engine.Main"/>
+                <attribute name="Main-Class" value="gos.matchmaker.Matchmaker"/>
                 <attribute name="Class-Path" value=". ${lib.list}"/>
             </manifest>
+            <fileset dir="build/classes" includes="**/*.class" />
+            <zipgroupfileset dir="${lib.dir}" includes="**/*.jar" />
         </jar>
     </target>
 

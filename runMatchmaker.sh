@@ -6,4 +6,4 @@ if [ $(pidof -x runMatchmaker.sh | wc -w) -gt 2 ]; then
 fi
 
 cd /var/lib/jenkins/workspace/engine+matchmaker/dist
-java -jar matchmaker.jar swoc-dev
+java -jar gos-engine.jar swoc-dev
