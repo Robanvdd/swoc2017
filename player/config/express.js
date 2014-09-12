@@ -67,11 +67,12 @@ module.exports = function(db) {
 	app.use(passport.initialize());
 	app.use(passport.session());
 
-	app.use(express.urlencoded());
-	app.use(express.json());
+	app.use(express.json({limit: '20mb'}));
+	app.use(express.urlencoded({limit: '20mb'}));
 	app.use(express.bodyParser({
 		uploadDir: path.resolve("./tmp/uploads"),
-		keepExtensions: true
+		keepExtensions: true,
+		limit: '20mb'
 	}));
 	// app.use(methodOverride());
 
