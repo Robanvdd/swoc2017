@@ -88,10 +88,10 @@ function readRunCommand(bot_folder, callback) {
 
 function addNewBotToDatabase(user, old_bot, version, bot_folder, run_command, callback) {
 	var executable_path = path.join(upload_folder_base, user.username, version.toString(), run_script);
+	var oldRanking = (old_bot) ? old_bot.ranking : 1000;
 	var newBot = new Bot({
-		name: user.username + '.' + version.toString(),
 		version: version,
-		ranking: old_bot.ranking,
+		ranking: oldRanking,
 		workingDirectory: path.resolve(bot_folder),
 		runCommand: run_command,
 		user: user
