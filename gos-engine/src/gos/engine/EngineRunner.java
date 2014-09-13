@@ -94,8 +94,8 @@ public class EngineRunner implements AutoCloseable
         botBlack.close();
     }
 
-    private static final long FirstMoveTimeOut = 2000;
-    private static final long NormalRoundTimeOut = 2000;
+    private static final long FirstMoveTimeOut = 5000;
+    private static final long NormalRoundTimeOut = 3000;
 
     private void InitializeBots()
     {

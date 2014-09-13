@@ -34,6 +34,7 @@ class StreamGobbler implements Runnable
         }
         catch (InterruptedException e)
         {
+            System.err.println("Readline timed out.");
             return null;
         }
     }

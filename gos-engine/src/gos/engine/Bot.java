@@ -45,12 +45,14 @@ public class Bot implements AutoCloseable
 	{
 		// Read
 		String messageStr = handler.readLine(timeOut);
-		botOutputLog.append(messageStr);
-        botOutputLog.append('\n');
         if (messageStr == null)
         {
+            botOutputLog.append("No response from bot");
             return null;
         }
+
+        botOutputLog.append(messageStr);
+        botOutputLog.append('\n');
 		
 		// Deserialize
 		return gson.fromJson(messageStr, classOfT);
