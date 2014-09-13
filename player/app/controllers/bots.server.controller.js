@@ -277,6 +277,7 @@ exports.retrieveOldBots = function(req, res) {
 					ranking: bot.ranking,
 					performance: performance,
 					rankdiff: bot.ranking - prevRanking
+					id: bot._id;
 				});
 				prevRanking = bot.ranking;
 			}

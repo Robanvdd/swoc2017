@@ -925,10 +925,31 @@ meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', '$routeP
 				console.log(data);
 			});
 	}
+	$scope.getOldBots = function() {
+		$http.get('/api/bot/getoldbots').success(function(oldBots){
+			$scope.oldBots = oldBots;
+		})
+		.error(function(data) {
+			console.log(data);
+		});
+	}
+
+	$scope.oldBots = [];
+	$scope.getOldBots();
 	$scope.getAll();
 	$scope.index = $routeParams.index;
 	$scope.newer = Math.max($scope.index - 20, 0);
 	$scope.older = Number ($scope.index) + 20;
+
+	$scope.$watch('filterBot', function(value) {
+		$http.get('/api/match/retrievelatest/' + $routeParams.index + '/' + value )
+			.success(function(data){
+				$scope.matches = data;
+			})
+			.error(function(data) {
+				console.log(data);
+			});
+    });
 }]);
 
 //CONTROLLER FOR mod_play.html
