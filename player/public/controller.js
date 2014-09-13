@@ -1786,8 +1786,8 @@ meanControllers.controller('LeaderboardCtrl', ['$scope', '$http', '$location', '
 	}
 	$scope.bots = [];
 	$scope.getAll();
-
-	$interval($scope.getAll, 30000); // 30 seconds
+    var intervalPromise = $interval($scope.getAll, 5000);
+	$scope.$on('$destroy', function () { $interval.cancel(intervalPromise); });
 }]);
 
 //CONTROLLER FOR mod_login.html
