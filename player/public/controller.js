@@ -934,7 +934,7 @@ meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', '$routeP
 		});
 	}
 	$scope.filter = function(bot) {
-		$http.get('/api/match/retrievelatest/' + $routeParams.index + '/' + bot._id )
+		$http.get('/api/match/retrievelatest/' + $routeParams.index + '/' + bot.id )
 			.success(function(data){
 				$scope.matches = data;
 			})
