@@ -1773,13 +1773,12 @@ meanControllers.controller('RulesCtrl', ['$scope', '$http', '$location', functio
 }]);
 
 //CONTROLLER FOR mod_leaderboard.html
-meanControllers.controller('LeaderboardCtrl', ['$scope', '$http', '$location', function($scope, $http, $location) {
+meanControllers.controller('LeaderboardCtrl', ['$scope', '$http', '$location', '$interval', function($scope, $http, $location, $interval) {
+
 	$scope.getAll = function() {
 		$http.get('/api/bot/getactivebots/')
 			.success(function(bots){
-				angular.forEach(bots, function(bot, key) {
-					$scope.bots.push(bot)
-				})
+				$scope.bots = bots;
 			})
 			.error(function(data) {
 				console.log(data);
@@ -1787,6 +1786,8 @@ meanControllers.controller('LeaderboardCtrl', ['$scope', '$http', '$location', f
 	}
 	$scope.bots = [];
 	$scope.getAll();
+
+	$interval($scope.getAll, 30000); // 30 seconds
 }]);
 
 //CONTROLLER FOR mod_login.html
