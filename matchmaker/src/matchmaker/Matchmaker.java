@@ -144,17 +144,19 @@ public class Matchmaker implements AutoCloseable {
     
     private ObjectId runMatch(ObjectId botId1, ObjectId botId2) {
         ObjectId matchId = null;
-        StringBuilder sb = new StringBuilder();
-        try {
+        StringBuilder errorOutputString = new StringBuilder();
+        try
+        {
             System.out.println("running match " + botId1 + " vs " + botId2);
             Process p = Runtime.getRuntime().exec("java -jar gos-engine.jar " + botId1 + " " + botId2);
 
-            BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            BufferedReader input = new BufferedReader(new InputStreamReader(p.getErrorStream()));
             String lastLine = "";
             String line;
-            while ((line = input.readLine()) != null) {
-                sb.append(line);
-                sb.append('\n');
+            while ((line = input.readLine()) != null)
+            {
+                errorOutputString.append(line);
+                errorOutputString.append('\n');
                 lastLine = line;
             }
             p.waitFor();
@@ -165,8 +167,8 @@ public class Matchmaker implements AutoCloseable {
         catch (Exception err) {
             System.err.println("Exception when running match.");
             err.printStackTrace();
-            System.err.println("Output of engine was:");
-            System.err.print(sb.toString());
+            System.err.println("Error output of engine was:");
+            System.err.print(errorOutputString.toString());
         }
         return matchId;
     }
