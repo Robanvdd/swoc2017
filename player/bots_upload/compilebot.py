@@ -51,12 +51,9 @@ def unzip(path):
     zfile = zipfile.ZipFile(path)
     for name in zfile.namelist():
         (dirname, filename) = os.path.split(name)
-        if filename == '':
-            # directory
-            if not os.path.exists(dirname):
-                os.mkdir(dirname)
-        else:
-            # file
+        if not dirname == '' and not os.path.exists(dirname):
+            os.mkdir(dirname)
+        if not filename == '':
             fd = open(name, 'wb')
             fd.write(zfile.read(name))
             fd.close()
