@@ -923,14 +923,23 @@ meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', '$routeP
 		$scope.user = user;
 		$scope.oldBots = [];
 		$scope.index = $routeParams.index;
-		$scope.newer = Math.max($scope.index - 20, 0);
-		$scope.older = Number ($scope.index) + 20;
 		$scope.filter();
 	});
 
+	$scope.olderMatches = function() {
+		console.log('newer matches!');
+		$scope.index = Number($scope.index) + 20;
+		$scope.filter();
+	}
+
+	$scope.newerMatches = function() {
+		console.log('older matches!');
+		$scope.index = Math.max($scope.index - 20, 0);
+		$scope.filter();
+	}
+
 	$scope.filter = function() {
-		console.log('filter!');
-		var url = '/api/match/retrievelatest/' + $routeParams.index;
+		var url = '/api/match/retrievelatest/' + $scope.index;
 		if ($scope.mineChecked) {
 			url += '/' + $scope.user.user;
 		}
