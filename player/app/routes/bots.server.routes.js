@@ -10,5 +10,5 @@ module.exports = function(app) {
 
 	app.post('/api/bot/upload/', users.requiresLogin, bots.upload);
 	app.get('/api/bot/getactivebots/', bots.retrieveAllLatest);
-    app.get('/api/bot/getoldbots', users.requiresLogin, bots.retrieveOldBots)
+    app.get('/api/bot/getoldbots/', users.requiresLogin, bots.retrieveOldBots)
 }

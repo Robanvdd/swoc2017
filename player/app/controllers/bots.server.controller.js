@@ -272,12 +272,13 @@ exports.retrieveOldBots = function(req, res) {
 				} else {
 					performance = 'degraded';
 				}
+				var nameParts = bot.name.split(" ");
 				oldBots.push({
 					version: bot.version,
 					ranking: bot.ranking,
 					performance: performance,
 					rankdiff: bot.ranking - prevRanking,
-					id: bot._id
+					username: nameParts[0]
 				});
 				prevRanking = bot.ranking;
 			}

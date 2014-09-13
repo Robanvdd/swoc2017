@@ -1,11 +1,6 @@
 <h2>Game Log</h2>
 <h3>History of the Game of Stones</h3>
-<p>filter for bot:</p>
-<ul>
-    <li ng:repeat="bot in oldBots">
-      <button ng:click="filter(bot)" >{{bot.version}}</button>
-    </li>
-</ul>
+<p><input type="checkbox" ng-model="mineChecked" ng:change="filter()" >Only your matches</button></p>
 
 <table width="100%" class="table table-hover">
 	<thead>

@@ -916,39 +916,32 @@ meanControllers.controller('PlayvCPUCtrl', ['$scope', '$http', '$location', 'Gam
 
 //CONTROLLER FOR mod_list.html
 meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', '$routeParams', function ($scope, $http, $location, $routeParams) {
-	$scope.getAll = function() {
-		$http.get('/api/match/retrievelatest/' + $routeParams.index)
-			.success(function(data){
-				$scope.matches = data;
-			})
-			.error(function(data) {
-				console.log(data);
-			});
-	}
-	$scope.getOldBots = function() {
-		$http.get('/api/bot/getoldbots').success(function(oldBots){
-			$scope.oldBots = oldBots;
-		})
-		.error(function(data) {
-			console.log(data);
-		});
-	}
-	$scope.filter = function(bot) {
-		$http.get('/api/match/retrievelatest/' + $routeParams.index + '/' + bot.id )
-			.success(function(data){
-				$scope.matches = data;
-			})
-			.error(function(data) {
-				console.log(data);
-			});
-	}
 
-	$scope.oldBots = [];
-	$scope.getOldBots();
-	$scope.getAll();
-	$scope.index = $routeParams.index;
-	$scope.newer = Math.max($scope.index - 20, 0);
-	$scope.older = Number ($scope.index) + 20;
+	$scope.user = '';
+	$http.get('/user').success(function(user){
+		$scope.mineChecked = true;
+		$scope.user = user;
+		$scope.oldBots = [];
+		$scope.index = $routeParams.index;
+		$scope.newer = Math.max($scope.index - 20, 0);
+		$scope.older = Number ($scope.index) + 20;
+		$scope.filter();
+	});
+
+	$scope.filter = function() {
+		console.log('filter!');
+		var url = '/api/match/retrievelatest/' + $routeParams.index;
+		if ($scope.mineChecked) {
+			url += '/' + $scope.user.user;
+		}
+		$http.get(url)
+			.success(function(data){
+				$scope.matches = data;
+			})
+			.error(function(data) {
+				console.log(data);
+			});
+	}
 }]);
 
 //CONTROLLER FOR mod_play.html
@@ -1807,7 +1800,7 @@ meanControllers.controller('UploadCtrl', ['$scope', '$http', function($scope, $h
 	};
 
 	$scope.getOldBots = function() {
-		$http.get('/api/bot/getoldbots').success(function(oldBots){
+		$http.get('/api/bot/getoldbots/').success(function(oldBots){
 			$scope.oldBots = oldBots;
 		})
 		.error(function(data) {

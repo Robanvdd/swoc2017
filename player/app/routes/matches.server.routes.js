@@ -12,8 +12,8 @@ module.exports = function(app) {
 		});
 	});
 
-	app.get('/api/match/retrievelatest/:skip/:botid', function(req, res) { 
-		matches.retrieveLatestFiltered(req.params.skip, req.params.botid, function(err, success) {
+	app.get('/api/match/retrievelatest/:skip/:username', function(req, res) { 
+		matches.retrieveLatestFiltered(req.params.skip, req.params.username, function(err, success) {
 			if(err) throw err;
 			else res.send(success);
 		});
