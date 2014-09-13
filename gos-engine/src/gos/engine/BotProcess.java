@@ -1,17 +1,9 @@
 package gos.engine;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class BotProcess implements AutoCloseable
 {
@@ -37,8 +29,8 @@ public class BotProcess implements AutoCloseable
         
         child = Runtime.getRuntime().exec(command, null, parent);
 
-        inputReader = new StreamGobbler(child.getInputStream(), "in");
-        errorReader = new StreamGobbler(child.getErrorStream(), "err");
+        inputReader = new StreamGobbler(child.getInputStream());
+        errorReader = new StreamGobbler(child.getErrorStream());
         outputWriter = new OutputStreamWriter(child.getOutputStream());
         
         inputThread = new Thread(inputReader);

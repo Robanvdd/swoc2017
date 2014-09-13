@@ -11,12 +11,10 @@ import java.util.concurrent.TimeUnit;
 class StreamGobbler implements Runnable
 {
     private final InputStream is;
-    private final String name;
 
-    StreamGobbler(InputStream is, String name)
+    StreamGobbler(InputStream is)
     {
         this.is = is;
-        this.name = name;
     }
     
     private final BlockingQueue<String> lines = new LinkedBlockingQueue<String>();
