@@ -933,6 +933,15 @@ meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', '$routeP
 			console.log(data);
 		});
 	}
+	$scope.filter = function(bot) {
+		$http.get('/api/match/retrievelatest/' + $routeParams.index + '/' + bot._id )
+			.success(function(data){
+				$scope.matches = data;
+			})
+			.error(function(data) {
+				console.log(data);
+			});
+	}
 
 	$scope.oldBots = [];
 	$scope.getOldBots();
@@ -940,16 +949,6 @@ meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', '$routeP
 	$scope.index = $routeParams.index;
 	$scope.newer = Math.max($scope.index - 20, 0);
 	$scope.older = Number ($scope.index) + 20;
-
-	$scope.$watch('filterBot', function(value) {
-		$http.get('/api/match/retrievelatest/' + $routeParams.index + '/' + value )
-			.success(function(data){
-				$scope.matches = data;
-			})
-			.error(function(data) {
-				console.log(data);
-			});
-    });
 }]);
 
 //CONTROLLER FOR mod_play.html

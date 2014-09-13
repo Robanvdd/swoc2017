@@ -1,11 +1,11 @@
 <h2>Game Log</h2>
 <h3>History of the Game of Stones</h3>
 <p>filter for bot:</p>
-<select ng-model="filterBot">
-    <option ng-repeat="bot in oldBots" value="bot.id">
-    	{{bot.name}}
-    </option>
-</select>
+<ul>
+    <li ng:repeat="bot in oldBots">
+      <button ng:click="filter(bot)" >{{bot.name}}</button>
+    </li>
+</ul>
 
 <table width="100%" class="table table-hover">
 	<thead>
