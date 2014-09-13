@@ -927,13 +927,11 @@ meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', '$routeP
 	});
 
 	$scope.olderMatches = function() {
-		console.log('newer matches!');
 		$scope.index = Number($scope.index) + 20;
 		$scope.filter();
 	}
 
 	$scope.newerMatches = function() {
-		console.log('older matches!');
 		$scope.index = Math.max($scope.index - 20, 0);
 		$scope.filter();
 	}
@@ -943,6 +941,7 @@ meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', '$routeP
 		if ($scope.mineChecked) {
 			url += '/' + $scope.user.user;
 		}
+		$scope.matches = [];
 		$http.get(url)
 			.success(function(data){
 				$scope.matches = data;
@@ -950,6 +949,11 @@ meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', '$routeP
 			.error(function(data) {
 				console.log(data);
 			});
+	}
+
+	$scope.toggleOwnMatches = function() {
+		$scope.mineChecked = ($scope.mineChecked) ? false : true;
+		$scope.filter();
 	}
 }]);
 
