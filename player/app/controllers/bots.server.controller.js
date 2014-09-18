@@ -286,3 +286,21 @@ exports.retrieveOldBots = function(req, res) {
 		}
 	});
 }
+
+exports.retrieveHistory = function(req, res, username) {
+	User.findOne({username: username}).exec(function(err, user){
+		if (err) {
+			res.status(400).send('Could not find user by given username');
+		} else {
+			Bot.find({user: user._id}, 'version ranking').sort('version').exec(function(err, bots){		
+				if (err) {
+					res.status(400).send('Could not retrieve bots');
+				} else if (!bots) {
+					res.status(400).send('User has no bots');
+				} else {
+					res.send(bots);
+				}
+			})
+		}
+	});
+}
