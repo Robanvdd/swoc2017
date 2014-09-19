@@ -8,7 +8,12 @@ module.exports = {
 	db: 'mongodb://localhost/swoc-dev',
 	port: process.env.PORT || 8090,
 	sessionSecret: 'Valar Morghulis',
-	sessionCollection: 'sessions'
+	sessionCollection: 'sessions',
+	db_mysql: {
+		host: 'localhost',
+		database: 'swoc',
+		user: 'swocreader',
+	}
 }
 
 /**
