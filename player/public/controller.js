@@ -1852,6 +1852,9 @@ meanControllers.controller('StatisticsCtrl', ['$scope', '$http', function($scope
         title: {
             text: 'Bot ranking over time'
         },
+        subtitle: {
+        	text: 'Select area to zoom, enable/disable users below'
+        },
         xAxis: {
             type: 'datetime',
             dateTimeLabelFormats: {
@@ -1895,6 +1898,17 @@ meanControllers.controller('StatisticsCtrl', ['$scope', '$http', function($scope
 			]);
 		}
 		$scope.chartConfig.series.push(curSerie);
+
+		// Determine top three users for visibility
+		$http.get('/api/statistics/top-three-users').success(function(rows){
+			for (var i = 0; i < $scope.chartConfig.series.length; i++) {
+				var serie = $scope.chartConfig.series[i];
+				if (rows.indexOf(serie.name) === -1) {
+					$scope.chartConfig.series[i].visible = false;
+				}
+			}
+		})
 	});
+
 }]);
 

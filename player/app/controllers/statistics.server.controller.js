@@ -13,3 +13,24 @@ exports.retrieveRankHistory = function(req, res) {
         });
     })
 }
+
+exports.retrieveTopThreeUsers = function(req, res) {
+    mysql(function(connection) {
+        var sql = "SELECT user.name AS username \
+                  FROM current_bot cb \
+                  JOIN user ON cb.user=user.id \
+                  JOIN bot ON bot.id=cb.bot \
+                  ORDER BY -ranking \
+                  LIMIT 3;";
+        connection.query(sql, function(err, rows, fields) {
+            if (err) res.send(err);
+            else {
+              var names = [];
+              for (var i = 0; i < rows.length; i++) {
+                names.push(rows[i].username);
+              }
+              res.send(names);
+            }
+        });
+    })
+}
