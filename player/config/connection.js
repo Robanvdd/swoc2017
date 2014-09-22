@@ -4,6 +4,7 @@ var config  = require('./config'),
 
 module.exports = function(callback){
   if(conn){
+    console.log('retrieving existing connection');
     callback(conn);
     return;
   }

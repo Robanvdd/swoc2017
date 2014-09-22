@@ -42,6 +42,10 @@ meanApp.config(['$routeProvider', function($routeProvider) {
 			controller:'CreateUserCtrl',
 			templateUrl:'mod_createuser.html'
 		})
+		.when('/statistics/', {
+			controller:'StatisticsCtrl',
+			templateUrl:'mod_statistics.html'
+		})
 		.otherwise({
 			redirectTo: '/'
 		});

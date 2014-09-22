@@ -1,4 +1,4 @@
-var meanControllers = angular.module('meanControllers', ['ngAnimate']);
+var meanControllers = angular.module('meanControllers', ['ngAnimate', 'highcharts-ng']);
 
 meanControllers.factory("GameLibrary", function() {
 	var gameLibrary = {};
@@ -1839,3 +1839,62 @@ meanControllers.controller('CreateUserCtrl', ['$scope', '$http', '$location', fu
 		});
 	};
 }]);
+
+//CONTROLLER FOR mod_statisticshtml
+meanControllers.controller('StatisticsCtrl', ['$scope', '$http', function($scope, $http) {
+    $scope.chartConfig = {
+        options: {
+            chart: {
+                type: 'line',
+                zoomType: 'x'
+            }
+        },
+        title: {
+            text: 'Bot ranking over time'
+        },
+        xAxis: {
+            type: 'datetime',
+            dateTimeLabelFormats: {
+                month: '%e. %b',
+                year: '%b'
+            },
+            title: {
+                text: 'Date'
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'MMR'
+            },
+            min: 0,
+            max: 2000
+        },
+        series: [],
+        loading: false
+    }
+
+	$http.get('/api/statistics/rank-history').success(function(rows){
+		var curName = rows[0].name;
+		var curSerie = {
+			name: curName,
+			data: []
+		};
+		for (var i = 0; i < rows.length; i++) {
+			var row = rows[i];
+			if (curName != row.name) {
+				curName = row.name;
+				$scope.chartConfig.series.push(curSerie);
+				curSerie = {
+					name: curName,
+					data: []
+				};
+			}
+			curSerie.data.push([
+				Date.UTC(row.year, row.month - 1, row.day, row.hour),
+				row.ranking
+			]);
+		}
+		$scope.chartConfig.series.push(curSerie);
+	});
+}]);
+
