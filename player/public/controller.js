@@ -940,7 +940,6 @@ meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', '$routeP
 		for (var i = 0; i < users.length; i++) {
 			if (users.username !== $scope.user) {
 				$scope.activeUsers.push(users[i]);
-				break;
 			}
 		}
 	});
