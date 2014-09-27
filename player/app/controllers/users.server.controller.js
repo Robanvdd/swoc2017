@@ -71,7 +71,7 @@ exports.me = function(req, res) {
 };
 
 exports.activeUsers = function(req, res) {
-    User.find({username: {$ne: 'admin'}}, 'username').exec(function(err, usernames) {
+    User.find({username: {$ne: 'admin'}}, 'username').sort('username').exec(function(err, usernames) {
         if (err) return res.send([]);
         res.send(usernames);
     });
