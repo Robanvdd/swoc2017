@@ -1871,6 +1871,7 @@ meanControllers.controller('StatisticsCtrl', ['$scope', '$http', function($scope
             },
             min: 0,
             max: 2000
+            min: 0
         },
         series: [],
         loading: false
