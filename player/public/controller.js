@@ -920,11 +920,29 @@ meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', '$routeP
 	$scope.user = '';
 	$scope.selectedUser = {username: 'All users'};
 	$scope.activeUsers = [$scope.selectedUser];
+	$scope.index = $routeParams.index;
+
+	$scope.filter = function() {
+		var url = '/api/match/retrievelatest/' + $scope.index;
+		if ($scope.selectedUser && $scope.selectedUser.username != 'All users') {
+			url += '/' + $scope.selectedUser.username;
+		}
+
+		$scope.matches = [];
+		$http.get(url)
+			.success(function(data){
+				$scope.matches = data;
+			})
+			.error(function(data) {
+				console.log(data);
+			});
+	}
+	
+	$scope.filter();
+
 	$http.get('/user').success(function(user){
 		$scope.user = user;
 		// $scope.oldBots = [];
-		$scope.index = $routeParams.index;
-		$scope.filter();
 	});
 
 	$http.get('/users/active').success(function(users){
@@ -952,22 +970,6 @@ meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', '$routeP
 	$scope.newerMatches = function() {
 		$scope.index = Math.max($scope.index - 20, 0);
 		$scope.filter();
-	}
-
-	$scope.filter = function() {
-		var url = '/api/match/retrievelatest/' + $scope.index;
-		if ($scope.selectedUser && $scope.selectedUser.username != 'All users') {
-			url += '/' + $scope.selectedUser.username;
-		}
-
-		$scope.matches = [];
-		$http.get(url)
-			.success(function(data){
-				$scope.matches = data;
-			})
-			.error(function(data) {
-				console.log(data);
-			});
 	}
 }]);
 
