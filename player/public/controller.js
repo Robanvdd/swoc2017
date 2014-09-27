@@ -918,12 +918,31 @@ meanControllers.controller('PlayvCPUCtrl', ['$scope', '$http', '$location', 'Gam
 meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', '$routeParams', function ($scope, $http, $location, $routeParams) {
 
 	$scope.user = '';
+	$scope.selectedUser = {username: 'All users'};
+	$scope.activeUsers = [$scope.selectedUser];
 	$http.get('/user').success(function(user){
-		$scope.mineChecked = true;
 		$scope.user = user;
-		$scope.oldBots = [];
+		// $scope.oldBots = [];
 		$scope.index = $routeParams.index;
 		$scope.filter();
+	});
+
+	$http.get('/users/active').success(function(users){
+		//Start with the current user
+		for (var i = 0; i < users.length; i++) {
+			if (users.username === $scope.user) {
+				$scope.activeUsers.push(users[i]);
+				break;
+			}
+		}
+
+		//Append other users
+		for (var i = 0; i < users.length; i++) {
+			if (users.username !== $scope.user) {
+				$scope.activeUsers.push(users[i]);
+				break;
+			}
+		}
 	});
 
 	$scope.olderMatches = function() {
@@ -938,9 +957,10 @@ meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', '$routeP
 
 	$scope.filter = function() {
 		var url = '/api/match/retrievelatest/' + $scope.index;
-		if ($scope.mineChecked) {
-			url += '/' + $scope.user.user;
+		if ($scope.selectedUser && $scope.selectedUser.username != 'All users') {
+			url += '/' + $scope.selectedUser.username;
 		}
+
 		$scope.matches = [];
 		$http.get(url)
 			.success(function(data){
@@ -949,11 +969,6 @@ meanControllers.controller('ListCtrl', ['$scope', '$http', '$location', '$routeP
 			.error(function(data) {
 				console.log(data);
 			});
-	}
-
-	$scope.toggleOwnMatches = function() {
-		$scope.mineChecked = ($scope.mineChecked) ? false : true;
-		$scope.filter();
 	}
 }]);
 
@@ -1869,8 +1884,6 @@ meanControllers.controller('StatisticsCtrl', ['$scope', '$http', function($scope
             title: {
                 text: 'MMR'
             },
-            min: 0,
-            max: 2000
             min: 0
         },
         series: [],

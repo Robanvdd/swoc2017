@@ -1,6 +1,6 @@
 <h2>Game Log</h2>
 <h3>History of the Game of Stones</h3>
-<button class="btn btn-primary btn-mini" ng:click="toggleOwnMatches();" title="Click to toggle">Only your matches: {{ mineChecked ? 'Yes' : 'No' }}</button>
+Show matches of <select ng-model="selectedUser" ng-options="user.username for user in activeUsers" ng-change="filter()"><select>
 <p></button></p>
 
 <table width="100%" class="table table-hover">

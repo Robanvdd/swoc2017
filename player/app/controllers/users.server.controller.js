@@ -70,6 +70,13 @@ exports.me = function(req, res) {
     res.send({user: req.user.username});
 };
 
+exports.activeUsers = function(req, res) {
+    User.find({username: {$ne: 'admin'}}, 'username').exec(function(err, usernames) {
+        if (err) return res.send([]);
+        res.send(usernames);
+    });
+}
+
 /**
  * Require login routing middleware
  */

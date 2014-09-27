@@ -9,4 +9,6 @@ module.exports = function(app) {
 	app.get('/logout', users.requiresLogin, users.signout);
     app.post('/createuser', users.requiresAdmin, users.createuser);
 	app.get('/user', users.requiresLogin, users.me);
+
+    app.get('/users/active', users.activeUsers);
 };
