@@ -250,7 +250,7 @@ public class Matchmaker implements AutoCloseable {
         int version = (Integer)bot.get("version");
         ObjectId userId = (ObjectId)bot.get("user");
         DBCollection users = db.getCollection("users");
-        DBObject user = users.findOne(new BasicDBObject("user", userId));
+        DBObject user = users.findOne(new BasicDBObject("_id", userId));
         String username = (String)user.get("username");
         return username + " v" + version;
     }
