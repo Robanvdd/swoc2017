@@ -102,22 +102,6 @@ public class Matchmaker implements AutoCloseable {
         return (ObjectId)match.get(WINNERFIELDNAME);
     }
     
-    private List<ObjectId> getAllBots(DB database) {
-        DBCollection coll = getBotTable(database);
-        
-        List<ObjectId> botList = new LinkedList<ObjectId>();
-        DBCursor cursor = coll.find();
-        try {
-            while (cursor.hasNext()) {
-                DBObject object = cursor.next();
-                botList.add((ObjectId)object.get("_id"));
-            }
-        } finally {
-            cursor.close();
-        }
-        return botList;
-    }
-    
     private List<ObjectId> getHighestVersionBots(DB database) {
         DBCollection allBotsColl = getBotTable(database);
         
@@ -146,7 +130,6 @@ public class Matchmaker implements AutoCloseable {
         ObjectId matchId = null;
         StringBuilder sb = new StringBuilder();
         try {
-            System.out.println("running match " + botId1 + " vs " + botId2);
             Process p = Runtime.getRuntime().exec("java -jar gos-engine.jar " + botId1 + " " + botId2);
 
             BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -172,23 +155,28 @@ public class Matchmaker implements AutoCloseable {
     }
     
     private void makeAMatch(ObjectId botId1, ObjectId botId2) {
-        DBObject botData1 = getBotData(db, botId1);
-        DBObject botData2 = getBotData(db, botId2);
-        
+        DBObject botData1 = getLatestBotData(db, botId1);
+        DBObject botData2 = getLatestBotData(db, botId2);
+
+        String botName1 = getBotName(botData1);
+        String botName2 = getBotName(botData2);
+
         int currentRanking1 = (Integer)botData1.get(RANKINGFIELDNAME);
         int currentRanking2 = (Integer)botData2.get(RANKINGFIELDNAME);
-        
+
         double expectedResult1 = calculateExpectedResult(currentRanking1, currentRanking2);
         double expectedResult2 = 1.0 - expectedResult1;
-        
+
         //Start Engine with two given bots: bot1 as white, 2 as black
+        System.out.println("running match " + botName1 + " vs " + botName2);
         ObjectId matchId1 = runMatch(botId1, botId2);
         //Start Engine with two given bots: bot1 as black, 2 as white
+        System.out.println("running match " + botName2 + " vs " + botName1);
         ObjectId matchId2 = runMatch(botId2, botId1);
 
         if (matchId1 == null || matchId2 == null)
         {
-            System.out.println("The result of the match " + botId1 + " vs " + botId2 + ": no matches stored");
+            System.out.println("The result of the match " + botName1 + " vs " + botName2 + ": no matches stored");
             return;
         }
         
@@ -231,11 +219,18 @@ public class Matchmaker implements AutoCloseable {
         System.out.println("Made all matches between "+ count +" bots");
     }
     
-    private DBObject getBotData(DB database, ObjectId botId)
+    private DBObject getLatestBotData(DB database, ObjectId botId)
     {
-        DBCollection coll = getBotTable(database);
-        BasicDBObject query = new BasicDBObject("_id", botId);
-        return coll.findOne(query);
+        DBCollection bots = getBotTable(database);
+
+        DBObject bot = bots.findOne(new BasicDBObject("_id", botId));
+        ObjectId user = (ObjectId)bot.get("user");
+        DBObject latestBot = bots.
+                find(new BasicDBObject("user", user)).
+                sort(new BasicDBObject("version", -1)).
+                one();
+
+        return latestBot;
     }
     
     private void updateBotData(DB database, ObjectId botId, int newRanking)
@@ -249,7 +244,17 @@ public class Matchmaker implements AutoCloseable {
 
         coll.update(query, updateObject);
     }
-    
+
+    private String getBotName(DBObject bot)
+    {
+        int version = (Integer)bot.get("version");
+        ObjectId userId = (ObjectId)bot.get("user");
+        DBCollection users = db.getCollection("users");
+        DBObject user = users.findOne(new BasicDBObject("_id", userId));
+        String username = (String)user.get("username");
+        return username + " v" + version;
+    }
+
     private double calculateExpectedResult(double rankingA, double rankingB)
     {
         double qa = Math.pow(10, rankingA / 400);
