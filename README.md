@@ -1,4 +1,4 @@
-swoc2014
+swoc2016
 ========
 
-Sioux Weekend of Code 2014
+Sioux Weekend of Code 2016
