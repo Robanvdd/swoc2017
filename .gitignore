@@ -4,3 +4,4 @@
 /matchmaker/matchmaker/build/
 /matchmaker/matchmaker/dist/
 /test-bot/TestBot/dist/
+*/build*
