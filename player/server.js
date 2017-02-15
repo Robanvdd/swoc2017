@@ -35,4 +35,7 @@ app.listen(config.port);
 exports = module.exports = app;
 
 // Logging initialization
-console.log('testing server is listening on port ' + config.port);
+console.log('Swoc2017 server is listening on port ' + config.port);
+setTimeout(function() {
+console.log('Swoc2017 server loaded, db: ' + JSON.stringify(db.connection.readyState));
+}, 5000);

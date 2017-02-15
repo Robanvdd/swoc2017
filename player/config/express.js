@@ -58,7 +58,7 @@ module.exports = function(db) {
 		resave: true,
 		secret: config.sessionSecret,
 		store: new mongoStore({
-			db: db.connection.db,
+			mongooseConnection: db.connection,
 			collection: config.sessionCollection
 		})
 	}));
@@ -85,6 +85,6 @@ module.exports = function(db) {
 	config.getGlobbedFiles('./app/routes/**/*.js').forEach(function(routePath) {
 		require(path.resolve(routePath))(app);
 	});
-
+	console.log('Expres loaded, db: ' + JSON.stringify(db.connection.readyState));
 	return app;
 }
