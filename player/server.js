@@ -20,7 +20,7 @@ var db = mongoose.connect(config.db, function(err) {
 });
 
 // Initialize MySQL connection
-require('./config/connection.js')(function(){})
+// require('./config/connection.js')(function(){})
 
 // Init the express application
 var app = require('./config/express')(db);
