@@ -4,3 +4,9 @@
 /matchmaker/matchmaker/build/
 /matchmaker/matchmaker/dist/
 /test-bot/TestBot/dist/
+**/Debug
+**/Release
+*.vs
+*.db
+*.opendb
+*.filters
