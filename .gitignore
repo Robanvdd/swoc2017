@@ -10,3 +10,5 @@
 *.db
 *.opendb
 *.filters
+**/build
+.gradle

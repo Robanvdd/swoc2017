@@ -13,7 +13,5 @@ int main()
 
 	std::cout << jsonInput["positions"];
 
-	std::cout << jsonInput << std::endl;
-
 	return 0;
 }
