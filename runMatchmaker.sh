@@ -5,5 +5,5 @@ if [ $(pidof -x runMatchmaker.sh | wc -w) -gt 2 ]; then
 	exit
 fi
 
-cd /var/lib/jenkins/workspace/engine+matchmaker/dist
+cd /home/bitnami/swoc2017/test/matchmaker/build/jar
 java -jar matchmaker.jar swoc-dev
