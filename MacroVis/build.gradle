@@ -1,13 +1,12 @@
 apply plugin: 'cpp'
 
 model {
-	components{
-		MicroVis(NativeExecutableSpec)
-		{
+	components {
+		MacroVis(NativeExecutableSpec) {
 			sources {
 				cpp {
 					source {
-						srcDir "src/MicroVis"
+						srcDir "src/MacroVis"
 						include "**/*.cpp"
 					}
 				}
