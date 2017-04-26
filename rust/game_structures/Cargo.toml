@@ -1,0 +1,8 @@
+[package]
+name = "game_structures"
+version = "0.1.0"
+authors = ["factory"]
+
+[dependencies]
+serde = "*"
+serde_derive = "*"

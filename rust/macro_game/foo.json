@@ -1,0 +1,123 @@
+{
+  "id": -1,
+  "name": "S1",
+  "tick": 231,
+  "solar_systems": [
+    {
+      "id": 1,
+      "name": "test",
+      "coord": {
+        "x": 1,
+        "y": 2
+      },
+      "planets": [
+        {
+          "id": 1,
+          "name": "test",
+          "orbit_distance": 10,
+          "orbit_rotation": 80,
+          "owned_by": 1
+        },
+        {
+          "id": 2,
+          "name": "test",
+          "orbit_distance": 11,
+          "orbit_rotation": 81,
+          "owned_by": 2
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "test",
+      "coord": {
+        "x": 1,
+        "y": 2
+      },
+      "planets": [
+        {
+          "id": 1,
+          "name": "test",
+          "orbit_distance": 10,
+          "orbit_rotation": 80,
+          "owned_by": 1
+        },
+        {
+          "id": 2,
+          "name": "test",
+          "orbit_distance": 11,
+          "orbit_rotation": 81,
+          "owned_by": 2
+        }
+      ]
+    }
+  ],
+  "players": [
+    {
+      "id": 1,
+      "name": "jan",
+      "credits": 10,
+      "ufos": [
+        {
+          "id": 0,
+          "ufo_type": "thank",
+          "in_fight": false,
+          "coord": {
+            "x": 0,
+            "y": 1
+          }
+        },
+        {
+          "id": 1,
+          "ufo_type": "thank",
+          "in_fight": false,
+          "coord": {
+            "x": 1,
+            "y": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "piet",
+      "credits": 10,
+      "ufos": [
+        {
+          "id": 1,
+          "ufo_type": "thank",
+          "in_fight": true,
+          "coord": {
+            "x": 0,
+            "y": 1
+          }
+        },
+        {
+          "id": 2,
+          "ufo_type": "thank",
+          "in_fight": true,
+          "coord": {
+            "x": 1,
+            "y": 2
+          }
+        }
+      ]
+    }
+  ],
+  "fights": {
+    "id": 1,
+    "player_one_id": 1,
+    "player_two_id": 2,
+    "planet_id": 1,
+    "player_one_ufo_ids": [
+      1,
+      2,
+      3
+    ],
+    "player_two_ufo_ids": [
+      4,
+      5,
+      6
+    ]
+  }
+}
