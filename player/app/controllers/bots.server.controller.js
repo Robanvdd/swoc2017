@@ -290,6 +290,7 @@ exports.retrieveOldBots = function(req, res) {
 				var nameParts = bot.name.split(" ");
 				oldBots.push({
 					version: bot.version,
+					kind: bot.kind,
 					ranking: bot.ranking,
 					performance: performance,
 					rankdiff: bot.ranking - prevRanking,
