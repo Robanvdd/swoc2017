@@ -271,7 +271,7 @@ exports.retrieveAllLatest = function(req, res) {
 
 exports.retrieveOldBots = function(req, res) {
 	var user = req.user;
-	Bot.find({user: user._id}, 'version ranking name').sort('version').exec(function(err, bots) {
+	Bot.find({user: user._id}, 'version kind ranking name').sort('version').exec(function(err, bots) {
 		if (err) {
 			res.status(400).send('Could not retrieve bots');
 		} else {
