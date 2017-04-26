@@ -8,7 +8,8 @@ var users = require('../../app/controllers/users'),
 
 module.exports = function(app) {
 
-	app.post('/api/bot/upload/', users.requiresLogin, bots.upload);
+	app.post('/api/bot/uploadmicro/', users.requiresLogin, bots.uploadmicro);
+	app.post('/api/bot/uploadmacro/', users.requiresLogin, bots.uploadmacro);
 	app.get('/api/bot/getactivebots/', bots.retrieveAllLatest);
     app.get('/api/bot/getoldbots/', users.requiresLogin, bots.retrieveOldBots)
 

@@ -12,12 +12,12 @@ var mongoose = require('mongoose'),
 	fs = require('fs');
 
 
-function findLastUserBot(user) {
-	return Bot.findOne({user: user._id}).sort({version: -1});
+function findLastUserBot(user, kind) {
+	return Bot.findOne({user: user._id, kind: kind}).sort({version: -1});
 }
 
-function getNewBotVersion(user, callback) {
-	findLastUserBot(user).exec(function(err, lastBot) {
+function getNewBotVersion(user, kind, callback) {
+	findLastUserBot(user, kind).exec(function(err, lastBot) {
 		if (err) {
 			callback(err);
 		} else if (!lastBot) {
@@ -28,7 +28,7 @@ function getNewBotVersion(user, callback) {
 	});
 }
 
-function createTargetFolder(user, botVersion, callback) {
+function createTargetFolder(user, botVersion, kind, callback) {
 	var target_folder = path.join(upload_folder_base, user.username);
 	fs.mkdir(target_folder, function(err){
 		if (err && err.code !== 'EEXIST') {
@@ -39,15 +39,22 @@ function createTargetFolder(user, botVersion, callback) {
 				if(err && err.code !== 'EEXIST'){
 					callback(err); 
 				} else {
-					callback(null, version_folder); // Success
+					var kind_folder = path.join(version_folder, kind);
+					fs.mkdir(kind_folder, function(err) {
+						if(err && err.code !== 'EEXIST'){
+							callback(err); 
+						} else {
+							callback(null, kind_folder); // Success
+						}
+					});
 				}
 			});
 		}
 	});
 }
 
-function moveUploadToBotFolder(file, user, botVersion, callback) {
-	createTargetFolder(user, botVersion, function(err, target_folder) {
+function moveUploadToBotFolder(file, user, botVersion, kind, callback) {
+	createTargetFolder(user, botVersion, kind, function(err, target_folder) {
 		if (err) {
 			callback(err);
 		} else {
@@ -86,7 +93,7 @@ function readRunCommand(bot_folder, callback) {
 	fs.readFile(runShellScript, 'utf8', callback)
 }
 
-function addNewBotToDatabase(user, old_bot, version, bot_folder, run_command, callback) {
+function addNewBotToDatabase(user, old_bot, version, bot_folder, run_command, kind, callback) {
 	var executable_path = path.join(upload_folder_base, user.username, version.toString(), run_script);
 	var oldRanking = (old_bot) ? old_bot.ranking : 1000;
 	var newBot = new Bot({
@@ -95,20 +102,21 @@ function addNewBotToDatabase(user, old_bot, version, bot_folder, run_command, ca
 		ranking: oldRanking,
 		workingDirectory: path.resolve(bot_folder),
 		runCommand: run_command,
-		user: user
+		user: user,
+		kind: kind
 	});
 	newBot.save(callback);
 }
 
-function createBot(user, file, callback) {
-	console.log("Upload from user:" + user.username + ", fileName:"  + file.name);
+function createBot(user, file, kind, callback) {
+	console.log("Upload from user:" + user.username + ", fileName:"  + file.name + ", kind:" + kind);
 	console.log('Retrieving new bot version number ...');
-	getNewBotVersion(user, function(err, newVersion, oldBot){
+	getNewBotVersion(user, kind, function(err, newVersion, oldBot){
 		if (err) {
 			callback(err)
 		} else {
 			console.log('Moving upload to bot folder with version ' + newVersion.toString() + ' ...');
-			moveUploadToBotFolder(file, user, newVersion, function(err, bot_folder) {
+			moveUploadToBotFolder(file, user, newVersion, kind, function(err, bot_folder) {
 				if (err) {
 					callback(err, bot_folder);
 				} else {
@@ -123,7 +131,7 @@ function createBot(user, file, callback) {
 									callback(err, bot_folder);
 								} else {
 									console.log('Adding new bot to database ...');
-									addNewBotToDatabase(user, oldBot, newVersion, bot_folder, run_command, function(err, bot) { 
+									addNewBotToDatabase(user, oldBot, newVersion, bot_folder, run_command, kind, function(err, bot) { 
 										if (err) {
 											callback(err, bot_folder)
 										} else {
@@ -185,13 +193,20 @@ var deleteFolderRecursive = function(path) {
 /**
  * Exported methods
  */
+ 
+ exports.uploadmicro = function(req, res) {
+	 upload(req,res,"micro");
+ }
+ exports.uploadmacro = function(req, res) {
+	 upload(req,res,"macro");
+ }
 
-exports.upload = function(req, res) {
+upload = function(req, res, kind) {
 	res.setHeader('Content-Type', 'text/html');
 	if (req.files.length == 0 || req.files.file.size == 0) {
 		res.send({ result: 'Failed', msg: 'No file given' });
 	} else {
-		createBot(req.user, req.files.file, function(err, bot_folder) {
+		createBot(req.user, req.files.file, kind, function(err, bot_folder) {
 			if (err) {
 				console.log(err);
 				result = 'Failed';

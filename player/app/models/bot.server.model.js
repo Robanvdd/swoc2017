@@ -34,6 +34,10 @@ var BotSchema = new Schema({
 	user: {
 		type: Schema.ObjectId,
 		ref: 'User'
+	},
+	kind: {
+		type: String,
+		required: 'A kind must be given: Macro/Micro'
 	}
 });
 

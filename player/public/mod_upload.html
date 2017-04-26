@@ -2,9 +2,9 @@
 <h3>Upload your latest bot here</h3>
 
 <section style="margin-left: auto; margin-right: auto; float: none; text-align: center;">
-    <form ng-upload="uploadFile(content)" action="/api/bot/upload/">
+    <form ng-upload="uploadFile(content)" action="/api/bot/uploadmicro/">
         <p>
-            <label>Select a file to upload (max. 10 MB):</label> 
+            <label>Select a file to upload for Micro (max. 10 MB):</label> 
             <input type="file" name="file" style="margin-left: auto; margin-right: auto; float: none;">
         </P>
         <p>
@@ -28,6 +28,18 @@
         <p>{{stderr}}</p>
     </div>
 </div>
+
+<section style="margin-left: auto; margin-right: auto; float: none; text-align: center;">
+    <form ng-upload="uploadFile(content)" action="/api/bot/uploadmacro/">
+        <p>
+            <label>Select a file to upload for Macro (max. 10 MB):</label> 
+            <input type="file" name="file" style="margin-left: auto; margin-right: auto; float: none;">
+        </P>
+        <p>
+            <input type="submit" class="btn" value="Submit" ng-disabled="$isUploading">
+        </p>
+    </form>
+</section>
 
 <div class="row">
     <div class="col-md-8">
@@ -101,12 +113,15 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th>Version</th><th>Performance</th><th>Final Rank</th>
+                    <th>Version</th><th>Kind</th><th>Performance</th><th>Final Rank</th>
                 </tr>
             </thead>
                 <tr ng-repeat="bot in oldBots">
                     <td>
                         <span>{{bot.version}}</span>
+                    </td>
+                    <td>
+                        <span>{{bot.kind}}</span>
                     </td>
                     <td ng-switch on="bot.performance">
                         <span ng-switch-when="improved" class="text-success">{{ '+' + bot.rankdiff.toString() }}</span>
