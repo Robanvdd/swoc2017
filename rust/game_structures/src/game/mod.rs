@@ -1,3 +1,10 @@
+extern crate serde;
+extern crate serde_json;
+
+use serde_json::Error;
+use std::fs::File;
+use std::io::Write;
+
 use fights::Fights;
 use generics::Point;
 use planet::Planet;
@@ -15,8 +22,29 @@ pub struct GameObject{
         pub fights: Fights
 }
 
-impl Default for GameObject {
-    fn default() -> GameObject {
+pub trait GameObjectFunctions {
+    fn default() -> GameObject;
+    fn convert_to_json(&self) -> String;
+    fn read_from_json(path: String) -> GameObject;
+    fn save_game_object_json(&self) -> bool;
+}
+
+impl GameObjectFunctions for GameObject{
+    fn convert_to_json(&self) -> String{
+        serde_json::to_string_pretty(&self).unwrap()
+    }
+
+    fn read_from_json(path: String) -> GameObject{
+        GameObject::default()
+    }
+
+    fn save_game_object_json(&self) -> bool{
+        let mut buffer = File::create("foo.json").expect("Unable to open");
+        let write_result = buffer.write(self.convert_to_json().as_bytes());
+        buffer.flush().is_ok()
+    }
+
+     fn default() -> GameObject {
         
         let mut all_planets_one = Vec::new();
         all_planets_one.push(Planet{id: 1, name: "test".to_string(), orbit_distance: 10, orbit_rotation: 80, owned_by: 1});
@@ -45,12 +73,12 @@ impl Default for GameObject {
 
 
 
-        let mut all_fights = Fights { id: 1,
-                                            player_one_id: 1,
-                                            player_two_id: 2,
-                                            planet_id: 1,
-                                            player_one_ufo_ids: vec![1, 2, 3],
-                                            player_two_ufo_ids:vec![4, 5, 6] };
+        let all_fights = Fights { id: 1,
+                                  player_one_id: 1,
+                                  player_two_id: 2,
+                                  planet_id: 1,
+                                  player_one_ufo_ids: vec![1, 2, 3],
+                                  player_two_ufo_ids:vec![4, 5, 6] };
         GameObject
             { id: -1, 
             name: "S1".to_string(),

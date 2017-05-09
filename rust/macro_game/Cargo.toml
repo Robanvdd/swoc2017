@@ -4,7 +4,4 @@ version = "0.1.0"
 authors = ["factory"]
 
 [dependencies]
-serde = "*"
-serde_json = "*"
-serde_derive = "*"
 game_structures = { path = "../game_structures" }

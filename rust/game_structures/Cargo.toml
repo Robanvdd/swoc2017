@@ -5,4 +5,5 @@ authors = ["factory"]
 
 [dependencies]
 serde = "*"
+serde_json = "*"
 serde_derive = "*"
