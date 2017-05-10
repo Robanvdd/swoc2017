@@ -1,15 +1,54 @@
 apply plugin: 'cpp'
 
 model {
-	components{
-		MicroVis(NativeExecutableSpec)
-		{
+	repositories {
+        libs(PrebuiltLibraries) {
+            sfml {
+                headers.srcDir "../SFML-2.4.2/include"
+            }
+
+            def libDir = "../SFML-2.4.2/lib/"
+
+            sfmlgraphics {
+                binaries.withType(PrebuiltSharedLibraryBinary) {
+                    sharedLibraryFile = file(libDir + 'sfml-graphics.lib')
+                }
+            }
+
+            sfmlwindow {
+                binaries.withType(PrebuiltSharedLibraryBinary) {
+                    sharedLibraryFile = file(libDir + 'sfml-window.lib')
+                }
+            }
+
+            sfmlsystem {
+                binaries.withType(PrebuiltSharedLibraryBinary) {
+                    sharedLibraryFile = file(libDir + 'sfml-system.lib')
+                }
+            }
+        }
+	}
+
+    components {
+		MicroVis(NativeExecutableSpec) {
+			binaries.all {
+				cppCompiler.args '-Wall', '-EHsc'
+			}
 			sources {
 				cpp {
 					source {
 						srcDir "src/MicroVis"
 						include "**/*.cpp"
 					}
+
+					exportedHeaders {
+						srcDir 'include'
+					}
+
+					lib library: "sfml", linkage: "api"
+					lib library: "sfmlgraphics"
+					lib library: "sfmlwindow"
+					lib library: "sfmlsystem"
 				}
 			}
 		}
