@@ -4,15 +4,24 @@
 
 using json = nlohmann::json;
 
-int main(int argc, char **argv)
+int main()
 {
-	std::cout << "JSON file read:" << std::endl;
-	/*std::ifstream input("input.json");
-	json jsonInput;
-	input >> jsonInput;
+	const std::string gameFilename("microgame1.json");
+	std::cout << "Looking for " << gameFilename << std::endl;
 
-	std::cout << jsonInput["positions"];*/
-	std:: cout << argv[1] << std::endl;
+	std::ifstream input(gameFilename);
+	if (input.is_open())
+	{
+		std::cout << "Found it!" << std::endl;
+		json jsonInput;
+		input >> jsonInput;
+		std::cout << jsonInput;
+	}
+	else
+	{
+		std::cout << "Could not find it!" << std::endl;
+		return -1;
+	}
 
 	return 0;
 }
