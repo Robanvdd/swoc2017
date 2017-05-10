@@ -21,12 +21,23 @@ import org.bson.types.ObjectId;
  * @author SvZ
  */
 public class Matchmaker implements AutoCloseable {
+
+    private class Bot {
+        Bot(DBObject micro, DBObject macro) {
+            this.micro = micro;
+            this.macro = macro;
+        }
+        final DBObject micro;
+        final DBObject macro;
+    }
+
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args)
     {
-        String dbName = "test";
+        String dbName = "swoc-dev";
         if (args.length > 0)
         {
             dbName = args[0];
@@ -93,7 +104,7 @@ public class Matchmaker implements AutoCloseable {
         BasicDBObject query = new BasicDBObject("_id", matchId);
         return table.findOne(query);
     }
-    
+    //TODO needs to get the score of the match
     private ObjectId getWinnerOfMatch(DBCollection coll, ObjectId matchId) {
         DBObject match = getMatchfromTable(coll, matchId);
         if (!match.containsField(WINNERFIELDNAME)) {
@@ -101,36 +112,51 @@ public class Matchmaker implements AutoCloseable {
         }
         return (ObjectId)match.get(WINNERFIELDNAME);
     }
-    
-    private List<ObjectId> getHighestVersionBots(DB database) {
+
+
+    private List<Bot> getHighestVersionBots(DB database) {
         DBCollection allBotsColl = getBotTable(database);
         
         List<ObjectId> userList = allBotsColl.distinct("user");
         
-        List<ObjectId> botList = new LinkedList<ObjectId>();
+        List<Bot> botList = new LinkedList<Bot>();
         for (ObjectId user: userList) {
             DBCollection coll = getBotTable(database);
-            BasicDBObject query = new BasicDBObject("user", user);
+            BasicDBObject macroQuery = new BasicDBObject("user", user).append("kind","macro");
+            BasicDBObject microQuery = new BasicDBObject("user", user).append("kind","micro");
             
-            DBCursor cursor = coll.find(query);
-            cursor.sort(new BasicDBObject("version", -1));
+            DBCursor macroCursor = coll.find(macroQuery);
+            macroCursor.sort(new BasicDBObject("version", -1));
+            DBCursor microCursor = coll.find(microQuery);
+            microCursor.sort(new BasicDBObject("version", -1));
             try {
-                if (cursor.hasNext()) {
-                    DBObject object = cursor.next();
-                    botList.add((ObjectId)object.get("_id"));
+                if (macroCursor.hasNext() && microCursor.hasNext()) {
+                    DBObject macroObject = macroCursor.next();
+                    DBObject microObject = microCursor.next();
+                    Bot bot = new Bot(microObject, macroObject);
+                    botList.add(bot);
                 }
             } finally {
-                cursor.close();
+                macroCursor.close();
+                microCursor.close();
             }
         }
         return botList;
     }
     
-    private ObjectId runMatch(ObjectId botId1, ObjectId botId2) {
+    private ObjectId runMatch(List<Bot> botList) {
         ObjectId matchId = null;
         StringBuilder sb = new StringBuilder();
+
+        String botString = "";
+
+        for(Bot bot : botList) {
+            botString += bot.micro.get("workingDirectory") + " ";
+            botString += bot.macro.get("workingDirectory") + " ";
+        }
+
         try {
-            Process p = Runtime.getRuntime().exec("java -jar gos-engine.jar " + botId1 + " " + botId2);
+            Process p = Runtime.getRuntime().exec("./macro_app " + botString);
 
             BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String lastLine = "";
@@ -154,69 +180,39 @@ public class Matchmaker implements AutoCloseable {
         return matchId;
     }
     
-    private void makeAMatch(ObjectId botId1, ObjectId botId2) {
-        DBObject botData1 = getLatestBotData(db, botId1);
-        DBObject botData2 = getLatestBotData(db, botId2);
+    private void makeAMatch(List<Bot> botList) {
 
-        String botName1 = getBotName(botData1);
-        String botName2 = getBotName(botData2);
+        String botString = "starting bots in: ";
 
-        int currentRanking1 = (Integer)botData1.get(RANKINGFIELDNAME);
-        int currentRanking2 = (Integer)botData2.get(RANKINGFIELDNAME);
+        for(Bot bot : botList) {
+            botString += bot.micro.get("workingDirectory") + ", ";
+            botString += bot.macro.get("workingDirectory") + " ";
+        }
 
-        double expectedResult1 = calculateExpectedResult(currentRanking1, currentRanking2);
-        double expectedResult2 = 1.0 - expectedResult1;
+        System.out.println(botString);
+        ObjectId matchId = runMatch(botList);
 
-        //Start Engine with two given bots: bot1 as white, 2 as black
-        System.out.println("running match " + botName1 + " vs " + botName2);
-        ObjectId matchId1 = runMatch(botId1, botId2);
-        //Start Engine with two given bots: bot1 as black, 2 as white
-        System.out.println("running match " + botName2 + " vs " + botName1);
-        ObjectId matchId2 = runMatch(botId2, botId1);
-
-        if (matchId1 == null || matchId2 == null)
+        if (matchId == null)
         {
-            System.out.println("The result of the match " + botName1 + " vs " + botName2 + ": no matches stored");
+            System.out.println("The match has not finished succesfully");
             return;
         }
         
-        ObjectId winner1 = getWinnerOfMatch(getMatchTable(db), matchId1);
-        ObjectId winner2 = getWinnerOfMatch(getMatchTable(db), matchId2);
-        
-        double actualScore1 = (winner1.equals(botId1) ? 1.0 : 0.0) + (winner2.equals(botId1) ? 1.0 : 0.0);
-        double actualScore2 = (winner1.equals(botId2) ? 1.0 : 0.0) + (winner2.equals(botId2) ? 1.0 : 0.0);
-        
-        double actualResult1 = actualScore1 / 2.0;
-        double actualResult2 = actualScore2 / 2.0;
-        
-        double newRanking1 = calculateNewRanking(currentRanking1, expectedResult1, actualResult1); 
-        double newRanking2 = calculateNewRanking(currentRanking2, expectedResult2, actualResult2); 
-
-        // round rankings to integers
-        int newRankingInt1 = (int)Math.round(newRanking1);
-        int newRankingInt2 = (int)Math.round(newRanking2);
-
-        updateBotData(db, botId1, newRankingInt1);
-        updateBotData(db, botId2, newRankingInt2);
-        
-        System.out.println("The result of the match " + botId1 + " vs " + botId2 + ": " + actualScore1 + " - " + actualScore2);
+        System.out.println("The match has finished succesfully");
     }
     
     /**
      * Let every bot first against each other bot once
      * @param coll List of botIds
      */
-    private void makeMatches(List<ObjectId> botIdList) {
-        long count = botIdList.size();
+    private void makeMatches(List<Bot> botList) {
+        long count = botList.size();
         if (count < 2) {
+            System.out.println("Only "+ count +" bots found, not starting a match");
             return; // We do not make a match with less then 2 bots
         }
-        for (int i = 0; i < count-1; i++) {
-            for (int j = i+1; j < count; j++) {
-                makeAMatch(botIdList.get(i), botIdList.get(j));
-            }
-        }
-        System.out.println("Made all matches between "+ count +" bots");
+        makeAMatch(botList);
+        System.out.println("Made the match between "+ count +" bots");
     }
     
     private DBObject getLatestBotData(DB database, ObjectId botId)
