@@ -1,0 +1,9 @@
+[package]
+name = "game_logic"
+version = "0.1.0"
+authors = ["Michael"]
+
+[dependencies]
+serde = "*"
+serde_json = "*"
+serde_derive = "*"

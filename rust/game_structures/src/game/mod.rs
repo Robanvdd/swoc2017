@@ -39,7 +39,7 @@ impl GameObjectFunctions for GameObject{
     }
 
     fn save_game_object_json(&self) -> bool{
-        let mut buffer = File::create("foo.json").expect("Unable to open");
+        let mut buffer = File::create("game.json").expect("Unable to open");
         let write_result = buffer.write(self.convert_to_json().as_bytes());
         buffer.flush().is_ok()
     }

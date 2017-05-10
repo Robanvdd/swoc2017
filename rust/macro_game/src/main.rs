@@ -1,7 +1,10 @@
 extern crate game_structures;
+extern crate game_logic;
 
 use game_structures::game;
 use game_structures::game::GameObjectFunctions;
+use game_logic::game_stats;
+
 use std::process::{Command, Stdio};
 
 use std::error::Error;
@@ -11,14 +14,11 @@ fn f()
 {
     let systems = game::GameObject::default();
     systems.save_game_object_json();
+    let stats = game_stats::GameStats{ BotOne: 1, BotTwo: 2 };
+    stats.save();
 }
 
 fn main() {
-    // let mut child = Command::new("python")
-    //                 .arg("/Users/Michael/Documents/swoc/swoc2017/rust/macro_game/test.py")
-    //                 .output()
-    //                 .expect("failed to execute python script");
-
     let process = match Command::new("python")
                                 .arg("/Users/Michael/Documents/swoc/swoc2017/rust/macro_game/test.py")
                                 .stdin(Stdio::piped())
@@ -33,5 +33,4 @@ fn main() {
         Err(why) => panic!("couldn't read wc stdout: {}", why.description()),
         _ => f(),
     }
-
 }
