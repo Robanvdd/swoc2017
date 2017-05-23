@@ -1,0 +1,9 @@
+[package]
+name = "micro_game"
+version = "0.1.0"
+authors = ["Michael"]
+
+[dependencies]
+game_structures = { path = "../game_structures" }
+game_logic = { path = "../game_logic" }
+game_process = { path = "../game_process" }
