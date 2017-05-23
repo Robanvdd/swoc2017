@@ -1,9 +1,12 @@
 extern crate game_structures;
 extern crate game_logic;
+extern crate game_process;
 
 use game_structures::game;
 use game_structures::game::GameObjectFunctions;
 use game_logic::game_stats;
+
+use game_process::process::GameProcess;
 
 use std::process::{Command, Stdio};
 
@@ -19,6 +22,11 @@ fn f()
 }
 
 fn main() {
+
+    let micro = GameProcess::new("python".to_string(), "/Users/Michael/Documents/swoc/swoc2017/rust/macro_game/test.py".to_string());
+
+    
+
     let process = match Command::new("python")
                                 .arg("/Users/Michael/Documents/swoc/swoc2017/rust/macro_game/test.py")
                                 .stdin(Stdio::piped())

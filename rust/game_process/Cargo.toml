@@ -1,0 +1,9 @@
+[package]
+name = "game_process"
+version = "0.1.0"
+authors = ["luke"]
+
+[dependencies]
+serde = "*"
+serde_json = "*"
+game_structures = { path = "../game_structures" }
