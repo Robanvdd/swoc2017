@@ -8,26 +8,28 @@ model {
             }
 
             def libDir = "../SFML-2.4.2/lib/"
+            def libPrefix = "lib"
             def libSuffix = ".so"
             if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+            	libPrefix = ""
 				libSuffix = ".lib"
 			}
 
             sfmlgraphics {
                 binaries.withType(PrebuiltSharedLibraryBinary) {
-                    sharedLibraryFile = file(libDir + 'sfml-graphics' + libSuffix)
+                    sharedLibraryFile = file(libDir + libPrefix + 'sfml-graphics' + libSuffix)
                 }
             }
 
             sfmlwindow {
                 binaries.withType(PrebuiltSharedLibraryBinary) {
-                    sharedLibraryFile = file(libDir + 'sfml-window' + libSuffix)
+                    sharedLibraryFile = file(libDir + libPrefix + 'sfml-window' + libSuffix)
                 }
             }
 
             sfmlsystem {
                 binaries.withType(PrebuiltSharedLibraryBinary) {
-                    sharedLibraryFile = file(libDir + 'sfml-system' + libSuffix)
+                    sharedLibraryFile = file(libDir + libPrefix + 'sfml-system' + libSuffix)
                 }
             }
         }
@@ -36,7 +38,7 @@ model {
     components {
 		MicroVis(NativeExecutableSpec) {
 			binaries.all {
-				cppCompiler.args '-Wall', '-EHsc'
+				cppCompiler.args '-Wall'
 			}
 			sources {
 				cpp {
