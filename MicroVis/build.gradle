@@ -8,22 +8,26 @@ model {
             }
 
             def libDir = "../SFML-2.4.2/lib/"
+            def libSuffix = ".so"
+            if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+				libSuffix = ".lib"
+			}
 
             sfmlgraphics {
                 binaries.withType(PrebuiltSharedLibraryBinary) {
-                    sharedLibraryFile = file(libDir + 'sfml-graphics.lib')
+                    sharedLibraryFile = file(libDir + 'sfml-graphics' + libSuffix)
                 }
             }
 
             sfmlwindow {
                 binaries.withType(PrebuiltSharedLibraryBinary) {
-                    sharedLibraryFile = file(libDir + 'sfml-window.lib')
+                    sharedLibraryFile = file(libDir + 'sfml-window' + libSuffix)
                 }
             }
 
             sfmlsystem {
                 binaries.withType(PrebuiltSharedLibraryBinary) {
-                    sharedLibraryFile = file(libDir + 'sfml-system.lib')
+                    sharedLibraryFile = file(libDir + 'sfml-system' + libSuffix)
                 }
             }
         }
