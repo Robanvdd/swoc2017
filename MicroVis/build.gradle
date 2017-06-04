@@ -1,113 +1,42 @@
 apply plugin: 'cpp'
 
 model {
-	repositories {
-        libs(PrebuiltLibraries) {
-            sfml {
-                headers.srcDir "../SFML-2.4.2/include"
+    repositories {
+            libs(PrebuiltLibraries) {
+                    sfml {
+                        headers.srcDir "../SFML-2.4.2/include"
+                    }
             }
+    }
 
-            def libDir = "../SFML-2.4.2/lib/"
-            def libPrefix = "lib"
-            def libSuffix = "-s.a"
-            if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
-            	libPrefix = ""
-				libSuffix = "-s.lib"
-
-                opengl32 {
-                    binaries.withType(PrebuiltStaticLibraryBinary) {
-                        staticLibraryFile = file(libDir + 'opengl32.lib')
-                    }
+    components {
+        MicroVis(NativeExecutableSpec) {
+            binaries.all {
+                cppCompiler.define "SFML_STATIC"
+                if (toolChain in Gcc) {
+                    cppCompiler.args '-Wall', '-MD', '-g'
+                    linker.args '-ljpeg', '-lpthread', '-lXrandr', '-lX11', '-lGL', '-ludev', '-lsfml-graphics', '-lsfml-window', '-lsfml-system'
                 }
-
-                winmm {
-                    binaries.withType(PrebuiltStaticLibraryBinary) {
-                        staticLibraryFile = file(libDir + 'winmm.lib')
-                    }
-                }
-
-                gdi32 {
-                    binaries.withType(PrebuiltStaticLibraryBinary) {
-                        staticLibraryFile = file(libDir + 'gdi32.lib')
-                    }
-                }
-
-                user32 {
-                    binaries.withType(PrebuiltStaticLibraryBinary) {
-                        staticLibraryFile = file(libDir + 'user32.lib')
-                    }
-                }
-
-                advapi32 {
-                    binaries.withType(PrebuiltStaticLibraryBinary) {
-                        staticLibraryFile = file(libDir + 'advapi32.lib')
-                    }
-                }
-
-                freetype {
-                    binaries.withType(PrebuiltStaticLibraryBinary) {
-                        staticLibraryFile = file(libDir + 'freetype.lib')
-                    }
-                }
-
-                jpeg {
-                    binaries.withType(PrebuiltStaticLibraryBinary) {
-                        staticLibraryFile = file(libDir + 'jpeg.lib')
-                    }
-                }
-			}
-
-            sfmlgraphics {
-                binaries.withType(PrebuiltStaticLibraryBinary) {
-                    staticLibraryFile = file(libDir + libPrefix + 'sfml-graphics' + libSuffix)
+                if (toolChain in VisualCpp) {
+                    cppCompiler.args '-Wall', '-MD', '-Zi'
+                    cppCompiler.define 'DEBUG'
+                    linker.args '-DEBUG', 'sfml-graphics-s-d.lib', 'sfml-window-s-d.lib', 'sfml-system-s-d.lib', 'opengl32', 'winmm', 'gdi32', 'freetype', 'jpeg'
                 }
             }
+            sources {
+                cpp {
+                    source {
+                        srcDir "src/MicroVis"
+                        include "**/*.cpp"
+                    }
 
-            sfmlwindow {
-                binaries.withType(PrebuiltStaticLibraryBinary) {
-                    staticLibraryFile = file(libDir + libPrefix + 'sfml-window' + libSuffix)
-                }
-            }
+                    exportedHeaders {
+                        srcDir 'include'
+                    }
 
-            sfmlsystem {
-                binaries.withType(PrebuiltStaticLibraryBinary) {
-                    staticLibraryFile = file(libDir + libPrefix + 'sfml-system' + libSuffix)
+                    lib library: "sfml", linkage: "api"
                 }
             }
         }
-	}
-
-    components {
-		MicroVis(NativeExecutableSpec) {
-			binaries.all {
-                cppCompiler.define "SFML_STATIC"
-				cppCompiler.args '-Wall', '/MD'
-			}
-			sources {
-				cpp {
-					source {
-						srcDir "src/MicroVis"
-						include "**/*.cpp"
-					}
-
-					exportedHeaders {
-						srcDir 'include'
-					}
-
-					lib library: "sfml", linkage: "api"
-					lib library: "sfmlgraphics", linkage: "static"
-					lib library: "sfmlwindow", linkage: "static"
-					lib library: "sfmlsystem", linkage: "static"
-
-                    lib library: "opengl32", linkage: "static"
-                    lib library: "winmm", linkage: "static"
-                    lib library: "gdi32", linkage: "static"
-                    lib library: "user32", linkage: "static"
-                    lib library: "advapi32", linkage: "static"
-                    lib library: "freetype", linkage: "static"
-                    lib library: "jpeg", linkage: "static"
-				}
-			}
-		}
-	}
+    }
 }
