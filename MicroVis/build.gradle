@@ -9,27 +9,69 @@ model {
 
             def libDir = "../SFML-2.4.2/lib/"
             def libPrefix = "lib"
-            def libSuffix = ".so"
+            def libSuffix = "-s.a"
             if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
             	libPrefix = ""
-				libSuffix = ".lib"
+				libSuffix = "-s.lib"
+
+                opengl32 {
+                    binaries.withType(PrebuiltStaticLibraryBinary) {
+                        staticLibraryFile = file(libDir + 'opengl32.lib')
+                    }
+                }
+
+                winmm {
+                    binaries.withType(PrebuiltStaticLibraryBinary) {
+                        staticLibraryFile = file(libDir + 'winmm.lib')
+                    }
+                }
+
+                gdi32 {
+                    binaries.withType(PrebuiltStaticLibraryBinary) {
+                        staticLibraryFile = file(libDir + 'gdi32.lib')
+                    }
+                }
+
+                user32 {
+                    binaries.withType(PrebuiltStaticLibraryBinary) {
+                        staticLibraryFile = file(libDir + 'user32.lib')
+                    }
+                }
+
+                advapi32 {
+                    binaries.withType(PrebuiltStaticLibraryBinary) {
+                        staticLibraryFile = file(libDir + 'advapi32.lib')
+                    }
+                }
+
+                freetype {
+                    binaries.withType(PrebuiltStaticLibraryBinary) {
+                        staticLibraryFile = file(libDir + 'freetype.lib')
+                    }
+                }
+
+                jpeg {
+                    binaries.withType(PrebuiltStaticLibraryBinary) {
+                        staticLibraryFile = file(libDir + 'jpeg.lib')
+                    }
+                }
 			}
 
             sfmlgraphics {
-                binaries.withType(PrebuiltSharedLibraryBinary) {
-                    sharedLibraryFile = file(libDir + libPrefix + 'sfml-graphics' + libSuffix)
+                binaries.withType(PrebuiltStaticLibraryBinary) {
+                    staticLibraryFile = file(libDir + libPrefix + 'sfml-graphics' + libSuffix)
                 }
             }
 
             sfmlwindow {
-                binaries.withType(PrebuiltSharedLibraryBinary) {
-                    sharedLibraryFile = file(libDir + libPrefix + 'sfml-window' + libSuffix)
+                binaries.withType(PrebuiltStaticLibraryBinary) {
+                    staticLibraryFile = file(libDir + libPrefix + 'sfml-window' + libSuffix)
                 }
             }
 
             sfmlsystem {
-                binaries.withType(PrebuiltSharedLibraryBinary) {
-                    sharedLibraryFile = file(libDir + libPrefix + 'sfml-system' + libSuffix)
+                binaries.withType(PrebuiltStaticLibraryBinary) {
+                    staticLibraryFile = file(libDir + libPrefix + 'sfml-system' + libSuffix)
                 }
             }
         }
@@ -38,7 +80,8 @@ model {
     components {
 		MicroVis(NativeExecutableSpec) {
 			binaries.all {
-				cppCompiler.args '-Wall'
+                cppCompiler.define "SFML_STATIC"
+				cppCompiler.args '-Wall', '/MD'
 			}
 			sources {
 				cpp {
@@ -52,9 +95,17 @@ model {
 					}
 
 					lib library: "sfml", linkage: "api"
-					lib library: "sfmlgraphics"
-					lib library: "sfmlwindow"
-					lib library: "sfmlsystem"
+					lib library: "sfmlgraphics", linkage: "static"
+					lib library: "sfmlwindow", linkage: "static"
+					lib library: "sfmlsystem", linkage: "static"
+
+                    lib library: "opengl32", linkage: "static"
+                    lib library: "winmm", linkage: "static"
+                    lib library: "gdi32", linkage: "static"
+                    lib library: "user32", linkage: "static"
+                    lib library: "advapi32", linkage: "static"
+                    lib library: "freetype", linkage: "static"
+                    lib library: "jpeg", linkage: "static"
 				}
 			}
 		}
