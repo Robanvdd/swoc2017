@@ -18,7 +18,7 @@ model {
                     linker.args '-ljpeg', '-lpthread', '-lXrandr', '-lX11', '-lGL', '-ludev', '-lsfml-graphics', '-lsfml-window', '-lsfml-system'
                 }
                 if (toolChain in VisualCpp) {
-                    cppCompiler.args '-Wall', '-MDd', '-Zi'
+                    cppCompiler.args '-Wall', '-MDd', '-Zi', '-FS', '-EHsc'
                     cppCompiler.define 'DEBUG'
                     linker.args '-DEBUG', 'opengl32.lib', 'winmm.lib', 'gdi32.lib', 'user32.lib', 'advapi32.lib', '/LIBPATH:../SFML-2.4.2/lib/', 'freetype.lib', 'jpeg.lib', 'sfml-graphics-s-d.lib', 'sfml-window-s-d.lib', 'sfml-system-s-d.lib'
                 }
@@ -31,7 +31,8 @@ model {
                     }
 
                     exportedHeaders {
-                        srcDir 'include'
+                        srcDir "src/MicroVis/headers"
+                        include "**/*.h"
                     }
 
                     lib library: "sfml", linkage: "api"
