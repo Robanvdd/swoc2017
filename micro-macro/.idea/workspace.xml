@@ -13,11 +13,171 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Main.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/sioux/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="27" lean-forward="true" selection-start-line="5" selection-start-column="27" selection-end-line="5" selection-end-column="27" />
+            <state relative-caret-position="120">
+              <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Player.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/sioux/game_objects/Player.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="360">
+              <caret line="24" column="0" lean-forward="true" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+              <folding>
+                <element signature="e#434#435#0" expanded="true" />
+                <element signature="e#459#460#0" expanded="true" />
+                <element signature="e#492#493#0" expanded="true" />
+                <element signature="e#520#521#0" expanded="true" />
+                <element signature="e#551#552#0" expanded="true" />
+                <element signature="e#578#579#0" expanded="true" />
+                <element signature="e#618#619#0" expanded="true" />
+                <element signature="e#650#651#0" expanded="true" />
+                <element signature="e#683#684#0" expanded="true" />
+                <element signature="e#713#714#0" expanded="true" />
+                <element signature="e#758#759#0" expanded="true" />
+                <element signature="e#796#797#0" expanded="true" />
+                <element signature="e#830#831#0" expanded="true" />
+                <element signature="e#857#858#0" expanded="true" />
+                <element signature="e#900#901#0" expanded="true" />
+                <element signature="e#932#933#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Ufo.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/sioux/game_objects/Ufo.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="630">
+              <caret line="42" column="26" lean-forward="false" selection-start-line="42" selection-start-column="26" selection-end-line="42" selection-end-column="26" />
+              <folding>
+                <element signature="e#453#454#0" expanded="true" />
+                <element signature="e#478#479#0" expanded="true" />
+                <element signature="e#511#512#0" expanded="true" />
+                <element signature="e#539#540#0" expanded="true" />
+                <element signature="e#574#575#0" expanded="true" />
+                <element signature="e#604#605#0" expanded="true" />
+                <element signature="e#651#652#0" expanded="true" />
+                <element signature="e#689#690#0" expanded="true" />
+                <element signature="e#723#724#0" expanded="true" />
+                <element signature="e#753#754#0" expanded="true" />
+                <element signature="e#800#801#0" expanded="true" />
+                <element signature="e#833#834#0" expanded="true" />
+                <element signature="e#869#870#0" expanded="true" />
+                <element signature="e#902#903#0" expanded="true" />
+                <element signature="e#953#954#0" expanded="true" />
+                <element signature="e#997#998#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Planet.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/sioux/game_objects/Planet.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="195">
+              <caret line="13" column="86" lean-forward="false" selection-start-line="13" selection-start-column="86" selection-end-line="13" selection-end-column="86" />
+              <folding>
+                <element signature="e#538#539#0" expanded="true" />
+                <element signature="e#563#564#0" expanded="true" />
+                <element signature="e#596#597#0" expanded="true" />
+                <element signature="e#624#625#0" expanded="true" />
+                <element signature="e#655#656#0" expanded="true" />
+                <element signature="e#682#683#0" expanded="true" />
+                <element signature="e#722#723#0" expanded="true" />
+                <element signature="e#754#755#0" expanded="true" />
+                <element signature="e#793#794#0" expanded="true" />
+                <element signature="e#829#830#0" expanded="true" />
+                <element signature="e#886#887#0" expanded="true" />
+                <element signature="e#936#937#0" expanded="true" />
+                <element signature="e#974#975#0" expanded="true" />
+                <element signature="e#1009#1010#0" expanded="true" />
+                <element signature="e#1064#1065#0" expanded="true" />
+                <element signature="e#1112#1113#0" expanded="true" />
+                <element signature="e#1147#1148#0" expanded="true" />
+                <element signature="e#1178#1179#0" expanded="true" />
+                <element signature="e#1226#1227#0" expanded="true" />
+                <element signature="e#1266#1267#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SolarSystem.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/sioux/game_objects/SolarSystem.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="225">
+              <caret line="15" column="85" lean-forward="false" selection-start-line="15" selection-start-column="85" selection-end-line="15" selection-end-column="85" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#493#494#0" expanded="true" />
+                <element signature="e#518#519#0" expanded="true" />
+                <element signature="e#551#552#0" expanded="true" />
+                <element signature="e#579#580#0" expanded="true" />
+                <element signature="e#610#611#0" expanded="true" />
+                <element signature="e#637#638#0" expanded="true" />
+                <element signature="e#677#678#0" expanded="true" />
+                <element signature="e#709#710#0" expanded="true" />
+                <element signature="e#745#746#0" expanded="true" />
+                <element signature="e#778#779#0" expanded="true" />
+                <element signature="e#829#830#0" expanded="true" />
+                <element signature="e#873#874#0" expanded="true" />
+                <element signature="e#913#914#0" expanded="true" />
+                <element signature="e#943#944#0" expanded="true" />
+                <element signature="e#995#996#0" expanded="true" />
+                <element signature="e#1033#1034#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Battle.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/sioux/game_objects/Battle.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="540">
+              <caret line="36" column="0" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
+              <folding>
+                <element signature="e#492#493#0" expanded="true" />
+                <element signature="e#517#518#0" expanded="true" />
+                <element signature="e#550#551#0" expanded="true" />
+                <element signature="e#578#579#0" expanded="true" />
+                <element signature="e#616#617#0" expanded="true" />
+                <element signature="e#647#648#0" expanded="true" />
+                <element signature="e#698#699#0" expanded="true" />
+                <element signature="e#738#739#0" expanded="true" />
+                <element signature="e#773#774#0" expanded="true" />
+                <element signature="e#801#802#0" expanded="true" />
+                <element signature="e#846#847#0" expanded="true" />
+                <element signature="e#880#881#0" expanded="true" />
+                <element signature="e#918#919#0" expanded="true" />
+                <element signature="e#952#953#0" expanded="true" />
+                <element signature="e#1006#1007#0" expanded="true" />
+                <element signature="e#1052#1053#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Game.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/sioux/game_objects/Game.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="210">
+              <caret line="14" column="26" lean-forward="false" selection-start-line="14" selection-start-column="26" selection-end-line="14" selection-end-column="26" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="UfoType.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/sioux/game_objects/UfoType.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="90">
+              <caret line="6" column="12" lean-forward="false" selection-start-line="6" selection-start-column="12" selection-end-line="6" selection-end-column="12" />
               <folding />
             </state>
           </provider>
@@ -25,16 +185,36 @@
       </file>
     </leaf>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="FxmlFile" />
+        <option value="Enum" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="GradleLocalSettings">
     <option name="externalProjectsViewState">
       <projects_view />
     </option>
   </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/src/com/sioux/game_objects/UfoType.java" />
+        <option value="$PROJECT_DIR$/src/com/sioux/game_objects/SolarSystem.java" />
+        <option value="$PROJECT_DIR$/src/com/sioux/game_objects/Ufo.java" />
+        <option value="$PROJECT_DIR$/src/com/sioux/game_objects/Player.java" />
+        <option value="$PROJECT_DIR$/src/com/sioux/game_objects/Planet.java" />
+        <option value="$PROJECT_DIR$/src/com/sioux/game_objects/Game.java" />
+        <option value="$PROJECT_DIR$/src/com/sioux/game_objects/Battle.java" />
+      </list>
+    </option>
+  </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="140" />
-    <option name="y" value="42" />
-    <option name="width" value="1400" />
-    <option name="height" value="937" />
+    <option name="width" value="1680" />
+    <option name="height" value="1050" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -82,11 +262,36 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="micro-macro" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="micro-macro" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sioux" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="game_objects" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
       <pane id="Scope" />
       <pane id="Scratches" />
     </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="FullScreen" value="true" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -325,13 +530,14 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="140" y="42" width="1400" height="937" extended-state="0" />
+    <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Nl-Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="SBT Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
@@ -343,7 +549,8 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20833333" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
@@ -354,7 +561,6 @@
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -365,12 +571,162 @@
     <breakpoint-manager />
     <watches-manager />
   </component>
+  <component name="antWorkspaceConfiguration">
+    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
+    <option name="FILTER_TARGETS" value="false" />
+  </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/com/sioux/game_objects/UfoType.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="12" lean-forward="false" selection-start-line="6" selection-start-column="12" selection-end-line="6" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/sioux/game_objects/Ufo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="630">
+          <caret line="42" column="26" lean-forward="false" selection-start-line="42" selection-start-column="26" selection-end-line="42" selection-end-column="26" />
+          <folding>
+            <element signature="e#453#454#0" expanded="true" />
+            <element signature="e#478#479#0" expanded="true" />
+            <element signature="e#511#512#0" expanded="true" />
+            <element signature="e#539#540#0" expanded="true" />
+            <element signature="e#574#575#0" expanded="true" />
+            <element signature="e#604#605#0" expanded="true" />
+            <element signature="e#651#652#0" expanded="true" />
+            <element signature="e#689#690#0" expanded="true" />
+            <element signature="e#723#724#0" expanded="true" />
+            <element signature="e#753#754#0" expanded="true" />
+            <element signature="e#800#801#0" expanded="true" />
+            <element signature="e#833#834#0" expanded="true" />
+            <element signature="e#869#870#0" expanded="true" />
+            <element signature="e#902#903#0" expanded="true" />
+            <element signature="e#953#954#0" expanded="true" />
+            <element signature="e#997#998#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/sioux/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="27" lean-forward="true" selection-start-line="5" selection-start-column="27" selection-end-line="5" selection-end-column="27" />
+        <state relative-caret-position="120">
+          <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/sioux/game_objects/SolarSystem.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="15" column="85" lean-forward="false" selection-start-line="15" selection-start-column="85" selection-end-line="15" selection-end-column="85" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#493#494#0" expanded="true" />
+            <element signature="e#518#519#0" expanded="true" />
+            <element signature="e#551#552#0" expanded="true" />
+            <element signature="e#579#580#0" expanded="true" />
+            <element signature="e#610#611#0" expanded="true" />
+            <element signature="e#637#638#0" expanded="true" />
+            <element signature="e#677#678#0" expanded="true" />
+            <element signature="e#709#710#0" expanded="true" />
+            <element signature="e#745#746#0" expanded="true" />
+            <element signature="e#778#779#0" expanded="true" />
+            <element signature="e#829#830#0" expanded="true" />
+            <element signature="e#873#874#0" expanded="true" />
+            <element signature="e#913#914#0" expanded="true" />
+            <element signature="e#943#944#0" expanded="true" />
+            <element signature="e#995#996#0" expanded="true" />
+            <element signature="e#1033#1034#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/sioux/game_objects/Game.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="14" column="26" lean-forward="false" selection-start-line="14" selection-start-column="26" selection-end-line="14" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/sioux/game_objects/Battle.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="36" column="0" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
+          <folding>
+            <element signature="e#492#493#0" expanded="true" />
+            <element signature="e#517#518#0" expanded="true" />
+            <element signature="e#550#551#0" expanded="true" />
+            <element signature="e#578#579#0" expanded="true" />
+            <element signature="e#616#617#0" expanded="true" />
+            <element signature="e#647#648#0" expanded="true" />
+            <element signature="e#698#699#0" expanded="true" />
+            <element signature="e#738#739#0" expanded="true" />
+            <element signature="e#773#774#0" expanded="true" />
+            <element signature="e#801#802#0" expanded="true" />
+            <element signature="e#846#847#0" expanded="true" />
+            <element signature="e#880#881#0" expanded="true" />
+            <element signature="e#918#919#0" expanded="true" />
+            <element signature="e#952#953#0" expanded="true" />
+            <element signature="e#1006#1007#0" expanded="true" />
+            <element signature="e#1052#1053#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/sioux/game_objects/Planet.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="13" column="86" lean-forward="false" selection-start-line="13" selection-start-column="86" selection-end-line="13" selection-end-column="86" />
+          <folding>
+            <element signature="e#538#539#0" expanded="true" />
+            <element signature="e#563#564#0" expanded="true" />
+            <element signature="e#596#597#0" expanded="true" />
+            <element signature="e#624#625#0" expanded="true" />
+            <element signature="e#655#656#0" expanded="true" />
+            <element signature="e#682#683#0" expanded="true" />
+            <element signature="e#722#723#0" expanded="true" />
+            <element signature="e#754#755#0" expanded="true" />
+            <element signature="e#793#794#0" expanded="true" />
+            <element signature="e#829#830#0" expanded="true" />
+            <element signature="e#886#887#0" expanded="true" />
+            <element signature="e#936#937#0" expanded="true" />
+            <element signature="e#974#975#0" expanded="true" />
+            <element signature="e#1009#1010#0" expanded="true" />
+            <element signature="e#1064#1065#0" expanded="true" />
+            <element signature="e#1112#1113#0" expanded="true" />
+            <element signature="e#1147#1148#0" expanded="true" />
+            <element signature="e#1178#1179#0" expanded="true" />
+            <element signature="e#1226#1227#0" expanded="true" />
+            <element signature="e#1266#1267#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/sioux/game_objects/Player.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="24" column="0" lean-forward="true" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+          <folding>
+            <element signature="e#434#435#0" expanded="true" />
+            <element signature="e#459#460#0" expanded="true" />
+            <element signature="e#492#493#0" expanded="true" />
+            <element signature="e#520#521#0" expanded="true" />
+            <element signature="e#551#552#0" expanded="true" />
+            <element signature="e#578#579#0" expanded="true" />
+            <element signature="e#618#619#0" expanded="true" />
+            <element signature="e#650#651#0" expanded="true" />
+            <element signature="e#683#684#0" expanded="true" />
+            <element signature="e#713#714#0" expanded="true" />
+            <element signature="e#758#759#0" expanded="true" />
+            <element signature="e#796#797#0" expanded="true" />
+            <element signature="e#830#831#0" expanded="true" />
+            <element signature="e#857#858#0" expanded="true" />
+            <element signature="e#900#901#0" expanded="true" />
+            <element signature="e#932#933#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
