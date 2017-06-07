@@ -2,15 +2,28 @@
 #include "json.hpp"
 #include <fstream>
 #include <SFML/Graphics.hpp>
+#include "Spaceship.h"
+#include "Vector.h"
 
 using json = nlohmann::json;
 
 int main()
 {
 	std::cout << "Starting SFML stuff" << std::endl;
-	sf::RenderWindow window(sf::VideoMode(400,400), "Hello World!");
-	sf::CircleShape shape(100.f);
-	shape.setFillColor(sf::Color::Green);
+	sf::RenderWindow window(sf::VideoMode(800, 600), "Hello World!");
+
+	const std::string ufoFilename = "ufo.png";
+	std::cout << "Looking for " << ufoFilename << std::endl;
+	sf::Texture ufoTexture;
+	if (!ufoTexture.loadFromFile(ufoFilename))
+	{
+		std::cout << "Could not find it!" << std::endl;
+		return -1;
+	}
+	ufoTexture.setSmooth(true);
+	ufoTexture.setRepeated(false);
+
+	Spaceship ufo(ufoTexture, Position(50.f, 50.f));
 
 	while (window.isOpen())
 	{
@@ -22,7 +35,7 @@ int main()
 		}
 
 		window.clear();
-		window.draw(shape);
+		ufo.Draw(window);
 		window.display();
 	}
 

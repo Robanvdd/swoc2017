@@ -1,62 +1,43 @@
 apply plugin: 'cpp'
 
 model {
-	repositories {
-        libs(PrebuiltLibraries) {
-            sfml {
-                headers.srcDir "../SFML-2.4.2/include"
+    repositories {
+            libs(PrebuiltLibraries) {
+                    sfml {
+                        headers.srcDir "../SFML-2.4.2/include"
+                    }
             }
+    }
 
-            def libDir = "../SFML-2.4.2/lib/"
-            def libPrefix = "lib"
-            def libSuffix = ".so"
-            if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
-            	libPrefix = ""
-				libSuffix = ".lib"
-			}
-
-            sfmlgraphics {
-                binaries.withType(PrebuiltSharedLibraryBinary) {
-                    sharedLibraryFile = file(libDir + libPrefix + 'sfml-graphics' + libSuffix)
+    components {
+        MicroVis(NativeExecutableSpec) {
+            binaries.all {
+                cppCompiler.define "SFML_STATIC"
+                if (toolChain in Gcc) {
+                    cppCompiler.args '-Wall', '-MD', '-g'
+                    linker.args '-ljpeg', '-lpthread', '-lXrandr', '-lX11', '-lGL', '-ludev', '-lsfml-graphics', '-lsfml-window', '-lsfml-system'
+                }
+                if (toolChain in VisualCpp) {
+                    cppCompiler.args '-Wall', '-MDd', '-Zi', '-FS', '-EHsc'
+                    cppCompiler.define 'DEBUG'
+                    linker.args '-DEBUG', 'opengl32.lib', 'winmm.lib', 'gdi32.lib', 'user32.lib', 'advapi32.lib', '/LIBPATH:../SFML-2.4.2/lib/', 'freetype.lib', 'jpeg.lib', 'sfml-graphics-s-d.lib', 'sfml-window-s-d.lib', 'sfml-system-s-d.lib'
                 }
             }
+            sources {
+                cpp {
+                    source {
+                        srcDir "src/MicroVis"
+                        include "**/*.cpp"
+                    }
 
-            sfmlwindow {
-                binaries.withType(PrebuiltSharedLibraryBinary) {
-                    sharedLibraryFile = file(libDir + libPrefix + 'sfml-window' + libSuffix)
-                }
-            }
+                    exportedHeaders {
+                        srcDir "src/MicroVis/headers"
+                        include "**/*.h"
+                    }
 
-            sfmlsystem {
-                binaries.withType(PrebuiltSharedLibraryBinary) {
-                    sharedLibraryFile = file(libDir + libPrefix + 'sfml-system' + libSuffix)
+                    lib library: "sfml", linkage: "api"
                 }
             }
         }
-	}
-
-    components {
-		MicroVis(NativeExecutableSpec) {
-			binaries.all {
-				cppCompiler.args '-Wall'
-			}
-			sources {
-				cpp {
-					source {
-						srcDir "src/MicroVis"
-						include "**/*.cpp"
-					}
-
-					exportedHeaders {
-						srcDir 'include'
-					}
-
-					lib library: "sfml", linkage: "api"
-					lib library: "sfmlgraphics"
-					lib library: "sfmlwindow"
-					lib library: "sfmlsystem"
-				}
-			}
-		}
-	}
+    }
 }
