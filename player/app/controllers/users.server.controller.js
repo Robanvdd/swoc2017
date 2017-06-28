@@ -94,11 +94,11 @@ exports.requiresLogin = function(req, res, next) {
  * Require login routing middleware
  */
 exports.requiresAdmin = function(req, res, next) {
-    if (!req.isAuthenticated() || req.user.username !== 'admin') {
-        return res.status(401).send({
-            message: 'User is not logged in or not admin'
-        });
-    }
+    //if (!req.isAuthenticated() || req.user.username !== 'admin') {
+    //    return res.status(401).send({
+    //        message: 'User is not logged in or not admin'
+    //    });
+    //}
 
     next();
 };
