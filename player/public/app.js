@@ -14,18 +14,6 @@ meanApp.config(['$routeProvider', function($routeProvider) {
 			controller:'UploadCtrl',
 			templateUrl:'mod_upload.html'
 		})
-		.when('/detail/:gameId', {
-			controller:'DetailCtrl',
-			templateUrl:'mod_detail.html'
-		})
-		.when('/play/', {
-			controller:'PlayCtrl',
-			templateUrl:'mod_play.html'
-		})
-		.when('/playvcpu/', {
-			controller:'PlayvCPUCtrl',
-			templateUrl:'mod_play_v_cpu.html'
-		})
 		.when('/login/', {
 			controller:'LogInCtrl',
 			templateUrl:'mod_login.html'
@@ -41,10 +29,6 @@ meanApp.config(['$routeProvider', function($routeProvider) {
 		.when('/createuser/', {
 			controller:'CreateUserCtrl',
 			templateUrl:'mod_createuser.html'
-		})
-		.when('/statistics/', {
-			controller:'StatisticsCtrl',
-			templateUrl:'mod_statistics.html'
 		})
 		.otherwise({
 			redirectTo: '/'

@@ -7,13 +7,13 @@ var mongoose = require('mongoose'),
     User = mongoose.model('User');
 
 exports.retrieveLatest = function(skip, callback) {
-	Match.find({}).sort('-completedOn').skip(skip).limit(20).populate('blackBot', 'name').populate('whiteBot', 'name').populate('winnerBot', 'name').exec(callback);
+	Match.find({}).sort('-completedOn').skip(Number(skip)).limit(20).populate('blackBot', 'name').populate('whiteBot', 'name').populate('winnerBot', 'name').exec(callback);
 }
 
 function findNextMatchPage(filter, skip, callback) {
     Match.find(filter)
          .sort('-completedOn')
-         .skip(skip)
+         .skip(Number(skip))
          .populate('blackBot', 'name')
          .populate('whiteBot', 'name')
          .populate('winnerBot', 'name')
