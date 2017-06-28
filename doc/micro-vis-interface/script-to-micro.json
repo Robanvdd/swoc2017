@@ -1,0 +1,22 @@
+{
+    "bots": {
+        "bot1": {
+            "move": {
+                "direction": "0,1",
+                "speed": "10"
+            },
+            "shoot": {
+                "direction": "1,0"
+            }
+        },
+        "bot2": {
+            "move": {
+                "direction": "0,1",
+                "speed": "10"
+            },
+            "shoot": {
+                "direction": "1,0"
+            }
+        }
+    }
+}
