@@ -9,89 +9,100 @@ ApplicationWindow {
     height: 768
     title: qsTr("Hello World")
 
-    FileIO {
-        id: fileIO
-        source: ""
-        onError: console.log(msg)
-    }
-
-    Timer {
-        interval: 1000/30
-        running: true
-        repeat: true
-        onTriggered: AppContext.processFrame()
-    }
-
-    MouseArea {
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
+    Item {
+        id: root
         anchors.fill: parent
-        onClicked: {
-            if (pressedButtons & Qt.LeftButton)
-                AppContext.addSpaceship(mouseX, mouseY)
-            else if (pressedButtons & Qt.RightButton)
-                AppContext.addBullet(mouseX, mouseY)
+
+        FileIO {
+            id: fileIO
+            source: ""
+            onError: console.log(msg)
         }
 
-    }
+        Timer {
+            id: gameTimer
+            interval: 1000/30
+            running: frameUrl != ""
+            repeat: true
+            property url frameUrl: ""
+            onTriggered: {
+                // Parse frame file
+               //fileIO.source = frameUrl
+                //var content = fileIO.read()
+                //var jsonObject = JSON.parse(content)
+                print(frameUrl)
 
-    Loader {
-        id: fileDialogLoader
-        property CustomFileDialog fileDialog: fileDialogLoader.item
-        Connections {
-            target: fileDialogLoader.item
-            onAccepted: {
-                fileIO.source = fileDialogLoader.fileDialog.fileUrl
-                var content = fileIO.read()
-                var jsonObject = JSON.parse(content)
+                appContext.processFrame()
 
-                console.log(jsonObject.x)
-                console.log(jsonObject.y)
+                frameUrl = filenameIncrementer.getNextFrameFileUrl(frameUrl)
             }
-            onRejected: {
-                console.log("Canceled")
+        }
+
+        MouseArea {
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+            anchors.fill: parent
+            onClicked: {
+                if (mouse.button == Qt.LeftButton)
+                    AppContext.addSpaceship(mouseX, mouseY)
+                else if (mouse.button == Qt.RightButton)
+                    AppContext.addBullet(mouseX, mouseY)
             }
         }
-    }
 
-    Component {
-        id: fileDialogComponent
-        CustomFileDialog {
+        Loader {
+            id: fileDialogLoader
+            property CustomFileDialog fileDialog: fileDialogLoader.item
+            Connections {
+                target: fileDialogLoader.item
+                onAccepted: {
+                    gameTimer.frameUrl = fileDialogLoader.fileDialog.fileUrl
+                }
+                onRejected: {
+                    console.log("Canceled")
+                }
+            }
         }
-    }
 
-    Button {
-        id: pressMeButton
-        text: "Press me"
-        onClicked: {
-            fileDialogLoader.sourceComponent = fileDialogComponent
-            fileDialogLoader.fileDialog.visible = true
+        Component {
+            id: fileDialogComponent
+            CustomFileDialog {
+            }
         }
-    }
 
-    Label {
-        id: pressMeLabel
-        text: "Default text"
-        anchors.left: pressMeButton.right
-        anchors.leftMargin: 16
-    }
-
-    Repeater {
-        model: AppContext.spaceships
-        delegate: Spaceship {
-            x: modelData.x
-            y: modelData.y
-            source: "qrc:///Images/ufo.png"
-            visible: !modelData.dead
+        Button {
+            id: pressMeButton
+            text: "Press me"
+            onClicked: {
+                fileDialogLoader.sourceComponent = fileDialogComponent
+                fileDialogLoader.fileDialog.visible = true
+            }
         }
-    }
 
-    Repeater {
-        model: AppContext.bullets
-        delegate: Bullet {
-            x: modelData.x
-            y: modelData.y
-            source: "qrc:///Images/bullet.png"
-            visible: true
+        Label {
+            id: pressMeLabel
+            text: "Default text"
+            anchors.left: pressMeButton.right
+            anchors.leftMargin: 16
+        }
+
+        Repeater {
+            model: appContext.spaceships
+            delegate: Spaceship {
+                x: modelData.x
+                y: modelData.y
+                source: "qrc:///Images/ufo.png"
+                visible: !modelData.dead
+            }
+        }
+
+        Repeater {
+            model: appContext.bullets
+            delegate: Bullet {
+                x: modelData.x
+                y: modelData.y
+                source: "qrc:///Images/bullet.png"
+                visible: true
+            }
         }
     }
 }

@@ -5,20 +5,24 @@
 #include "appcontext.h"
 #include "fileio.h"
 #include "customfiledialog.h"
+#include "filenameincrementer.h"
 
 int main(int argc, char *argv[])
 {
     AppContext appContext;
+    FilenameIncrementer filenameIncrementer;
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
-    engine.rootContext()->setContextProperty("AppContext", &appContext);
+    engine.rootContext()->setContextProperty("appContext", &appContext);
+    engine.rootContext()->setContextProperty("filenameIncrementer", &filenameIncrementer);
 
     qmlRegisterType<FileIO>("SWOC", 1, 0, "FileIO");
     qmlRegisterType<CustomFileDialog>("SWOC", 1, 0, "CustomFileDialog");
     qmlRegisterInterface<Spaceship>("Spaceship");
+    qmlRegisterInterface<Bullet>("Bullet");
 
     engine.load(QUrl(QLatin1String("qrc:/main.qml")));
 

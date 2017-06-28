@@ -11,6 +11,7 @@ class AppContext : public QObject
     Q_OBJECT
     Q_PROPERTY(QString helloWorld MEMBER m_helloWorld NOTIFY helloWorldChanged)
     Q_PROPERTY(QQmlListProperty<Spaceship> spaceships READ getSpaceships NOTIFY spaceshipsChanged)
+    Q_PROPERTY(QQmlListProperty<Bullet> bullets READ getBullets NOTIFY bulletsChanged)
 
 public:
     explicit AppContext(QObject *parent = 0);

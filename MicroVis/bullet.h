@@ -6,6 +6,8 @@
 class Bullet : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(int x MEMBER m_x NOTIFY xChanged)
+    Q_PROPERTY(int y MEMBER m_y NOTIFY yChanged)
 public:
     explicit Bullet(QObject *parent = nullptr);
     Bullet(int x, int y, QObject *parent = nullptr);

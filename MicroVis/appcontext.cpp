@@ -26,6 +26,11 @@ void AppContext::addBullet(int x, int y)
     emit bulletsChanged();
 }
 
+QQmlListProperty<Bullet> AppContext::getBullets()
+{
+    return QQmlListProperty<Bullet>(this, m_bullets);
+}
+
 void AppContext::processFrame()
 {
     for (auto spaceship : m_spaceships)
