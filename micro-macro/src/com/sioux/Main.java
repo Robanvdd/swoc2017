@@ -3,9 +3,17 @@ package com.sioux;
 public class Main {
 
     public static void main(String[] args) {
-        // write your code here
-        // 1 create a game object
-        // 2 start the macro game engine and send the object to the game engine
-        // 3
+
+        //Scripts s = new Scripts("/Users/Michael/Documents/testdir");
+
+        MacroEngine engine = new MacroEngine();
+
+        engine.InitAndStart();
+
+           // Command c = b.readMessage(Command.class,5000);
+           // InitialState i = b.writeAndReadMessage(initialState,InitialState.class);
+           // System.out.print(c.Type);
+           // bot1.close();
+           // bot2.close();
     }
 }

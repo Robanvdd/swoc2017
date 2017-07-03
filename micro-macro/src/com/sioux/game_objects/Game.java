@@ -1,10 +1,12 @@
 package com.sioux.game_objects;
 
+import java.io.Serializable;
+
 /**
  * Created by Michael on 07/06/2017.
  * A game is a battle on a solarsystem
  */
-public class Game {
+public class Game implements Serializable{
 
     private int id;
     private String name;
