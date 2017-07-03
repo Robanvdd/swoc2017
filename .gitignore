@@ -10,6 +10,6 @@
 *.db
 *.opendb
 *.filters
-**/build
+**/build*
 .gradle
 .DS_Store

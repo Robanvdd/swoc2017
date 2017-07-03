@@ -5,19 +5,19 @@
 #include "appcontext.h"
 #include "fileio.h"
 #include "customfiledialog.h"
-#include "filenameincrementer.h"
+#include "nextfilegrabber.h"
 
 int main(int argc, char *argv[])
 {
     AppContext appContext;
-    FilenameIncrementer filenameIncrementer;
+    NextFileGrabber nextFileGrabber;
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("appContext", &appContext);
-    engine.rootContext()->setContextProperty("filenameIncrementer", &filenameIncrementer);
+    engine.rootContext()->setContextProperty("nextFileGrabber", &nextFileGrabber);
 
     qmlRegisterType<FileIO>("SWOC", 1, 0, "FileIO");
     qmlRegisterType<CustomFileDialog>("SWOC", 1, 0, "CustomFileDialog");

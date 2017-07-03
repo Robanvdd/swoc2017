@@ -27,14 +27,14 @@ ApplicationWindow {
             property url frameUrl: ""
             onTriggered: {
                 // Parse frame file
-               //fileIO.source = frameUrl
+                //fileIO.source = frameUrl
                 //var content = fileIO.read()
                 //var jsonObject = JSON.parse(content)
                 print(frameUrl)
 
                 appContext.processFrame()
 
-                frameUrl = filenameIncrementer.getNextFrameFileUrl(frameUrl)
+                frameUrl = nextFileGrabber.getNextFrameFileUrl(frameUrl)
             }
         }
 
