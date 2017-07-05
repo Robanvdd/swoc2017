@@ -1,13 +1,20 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
 import SWOC 1.0
 
 ApplicationWindow {
     visible: true
     width: 1024
     height: 768
-    title: qsTr("Hello World")
+    style: ApplicationWindowStyle {
+            background: Image {
+                source: "qrc:///Images/background.png"
+            }
+        }
+    title: qsTr("MicroVis")
 
     function parseJson(jsonObject)
     {
@@ -96,13 +103,6 @@ ApplicationWindow {
                 fileDialogLoader.sourceComponent = fileDialogComponent
                 fileDialogLoader.fileDialog.visible = true
             }
-        }
-
-        Label {
-            id: pressMeLabel
-            text: "Default text"
-            anchors.left: pressMeButton.right
-            anchors.leftMargin: 16
         }
 
         Repeater {

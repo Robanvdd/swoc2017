@@ -6,8 +6,8 @@ AppContext::AppContext(QObject *parent) : QObject(parent),
     m_helloWorld("Hello, world!")
 {
     m_spaceships << new Spaceship(100, 200, this) << new Spaceship(200, 300, this);
-    m_spaceships << new Spaceship(30, 30, this) << new Spaceship(400, 400, this);
-    m_bullets << new Bullet(50, 50, this) << new Bullet(300, 200, this);
+    m_spaceships << new Spaceship(800, 550, this) << new Spaceship(400, 400, this);
+    m_bullets << new Bullet(650, 500, this) << new Bullet(300, 200, this);
 }
 
 void AppContext::addSpaceship(int x, int y)

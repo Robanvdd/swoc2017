@@ -4,5 +4,6 @@
         <file>qtquickcontrols2.conf</file>
         <file>Spaceship.qml</file>
         <file>Bullet.qml</file>
+        <file>Background.qml</file>
     </qresource>
 </RCC>
