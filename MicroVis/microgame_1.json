@@ -10,12 +10,12 @@
                 {
                 	"name": "bot1",
                     "hitpoints": "25",
-                    "position": "1,1"
+                    "position": "100,150"
                 },
                 {
                 	"name": "bot2",
                     "hitpoints": "25",
-                    "position": "1,1"
+                    "position": "120,40"
                 }
             ]
         },
@@ -25,12 +25,12 @@
                 {
                 	"name": "bot1",
                     "hitpoints": "25",
-                    "position": "1,1"
+                    "position": "300,340"
                 },
                 {
                 	"name": "bot2",
                     "hitpoints": "25",
-                    "position": "1,1"
+                    "position": "300,540"
                 }
             ]
         }
@@ -38,11 +38,11 @@
     "projectiles": [
         {
         	"name": "projectile1",
-            "position": "1,1"
+            "position": "80,120"
         },
         {
         	"name": "projectile2",
-            "position": "2,2"
+            "position": "220,40"
         }
     ]
 }

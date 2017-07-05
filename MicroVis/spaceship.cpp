@@ -34,6 +34,14 @@ void Spaceship::setY(int y)
     emit yChanged();
 }
 
+void Spaceship::move(int x, int y)
+{
+    m_x = x;
+    m_y = y;
+    emit xChanged();
+    emit yChanged();
+}
+
 bool Spaceship::dead() const
 {
     return m_dead;

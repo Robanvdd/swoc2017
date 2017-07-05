@@ -19,6 +19,8 @@ public:
     int y() const;
     void setY(int y);
 
+    void move(int x, int y);
+
     bool dead() const;
     void setDead(bool dead);
 

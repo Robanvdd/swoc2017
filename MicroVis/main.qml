@@ -1,13 +1,40 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
 import SWOC 1.0
 
 ApplicationWindow {
     visible: true
     width: 1024
     height: 768
-    title: qsTr("Hello World")
+    style: ApplicationWindowStyle {
+            background: Image {
+                source: "qrc:///Images/background.png"
+            }
+        }
+    title: qsTr("MicroVis")
+
+    function parseJson(jsonObject)
+    {
+        for (var i = 0; i < jsonObject.players.length; i++)
+        {
+            var bots = jsonObject.players[i].bots
+            for (var j = 0; j < bots.length; j++)
+            {
+                var posShip = bots[j].position.split(',')
+                appContext.moveSpaceship(j, posShip[0], posShip[1])
+            }
+
+            var bullets = jsonObject.projectiles
+            for (var k = 0; k < bullets.length; k++)
+            {
+                var posBul = bullets[k].position.split(',')
+                appContext.moveBullet(k, posBul[0], posBul[1])
+            }
+        }
+    }
 
     Item {
         id: root
@@ -27,10 +54,10 @@ ApplicationWindow {
             property url frameUrl: ""
             onTriggered: {
                 // Parse frame file
-                //fileIO.source = frameUrl
-                //var content = fileIO.read()
-                //var jsonObject = JSON.parse(content)
-                print(frameUrl)
+                fileIO.source = frameUrl
+                var content = fileIO.read()
+                var jsonObject = JSON.parse(content)
+                parseJson(jsonObject)
 
                 appContext.processFrame()
 
@@ -42,10 +69,10 @@ ApplicationWindow {
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             anchors.fill: parent
             onClicked: {
-                if (mouse.button == Qt.LeftButton)
-                    AppContext.addSpaceship(mouseX, mouseY)
-                else if (mouse.button == Qt.RightButton)
-                    AppContext.addBullet(mouseX, mouseY)
+                if (mouse.button === Qt.LeftButton)
+                    appContext.addSpaceship(mouseX, mouseY)
+                else if (mouse.button === Qt.RightButton)
+                    appContext.addBullet(mouseX, mouseY)
             }
         }
 
@@ -76,13 +103,6 @@ ApplicationWindow {
                 fileDialogLoader.sourceComponent = fileDialogComponent
                 fileDialogLoader.fileDialog.visible = true
             }
-        }
-
-        Label {
-            id: pressMeLabel
-            text: "Default text"
-            anchors.left: pressMeButton.right
-            anchors.leftMargin: 16
         }
 
         Repeater {
