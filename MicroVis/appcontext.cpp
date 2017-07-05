@@ -6,6 +6,7 @@ AppContext::AppContext(QObject *parent) : QObject(parent),
     m_helloWorld("Hello, world!")
 {
     m_spaceships << new Spaceship(100, 200, this) << new Spaceship(200, 300, this);
+    m_spaceships << new Spaceship(30, 30, this) << new Spaceship(400, 400, this);
     m_bullets << new Bullet(50, 50, this) << new Bullet(300, 200, this);
 }
 
@@ -13,6 +14,11 @@ void AppContext::addSpaceship(int x, int y)
 {
     m_spaceships << new Spaceship(x, y, this);
     emit spaceshipsChanged();
+}
+
+void AppContext::moveSpaceship(int index, int x, int y)
+{
+    m_spaceships.at(index)->move(x, y);
 }
 
 QQmlListProperty<Spaceship> AppContext::getSpaceships()
@@ -24,6 +30,11 @@ void AppContext::addBullet(int x, int y)
 {
     m_bullets << new Bullet(x, y, this);
     emit bulletsChanged();
+}
+
+void AppContext::moveBullet(int index, int x, int y)
+{
+    m_bullets.at(index)->move(x, y);
 }
 
 QQmlListProperty<Bullet> AppContext::getBullets()

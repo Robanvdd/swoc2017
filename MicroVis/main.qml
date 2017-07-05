@@ -9,6 +9,26 @@ ApplicationWindow {
     height: 768
     title: qsTr("Hello World")
 
+    function parseJson(jsonObject)
+    {
+        for (var i = 0; i < jsonObject.players.length; i++)
+        {
+            var bots = jsonObject.players[i].bots
+            for (var j = 0; j < bots.length; j++)
+            {
+                var posShip = bots[j].position.split(',')
+                appContext.moveSpaceship(j, posShip[0], posShip[1])
+            }
+
+            var bullets = jsonObject.projectiles
+            for (var k = 0; k < bullets.length; k++)
+            {
+                var posBul = bullets[k].position.split(',')
+                appContext.moveBullet(k, posBul[0], posBul[1])
+            }
+        }
+    }
+
     Item {
         id: root
         anchors.fill: parent
@@ -27,10 +47,10 @@ ApplicationWindow {
             property url frameUrl: ""
             onTriggered: {
                 // Parse frame file
-                //fileIO.source = frameUrl
-                //var content = fileIO.read()
-                //var jsonObject = JSON.parse(content)
-                print(frameUrl)
+                fileIO.source = frameUrl
+                var content = fileIO.read()
+                var jsonObject = JSON.parse(content)
+                parseJson(jsonObject)
 
                 appContext.processFrame()
 
@@ -42,10 +62,10 @@ ApplicationWindow {
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             anchors.fill: parent
             onClicked: {
-                if (mouse.button == Qt.LeftButton)
-                    AppContext.addSpaceship(mouseX, mouseY)
-                else if (mouse.button == Qt.RightButton)
-                    AppContext.addBullet(mouseX, mouseY)
+                if (mouse.button === Qt.LeftButton)
+                    appContext.addSpaceship(mouseX, mouseY)
+                else if (mouse.button === Qt.RightButton)
+                    appContext.addBullet(mouseX, mouseY)
             }
         }
 

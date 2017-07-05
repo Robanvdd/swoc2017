@@ -31,3 +31,11 @@ void Bullet::setY(int y)
     m_y = y;
     emit yChanged();
 }
+
+void Bullet::move(int x, int y)
+{
+    m_x = x;
+    m_y = y;
+    emit xChanged();
+    emit yChanged();
+}

@@ -17,9 +17,11 @@ public:
     explicit AppContext(QObject *parent = 0);
 
     Q_INVOKABLE void addSpaceship(int x, int y);
+    Q_INVOKABLE void moveSpaceship(int index, int x, int y);
     QQmlListProperty<Spaceship> getSpaceships();
 
     Q_INVOKABLE void addBullet(int x, int y);
+    Q_INVOKABLE void moveBullet(int index, int x, int y);
     QQmlListProperty<Bullet> getBullets();
 
     Q_INVOKABLE void processFrame();

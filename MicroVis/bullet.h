@@ -18,6 +18,8 @@ public:
     int y() const;
     void setY(int y);
 
+    void move(int x, int y);
+
 signals:
     void xChanged();
     void yChanged();
