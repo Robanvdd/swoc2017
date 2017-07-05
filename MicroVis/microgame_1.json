@@ -1,1 +1,48 @@
-{ "positions": [ "2,3", "3,4" ] }
+{
+    "arena": {
+        "height": "100",
+        "width": "100"
+    },
+    "players": [
+        {
+        	"name": "player1",
+            "bots": [
+                {
+                	"name": "bot1",
+                    "hitpoints": "25",
+                    "position": "1,1"
+                },
+                {
+                	"name": "bot2",
+                    "hitpoints": "25",
+                    "position": "1,1"
+                }
+            ]
+        },
+        {
+        	"name": "player2",
+            "bots": [
+                {
+                	"name": "bot1",
+                    "hitpoints": "25",
+                    "position": "1,1"
+                },
+                {
+                	"name": "bot2",
+                    "hitpoints": "25",
+                    "position": "1,1"
+                }
+            ]
+        }
+    ],
+    "projectiles": [
+        {
+        	"name": "projectile1",
+            "position": "1,1"
+        },
+        {
+        	"name": "projectile2",
+            "position": "2,2"
+        }
+    ]
+}

@@ -1,43 +1,48 @@
 {
-    "tick1": {
-        "arena": {
-            "height": "100",
-            "width": "100"
-        },
-        "players": {
-            "player1": {
-                "bots": {
-                    "bot1": {
-                        "hitpoints": "25",
-                        "position": "1,1"
-                    },
-                    "bot2": {
-                        "hitpoints": "25",
-                        "position": "1,1"
-                    }
+    "arena": {
+        "height": "100",
+        "width": "100"
+    },
+    "players": [
+        {
+            "name": "player1",
+            "bots": [
+                {
+                    "name": "bot1",
+                    "hitpoints": "25",
+                    "position": "1,1"
+                },
+                {
+                    "name": "bot2",
+                    "hitpoints": "25",
+                    "position": "1,1"
                 }
-            },
-            "player2": {
-                "bots": {
-                    "bot1": {
-                        "hitpoints": "25",
-                        "position": "1,1"
-                    },
-                    "bot2": {
-                        "hitpoints": "25",
-                        "position": "1,1"
-                    }
+            ]
+        },
+        {
+            "name": "player2",
+            "bots": [
+                {
+                    "name": "bot1",
+                    "hitpoints": "25",
+                    "position": "1,1"
+                },
+                {
+                    "name": "bot2",
+                    "hitpoints": "25",
+                    "position": "1,1"
                 }
-            }
+            ]
+        }
+    ],
+    "projectiles": [
+        {
+            "name": "projectile1",
+            "position": "1,1"
         },
-        "projectiles": {
-            "projectile1": {
-                "position": "1,1"
-            },
-            "projectile2": {
-                "position": "2,2"
-            }
-        },
-        "hits": {}
-    }
+        {
+            "name": "projectile2",
+            "position": "2,2"
+        }
+    ]
 }
