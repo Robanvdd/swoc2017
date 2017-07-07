@@ -1,7 +1,5 @@
 package com.sioux;
 
-import com.sioux.game_objects.MicroGame;
-
 public class Main {
 
     public static void main(String[] args) {
@@ -19,6 +17,6 @@ public class Main {
            // bot2.close();
 
         MicroEngine micro_engine = new MicroEngine();
-        micro_engine.Run(new MicroGame());
+        micro_engine.Run(null);
     }
 }
