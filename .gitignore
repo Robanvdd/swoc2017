@@ -4,6 +4,7 @@
 /matchmaker/matchmaker/build/
 /matchmaker/matchmaker/dist/
 /test-bot/TestBot/dist/
+/micro-macro/out/
 **/Debug
 **/Release
 *.vs
@@ -14,3 +15,4 @@
 .gradle
 .DS_Store
 *.pro.user
+*.class
