@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by Michael on 01/07/2017.
  */
-public class MacroEngine {
+public class MacroEngine implements TickListener {
     Game game;
     Gson gson;
     List<Bot> runningBots;
@@ -22,10 +22,12 @@ public class MacroEngine {
     CommandQueue incommingCommands;
     Boolean running = true;
     int fileCount = 0;//TODO Bad Hack
+    TickEngine tick;
 
     MacroEngine(){
         gson = new Gson();
         s = new Scripts("/Users/Michael/Documents/testdir");
+        tick = TickEngine.GetInstance();
     }
 
     public void InitAndStart(){
@@ -103,13 +105,14 @@ public class MacroEngine {
 
     public void Run(InitialState initGameState){
         SendInitialGameState(initGameState);
-        while(running){
-            ReceiveMessage();
-            ExecuteCommands();
-            SaveGameState();//does not file data
-        }
+        tick.AddListner(this);
+        tick.Start();
     }
 
-
-
+    @Override
+    public void TickUpdate() {
+        ReceiveMessage();
+        ExecuteCommands();
+        SaveGameState();
+    }
 }

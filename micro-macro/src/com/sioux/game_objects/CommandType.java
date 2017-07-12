@@ -5,5 +5,6 @@ package com.sioux.game_objects;
  */
 public enum CommandType {
     MOVE,
-    NEW_COMMAND, CONQUER
+    NEW_COMMAND,
+    CONQUER
 }

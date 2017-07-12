@@ -14,3 +14,4 @@
 .gradle
 .DS_Store
 *.pro.user
+*.class
