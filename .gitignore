@@ -4,6 +4,7 @@
 /matchmaker/matchmaker/build/
 /matchmaker/matchmaker/dist/
 /test-bot/TestBot/dist/
+/micro-macro/out/
 **/Debug
 **/Release
 *.vs
