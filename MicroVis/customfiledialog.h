@@ -11,7 +11,7 @@ class CustomFileDialog : public QObject
     Q_PROPERTY(bool visible MEMBER m_visible NOTIFY visibleChanged)
     Q_PROPERTY(QUrl fileUrl READ fileUrl NOTIFY accepted)
 public:
-    explicit CustomFileDialog(QObject *parent = 0);
+    explicit CustomFileDialog(QObject *parent = nullptr);
     QUrl fileUrl() const;
 
 signals:

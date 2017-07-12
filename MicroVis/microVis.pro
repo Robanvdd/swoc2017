@@ -8,7 +8,8 @@ SOURCES += main.cpp \
     customfiledialog.cpp \
     fileio.cpp \
     bullet.cpp \
-    nextfilegrabber.cpp
+    nextfilegrabber.cpp \
+    player.cpp
 
 RESOURCES += qml.qrc \
     images.qrc
@@ -41,4 +42,5 @@ HEADERS += \
     customfiledialog.h \
     fileio.h \
     bullet.h \
-    nextfilegrabber.h
+    nextfilegrabber.h \
+    player.h

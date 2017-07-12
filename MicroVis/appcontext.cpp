@@ -16,14 +16,20 @@ void AppContext::addSpaceship(int x, int y)
     emit spaceshipsChanged();
 }
 
-void AppContext::moveSpaceship(int index, int x, int y)
-{
-    m_spaceships.at(index)->move(x, y);
-}
-
 QQmlListProperty<Spaceship> AppContext::getSpaceships()
 {
     return QQmlListProperty<Spaceship>(this, m_spaceships);
+}
+
+void AppContext::addPlayer(QString id)
+{
+    m_players << new Player(id);
+    emit playersChanged();
+}
+
+QQmlListProperty<Player> AppContext::getPlayers()
+{
+    return QQmlListProperty<Player>(this, m_players);
 }
 
 void AppContext::addBullet(int x, int y)
@@ -44,18 +50,5 @@ QQmlListProperty<Bullet> AppContext::getBullets()
 
 void AppContext::processFrame()
 {
-    for (auto spaceship : m_spaceships)
-    {
-        spaceship->setX(spaceship->x() + 1);
-        if (spaceship->x() > 600)
-        {
-            spaceship->setDead(true);
-        }
-    }
 
-    for (auto bullet : m_bullets)
-    {
-        bullet->setX(bullet->x() - 1);
-        bullet->setY(bullet->y() + 1);
-    }
 }

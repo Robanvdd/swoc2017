@@ -23,8 +23,8 @@ ApplicationWindow {
             var bots = jsonObject.players[i].bots
             for (var j = 0; j < bots.length; j++)
             {
-                var posShip = bots[j].position.split(',')
-                appContext.moveSpaceship(j, posShip[0], posShip[1])
+                var posBot = bots[j].position.split(',')
+                appContext.players[i].moveSpaceship(j, posBot[0], posBot[1])
             }
 
             var bullets = jsonObject.projectiles
@@ -32,6 +32,21 @@ ApplicationWindow {
             {
                 var posBul = bullets[k].position.split(',')
                 appContext.moveBullet(k, posBul[0], posBul[1])
+            }
+        }
+    }
+
+    function parseJsonFirstFrame(jsonObject)
+    {
+        for (var l = 0; l < jsonObject.players.length; l++)
+        {
+            appContext.addPlayer("SomeName")
+            var spaceships = jsonObject.players[l].bots
+            for (var m = 0; m < spaceships.length; m++)
+            {
+                var posShip = spaceships[m].position.split(',')
+                var player = appContext.players[l];
+                player.addSpaceship(posShip[0], posShip[1])
             }
         }
     }
@@ -52,27 +67,22 @@ ApplicationWindow {
             running: frameUrl != ""
             repeat: true
             property url frameUrl: ""
+            property bool firstTrigger: false
             onTriggered: {
                 // Parse frame file
                 fileIO.source = frameUrl
                 var content = fileIO.read()
                 var jsonObject = JSON.parse(content)
+
+                if (firstTrigger)
+                {
+                    firstTrigger = false
+                    parseJsonFirstFrame(jsonObject)
+                }
+
                 parseJson(jsonObject)
 
-                appContext.processFrame()
-
                 frameUrl = nextFileGrabber.getNextFrameFileUrl(frameUrl)
-            }
-        }
-
-        MouseArea {
-            acceptedButtons: Qt.LeftButton | Qt.RightButton
-            anchors.fill: parent
-            onClicked: {
-                if (mouse.button === Qt.LeftButton)
-                    appContext.addSpaceship(mouseX, mouseY)
-                else if (mouse.button === Qt.RightButton)
-                    appContext.addBullet(mouseX, mouseY)
             }
         }
 
@@ -82,6 +92,7 @@ ApplicationWindow {
             Connections {
                 target: fileDialogLoader.item
                 onAccepted: {
+                    gameTimer.firstTrigger = true
                     gameTimer.frameUrl = fileDialogLoader.fileDialog.fileUrl
                 }
                 onRejected: {
@@ -97,8 +108,8 @@ ApplicationWindow {
         }
 
         Button {
-            id: pressMeButton
-            text: "Press me"
+            id: loadGameButton
+            text: "Load Game"
             onClicked: {
                 fileDialogLoader.sourceComponent = fileDialogComponent
                 fileDialogLoader.fileDialog.visible = true
@@ -106,12 +117,15 @@ ApplicationWindow {
         }
 
         Repeater {
-            model: appContext.spaceships
-            delegate: Spaceship {
-                x: modelData.x
-                y: modelData.y
-                source: "qrc:///Images/ufo.png"
-                visible: !modelData.dead
+            model: appContext.players
+            delegate: Repeater {
+                model: modelData.spaceships
+                delegate: Spaceship {
+                    x: modelData.x
+                    y: modelData.y
+                    source: "qrc:///Images/ufo.png"
+                    visible: true
+                }
             }
         }
 
