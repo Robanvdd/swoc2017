@@ -12,10 +12,7 @@ import java.awt.Point;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Ferdinand on 4-7-17.
@@ -45,7 +42,7 @@ public class MicroEngine {
             GameLogic();
 
             // Run for a specific amount of ticks.
-            gameRunning = (++this.tickCounter < 1);
+            gameRunning = (++this.tickCounter < 3);
         }
 
         Cleanup();
@@ -55,11 +52,11 @@ public class MicroEngine {
         // TODO Game data -> MicroTick state
 
         for (int i = 0; i < 2; i++) {
-            MicroPlayer player = new MicroPlayer("Player#" + i);
+            MicroPlayer player = new MicroPlayer("player" + i);
 
             for (int j = 0; j < 4; j++) {
                 Point position = new Point(10 * i, 10 * j);
-                player.Add(new MicroBot("Bot#" + j, 100, position));
+                player.Add(new MicroBot("bot" + j, 100, position));
             }
 
             state.Add(player);
@@ -103,12 +100,36 @@ public class MicroEngine {
             String inputJson = scripts.get(player.name).readLine(1000);
             MicroInput input = gson.fromJson(inputJson, MicroInput.class);
 
-            ExecuteCommands(player.name, input);
+            ExecuteCommands(player, input);
         }
     }
 
-    private void ExecuteCommands(String name, MicroInput input) {
-        // TODO run commands for player
+    private void ExecuteCommands(MicroPlayer player, MicroInput input) {
+        for (BotInput command : input.bots) {
+            if (command.name == null) continue;
+            Optional<MicroBot> result = player.bots.stream().filter(b -> b.name.equals(command.name)).findFirst();
+
+            if (!result.isPresent()) continue;
+            MicroBot bot = result.get();
+
+            if (command.move != null) {
+                HandleCommand(bot, command.move);
+            }
+
+            if (command.shoot != null) {
+                HandleCommand(bot, command.shoot);
+            }
+        }
+    }
+
+    private void HandleCommand(MicroBot bot, Move move) {
+        if (move.direction != null) {
+            bot.position.setLocation(move.direction);
+        }
+    }
+
+    private void HandleCommand(MicroBot bot, Shoot shoot) {
+
     }
 
     private void SaveGameState() {
@@ -205,23 +226,25 @@ public class MicroEngine {
     }
 
     private class MicroInput {
-        private List<BotCommand> bots;
+        private List<BotInput> bots;
 
         public MicroInput() {
             bots = new ArrayList<>();
         }
     }
 
-    private class BotCommand {
+    private class BotInput {
         private String name;
+        private Move move;
+        private Shoot shoot;
     }
 
-    private class Move extends BotCommand {
+    private class Move {
         private Point direction;
         private Integer speed;
     }
 
-    private class Shoot extends BotCommand {
+    private class Shoot {
         private Point direction;
     }
 
