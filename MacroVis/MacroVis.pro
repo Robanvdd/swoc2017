@@ -3,16 +3,15 @@ QT += qml quick widgets
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    spaceship.cpp \
-    appcontext.cpp \
-    customfiledialog.cpp \
     fileio.cpp \
-    bullet.cpp \
-    nextfilegrabber.cpp \
-    player.cpp
+    customfiledialog.cpp \
+    game.cpp \
+    solarsystem.cpp \
+    planet.cpp \
+    gameobject.cpp \
+    planetimageprovider.cpp
 
-RESOURCES += qml.qrc \
-    images.qrc
+RESOURCES += qml.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -37,10 +36,10 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    spaceship.h \
-    appcontext.h \
-    customfiledialog.h \
     fileio.h \
-    bullet.h \
-    nextfilegrabber.h \
-    player.h
+    customfiledialog.h \
+    game.h \
+    solarsystem.h \
+    planet.h \
+    gameobject.h \
+    planetimageprovider.h

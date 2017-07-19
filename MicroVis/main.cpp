@@ -23,6 +23,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<CustomFileDialog>("SWOC", 1, 0, "CustomFileDialog");
     qmlRegisterInterface<Spaceship>("Spaceship");
     qmlRegisterInterface<Bullet>("Bullet");
+    qmlRegisterInterface<Player>("Player");
 
     engine.load(QUrl(QLatin1String("qrc:/main.qml")));
 

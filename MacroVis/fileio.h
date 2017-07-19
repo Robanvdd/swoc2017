@@ -9,7 +9,7 @@ class FileIO : public QObject
     Q_OBJECT
     Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
 public:
-    explicit FileIO(QObject *parent = nullptr);
+    explicit FileIO(QObject *parent = 0);
 
     QUrl source() const;
     void setSource(const QUrl &source);
