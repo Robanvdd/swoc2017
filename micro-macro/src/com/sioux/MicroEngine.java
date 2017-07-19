@@ -7,6 +7,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import com.sioux.game_objects.Game;
+import com.sioux.game_objects.GameResult;
 
 import java.awt.Point;
 import java.io.File;
@@ -35,7 +36,7 @@ public class MicroEngine {
         this.gameRunning = false;
     }
 
-    public void Run(Game start) {
+    public GameResult Run(Game start) {
         Initialize(start);
 
         while (gameRunning) {
@@ -45,7 +46,9 @@ public class MicroEngine {
             gameRunning = (++this.tickCounter < 3);
         }
 
-        Cleanup();
+        Uninitialize();
+
+        return new GameResult(GetGame(), GetWinner());
     }
 
     private void Initialize(Game start) {
@@ -74,7 +77,7 @@ public class MicroEngine {
         gameRunning = true;
     }
 
-    private void Cleanup() {
+    private void Uninitialize() {
         for (Map.Entry<String, BotProcess> entry : scripts.entrySet()) {
             if (entry.getValue().isRunning()) {
                 entry.getValue().close();
@@ -124,12 +127,19 @@ public class MicroEngine {
 
     private void HandleCommand(MicroBot bot, Move move) {
         if (move.direction != null) {
-            bot.position.setLocation(move.direction);
+            bot.position.setLocation(ArenaBoundsCheck(move.direction));
         }
     }
 
     private void HandleCommand(MicroBot bot, Shoot shoot) {
 
+    }
+
+    private Point ArenaBoundsCheck(Point pos) {
+        Point newPos = new Point();
+        newPos.x = Math.min(Math.max(pos.x, 0), this.state.arena.width);
+        newPos.y = Math.min(Math.max(pos.x, 0), this.state.arena.height);
+        return newPos;
     }
 
     private void SaveGameState() {
@@ -147,6 +157,14 @@ public class MicroEngine {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private Game GetGame() {
+        return null;
+    }
+
+    private String GetWinner() {
+        return new String();
     }
 
     private class MicroTick {
@@ -259,6 +277,7 @@ public class MicroEngine {
             Integer y = Integer.parseInt(point[1]);
             return new Point(x, y);
         }
+
         public void write(JsonWriter writer, Point value) throws IOException {
             if (value == null) {
                 writer.nullValue();
