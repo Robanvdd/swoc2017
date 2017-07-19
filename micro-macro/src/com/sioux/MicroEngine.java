@@ -64,8 +64,8 @@ public class MicroEngine {
 
             state.Add(player);
 
-            final String dir = "/home/luke/Projects/swoc2017/test-scripts/";
-            final String cmd = "python3.5 micro-bot.py";
+            final String dir = "../test-scripts/readyplayerone/1/micro/";
+            final String cmd = "./run.sh";
 
             try {
                 scripts.put(player.name, new BotProcess(dir, cmd));
@@ -143,7 +143,7 @@ public class MicroEngine {
     }
 
     private void SaveGameState() {
-        final String path = "/home/luke/Projects/swoc2017/test-scripts/ticks/tick_" + this.tickCounter + ".json";
+        final String path = "../test-scripts/readyplayerone/1/micro/ticks/tick_" + this.tickCounter + ".json";
         final String data = gson.toJson(state, MicroTick.class);
 
         try {
