@@ -5,8 +5,8 @@ Player::Player(QObject *parent) : QObject(parent)
 
 }
 
-Player::Player(QString id, QObject *parent) :
-    QObject(parent), m_id(id)
+Player::Player(QString id, QColor color, QObject *parent) :
+    QObject(parent), m_id(id), m_color(color)
 {}
 
 void Player::setId(QString id)
@@ -18,6 +18,17 @@ void Player::setId(QString id)
 QString Player::getId()
 {
     return m_id;
+}
+
+void Player::setColor(QColor color)
+{
+    m_color = color;
+    emit colorChanged();
+}
+
+QColor Player::getColor()
+{
+    return m_color;
 }
 
 void Player::addSpaceship(int x, int y)

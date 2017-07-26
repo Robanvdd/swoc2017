@@ -21,7 +21,7 @@ public:
     Q_INVOKABLE void addSpaceship(int x, int y);
     QQmlListProperty<Spaceship> getSpaceships();
 
-    Q_INVOKABLE void addPlayer(QString id);
+    Q_INVOKABLE void addPlayer(QString id, QColor color);
     QQmlListProperty<Player> getPlayers();
 
     Q_INVOKABLE void addBullet(int x, int y);

@@ -21,9 +21,9 @@ QQmlListProperty<Spaceship> AppContext::getSpaceships()
     return QQmlListProperty<Spaceship>(this, m_spaceships);
 }
 
-void AppContext::addPlayer(QString id)
+void AppContext::addPlayer(QString id, QColor color)
 {
-    m_players << new Player(id);
+    m_players << new Player(id, color);
     emit playersChanged();
 }
 

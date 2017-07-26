@@ -3,6 +3,7 @@ import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
+import QtGraphicalEffects 1.0
 import SWOC 1.0
 
 ApplicationWindow {
@@ -40,7 +41,10 @@ ApplicationWindow {
     {
         for (var l = 0; l < jsonObject.players.length; l++)
         {
-            appContext.addPlayer("SomeName")
+            var color = "#800000FF";
+            if (l == 0) color = "#80FF0000"
+            if (l == 1) color = "#8000FF00"
+            appContext.addPlayer("SomeName", color)
             var spaceships = jsonObject.players[l].bots
             for (var m = 0; m < spaceships.length; m++)
             {
@@ -117,14 +121,26 @@ ApplicationWindow {
         }
 
         Repeater {
+            id: outerRepeater
             model: appContext.players
-            delegate: Repeater {
-                model: modelData.spaceships
-                delegate: Spaceship {
-                    x: modelData.x
-                    y: modelData.y
-                    source: "qrc:///Images/ufo.png"
-                    visible: true
+            delegate: Item {
+                property color playerColor: color
+                Repeater {
+                    model: modelData.spaceships
+                    delegate: Spaceship {
+                        property color playerColor: parent.playerColor
+                        id: aSpaceShip
+                        x: modelData.x
+                        y: modelData.y
+                        source: "qrc:///Images/ufo.png"
+                        visible: true
+
+                        ColorOverlay {
+                            anchors.fill: aSpaceShip
+                            source: aSpaceShip
+                            color: aSpaceShip.playerColor
+                        }
+                    }
                 }
             }
         }
