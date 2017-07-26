@@ -28,9 +28,10 @@ class RedirectStdStreams(object):
 class Language:
     JAVA = 1
     CSHARP = 2
+    PYTHON = 3
 
 codeSubdir = "code"
-allowedLanguages = ['java', 'csharp']
+allowedLanguages = ['java', 'csharp', 'python']
 
 def touch(path):
     with open(path, 'a'):
@@ -74,8 +75,8 @@ def extract_bot():
     # Working from bot-id directory
     zipFiles = glob.glob("*.zip")
     if not zipFiles:
-    	sys.stderr.write("Error: No zip file found")
-    	sys.exit(1)
+        sys.stderr.write("Error: No zip file found")
+        sys.exit(1)
 
     zipFileName = zipFiles[0]
     if len(zipFiles) > 1:
@@ -130,6 +131,23 @@ def create_csharp_run_script(exeName):
     os.chmod("code/" + exeName, st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
 #
+# Python methods
+#
+
+def get_first_py_name():
+    os.chdir(codeSubdir)
+    exe = glob.glob("*.py")[0]
+    os.chdir("..")
+    return exe
+
+def create_python_run_script(pyName):
+    # Working from bot-id directory
+    with open("run.sh", "w") as f:
+        f.write("python code/" + pyName)
+    st = os.stat("run.sh")
+    os.chmod("run.sh", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+
+#
 # Language determination
 #
 
@@ -147,6 +165,10 @@ def determine_language():
     # Else, test for csharp, which is true when there is a single .exe file in the root directory
     elif glob.glob("*.exe"):
         language = Language.CSHARP
+
+    # Else, test for python, which is true when there is a single .py file in the root directory
+    elif glob.glob("*.py"):
+        language = Language.PYTHON
 
     os.chdir("..")
     return language
@@ -189,6 +211,10 @@ def main():
                     print("Detected language is C#")
                     exeName = get_first_exe_name()
                     create_csharp_run_script(exeName)
+                elif language == Language.PYTHON:
+                    print("Detected language is python")
+                    pyName = get_first_py_name()
+                    create_python_run_script(pyName)
                 else:
                     sys.stderr.write("Error: Code was not written in a valid language")
                     sys.exit(1)

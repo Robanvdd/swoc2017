@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>qtquickcontrols2.conf</file>
+        <file>images/Ceres.ico</file>
+        <file>images/Earth.ico</file>
+        <file>images/Eris.ico</file>
+        <file>images/Jupiter.ico</file>
+        <file>images/Mars.ico</file>
+        <file>images/Mercury.ico</file>
+        <file>images/Moon.ico</file>
+        <file>images/Neptune.ico</file>
+        <file>images/Pluto.ico</file>
+        <file>images/Saturn.ico</file>
+        <file>images/Sun.ico</file>
+        <file>images/Uranus.ico</file>
+        <file>images/Venus.ico</file>
+    </qresource>
+</RCC>

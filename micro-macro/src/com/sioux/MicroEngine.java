@@ -7,15 +7,13 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import com.sioux.game_objects.Game;
+import com.sioux.game_objects.GameResult;
 
 import java.awt.Point;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Ferdinand on 4-7-17.
@@ -38,34 +36,36 @@ public class MicroEngine {
         this.gameRunning = false;
     }
 
-    public void Run(Game start) {
+    public GameResult Run(Game start) {
         Initialize(start);
 
         while (gameRunning) {
             GameLogic();
 
             // Run for a specific amount of ticks.
-            gameRunning = (++this.tickCounter < 1);
+            gameRunning = (++this.tickCounter < 3);
         }
 
-        Cleanup();
+        Uninitialize();
+
+        return new GameResult(GetGame(), GetWinner());
     }
 
     private void Initialize(Game start) {
         // TODO Game data -> MicroTick state
 
         for (int i = 0; i < 2; i++) {
-            MicroPlayer player = new MicroPlayer("Player#" + i);
+            MicroPlayer player = new MicroPlayer("player" + i);
 
             for (int j = 0; j < 4; j++) {
                 Point position = new Point(10 * i, 10 * j);
-                player.Add(new MicroBot("Bot#" + j, 100, position));
+                player.Add(new MicroBot("bot" + j, 100, position));
             }
 
             state.Add(player);
 
-            final String dir = "/home/luke/Projects/swoc2017/test-scripts/";
-            final String cmd = "python3.5 micro-bot.py";
+            final String dir = "../test-scripts/readyplayerone/1/micro/";
+            final String cmd = "./run.sh";
 
             try {
                 scripts.put(player.name, new BotProcess(dir, cmd));
@@ -77,7 +77,7 @@ public class MicroEngine {
         gameRunning = true;
     }
 
-    private void Cleanup() {
+    private void Uninitialize() {
         for (Map.Entry<String, BotProcess> entry : scripts.entrySet()) {
             if (entry.getValue().isRunning()) {
                 entry.getValue().close();
@@ -103,16 +103,47 @@ public class MicroEngine {
             String inputJson = scripts.get(player.name).readLine(1000);
             MicroInput input = gson.fromJson(inputJson, MicroInput.class);
 
-            ExecuteCommands(player.name, input);
+            ExecuteCommands(player, input);
         }
     }
 
-    private void ExecuteCommands(String name, MicroInput input) {
-        // TODO run commands for player
+    private void ExecuteCommands(MicroPlayer player, MicroInput input) {
+        for (BotInput command : input.bots) {
+            if (command.name == null) continue;
+            Optional<MicroBot> result = player.bots.stream().filter(b -> b.name.equals(command.name)).findFirst();
+
+            if (!result.isPresent()) continue;
+            MicroBot bot = result.get();
+
+            if (command.move != null) {
+                HandleCommand(bot, command.move);
+            }
+
+            if (command.shoot != null) {
+                HandleCommand(bot, command.shoot);
+            }
+        }
+    }
+
+    private void HandleCommand(MicroBot bot, Move move) {
+        if (move.direction != null) {
+            bot.position.setLocation(ArenaBoundsCheck(move.direction));
+        }
+    }
+
+    private void HandleCommand(MicroBot bot, Shoot shoot) {
+
+    }
+
+    private Point ArenaBoundsCheck(Point pos) {
+        Point newPos = new Point();
+        newPos.x = Math.min(Math.max(pos.x, 0), this.state.arena.width);
+        newPos.y = Math.min(Math.max(pos.x, 0), this.state.arena.height);
+        return newPos;
     }
 
     private void SaveGameState() {
-        final String path = "/home/luke/Projects/swoc2017/test-scripts/ticks/tick_" + this.tickCounter + ".json";
+        final String path = "../test-scripts/readyplayerone/1/micro/ticks/tick_" + this.tickCounter + ".json";
         final String data = gson.toJson(state, MicroTick.class);
 
         try {
@@ -126,6 +157,14 @@ public class MicroEngine {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private Game GetGame() {
+        return null;
+    }
+
+    private String GetWinner() {
+        return new String();
     }
 
     private class MicroTick {
@@ -205,23 +244,25 @@ public class MicroEngine {
     }
 
     private class MicroInput {
-        private List<BotCommand> bots;
+        private List<BotInput> bots;
 
         public MicroInput() {
             bots = new ArrayList<>();
         }
     }
 
-    private class BotCommand {
+    private class BotInput {
         private String name;
+        private Move move;
+        private Shoot shoot;
     }
 
-    private class Move extends BotCommand {
+    private class Move {
         private Point direction;
         private Integer speed;
     }
 
-    private class Shoot extends BotCommand {
+    private class Shoot {
         private Point direction;
     }
 
@@ -236,6 +277,7 @@ public class MicroEngine {
             Integer y = Integer.parseInt(point[1]);
             return new Point(x, y);
         }
+
         public void write(JsonWriter writer, Point value) throws IOException {
             if (value == null) {
                 writer.nullValue();

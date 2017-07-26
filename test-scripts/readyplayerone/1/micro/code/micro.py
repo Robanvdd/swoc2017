@@ -18,6 +18,22 @@ def game_loop():
     commands = {
         "bots": [
             {
+                "name": "bot0",
+            },
+            {
+                "name": "bot1",
+                "move": {
+                    "direction": "1,1",
+                    "speed": "10"
+                }
+            },
+            {
+                "name": "bot2",
+                "shoot": {
+                    "direction": "1,1"
+                }
+            },
+            {
                 "name": "bot1",
                 "move": {
                     "direction": "1,1",
@@ -27,16 +43,6 @@ def game_loop():
                     "direction": "1,1"
                 }
             },
-            {
-                "name": "bot2",
-                "move": {
-                    "direction": "1,1",
-                    "speed": "10"
-                },
-                "shoot": {
-                    "direction": "1,1"
-                }
-            }
         ]
     }
 
