@@ -43,7 +43,7 @@ public class MicroEngine {
             GameLogic();
 
             // Run for a specific amount of ticks.
-            gameRunning = (++this.tickCounter < 3);
+            gameRunning = (++this.tickCounter < 100);
         }
 
         Uninitialize();
@@ -65,7 +65,7 @@ public class MicroEngine {
             state.Add(player);
 
             final String dir = "../test-scripts/readyplayerone/1/micro/";
-            final String cmd = "./run.sh";
+            final String cmd = "python3.5 ./code/micro.py"; //"./run.sh";
 
             try {
                 scripts.put(player.name, new BotProcess(dir, cmd));
@@ -114,32 +114,22 @@ public class MicroEngine {
 
             if (!result.isPresent()) continue;
             MicroBot bot = result.get();
-
-            if (command.move != null) {
-                HandleCommand(bot, command.move);
-            }
-
-            if (command.shoot != null) {
-                HandleCommand(bot, command.shoot);
-            }
+            bot.Move(command.move);
+            bot.Shoot(command.shoot);
         }
     }
 
-    private void HandleCommand(MicroBot bot, Move move) {
-        if (move.direction != null) {
-            bot.position.setLocation(ArenaBoundsCheck(move.direction));
-        }
-    }
-
-    private void HandleCommand(MicroBot bot, Shoot shoot) {
-
+    private Point PolarToCartesian(Integer distance, Integer angle) {
+        Double radian = Math.toRadians(angle);
+        Double x = distance * Math.cos(radian);
+        Double y = distance * Math.sin(radian);
+        return new Point(x.intValue(), y.intValue());
     }
 
     private Point ArenaBoundsCheck(Point pos) {
-        Point newPos = new Point();
-        newPos.x = Math.min(Math.max(pos.x, 0), this.state.arena.width);
-        newPos.y = Math.min(Math.max(pos.x, 0), this.state.arena.height);
-        return newPos;
+        Integer x = Math.min(Math.max(pos.x, 0), this.state.arena.width);
+        Integer y = Math.min(Math.max(pos.y, 0), this.state.arena.height);
+        return new Point(x, y);
     }
 
     private void SaveGameState() {
@@ -222,9 +212,11 @@ public class MicroEngine {
             this.position = pos;
         }
 
-        public Boolean Move(Move cmd) {
-            // TODO
-            return true;
+        public void Move(Move cmd) {
+            if (cmd == null) return;
+            Point newPos = PolarToCartesian(cmd.speed, cmd.direction);
+            newPos = ArenaBoundsCheck(newPos);
+            position.translate(newPos.x, newPos.y);
         }
 
         public MicroProjectile Shoot(Shoot cmd) {
@@ -258,12 +250,12 @@ public class MicroEngine {
     }
 
     private class Move {
-        private Point direction;
+        private Integer direction;
         private Integer speed;
     }
 
     private class Shoot {
-        private Point direction;
+        private Integer direction;
     }
 
     private class PointAdapter extends TypeAdapter<Point> {

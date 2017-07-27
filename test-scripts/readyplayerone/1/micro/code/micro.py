@@ -1,9 +1,37 @@
-# Example micro bot script.
+"""
+Example micro bot script.
+
+Input from micro game:
+"arena" {
+    //TODO
+},
+players: [
+
+]
+
+
+Output to micro game:
+
+"bots": [
+    {
+        "name": "bot_name"
+        "move": {
+            "direction": "0-360",
+            "speed": "0-10"
+        },
+        "shoot": {
+            "direction": "0-360"
+        }
+    }
+]
+"""
 
 import json
 import sys
 import traceback
 
+
+angle = 0
 
 def game_loop():
     # Wait for input from micro.
@@ -15,6 +43,9 @@ def game_loop():
     print(micro, file=sys.stderr)
 
     # Bot logic
+    global angle
+    angle = (angle + 1) % 360
+
     commands = {
         "bots": [
             {
@@ -23,24 +54,24 @@ def game_loop():
             {
                 "name": "bot1",
                 "move": {
-                    "direction": "1,1",
-                    "speed": "10"
+                    "direction": angle,
+                    "speed": "5"
                 }
             },
             {
                 "name": "bot2",
                 "shoot": {
-                    "direction": "1,1"
+                    "direction": angle
                 }
             },
             {
                 "name": "bot1",
                 "move": {
-                    "direction": "1,1",
-                    "speed": "10"
+                    "direction": angle,
+                    "speed": "5"
                 },
                 "shoot": {
-                    "direction": "1,1"
+                    "direction": angle
                 }
             },
         ]
