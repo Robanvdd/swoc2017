@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by Michael on 01/07/2017.
  */
-public class MacroEngine implements TickListener {
+public class MacroEngine {
     Game game;
     Gson gson;
     List<Bot> runningBots;
@@ -22,12 +22,10 @@ public class MacroEngine implements TickListener {
     CommandQueue incommingCommands;
     Boolean running = true;
     int fileCount = 0;//TODO Bad Hack
-    TickEngine tick;
 
     MacroEngine(){
         gson = new Gson();
         s = new Scripts("/Users/Michael/Documents/testdir");
-        tick = TickEngine.GetInstance();
     }
 
     public void InitAndStart(){
@@ -87,7 +85,6 @@ public class MacroEngine implements TickListener {
         }
     }
 
-
     public void ExecuteCommands(){
         Command c = incommingCommands.GetCommandOutOffQueue();
         switch (c.Type) {
@@ -103,14 +100,28 @@ public class MacroEngine implements TickListener {
         }
     }
 
-    public void Run(InitialState initGameState){
+    public void Run(InitialState initGameState) {
         SendInitialGameState(initGameState);
-        tick.AddListner(this);
-        tick.Start();
+
+        long previousTime = System.nanoTime();
+        long currentTime = 0;
+        long elapsedNanos = 0;
+        double deltaTime = 0;
+
+        //game loop
+        while (running) {
+            currentTime = System.nanoTime();
+            elapsedNanos = currentTime - previousTime;
+            deltaTime = elapsedNanos / 1_000_000_000.0;
+
+            if(deltaTime >= 10){
+                UpdateGame();
+                previousTime = currentTime;
+            }
+        }
     }
 
-    @Override
-    public void TickUpdate() {
+    public void UpdateGame(){
         ReceiveMessage();
         ExecuteCommands();
         SaveGameState();
