@@ -3,20 +3,22 @@ package com.sioux;
 public class Main {
 
     public static void main(String[] args) {
+        BotShepherdThread bot = new BotShepherdThread();//starts the bots
+        Thread botThread = new Thread(bot);
+        Engine e = new Engine(bot);
+        Thread engineThread = new Thread(e);
 
-        //Scripts s = new Scripts("/Users/Michael/Documents/testdir");
+        botThread.start();
+        engineThread.start();
 
-        MacroEngine engine = new MacroEngine();
+        //Sleep for testing
+        try { Thread.sleep(20000);} catch (InterruptedException e1) { e1.printStackTrace(); }
 
-        engine.InitAndStart();
-
-           // Command c = b.readMessage(Command.class,5000);
-           // InitialState i = b.writeAndReadMessage(initialState,InitialState.class);
-           // System.out.print(c.Type);
-           // bot1.close();
-           // bot2.close();
-
-        //MicroEngine micro_engine = new MicroEngine();
-        //micro_engine.Run(null);
+        try {
+            botThread.interrupt();
+            engineThread.interrupt();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }
