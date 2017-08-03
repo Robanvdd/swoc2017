@@ -30,7 +30,7 @@ public class MicroEngine {
         this.state = new MicroTick();
         this.scripts = new HashMap<>();
         this.gsonBuilder = new GsonBuilder();
-        this.gsonBuilder.registerTypeAdapter(Point.class, new PointAdapter());
+        this.gsonBuilder.registerTypeAdapter(Point.Double.class, new PointAdapter());
         this.gson = this.gsonBuilder.create();
         this.tickCounter = 0;
         this.gameRunning = false;
@@ -54,12 +54,12 @@ public class MicroEngine {
     private void Initialize(Game start) {
         // TODO Game data -> MicroTick state
 
-        String[] colors = {"#FF0000", "#0000FF"};
+        String[] colors = {"#32FF0000", "#320000FF"};
         for (int i = 0; i < colors.length; i++) {
             MicroPlayer player = new MicroPlayer("player" + i, colors[i]);
 
             for (int j = 0; j < 4; j++) {
-                Point position = new Point(10 * i, 10 * j);
+                Point.Double position = new Point.Double(10 * i, 10 * j);
                 player.Add(new MicroBot("bot" + j, 100, position));
             }
 
@@ -120,17 +120,17 @@ public class MicroEngine {
         }
     }
 
-    private Point PolarToCartesian(Integer distance, Integer angle) {
+    private Point.Double PolarToCartesian(Double distance, Double angle) {
         Double radian = Math.toRadians(angle);
         Double x = distance * Math.cos(radian);
         Double y = distance * Math.sin(radian);
-        return new Point(x.intValue(), y.intValue());
+        return new Point.Double(x, y);
     }
 
-    private Point ArenaBoundsCheck(Point pos) {
-        Integer x = Math.min(Math.max(pos.x, 0), this.state.arena.width);
-        Integer y = Math.min(Math.max(pos.y, 0), this.state.arena.height);
-        return new Point(x, y);
+    private Point.Double ArenaBoundsCheck(Point.Double pos) {
+        Double x = Math.min(Math.max(pos.x, 0), this.state.arena.width);
+        Double y = Math.min(Math.max(pos.y, 0), this.state.arena.height);
+        return new Point.Double(x, y);
     }
 
     private void SaveGameState() {
@@ -207,9 +207,9 @@ public class MicroEngine {
     private class MicroBot {
         private String name;
         private Integer hitpoints;
-        private Point position;
+        private Point.Double position;
 
-        public MicroBot(String name, Integer hp, Point pos) {
+        public MicroBot(String name, Integer hp, Point.Double pos) {
             this.name = name;
             this.hitpoints = hp;
             this.position = pos;
@@ -217,9 +217,10 @@ public class MicroEngine {
 
         public void Move(Move cmd) {
             if (cmd == null) return;
-            Point newPos = PolarToCartesian(cmd.speed, cmd.direction);
+            Point.Double newPos = PolarToCartesian(cmd.speed, cmd.direction);
             newPos = ArenaBoundsCheck(newPos);
-            position.translate(newPos.x, newPos.y);
+            this.position.x += newPos.x;
+            this.position.y += newPos.y;
         }
 
         public MicroProjectile Shoot(Shoot cmd) {
@@ -235,7 +236,7 @@ public class MicroEngine {
 
     private class MicroProjectile {
         private String name;
-        private Point position;
+        private Point.Double position;
     }
 
     private class MicroInput {
@@ -253,27 +254,27 @@ public class MicroEngine {
     }
 
     private class Move {
-        private Integer direction;
-        private Integer speed;
+        private Double direction;
+        private Double speed;
     }
 
     private class Shoot {
-        private Integer direction;
+        private Double direction;
     }
 
-    private class PointAdapter extends TypeAdapter<Point> {
-        public Point read(JsonReader reader) throws IOException {
+    private class PointAdapter extends TypeAdapter<Point.Double> {
+        public Point.Double read(JsonReader reader) throws IOException {
             if (reader.peek() == JsonToken.NULL) {
                 reader.nextNull();
                 return null;
             }
             String[] point = reader.nextString().split(",");
-            Integer x = Integer.parseInt(point[0]);
-            Integer y = Integer.parseInt(point[1]);
-            return new Point(x, y);
+            Double x = Double.parseDouble(point[0]);
+            Double y = Double.parseDouble(point[1]);
+            return new Point.Double(x, y);
         }
 
-        public void write(JsonWriter writer, Point value) throws IOException {
+        public void write(JsonWriter writer, Point.Double value) throws IOException {
             if (value == null) {
                 writer.nullValue();
                 return;
