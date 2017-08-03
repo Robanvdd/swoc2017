@@ -54,7 +54,7 @@ public class MicroEngine {
     private void Initialize(Game start) {
         // TODO Game data -> MicroTick state
 
-        String[] colors = {"#FF0000", "#0000FF"};
+        String[] colors = {"#32FF0000", "#320000FF"};
         for (int i = 0; i < colors.length; i++) {
             MicroPlayer player = new MicroPlayer("player" + i, colors[i]);
 
