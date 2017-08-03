@@ -5,7 +5,6 @@ import com.sioux.game_objects.*;
 import com.sioux.game_objects.Player;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.Semaphore;
@@ -16,7 +15,6 @@ public class BotShepherdThread implements Runnable {
     private LinkedList<ICommand> receiveQueue;
     private Semaphore mutex;
     private Map<String, BotProcess> bots;
-    private List<com.sioux.game_objects.Player> players;
     private Gson gson;
     private String[] botFiles;
 
@@ -26,7 +24,6 @@ public class BotShepherdThread implements Runnable {
         this.mutex = new Semaphore(1);
         this.bots = new HashMap<String, BotProcess>();
         this.gson = new Gson();
-        this.players = new ArrayList<Player>();
         this.botFiles = botFiles;
     }
 
@@ -37,12 +34,16 @@ public class BotShepherdThread implements Runnable {
             for (File file: GetAllScripts()) {
                 nameCount++;
                 Player p = new Player("player"+nameCount,10,null,1);
-                players.add(p);
+                SetUpPlayer(p);
                 bots.put(p.getName(),new BotProcess("/Users/Michael/Documents/testdir", "python " + file.toString()));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void SetUpPlayer(Player p){
+        MacroGameLogic.getInstance().AddPlayerToGame(p);
     }
 
     private void TransformToCommand(CommandAdapter command){
@@ -52,21 +53,22 @@ public class BotShepherdThread implements Runnable {
     }
 
     private void WaitForCommands(){
+        ArrayList<Player> players = MacroGameLogic.getInstance().getPlayers();
         for (Player player: players){
             String input;
             input = bots.get(player.getName()).readLine(1000);
             if(input != null) {
                 System.out.print(input);
             }
+            //TODO
             //CommandAdapter inputCommand = gson.fromJson(input,CommandAdapter.class);
             //TransformToCommand(inputCommand);
         }
     }
 
-    private void SendMessage(){
-        for (Player player: players){
-            String output;
-            bots.get(player.getName()).writeLine("hello");
+    private void SendMessage(Player p, CommandAdapter commandAdapter){
+        if (commandAdapter != null) {
+            bots.get(p.getName()).writeLine(gson.toJson(commandAdapter));
         }
     }
 
@@ -74,8 +76,10 @@ public class BotShepherdThread implements Runnable {
         int counterForTesting = 0;
 
         while(!Thread.currentThread().isInterrupted()){
-            //Add commands for testing. The commands need to come from BOTS;
-            SendMessage();
+            // for testing.
+            for (Player p : MacroGameLogic.getInstance().getPlayers()){
+                SendMessage(p,new CommandAdapter(p.getName(),CommandAdapterType.MOVE));
+            }
             WaitForCommands();
             if(10 >= counterForTesting) {
                 AddCommandsToReceiveQueue(new MoveCommand(MacroGameLogic.getInstance()));
@@ -117,6 +121,7 @@ public class BotShepherdThread implements Runnable {
     @Override
     public void run() {
         StartBots();
+        MacroGameLogic.getInstance().InitGameState();
         CommunicationLoop();
     }
 }
