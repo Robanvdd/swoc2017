@@ -3,8 +3,14 @@
 /matchmaker/matchmaker/nbproject/private/
 /matchmaker/matchmaker/build/
 /matchmaker/matchmaker/dist/
+/matchmaker/.idea/
 /test-bot/TestBot/dist/
 /micro-macro/out/
+/micro-macro/.idea/
+/player/bots_upload/
+/player/tmp/
+/java-bot/.idea/
+/java-bot/classes/
 **/Debug
 **/Release
 *.vs
