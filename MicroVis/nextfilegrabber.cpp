@@ -9,7 +9,7 @@ NextFileGrabber::NextFileGrabber(QObject *parent) : QObject(parent)
 QUrl NextFileGrabber::getNextFrameFileUrl(const QUrl &url)
 {
     // Extract path and filename
-    QFileInfo fileInfo(url.path());
+    QFileInfo fileInfo(url.toLocalFile());
     QString pathAndFilename = url.path();
     QString filename = fileInfo.fileName();
     int fileNameIndex = pathAndFilename.indexOf(filename);
@@ -28,8 +28,8 @@ QUrl NextFileGrabber::getNextFrameFileUrl(const QUrl &url)
     newUrl.setPath(path + nextFilename);
 
     // Check for existence
-    QFileInfo info(newUrl.path());
-    if (info.exists() && info.isFile())
+    QFileInfo info(newUrl.toLocalFile());
+    if (info.exists())
         return newUrl;
     else
         return "";

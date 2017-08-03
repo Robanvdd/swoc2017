@@ -16,6 +16,7 @@ class Player : public QObject
 public:
     explicit Player(QObject *parent = nullptr);
     Player(QString id, QColor color, QObject *parent = nullptr);
+    virtual ~Player();
 
     void setId(QString id);
     QString getId();
@@ -25,6 +26,8 @@ public:
 
     Q_INVOKABLE void addSpaceship(int x, int y);
     Q_INVOKABLE void moveSpaceship(int index, int x, int y);
+    Q_INVOKABLE void removeSpaceship(int index);
+    Q_INVOKABLE void clearSpaceships();
     QQmlListProperty<Spaceship> getSpaceships();
 
 signals:

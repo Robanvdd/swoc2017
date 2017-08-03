@@ -1,13 +1,17 @@
 #include "player.h"
 
 Player::Player(QObject *parent) : QObject(parent)
-{
-
-}
+{}
 
 Player::Player(QString id, QColor color, QObject *parent) :
     QObject(parent), m_id(id), m_color(color)
-{}
+{
+}
+
+Player::~Player()
+{
+    clearSpaceships();
+}
 
 void Player::setId(QString id)
 {
@@ -41,6 +45,21 @@ void Player::moveSpaceship(int index, int x, int y)
 {
     m_spaceships.at(index)->move(x, y);
     emit spaceshipsChanged();
+}
+
+void Player::removeSpaceship(int index)
+{
+    delete m_spaceships.at(index);
+    m_spaceships.removeAt(index);
+    emit spaceshipsChanged();
+}
+
+void Player::clearSpaceships()
+{
+    auto backup = m_spaceships;
+    m_spaceships.clear();
+    emit spaceshipsChanged();
+    qDeleteAll(backup);
 }
 
 QQmlListProperty<Spaceship> Player::getSpaceships()

@@ -41,10 +41,7 @@ ApplicationWindow {
     {
         for (var l = 0; l < jsonObject.players.length; l++)
         {
-            var color = "#800000FF";
-            if (l == 0) color = "#80FF0000"
-            if (l == 1) color = "#8000FF00"
-            appContext.addPlayer("SomeName", color)
+            appContext.addPlayer("SomeName", jsonObject.players[l].color)
             var spaceships = jsonObject.players[l].bots
             for (var m = 0; m < spaceships.length; m++)
             {
@@ -115,9 +112,12 @@ ApplicationWindow {
             id: loadGameButton
             text: "Load Game"
             onClicked: {
+                appContext.clearPlayers()
+                appContext.clearBullets()
                 fileDialogLoader.sourceComponent = fileDialogComponent
                 fileDialogLoader.fileDialog.visible = true
             }
+            z: 1
         }
 
         Repeater {

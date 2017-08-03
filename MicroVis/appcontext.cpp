@@ -2,29 +2,22 @@
 
 #include <QFile>
 
-AppContext::AppContext(QObject *parent) : QObject(parent),
-    m_helloWorld("Hello, world!")
+AppContext::AppContext(QObject *parent) : QObject(parent)
 {
-    m_spaceships << new Spaceship(100, 200, this) << new Spaceship(200, 300, this);
-    m_spaceships << new Spaceship(800, 550, this) << new Spaceship(400, 400, this);
-    m_bullets << new Bullet(650, 500, this) << new Bullet(300, 200, this);
-}
-
-void AppContext::addSpaceship(int x, int y)
-{
-    m_spaceships << new Spaceship(x, y, this);
-    emit spaceshipsChanged();
-}
-
-QQmlListProperty<Spaceship> AppContext::getSpaceships()
-{
-    return QQmlListProperty<Spaceship>(this, m_spaceships);
 }
 
 void AppContext::addPlayer(QString id, QColor color)
 {
     m_players << new Player(id, color);
     emit playersChanged();
+}
+
+void AppContext::clearPlayers()
+{
+    auto backup = m_players;
+    m_players.clear();
+    emit playersChanged();
+    qDeleteAll(backup);
 }
 
 QQmlListProperty<Player> AppContext::getPlayers()
@@ -41,6 +34,22 @@ void AppContext::addBullet(int x, int y)
 void AppContext::moveBullet(int index, int x, int y)
 {
     m_bullets.at(index)->move(x, y);
+    emit bulletsChanged();
+}
+
+void AppContext::removeBullet(int index)
+{
+    delete m_bullets.at(index);
+    m_bullets.removeAt(index);
+    emit bulletsChanged();
+}
+
+void AppContext::clearBullets()
+{
+    auto backup = m_bullets;
+    m_bullets.clear();
+    emit bulletsChanged();
+    qDeleteAll(backup);
 }
 
 QQmlListProperty<Bullet> AppContext::getBullets()
