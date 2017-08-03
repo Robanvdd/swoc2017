@@ -54,8 +54,9 @@ public class MicroEngine {
     private void Initialize(Game start) {
         // TODO Game data -> MicroTick state
 
-        for (int i = 0; i < 2; i++) {
-            MicroPlayer player = new MicroPlayer("player" + i);
+        String[] colors = {"#FF0000", "#0000FF"};
+        for (int i = 0; i < colors.length; i++) {
+            MicroPlayer player = new MicroPlayer("player" + i, colors[i]);
 
             for (int j = 0; j < 4; j++) {
                 Point position = new Point(10 * i, 10 * j);
@@ -189,10 +190,12 @@ public class MicroEngine {
 
     private class MicroPlayer {
         private String name;
+        private String color;
         private List<MicroBot> bots;
 
-        public MicroPlayer(String name) {
+        public MicroPlayer(String name, String color) {
             this.name = name;
+            this.color = color;
             this.bots = new ArrayList<>();
         }
 
