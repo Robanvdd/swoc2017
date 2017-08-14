@@ -132,8 +132,6 @@ ApplicationWindow {
                         id: aSpaceShip
                         x: modelData.x
                         y: modelData.y
-                        source: "qrc:///Images/ufo.png"
-                        visible: true
 
                         ColorOverlay {
                             anchors.fill: aSpaceShip
@@ -150,9 +148,14 @@ ApplicationWindow {
             delegate: Bullet {
                 x: modelData.x
                 y: modelData.y
-                source: "qrc:///Images/bullet.png"
-                visible: true
             }
         }
+    }
+
+    LaserFence {
+        id: laserFence
+        visible: true
+        x: 15
+        y: 35
     }
 }

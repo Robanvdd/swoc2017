@@ -3,5 +3,6 @@
         <file>Images/bullet.png</file>
         <file>Images/ufo.png</file>
         <file>Images/background.png</file>
+        <file>Images/laserfence.png</file>
     </qresource>
 </RCC>

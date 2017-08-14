@@ -5,6 +5,9 @@ Image {
     id: spaceshipImage
     width: 64
     height: 64
+    source: "qrc:///Images/ufo.png"
+    visible: true
+
     Behavior on x {
         NumberAnimation {
             id: spaceXAnimation
@@ -16,7 +19,4 @@ Image {
             duration: 1000/30
         }
     }
-
-    Component.onCompleted: print(spaceXAnimation.duration)
-    onXChanged: print("X changed: " + x)
 }
