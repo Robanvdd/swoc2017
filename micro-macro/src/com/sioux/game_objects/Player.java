@@ -47,6 +47,14 @@ public class Player {
         return ufos;
     }
 
+    public Ufo GetUfoById(int id){
+        for (Ufo u: ufos) {
+            if (u.getId() == id) return u;
+        }
+        System.out.print("[Player]::No such Ufo found.");
+        return null;
+    }
+
     public void setUfos(List<Ufo> ufos) {
         this.ufos = ufos;
     }

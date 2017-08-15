@@ -48,15 +48,28 @@ public class MacroGameLogic {
         gameState = game;
     }
 
+    private Player GetPlayer(String playerName){
+        for (Player p: players) {
+            if(p.getName() == playerName) return p;
+        }
+        System.out.print("[MacroGameLogic]::No such player found");
+        return null;
+    }
+
     public ArrayList<Player> getPlayers() {
         return players;
+    }
+
+    public Game GetGameState(){
+        return this.gameState;
     }
 
     public void AddPlayerToGame(Player p){
         players.add(p);
     }
 
-    public void Move(){
+    public void Move(String playerId, int ufoId, String SolarSystem, String ToPlanet){
+
         System.out.print("[Game]::Doing a Move\n");
     }
 

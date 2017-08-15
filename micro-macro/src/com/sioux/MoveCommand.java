@@ -9,6 +9,7 @@ public class MoveCommand implements ICommand {
 
     @Override
     public void Execute() {
-        game.Move();
+        game.Move("name",1,"system","planet");
     }
 }
+
