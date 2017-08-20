@@ -3,6 +3,7 @@ import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
+import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.0
 import SWOC 1.0
 
@@ -19,36 +20,58 @@ ApplicationWindow {
 
     function parseJson(jsonObject)
     {
-        for (var i = 0; i < jsonObject.players.length; i++)
+        try
         {
-            var bots = jsonObject.players[i].bots
-            for (var j = 0; j < bots.length; j++)
-            {
-                var posBot = bots[j].position.split(',')
-                appContext.players[i].moveSpaceship(j, posBot[0], posBot[1])
-            }
+            laserFence.width = jsonObject.arena.width;
+            laserFence.height = jsonObject.arena.height;
 
-            var bullets = jsonObject.projectiles
-            for (var k = 0; k < bullets.length; k++)
+            for (var i = 0; i < jsonObject.players.length; i++)
             {
-                var posBul = bullets[k].position.split(',')
-                appContext.moveBullet(k, posBul[0], posBul[1])
+                var bots = jsonObject.players[i].bots
+                for (var j = 0; j < bots.length; j++)
+                {
+                    var posBot = bots[j].position.split(',')
+                    appContext.players[i].moveSpaceship(j, posBot[0], posBot[1])
+                }
+
+                var bullets = jsonObject.projectiles
+                for (var k = 0; k < bullets.length; k++)
+                {
+                    var posBul = bullets[k].position.split(',')
+                    appContext.moveBullet(k, posBul[0], posBul[1])
+                }
             }
+        }
+        catch (error)
+        {
+            messageDialog.text = "Error parsing json: " + error.message
+            messageDialog.visible = true
         }
     }
 
     function parseJsonFirstFrame(jsonObject)
     {
-        for (var l = 0; l < jsonObject.players.length; l++)
+        try
         {
-            appContext.addPlayer("SomeName", jsonObject.players[l].color)
-            var spaceships = jsonObject.players[l].bots
-            for (var m = 0; m < spaceships.length; m++)
+            laserFence.width = jsonObject.arena.width;
+            laserFence.height = jsonObject.arena.height;
+
+            for (var l = 0; l < jsonObject.players.length; l++)
             {
-                var posShip = spaceships[m].position.split(',')
-                var player = appContext.players[l];
-                player.addSpaceship(posShip[0], posShip[1])
+                appContext.addPlayer(jsonObject.players[l].name, jsonObject.players[l].color)
+                var spaceships = jsonObject.players[l].bots
+                for (var m = 0; m < spaceships.length; m++)
+                {
+                    var posShip = spaceships[m].position.split(',')
+                    var player = appContext.players[l];
+                    player.addSpaceship(posShip[0], posShip[1])
+                }
             }
+        }
+        catch (error)
+        {
+            messageDialog.text = "Error parsing json: " + error.message
+            messageDialog.visible = true
         }
     }
 
@@ -59,7 +82,10 @@ ApplicationWindow {
         FileIO {
             id: fileIO
             source: ""
-            onError: console.log(msg)
+            onError: {
+                messageDialog.text = msg
+                messageDialog.visible = true
+            }
         }
 
         Timer {
@@ -157,5 +183,16 @@ ApplicationWindow {
         visible: true
         x: 15
         y: 35
+    }
+
+    MessageDialog {
+        id: messageDialog
+        title: "Error occurred!"
+        onAccepted: {
+            visible = false
+        }
+
+        visible: false
+
     }
 }
