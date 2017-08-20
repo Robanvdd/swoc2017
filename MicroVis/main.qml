@@ -38,7 +38,14 @@ ApplicationWindow {
                 for (var k = 0; k < bullets.length; k++)
                 {
                     var posBul = bullets[k].position.split(',')
-                    appContext.moveBullet(k, posBul[0], posBul[1])
+                    if (appContext.getBulletCount() <= k)
+                        appContext.addBullet(posBul[0], posBul[1])
+                    else
+                        appContext.moveBullet(k, posBul[0], posBul[1])
+                }
+                while (appContext.getBulletCount() > jsonObject.projectiles)
+                {
+                    appContext.removeBullet()
                 }
             }
         }

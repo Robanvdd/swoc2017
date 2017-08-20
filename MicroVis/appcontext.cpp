@@ -37,11 +37,16 @@ void AppContext::moveBullet(int index, int x, int y)
     emit bulletsChanged();
 }
 
-void AppContext::removeBullet(int index)
+void AppContext::removeBullet()
 {
-    delete m_bullets.at(index);
-    m_bullets.removeAt(index);
+    delete m_bullets.back();
+    m_bullets.pop_back();
     emit bulletsChanged();
+}
+
+int AppContext::getBulletCount() const
+{
+    return m_bullets.size();
 }
 
 void AppContext::clearBullets()
