@@ -8,12 +8,14 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import com.sioux.game_objects.Game;
 import com.sioux.game_objects.GameResult;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.awt.Point;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by Ferdinand on 4-7-17.
@@ -116,7 +118,30 @@ public class MicroEngine {
             if (!result.isPresent()) continue;
             MicroBot bot = result.get();
             bot.Move(command.move);
-            bot.Shoot(command.shoot);
+            bot.Shoot(command.shoot, player.name);
+        }
+        ProcessHits();
+    }
+
+    private void ProcessHits() {
+        for (MicroProjectile projectile : this.state.projectiles) {
+            Point.Double newPos = PolarToCartesian(10.0, projectile.direction);
+            projectile.position.x += newPos.x;
+            projectile.position.y += newPos.y;
+        }
+        for (MicroPlayer player : this.state.players) {
+            List<MicroProjectile> targets = this.state.projectiles.stream()
+                    .filter(p -> !p.source.equalsIgnoreCase(player.name)).collect(Collectors.toList());
+            for (MicroProjectile projectile : targets) {
+                if (!player.name.equalsIgnoreCase(projectile.source)) {
+                    for (MicroBot bot : player.bots) {
+                        if (bot.Hit(projectile)) {
+                            this.state.projectiles.remove(projectile);
+                        }
+                    }
+                }
+            }
+
         }
     }
 
@@ -208,35 +233,66 @@ public class MicroEngine {
         private String name;
         private Integer hitpoints;
         private Point.Double position;
+        private transient Integer tickShoot;
 
         public MicroBot(String name, Integer hp, Point.Double pos) {
             this.name = name;
             this.hitpoints = hp;
             this.position = pos;
+            this.tickShoot = 0;
         }
 
         public void Move(Move cmd) {
-            if (cmd == null) return;
+            if (cmd == null || !this.isAlive()) return;
             Point.Double newPos = PolarToCartesian(cmd.speed, cmd.direction);
             newPos = ArenaBoundsCheck(newPos);
             this.position.x += newPos.x;
             this.position.y += newPos.y;
         }
 
-        public MicroProjectile Shoot(Shoot cmd) {
-            // TODO
-            return new MicroProjectile();
+        public void Shoot(Shoot cmd, String source) {
+            if (cmd == null || !this.isAlive() || !this.canShoot())  return;
+            else this.tickShoot = tickCounter;
+            state.projectiles.add(new MicroProjectile(this.position, cmd.direction, source));
         }
 
-        public Boolean Hit(Shoot cmd) {
-            // TODO
+        public Boolean Hit(MicroProjectile projectile) {
+            if (projectile == null || !this.isAlive()) return false;
+
+            Double botRadius = 15.0;
+            Double projectileRadius = 5.0;
+            Double dx = projectile.position.getX() - this.position.getX();
+            Double dy = projectile.position.getY() - this.position.getY();
+            Double radii = botRadius + projectileRadius;
+
+            if (( dx * dx ) + ( dy * dy ) < radii * radii) {
+                this.hitpoints -= projectile.damage;
+                return true;
+            }
             return false;
+        }
+
+        public Boolean isAlive() {
+            return this.hitpoints > 0;
+        }
+
+        public Boolean canShoot() {
+            return (this.tickShoot + 30) < tickCounter;
         }
     }
 
     private class MicroProjectile {
-        private String name;
         private Point.Double position;
+        private Double direction;
+        private transient String source;
+        private transient Integer damage;
+
+        public MicroProjectile(Point.Double position, Double direction, String source) {
+            this.position = position;
+            this.direction = direction;
+            this.source = source;
+            this.damage = 5;
+        }
     }
 
     private class MicroInput {

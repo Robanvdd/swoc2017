@@ -28,7 +28,8 @@ int main(int argc, char *argv[])
     QQmlContext* context = engine.rootContext();
     context->setContextProperty("planetImageProvider", &planetImageProvider);
 
-    engine.load(QUrl(QLatin1String("qrc:/main.qml")));
+    engine.load(QUrl(QLatin1String("qrc:/Qml/"
+                                   "main.qml")));
 
     return app.exec();
 }

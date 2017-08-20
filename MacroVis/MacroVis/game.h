@@ -18,6 +18,7 @@ public:
     Q_INVOKABLE bool solarSystemExists(int solarSystemId) const;
     Q_INVOKABLE void createSolarSystem(int solarSystemId);
     Q_INVOKABLE SolarSystem* getSolarSystem(int solarSystemId) const;
+    Q_INVOKABLE void reset();
 
 signals:
     void nameChanged();

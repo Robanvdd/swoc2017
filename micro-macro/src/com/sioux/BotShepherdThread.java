@@ -52,6 +52,20 @@ public class BotShepherdThread implements Runnable {
         }
     }
 
+    public Game GetGameState(){
+        try{
+            Game _game;
+            mutex.acquire();
+                _game = MacroGameLogic.getInstance().GetGameState();
+            mutex.release();
+            return _game;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        System.out.print("[BotShepherd]:: GameState is null.");
+        return null;
+    }
+
     private void WaitForCommands(){
         ArrayList<Player> players = MacroGameLogic.getInstance().getPlayers();
         for (Player player: players){

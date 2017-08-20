@@ -29,6 +29,12 @@ SolarSystem *Game::getSolarSystem(int solarSystemId) const
         return nullptr;
 }
 
+void Game::reset()
+{
+    qDeleteAll(m_solarSystems);
+    m_solarSystems.clear();
+}
+
 void Game::createSolarSystem(int solarSystemId)
 {
     m_solarSystems.append(new SolarSystem(solarSystemId, this));

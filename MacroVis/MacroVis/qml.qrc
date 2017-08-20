@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>main.qml</file>
         <file>qtquickcontrols2.conf</file>
         <file>images/Ceres.ico</file>
         <file>images/Earth.ico</file>
@@ -15,5 +14,12 @@
         <file>images/Sun.ico</file>
         <file>images/Uranus.ico</file>
         <file>images/Venus.ico</file>
+        <file>Qml/main.qml</file>
+        <file>Qml/Universe.qml</file>
+        <file>Qml/SolarSystem.qml</file>
+        <file>Qml/Planet.qml</file>
+        <file>Qml/ParseFunctions.js</file>
+        <file>Qml/GameLoader.qml</file>
+        <file>Qml/GameStateTable.qml</file>
     </qresource>
 </RCC>
