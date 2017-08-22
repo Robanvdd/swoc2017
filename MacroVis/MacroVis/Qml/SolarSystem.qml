@@ -5,7 +5,6 @@ Item {
     y: modelData.coords.y * 4
     width: childrenRect.width + childrenRect.x
     height: childrenRect.height + childrenRect.y
-    Component.onCompleted: print("solar system created")
 
     Image {
         x: -0.5*width
@@ -16,6 +15,7 @@ Item {
     }
 
     Rectangle {
+        visible: false
         color: "blue"
         radius: 0.5*width
         width: 8

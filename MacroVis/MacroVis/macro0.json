@@ -77,12 +77,39 @@
 			"credits": 133,
 			"ufos": [
 				{
-					"id": 9364,
+					"id": 9363,
 					"type": "fighter",
 					"inFight": true,
 					"coord": {
 						"x": 180,
-						"y": 130
+						"y": 400
+					}
+				},
+				{
+					"id": 9364,
+					"type": "fighter",
+					"inFight": true,
+					"coord": {
+						"x": 1200,
+						"y": 400
+					}
+				},
+				{
+					"id": 9365,
+					"type": "fighter",
+					"inFight": true,
+					"coord": {
+						"x": 900,
+						"y": 884
+					}
+				},
+				{
+					"id": 9366,
+					"type": "fighter",
+					"inFight": true,
+					"coord": {
+						"x": 700,
+						"y": 100
 					}
 				},
 				{
@@ -91,7 +118,7 @@
 					"inFight": false,
 					"coord": {
 						"x": 280,
-						"y": 160
+						"y": 700
 					}
 				}
 			]

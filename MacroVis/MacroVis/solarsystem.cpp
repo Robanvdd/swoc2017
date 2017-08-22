@@ -8,6 +8,11 @@ SolarSystem::SolarSystem(int id, QObject *parent) : GameObject(id, parent)
 {
 }
 
+SolarSystem::~SolarSystem()
+{
+    qDeleteAll(m_planets);
+}
+
 bool SolarSystem::planetExists(int planetId) const
 {
     auto planet = std::find_if(std::begin(m_planets), std::end(m_planets), [planetId](QObject* planet)

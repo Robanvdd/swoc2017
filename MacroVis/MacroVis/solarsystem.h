@@ -11,11 +11,12 @@ class SolarSystem : public GameObject
 {
     Q_OBJECT
     Q_PROPERTY(QString name MEMBER m_name NOTIFY nameChanged)
-    Q_PROPERTY(QVector2D coords MEMBER m_coords NOTIFY coordsChanged)
+    Q_PROPERTY(QPointF coords MEMBER m_coords NOTIFY coordsChanged)
     Q_PROPERTY(QList<QObject*> planets MEMBER m_planets NOTIFY planetsChanged)
 public:
     explicit SolarSystem(QObject *parent = 0);
     explicit SolarSystem(int id, QObject *parent = 0);
+    ~SolarSystem();
 
     Q_INVOKABLE bool planetExists(int planetId) const;
     Q_INVOKABLE void createPlanet(int planetId);
@@ -28,7 +29,7 @@ signals:
 public slots:
 private:
     QString m_name;
-    QVector2D m_coords;
+    QPointF m_coords;
     QList<QObject*> m_planets;
 };
 
