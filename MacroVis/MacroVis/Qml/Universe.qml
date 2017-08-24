@@ -8,18 +8,38 @@ Flickable {
         id: universe
         width: childrenRect.width + childrenRect.x
         height: childrenRect.height + childrenRect.y
-        Connections {
-            target: gameBackend
-            onSolarSystemsChanged: print("solar systems changed: " + gameBackend.solarSystems.length + " solar systems")
-        }
 
         Item {
-            width: childrenRect.width
-            height: childrenRect.height
-            Component.onCompleted: print("game created")
+            width: childrenRect.width + childrenRect.x
+            height: childrenRect.height + childrenRect.y
             Repeater {
                 model: gameBackend.solarSystems
                 delegate: SolarSystem { }
+            }
+        }
+
+        Item {
+            width: childrenRect.width + childrenRect.x
+            height: childrenRect.height + childrenRect.y
+            Repeater {
+                model: gameBackend.players
+                delegate: Item {
+                    id: player
+                    width: childrenRect.width + childrenRect.x
+                    height: childrenRect.height + childrenRect.y
+                    Repeater {
+                        model: modelData.ufos
+                        delegate: Image {
+                            x: modelData.coord.x
+                            y: modelData.coord.y
+                            width: 20
+                            height: 20
+                            smooth: true
+                            mipmap: true
+                            source: "qrc:/images/spaceship.png"
+                        }
+                    }
+                }
             }
         }
     }

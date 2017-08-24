@@ -21,7 +21,7 @@ Item {
             var content = fileIO.read()
             var jsonObject = JSON.parse(content)
             gameBackend.reset()
-            tickTimer.start()
+            //tickTimer.start()
             ParseFunctions.parseGameJSON(jsonObject)
         }
         onRejected: {

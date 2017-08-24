@@ -21,5 +21,6 @@
         <file>Qml/ParseFunctions.js</file>
         <file>Qml/GameLoader.qml</file>
         <file>Qml/GameStateTable.qml</file>
+        <file>images/spaceship.png</file>
     </qresource>
 </RCC>

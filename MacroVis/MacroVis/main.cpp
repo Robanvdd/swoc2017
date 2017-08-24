@@ -9,6 +9,8 @@
 #include "solarsystem.h"
 #include "planet.h"
 #include "planetimageprovider.h"
+#include "player.h"
+#include "ufo.h"
 
 int main(int argc, char *argv[])
 {
@@ -22,7 +24,8 @@ int main(int argc, char *argv[])
     qmlRegisterType<Game>("SWOC", 1, 0, "Game");
     qmlRegisterType<SolarSystem>("SWOC", 1, 0, "SolarSystem");
     qmlRegisterType<Planet>("SWOC", 1, 0, "Planet");
-    //qmlRegisterInterface<PlanetImageProvider>("PlanetImageProvider");
+    qmlRegisterType<Player>("SWOC", 1, 0, "Player");
+    qmlRegisterType<Ufo>("SWOC", 1, 0, "Ufo");
 
     QQmlApplicationEngine engine;
     QQmlContext* context = engine.rootContext();

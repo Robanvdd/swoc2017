@@ -14,7 +14,11 @@ function parseGameJSON(gameJSON) {
 
     for (var playerI = 0; playerI < gameJSON.players.length; playerI++) {
         var playerJSON = gameJSON.players[playerI]
-        parsePlayer(playerJSON)
+        var playerId = playerJSON.id
+        if (!gameBackend.playerExists(playerId))
+            gameBackend.createPlayer(playerId)
+        var playerCpp = gameBackend.getPlayer(playerId)
+        parsePlayer(playerJSON, playerCpp)
     }
 
     for (var fightI = 0; fightI < gameJSON.fights.length; fightI++) {
@@ -32,22 +36,25 @@ function parseFight(fightJSON) {
         + fightJSON.player2UfoIds)
 }
 
-function parsePlayer(playerJSON) {
-    print(playerJSON.id + " "
-        + playerJSON.name + " "
-        + playerJSON.credits)
+function parsePlayer(playerJSON, playerCpp) {
+    playerCpp.name = playerJSON.name
+    playerCpp.credits = playerJSON.credits
 
     for (var ufoI = 0; ufoI < playerJSON.ufos.length; ufoI++) {
         var ufoJSON = playerJSON.ufos[ufoI]
-        parseUfo(ufoJSON)
+        var ufoId = ufoJSON.id
+        if (!playerCpp.ufoExists(ufoId))
+            playerCpp.createUfo(ufoId)
+        var ufoCpp = playerCpp.getUfo(ufoId)
+        parseUfo(ufoJSON, ufoCpp)
     }
 }
 
-function parseUfo(ufoJSON) {
-    print(ufoJSON.id + " "
-        + ufoJSON.type + " "
-        + ufoJSON.inFight + " "
-        + ufoJSON.coord.x + "," + ufoJSON.coord.y)
+function parseUfo(ufoJSON, ufoCpp) {
+    ufoCpp.type = ufoJSON.type
+    ufoCpp.inFight = ufoJSON.inFight
+    ufoCpp.coord.x = ufoJSON.coord.x
+    ufoCpp.coord.y = ufoJSON.coord.y
 }
 
 function parseSolarSystem(solarSystemJSON, solarSystemCpp) {
