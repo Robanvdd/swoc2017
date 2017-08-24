@@ -87,11 +87,17 @@ ApplicationWindow {
     {
         for (var i = 0; i < jsonObject.players.length; i++)
         {
-            var bots = jsonObject.players[i].bots
+            var player = jsonObject.players[i]
+            var bots = player.bots
             for (var j = 0; j < bots.length; j++)
             {
                 var posBot = bots[j].position.split(',')
                 appContext.players[i].moveSpaceship(j, posBot[0], posBot[1])
+            }
+            while (appContext.players[i].getSpaceshipCount > player.bots.length)
+            {
+                // Only remove. Players never get new spaceships after a micro game started
+                appContext.players[i].removeSpaceship()
             }
         }
     }
@@ -122,10 +128,12 @@ ApplicationWindow {
                 laserFence.visible = true
                 initializePlayers(jsonObject)
                 initializeShips(jsonObject)
+                // projectiles init and destroy dynamically
             }
 
             calculateTransforms(jsonObject)
 
+            // players do not update (only their spaceships)
             updateSpaceships(jsonObject)
             updateProjectiles(jsonObject)
         }

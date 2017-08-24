@@ -47,11 +47,16 @@ void Player::moveSpaceship(int index, int x, int y)
     emit spaceshipsChanged();
 }
 
-void Player::removeSpaceship(int index)
+void Player::removeSpaceship()
 {
-    delete m_spaceships.at(index);
-    m_spaceships.removeAt(index);
+    delete m_spaceships.back();
+    m_spaceships.pop_back();
     emit spaceshipsChanged();
+}
+
+int Player::getSpaceshipCount() const
+{
+    return m_spaceships.size();
 }
 
 void Player::clearSpaceships()

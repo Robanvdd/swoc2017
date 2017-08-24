@@ -26,7 +26,8 @@ public:
 
     Q_INVOKABLE void addSpaceship(int x, int y);
     Q_INVOKABLE void moveSpaceship(int index, int x, int y);
-    Q_INVOKABLE void removeSpaceship(int index);
+    Q_INVOKABLE void removeSpaceship();
+    Q_INVOKABLE int getSpaceshipCount() const;
     Q_INVOKABLE void clearSpaceships();
     QQmlListProperty<Spaceship> getSpaceships();
 
