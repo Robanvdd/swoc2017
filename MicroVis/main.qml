@@ -8,6 +8,7 @@ import QtGraphicalEffects 1.0
 import SWOC 1.0
 
 ApplicationWindow {
+    id: appWindow
     visible: true
     width: 1024
     height: 768
@@ -17,13 +18,54 @@ ApplicationWindow {
             }
         }
     title: qsTr("MicroVis")
+    property real zoomFactor: 1.0
+    property int horizontalOffset: 0
+    property int verticalOffset: 0
+    property int arenaWidth: 1000
+    property int arenaHeight: 700
+
+    function calculateZoomFactor()
+    {
+        var margin = 50
+        var widthRatio = appWindow.width / (appWindow.arenaWidth + margin)
+        var heightRatio = appWindow.height / (appWindow.arenaHeight + margin)
+        var smallestRatio = widthRatio < heightRatio ? widthRatio : heightRatio
+        if (smallestRatio < 1.0)
+            appWindow.zoomFactor = smallestRatio
+
+        if (smallestRatio < 1.0 && heightRatio === smallestRatio)
+        {
+            appWindow.horizontalOffset = (appWindow.width - (appWindow.arenaWidth + margin) * smallestRatio) / 2
+        }
+        else if (smallestRatio < 1.0 && widthRatio === smallestRatio)
+        {
+            appWindow.verticalOffset = (appWindow.height - (appWindow.arenaHeight + margin) * smallestRatio) / 2
+        }
+    }
+
+    function xTransformForZoom(value)
+    {
+        return value * appWindow.zoomFactor + horizontalOffset
+    }
+
+    function yTransformForZoom(value)
+    {
+        return value * appWindow.zoomFactor + verticalOffset
+    }
+
+    function sizeTransformForZoom(value)
+    {
+        return value * appWindow.zoomFactor
+    }
 
     function parseJson(jsonObject)
     {
         try
         {
-            laserFence.width = jsonObject.arena.width;
-            laserFence.height = jsonObject.arena.height;
+            appWindow.arenaWidth = jsonObject.arena.width
+            appWindow.arenaHeight = jsonObject.arena.height
+
+            calculateZoomFactor()
 
             for (var i = 0; i < jsonObject.players.length; i++)
             {
@@ -60,8 +102,10 @@ ApplicationWindow {
     {
         try
         {
-            laserFence.width = jsonObject.arena.width;
-            laserFence.height = jsonObject.arena.height;
+            appWindow.arenaWidth = jsonObject.arena.width
+            appWindow.arenaHeight = jsonObject.arena.height
+
+            calculateZoomFactor()
 
             for (var l = 0; l < jsonObject.players.length; l++)
             {
@@ -70,7 +114,7 @@ ApplicationWindow {
                 for (var m = 0; m < spaceships.length; m++)
                 {
                     var posShip = spaceships[m].position.split(',')
-                    var player = appContext.players[l];
+                    var player = appContext.players[l]
                     player.addSpaceship(posShip[0], posShip[1])
                 }
             }
@@ -163,8 +207,10 @@ ApplicationWindow {
                     delegate: Spaceship {
                         property color playerColor: parent.playerColor
                         id: aSpaceShip
-                        x: modelData.x
-                        y: modelData.y
+                        x: xTransformForZoom(modelData.x)
+                        y: yTransformForZoom(modelData.y)
+                        width: sizeTransformForZoom(64)
+                        height: sizeTransformForZoom(64)
 
                         ColorOverlay {
                             anchors.fill: aSpaceShip
@@ -179,8 +225,10 @@ ApplicationWindow {
         Repeater {
             model: appContext.bullets
             delegate: Bullet {
-                x: modelData.x
-                y: modelData.y
+                x: xTransformForZoom(modelData.x)
+                y: yTransformForZoom(modelData.y)
+                width: sizeTransformForZoom(16)
+                height: sizeTransformForZoom(16)
             }
         }
     }
@@ -188,8 +236,10 @@ ApplicationWindow {
     LaserFence {
         id: laserFence
         visible: true
-        x: 15
-        y: 35
+        x: xTransformForZoom(15)
+        y: yTransformForZoom(35)
+        width: sizeTransformForZoom(appWindow.arenaWidth)
+        height: sizeTransformForZoom(appWindow.arenaHeight)
     }
 
     MessageDialog {
@@ -200,6 +250,5 @@ ApplicationWindow {
         }
 
         visible: false
-
     }
 }
