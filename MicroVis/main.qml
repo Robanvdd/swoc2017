@@ -24,8 +24,11 @@ ApplicationWindow {
     property int arenaWidth: 1000
     property int arenaHeight: 700
 
-    function calculateZoomFactor()
+    function calculateTransforms(jsonObject)
     {
+        appWindow.arenaWidth = jsonObject.arena.width
+        appWindow.arenaHeight = jsonObject.arena.height
+
         var margin = 50
         var widthRatio = appWindow.width / (appWindow.arenaWidth + margin)
         var heightRatio = appWindow.height / (appWindow.arenaHeight + margin)
@@ -58,66 +61,73 @@ ApplicationWindow {
         return value * appWindow.zoomFactor
     }
 
-    function parseJson(jsonObject)
+    function initializePlayers(jsonObject)
     {
-        try
+        for (var l = 0; l < jsonObject.players.length; l++)
         {
-            appWindow.arenaWidth = jsonObject.arena.width
-            appWindow.arenaHeight = jsonObject.arena.height
-
-            calculateZoomFactor()
-
-            for (var i = 0; i < jsonObject.players.length; i++)
-            {
-                var bots = jsonObject.players[i].bots
-                for (var j = 0; j < bots.length; j++)
-                {
-                    var posBot = bots[j].position.split(',')
-                    appContext.players[i].moveSpaceship(j, posBot[0], posBot[1])
-                }
-
-                var bullets = jsonObject.projectiles
-                for (var k = 0; k < bullets.length; k++)
-                {
-                    var posBul = bullets[k].position.split(',')
-                    if (appContext.getBulletCount() <= k)
-                        appContext.addBullet(posBul[0], posBul[1])
-                    else
-                        appContext.moveBullet(k, posBul[0], posBul[1])
-                }
-                while (appContext.getBulletCount() > jsonObject.projectiles)
-                {
-                    appContext.removeBullet()
-                }
-            }
-        }
-        catch (error)
-        {
-            messageDialog.text = "Error parsing json: " + error.message
-            messageDialog.visible = true
+            appContext.addPlayer(jsonObject.players[l].name, jsonObject.players[l].color)
         }
     }
 
-    function parseJsonFirstFrame(jsonObject)
+    function initializeShips(jsonObject)
+    {
+        for (var l = 0; l < jsonObject.players.length; l++)
+        {
+            var spaceships = jsonObject.players[l].bots
+            for (var m = 0; m < spaceships.length; m++)
+            {
+                var posShip = spaceships[m].position.split(',')
+                var player = appContext.players[l]
+                player.addSpaceship(posShip[0], posShip[1])
+            }
+        }
+    }
+
+    function updateSpaceships(jsonObject)
+    {
+        for (var i = 0; i < jsonObject.players.length; i++)
+        {
+            var bots = jsonObject.players[i].bots
+            for (var j = 0; j < bots.length; j++)
+            {
+                var posBot = bots[j].position.split(',')
+                appContext.players[i].moveSpaceship(j, posBot[0], posBot[1])
+            }
+        }
+    }
+
+    function updateProjectiles(jsonObject)
+    {
+        var bullets = jsonObject.projectiles
+        for (var k = 0; k < bullets.length; k++)
+        {
+            var posBul = bullets[k].position.split(',')
+            if (appContext.getBulletCount() <= k)
+                appContext.addBullet(posBul[0], posBul[1])
+            else
+                appContext.moveBullet(k, posBul[0], posBul[1])
+        }
+        while (appContext.getBulletCount() > jsonObject.projectiles)
+        {
+            appContext.removeBullet()
+        }
+    }
+
+    function parseJson(jsonObject, firstFrame)
     {
         try
         {
-            appWindow.arenaWidth = jsonObject.arena.width
-            appWindow.arenaHeight = jsonObject.arena.height
-
-            calculateZoomFactor()
-
-            for (var l = 0; l < jsonObject.players.length; l++)
+            if (firstFrame)
             {
-                appContext.addPlayer(jsonObject.players[l].name, jsonObject.players[l].color)
-                var spaceships = jsonObject.players[l].bots
-                for (var m = 0; m < spaceships.length; m++)
-                {
-                    var posShip = spaceships[m].position.split(',')
-                    var player = appContext.players[l]
-                    player.addSpaceship(posShip[0], posShip[1])
-                }
+                laserFence.visible = true
+                initializePlayers(jsonObject)
+                initializeShips(jsonObject)
             }
+
+            calculateTransforms(jsonObject)
+
+            updateSpaceships(jsonObject)
+            updateProjectiles(jsonObject)
         }
         catch (error)
         {
@@ -147,18 +157,12 @@ ApplicationWindow {
             property url frameUrl: ""
             property bool firstTrigger: false
             onTriggered: {
-                // Parse frame file
                 fileIO.source = frameUrl
                 var content = fileIO.read()
                 var jsonObject = JSON.parse(content)
 
-                if (firstTrigger)
-                {
-                    firstTrigger = false
-                    parseJsonFirstFrame(jsonObject)
-                }
-
-                parseJson(jsonObject)
+                parseJson(jsonObject, firstTrigger)
+                if (firstTrigger) firstTrigger = false
 
                 frameUrl = nextFileGrabber.getNextFrameFileUrl(frameUrl)
             }
@@ -235,7 +239,7 @@ ApplicationWindow {
 
     LaserFence {
         id: laserFence
-        visible: true
+        visible: false
         x: xTransformForZoom(15)
         y: yTransformForZoom(35)
         width: sizeTransformForZoom(appWindow.arenaWidth)
