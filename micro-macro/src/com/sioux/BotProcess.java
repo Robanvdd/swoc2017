@@ -34,7 +34,7 @@ public class BotProcess implements AutoCloseable
 
         System.out.println("Starting new bot process " + command + " in " + parent);
 
-        child = Runtime.getRuntime().exec(command, null, parent);
+        child = Runtime.getRuntime().exec(workingDir + "\\" + command, null, parent);
 
         inputReader = new StreamGobbler(child.getInputStream());
         errorReader = new StreamGobbler(child.getErrorStream());

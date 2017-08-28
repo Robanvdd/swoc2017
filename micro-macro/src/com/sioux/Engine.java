@@ -50,13 +50,13 @@ public class Engine implements Runnable {
 
     private void SaveGameState(long timeStamp) {
 
-        final String path = "/Users/Michael/Documents/testDirSavesFiles/tick_" + timeStamp + ".json";
+        final String path = "tick_" + timeStamp + ".json";
         Game game = botShepherd.GetGameState();
         final String data = gson.toJson(game, Game.class);
 
         try {
             File file = new File(path);
-            file.getParentFile().mkdir();
+//            file.getParentFile().mkdir();
             file.createNewFile();
             FileWriter writer = new FileWriter(file);
             writer.write(data);

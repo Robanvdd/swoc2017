@@ -18,15 +18,17 @@ import org.bson.types.ObjectId;
 
 /**
  *
- * @author SvZ
+ * @author The Robbert-Jan
  */
 public class Matchmaker implements AutoCloseable {
 
     private class Bot {
-        Bot(DBObject micro, DBObject macro) {
+        Bot(DBObject user,  DBObject micro, DBObject macro) {
+			this.user = user;
             this.micro = micro;
             this.macro = macro;
         }
+		final DBObject user;
         final DBObject micro;
         final DBObject macro;
     }
@@ -54,6 +56,7 @@ public class Matchmaker implements AutoCloseable {
 
     private final String BOTTABLE = "bots";
     private final String MATCHTABLE = "matches";
+    private final String USERTABLE = "users";
     private final String WINNERFIELDNAME = "winnerBot";
     private final String RANKINGFIELDNAME = "ranking";
 
@@ -99,6 +102,11 @@ public class Matchmaker implements AutoCloseable {
         DBCollection coll = database.getCollection(BOTTABLE);
         return coll;
     }
+
+    private DBCollection getUserTable(DB database) {
+        DBCollection coll = database.getCollection(USERTABLE);
+        return coll;
+    }
     
     private DBObject getMatchfromTable(DBCollection table, ObjectId matchId) {
         BasicDBObject query = new BasicDBObject("_id", matchId);
@@ -121,6 +129,10 @@ public class Matchmaker implements AutoCloseable {
         
         List<Bot> botList = new LinkedList<Bot>();
         for (ObjectId user: userList) {
+            DBCollection userColl = getUserTable(database);
+            BasicDBObject userQuery = new BasicDBObject("_id", user);
+            DBCursor userCursor = userColl.find(userQuery);
+
             DBCollection coll = getBotTable(database);
             BasicDBObject macroQuery = new BasicDBObject("user", user).append("kind","macro");
             BasicDBObject microQuery = new BasicDBObject("user", user).append("kind","micro");
@@ -130,10 +142,11 @@ public class Matchmaker implements AutoCloseable {
             DBCursor microCursor = coll.find(microQuery);
             microCursor.sort(new BasicDBObject("version", -1));
             try {
-                if (macroCursor.hasNext() && microCursor.hasNext()) {
+                if (userCursor.hasNext() && macroCursor.hasNext() && microCursor.hasNext()) {
+                    DBObject userObject = userCursor.next();
                     DBObject macroObject = macroCursor.next();
                     DBObject microObject = microCursor.next();
-                    Bot bot = new Bot(microObject, macroObject);
+                    Bot bot = new Bot(userObject, microObject, macroObject);
                     botList.add(bot);
                 }
             } finally {
@@ -144,19 +157,21 @@ public class Matchmaker implements AutoCloseable {
         return botList;
     }
     
-    private ObjectId runMatch(List<Bot> botList) {
+    private void runMatch(List<Bot> botList) {
         ObjectId matchId = null;
         StringBuilder sb = new StringBuilder();
 
         String botString = "";
 
         for(Bot bot : botList) {
-            botString += bot.micro.get("workingDirectory") + " ";
+            botString += bot.user.get("username") + " ";
             botString += bot.macro.get("workingDirectory") + " ";
+            botString += bot.micro.get("workingDirectory") + " ";
         }
 
         try {
-            Process p = Runtime.getRuntime().exec("./macro_app " + botString);
+			//botString should be player_name/id macro_path micro_path
+            Process p = Runtime.getRuntime().exec("java -jar micro-macro.jar " + botString);
 
             BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String lastLine = "";
@@ -169,7 +184,8 @@ public class Matchmaker implements AutoCloseable {
             p.waitFor();
             input.close();
             
-            matchId = new ObjectId(lastLine);
+//            matchId = new ObjectId(lastLine);
+            System.out.println(sb.toString());
         }
         catch (Exception err) {
             System.err.println("Exception when running match.");
@@ -177,7 +193,7 @@ public class Matchmaker implements AutoCloseable {
             System.err.println("Output of engine was:");
             System.err.print(sb.toString());
         }
-        return matchId;
+//        return matchId;
     }
     
     private void makeAMatch(List<Bot> botList) {
@@ -185,26 +201,23 @@ public class Matchmaker implements AutoCloseable {
         String botString = "starting bots in: ";
 
         for(Bot bot : botList) {
-            botString += bot.micro.get("workingDirectory") + ", ";
+            botString += bot.user.get("username") + " ";
             botString += bot.macro.get("workingDirectory") + " ";
+            botString += bot.micro.get("workingDirectory") + " ";
         }
 
         System.out.println(botString);
-        ObjectId matchId = runMatch(botList);
-
-        if (matchId == null)
-        {
-            System.out.println("The match has not finished succesfully");
-            return;
-        }
-        
-        System.out.println("The match has finished succesfully");
+        /*ObjectId matchId = */runMatch(botList);
+//
+//        if (matchId == null)
+//        {
+//            System.out.println("The match has not finished succesfully");
+//            return;
+//        }
+//
+//        System.out.println("The match has finished succesfully");
     }
-    
-    /**
-     * Let every bot first against each other bot once
-     * @param coll List of botIds
-     */
+
     private void makeMatches(List<Bot> botList) {
         long count = botList.size();
         if (count < 2) {

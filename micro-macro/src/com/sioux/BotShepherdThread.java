@@ -3,39 +3,46 @@ package com.sioux;
 import com.google.gson.Gson;
 import com.sioux.game_objects.*;
 import com.sioux.game_objects.Player;
+import com.sun.javaws.exceptions.InvalidArgumentException;
+import sun.awt.OSInfo;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.Semaphore;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class BotShepherdThread implements Runnable {
     private LinkedList<ICommand> receiveQueue;
     private Semaphore mutex;
     private Map<String, BotProcess> bots;
     private Gson gson;
-    private String[] botFiles;
+    private String[] botArgs;
 
 
-    public BotShepherdThread(String[] botFiles){
+    public BotShepherdThread(String[] botArgs){
         this.receiveQueue = new LinkedList<ICommand>();
         this.mutex = new Semaphore(1);
         this.bots = new HashMap<String, BotProcess>();
         this.gson = new Gson();
-        this.botFiles = botFiles;
+        this.botArgs = botArgs;
     }
 
-    private void  StartBots(){
-        int nameCount = 0;
-
+    private void SetupBots() {
+        if(botArgs.length % 3 != 0) System.out.println("Invalid argument count, needs to be divisable by 3");
         try {
-            for (File file: GetAllScripts()) {
-                nameCount++;
-                Player p = new Player("player"+nameCount,10,null,1);
+            Iterator<String> botIterator = Arrays.stream(botArgs).iterator();
+            int id = 0;
+            while(botIterator.hasNext()) {
+                String name = botIterator.next();
+                String macroPath = botIterator.next();
+                String microPath = botIterator.next();
+                Player p = new Player(name,10,null,id++);
                 SetUpPlayer(p);
-                bots.put(p.getName(),new BotProcess("/Users/Michael/Documents/testdir", "python " + file.toString()));
+                if (OSInfo.getOSType() == OSInfo.OSType.WINDOWS) {
+                    bots.put(name, new BotProcess(macroPath, "run.bat"));
+                } else {
+                    bots.put(name, new BotProcess(macroPath, "run.sh"));
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -112,11 +119,6 @@ public class BotShepherdThread implements Runnable {
         }
     }
 
-    private List<File> GetAllScripts(){
-
-        return Stream.of(botFiles).map(File::new).collect(Collectors.toList());
-    }
-
     public LinkedList<ICommand> getReceiveQueue() {
         LinkedList<ICommand> commandsToReturn = new LinkedList<ICommand>();
         try{
@@ -134,7 +136,7 @@ public class BotShepherdThread implements Runnable {
 
     @Override
     public void run() {
-        StartBots();
+        SetupBots();
         MacroGameLogic.getInstance().InitGameState();
         CommunicationLoop();
     }

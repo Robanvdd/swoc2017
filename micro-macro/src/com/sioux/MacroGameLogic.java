@@ -43,7 +43,7 @@ public class MacroGameLogic {
         ufos.add(new Ufo(1, UfoType.FIGHTER,false,new Point(10,10)));
         ufos.add(new Ufo(1,UfoType.FIGHTER,false,new Point(10,10)));
 
-        Game game = new Game(1,"macroBatle",(1000/60),solarSystem,players.get(0),players.get(0),null);
+        Game game = new Game(1,"macroBatle",(1000/60),solarSystem,players.get(0),players.get(1),null);
 
         gameState = game;
     }

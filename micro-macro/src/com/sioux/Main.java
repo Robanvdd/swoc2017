@@ -2,9 +2,8 @@ package com.sioux;
 
 public class Main {
 
-    public static void main(String[] args) {
-        String[] botFiles = args;
-        BotShepherdThread bot = new BotShepherdThread(botFiles);//starts the bots
+    public static void main(String[] botArgs) {
+        BotShepherdThread bot = new BotShepherdThread(botArgs);//starts the bots
         Thread botThread = new Thread(bot);
         Engine e = new Engine(bot);
         Thread engineThread = new Thread(e);
