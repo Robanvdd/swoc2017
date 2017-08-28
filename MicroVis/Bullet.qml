@@ -6,4 +6,6 @@ Image {
     height: 16
     source: "qrc:///Images/bullet.png"
     visible: true
+    property int defaultWidth: 16
+    property int defaultHeight: 16
 }

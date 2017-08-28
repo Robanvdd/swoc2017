@@ -7,6 +7,8 @@ Image {
     height: 64
     source: "qrc:///Images/ufo.png"
     visible: true
+    property int defaultWidth: 64
+    property int defaultHeight: 64
 
     Behavior on x {
         NumberAnimation {

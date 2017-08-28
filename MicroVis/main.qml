@@ -8,6 +8,7 @@ import QtGraphicalEffects 1.0
 import SWOC 1.0
 
 ApplicationWindow {
+    id: appWindow
     visible: true
     width: 1024
     height: 768
@@ -17,63 +18,124 @@ ApplicationWindow {
             }
         }
     title: qsTr("MicroVis")
+    property real zoomFactor: 1.0
+    property int horizontalOffset: 0
+    property int verticalOffset: 0
+    property int arenaWidth: 1000
+    property int arenaHeight: 700
 
-    function parseJson(jsonObject)
+    function calculateTransforms(jsonObject)
     {
-        try
+        appWindow.arenaWidth = jsonObject.arena.width
+        appWindow.arenaHeight = jsonObject.arena.height
+
+        var margin = 50
+        var widthRatio = appWindow.width / (appWindow.arenaWidth + margin)
+        var heightRatio = appWindow.height / (appWindow.arenaHeight + margin)
+        var smallestRatio = widthRatio < heightRatio ? widthRatio : heightRatio
+        if (smallestRatio < 1.0)
+            appWindow.zoomFactor = smallestRatio
+
+        if (smallestRatio < 1.0 && heightRatio === smallestRatio)
         {
-            laserFence.width = jsonObject.arena.width;
-            laserFence.height = jsonObject.arena.height;
-
-            for (var i = 0; i < jsonObject.players.length; i++)
-            {
-                var bots = jsonObject.players[i].bots
-                for (var j = 0; j < bots.length; j++)
-                {
-                    var posBot = bots[j].position.split(',')
-                    appContext.players[i].moveSpaceship(j, posBot[0], posBot[1])
-                }
-
-                var bullets = jsonObject.projectiles
-                for (var k = 0; k < bullets.length; k++)
-                {
-                    var posBul = bullets[k].position.split(',')
-                    if (appContext.getBulletCount() <= k)
-                        appContext.addBullet(posBul[0], posBul[1])
-                    else
-                        appContext.moveBullet(k, posBul[0], posBul[1])
-                }
-                while (appContext.getBulletCount() > jsonObject.projectiles)
-                {
-                    appContext.removeBullet()
-                }
-            }
+            appWindow.horizontalOffset = (appWindow.width - (appWindow.arenaWidth + margin) * smallestRatio) / 2
         }
-        catch (error)
+        else if (smallestRatio < 1.0 && widthRatio === smallestRatio)
         {
-            messageDialog.text = "Error parsing json: " + error.message
-            messageDialog.visible = true
+            appWindow.verticalOffset = (appWindow.height - (appWindow.arenaHeight + margin) * smallestRatio) / 2
         }
     }
 
-    function parseJsonFirstFrame(jsonObject)
+    function xTransformForZoom(value)
+    {
+        return value * appWindow.zoomFactor + horizontalOffset
+    }
+
+    function yTransformForZoom(value)
+    {
+        return value * appWindow.zoomFactor + verticalOffset
+    }
+
+    function sizeTransformForZoom(value)
+    {
+        return value * appWindow.zoomFactor
+    }
+
+    function initializePlayers(jsonObject)
+    {
+        for (var l = 0; l < jsonObject.players.length; l++)
+        {
+            appContext.addPlayer(jsonObject.players[l].name, jsonObject.players[l].color)
+        }
+    }
+
+    function initializeShips(jsonObject)
+    {
+        for (var l = 0; l < jsonObject.players.length; l++)
+        {
+            var spaceships = jsonObject.players[l].bots
+            for (var m = 0; m < spaceships.length; m++)
+            {
+                var posShip = spaceships[m].position.split(',')
+                var player = appContext.players[l]
+                player.addSpaceship(posShip[0], posShip[1])
+            }
+        }
+    }
+
+    function updateSpaceships(jsonObject)
+    {
+        for (var i = 0; i < jsonObject.players.length; i++)
+        {
+            var player = jsonObject.players[i]
+            var bots = player.bots
+            for (var j = 0; j < bots.length; j++)
+            {
+                var posBot = bots[j].position.split(',')
+                appContext.players[i].moveSpaceship(j, posBot[0], posBot[1])
+            }
+            while (appContext.players[i].getSpaceshipCount > player.bots.length)
+            {
+                // Only remove. Players never get new spaceships after a micro game started
+                appContext.players[i].removeSpaceship()
+            }
+        }
+    }
+
+    function updateProjectiles(jsonObject)
+    {
+        var bullets = jsonObject.projectiles
+        for (var k = 0; k < bullets.length; k++)
+        {
+            var posBul = bullets[k].position.split(',')
+            if (appContext.getBulletCount() <= k)
+                appContext.addBullet(posBul[0], posBul[1])
+            else
+                appContext.moveBullet(k, posBul[0], posBul[1])
+        }
+        while (appContext.getBulletCount() > jsonObject.projectiles)
+        {
+            appContext.removeBullet()
+        }
+    }
+
+    function parseJson(jsonObject, firstFrame)
     {
         try
         {
-            laserFence.width = jsonObject.arena.width;
-            laserFence.height = jsonObject.arena.height;
-
-            for (var l = 0; l < jsonObject.players.length; l++)
+            if (firstFrame)
             {
-                appContext.addPlayer(jsonObject.players[l].name, jsonObject.players[l].color)
-                var spaceships = jsonObject.players[l].bots
-                for (var m = 0; m < spaceships.length; m++)
-                {
-                    var posShip = spaceships[m].position.split(',')
-                    var player = appContext.players[l];
-                    player.addSpaceship(posShip[0], posShip[1])
-                }
+                laserFence.visible = true
+                initializePlayers(jsonObject)
+                initializeShips(jsonObject)
+                // projectiles init and destroy dynamically
             }
+
+            calculateTransforms(jsonObject)
+
+            // players do not update (only their spaceships)
+            updateSpaceships(jsonObject)
+            updateProjectiles(jsonObject)
         }
         catch (error)
         {
@@ -103,18 +165,12 @@ ApplicationWindow {
             property url frameUrl: ""
             property bool firstTrigger: false
             onTriggered: {
-                // Parse frame file
                 fileIO.source = frameUrl
                 var content = fileIO.read()
                 var jsonObject = JSON.parse(content)
 
-                if (firstTrigger)
-                {
-                    firstTrigger = false
-                    parseJsonFirstFrame(jsonObject)
-                }
-
-                parseJson(jsonObject)
+                parseJson(jsonObject, firstTrigger)
+                if (firstTrigger) firstTrigger = false
 
                 frameUrl = nextFileGrabber.getNextFrameFileUrl(frameUrl)
             }
@@ -163,8 +219,10 @@ ApplicationWindow {
                     delegate: Spaceship {
                         property color playerColor: parent.playerColor
                         id: aSpaceShip
-                        x: modelData.x
-                        y: modelData.y
+                        x: xTransformForZoom(modelData.x)
+                        y: yTransformForZoom(modelData.y)
+                        width: sizeTransformForZoom(64)
+                        height: sizeTransformForZoom(64)
 
                         ColorOverlay {
                             anchors.fill: aSpaceShip
@@ -179,17 +237,21 @@ ApplicationWindow {
         Repeater {
             model: appContext.bullets
             delegate: Bullet {
-                x: modelData.x
-                y: modelData.y
+                x: xTransformForZoom(modelData.x)
+                y: yTransformForZoom(modelData.y)
+                width: sizeTransformForZoom(16)
+                height: sizeTransformForZoom(16)
             }
         }
     }
 
     LaserFence {
         id: laserFence
-        visible: true
-        x: 15
-        y: 35
+        visible: false
+        x: xTransformForZoom(15)
+        y: yTransformForZoom(35)
+        width: sizeTransformForZoom(appWindow.arenaWidth)
+        height: sizeTransformForZoom(appWindow.arenaHeight)
     }
 
     MessageDialog {
@@ -200,6 +262,5 @@ ApplicationWindow {
         }
 
         visible: false
-
     }
 }

@@ -32,5 +32,5 @@ QUrl NextFileGrabber::getNextFrameFileUrl(const QUrl &url)
     if (info.exists())
         return newUrl;
     else
-        return "";
+        return QUrl();
 }
