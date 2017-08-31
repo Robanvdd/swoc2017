@@ -9,7 +9,7 @@ Item {
     height: 200
     FileIO {
         id: fileIO
-        source: fileDialog.file
+        //source: fileDialog.file
         onError: print(msg)
     }
 
@@ -18,11 +18,8 @@ Item {
         nameFilters: ["JSON (*.json)"]
         fileMode: FileDialog.OpenFile
         onAccepted: {
-            var content = fileIO.read()
-            var jsonObject = JSON.parse(content)
-            gameBackend.reset()
-            //tickTimer.start()
-            ParseFunctions.parseGameJSON(jsonObject)
+            readAndParseFile(file)
+            tickTimer.start()
         }
         onRejected: {
             print("Canceled")
@@ -36,22 +33,28 @@ Item {
         onTriggered: loadNextTick()
     }
 
+    function readAndParseFile(fileName) {
+        if (fileIO.fileExists(fileName))
+        {
+            fileIO.source = fileName
+            var content = fileIO.read()
+            var jsonObject = JSON.parse(content)
+            ParseFunctions.parseGameJSON(jsonObject)
+        }
+    }
+
     function loadNextTick()
     {
         var currentFileUrl = fileIO.source
         var filename = currentFileUrl.toString().replace(/^.*[\\\/]/, '')
-        print(filename)
         var path = currentFileUrl.toString().replace(filename, '')
-        print(path)
         var numb = filename.match(/\d/g)
         numb = numb.join("")
-        print(numb)
         var newNumb = parseInt(numb) + 1
         var newFilename = filename.replace(numb, newNumb)
         var newCompleteFilename = path + newFilename
-        print(newNumb)
-        print(newFilename)
-        print(newCompleteFilename)
+
+        readAndParseFile(newCompleteFilename)
     }
 
     function load()

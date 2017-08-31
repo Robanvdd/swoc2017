@@ -63,3 +63,9 @@ bool FileIO::write(const QString& data) const
 
     return true;
 }
+
+bool FileIO::fileExists(const QUrl &fileUrl) const
+{
+    QFile file(fileUrl.toLocalFile());
+    return file.exists();
+}

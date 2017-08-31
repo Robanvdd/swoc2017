@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     PlanetImageProvider planetImageProvider;
+    Game gameBackend;
 
     qmlRegisterType<FileIO>("SWOC", 1, 0, "FileIO");
     qmlRegisterType<CustomFileDialog>("SWOC", 1, 0, "CustomFileDialog");
@@ -30,6 +31,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     QQmlContext* context = engine.rootContext();
     context->setContextProperty("planetImageProvider", &planetImageProvider);
+    context->setContextProperty("gameBackend", &gameBackend);
 
     engine.load(QUrl(QLatin1String("qrc:/Qml/"
                                    "main.qml")));

@@ -6,7 +6,7 @@ import SWOC 1.0
 
 ApplicationWindow {
     visible: true
-    visibility: ApplicationWindow.FullScreen
+    visibility: ApplicationWindow.Maximized
     width: 1024
     height: 968
     title: qsTr("MacroVis")
@@ -14,11 +14,6 @@ ApplicationWindow {
 
     GameLoader {
         id: fileDialogLoader
-        Component.onCompleted: print("Check")
-    }
-
-    Game {
-        id: gameBackend
     }
 
     Universe {
@@ -38,5 +33,4 @@ ApplicationWindow {
         id: gameStateTable
         anchors.top: loadFileButton.bottom
     }
-
 }
