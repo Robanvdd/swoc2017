@@ -20,7 +20,7 @@ def main():
 
     addUserString = "db.users.insert({username: '" + options.username + "', email: '', password: '" + hashed + "', roles: ['user']})"
 
-    p = subprocess.Popen(["mongo ", "--quiet", "--eval", '"' + addUserString + '"'])
+    p = subprocess.Popen(["C:\\Program Files\\MongoDB\\Server\\3.4\\bin\\mongo.exe", "--quiet", "--eval", '"' + addUserString + '"'])
 
 if __name__ == '__main__':
     main()
