@@ -43,23 +43,22 @@ Column {
     }
     GridLayout {
         id: playerCreditGrid
+        rows: gameBackend.players.length
         columns: 2
         rowSpacing: gameGrid.rowSpacing
+        flow: GridLayout.TopToBottom
         Repeater {
             model: gameBackend.players
-            delegate: Item {
-                Label {
-                    parent: playerCreditGrid
-                    Layout.column: 0
-                    Layout.row: index
-                    text: modelData.name
-                }
-                Label {
-                    parent: playerCreditGrid
-                    Layout.column: 1
-                    Layout.row: index
-                    text: modelData.credits
-                }
+            delegate: Label {
+                parent: playerCreditGrid
+                text: modelData.name
+            }
+        }
+        Repeater {
+            model: gameBackend.players
+            delegate: Label {
+                parent: playerCreditGrid
+                text: modelData.credits
             }
         }
     }
