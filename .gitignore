@@ -22,3 +22,7 @@
 .DS_Store
 *.pro.user
 *.class
+micro-macro/tick_*.json
+temp/macro_app.jar
+temp/matchmaker.jar
+matchmaker/classes/artifacts/matchmaker_jar/matchmaker.jar
