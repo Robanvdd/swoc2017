@@ -28,24 +28,31 @@ public class MicroEngine {
     private Integer tickCounter;
     private Boolean gameRunning;
 
-    MicroEngine() {
+    public MicroEngine() {
         this.state = new MicroTick();
         this.scripts = new HashMap<>();
         this.gsonBuilder = new GsonBuilder();
         this.gsonBuilder.registerTypeAdapter(Point.Double.class, new PointAdapter());
         this.gson = this.gsonBuilder.create();
         this.tickCounter = 0;
-        this.gameRunning = false;
     }
 
     public GameResult Run(Game start) {
         Initialize(start);
 
-        while (gameRunning) {
-            GameLogic();
+        while (true) {
+            if (!this.state.arena.Playable()) {
+                break;
+            }
+            else if (this.tickCounter > 1000) {
+                this.state.arena.Shrink(10);
+            }
 
-            // Run for a specific amount of ticks.
-            gameRunning = (++this.tickCounter < 100);
+            SendGameState();
+            WaitForCommands();
+            SaveGameState();
+
+            this.tickCounter++;
         }
 
         Uninitialize();
@@ -88,12 +95,6 @@ public class MicroEngine {
         }
     }
 
-    private void GameLogic() {
-        SendGameState();
-        WaitForCommands();
-        SaveGameState();
-    }
-
     private void SendGameState() {
         for (MicroPlayer player : state.players) {
             String stateJson = gson.toJson(this.state, MicroTick.class);
@@ -125,7 +126,7 @@ public class MicroEngine {
 
     private void ProcessHits() {
         for (MicroProjectile projectile : this.state.projectiles) {
-            Point.Double newPos = PolarToCartesian(10.0, projectile.direction);
+            Point.Double newPos = PolarToCartesian(5.0, projectile.direction);
             projectile.position.x += newPos.x;
             projectile.position.y += newPos.y;
         }
@@ -145,10 +146,10 @@ public class MicroEngine {
         }
     }
 
-    private Point.Double PolarToCartesian(Double distance, Double angle) {
+    private Point.Double PolarToCartesian(Double radius, Double angle) {
         Double radian = Math.toRadians(angle);
-        Double x = distance * Math.cos(radian);
-        Double y = distance * Math.sin(radian);
+        Double x = radius * Math.cos(radian);
+        Double y = radius * Math.sin(radian);
         return new Point.Double(x, y);
     }
 
@@ -210,6 +211,15 @@ public class MicroEngine {
         public MicroArena(Integer height, Integer width) {
             this.height = height;
             this.width = width;
+        }
+
+        public void Shrink(Integer delta) {
+            this.height = Math.max(this.height - delta, 0);
+            this.width = Math.max(this.width - delta, 0);
+        }
+
+        public boolean Playable() {
+            return this.height > 0 && this.width > 0;
         }
     }
 
