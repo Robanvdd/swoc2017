@@ -63,13 +63,35 @@ public class MicroEngine {
     private void Initialize(Game start) {
         // TODO Game data -> MicroTick state
 
-        String[] colors = {"#32FF0000", "#320000FF"};
-        for (int i = 0; i < colors.length; i++) {
-            MicroPlayer player = new MicroPlayer("player" + i, colors[i]);
+        final int botRadius = 15;
+        final int baseArenaHeight = 1000;
+        final int baseArenaWidth = 1000;
+        final int extraArenaHeightPerBot = botRadius * 2;
+        final int extraArenaWidthPerBot = botRadius * 2;
 
-            for (int j = 0; j < 4; j++) {
+        int nrPlayers = 2;
+        String[] playerNames = {"Player1", "Player2"};
+        String[] playerColors = {"#32FF0000", "#320000FF"};
+        int[] playerNrBots = {5, 5};
+
+        int sumBots = 0;
+        for (int i = 0; i < playerNrBots.length; i++)
+            sumBots += playerNrBots[i];
+
+        state.arena.width = baseArenaWidth;
+        state.arena.height = baseArenaHeight;
+        if (sumBots > 16)
+        {
+            state.arena.width += (sumBots - 16) * extraArenaWidthPerBot;
+            state.arena.height += (sumBots - 16) * extraArenaHeightPerBot;
+        }
+
+        for (int i = 0; i < nrPlayers; i++) {
+            MicroPlayer player = new MicroPlayer(playerNames[i], playerColors[i]);
+
+            for (int j = 0; j < playerNrBots[i]; j++) {
                 Point.Double position = new Point.Double(10 * i, 10 * j);
-                player.Add(new MicroBot("bot" + j, 100, position));
+                player.Add(new MicroBot("bot" + j, 100, position, botRadius));
             }
 
             state.Add(player);
@@ -244,12 +266,14 @@ public class MicroEngine {
         private Integer hitpoints;
         private Point.Double position;
         private transient Integer tickShoot;
+        public transient Integer radius;
 
-        public MicroBot(String name, Integer hp, Point.Double pos) {
+        public MicroBot(String name, Integer hp, Point.Double pos, Integer radius) {
             this.name = name;
             this.hitpoints = hp;
             this.position = pos;
             this.tickShoot = 0;
+            this.radius = radius;
         }
 
         public void Move(Move cmd) {
@@ -269,11 +293,10 @@ public class MicroEngine {
         public Boolean Hit(MicroProjectile projectile) {
             if (projectile == null || !this.isAlive()) return false;
 
-            Double botRadius = 15.0;
             Double projectileRadius = 5.0;
             Double dx = projectile.position.getX() - this.position.getX();
             Double dy = projectile.position.getY() - this.position.getY();
-            Double radii = botRadius + projectileRadius;
+            Double radii = radius + projectileRadius;
 
             if (( dx * dx ) + ( dy * dy ) < radii * radii) {
                 this.hitpoints -= projectile.damage;
