@@ -90,8 +90,8 @@ The input received from micro has the following format:
 ```json
 {
     "arena": {
-        "height": "number",
-        "width": "number"
+        "height": "integer",
+        "width": "integer"
     },
     "players": [
         {
@@ -99,11 +99,17 @@ The input received from micro has the following format:
             "bots": [
                 {
                     "name": "string",
-                    "hitpoints": "number",
-                    "position": "number,number"
+                    "hitpoints": "float",
+                    "position": "float,float"
                 }
             ]
         }
+    ],
+    "projectiles": [
+        {
+            "position": "float,float",
+            "direction": "float",
+        },
     ]
 }
 ```
@@ -147,6 +153,16 @@ Input example:
                 }
             ]
         }
+    ],
+    "projectiles": [
+        {
+            "position": "23,34",
+            "direction": "32",
+        },
+        {
+            "position":"15,17",
+            "direction": "32"
+        }
     ]
 }
 ```
@@ -162,11 +178,11 @@ The output sent to micro has the following format:
         {
             "name": "string",
             "move": {
-                "direction": "number",
-                "speed": "number"
+                "direction": "float",
+                "speed": "float"
             },
             "shoot": {
-                "direction": "number"
+                "direction": "float"
             }
         },
     ]
