@@ -75,6 +75,13 @@ public class BotShepherdThread implements Runnable {
         return null;
     }
 
+    public void SendGameUpdate(){
+        Game _game = GetGameState();
+        for (Player p: _game.getPlayers()) {;
+            SendMessage(p,new CommandAdapter(p.getName(),CommandAdapterType.GameUpdate, _game));
+        }
+    }
+
     private void WaitForCommands(){
         try{
             mutex.acquire();
@@ -115,7 +122,7 @@ public class BotShepherdThread implements Runnable {
 
             //testing code
             for (Player p : MacroGameLogic.getInstance().getPlayers()){
-                SendMessage(p,new CommandAdapter(p.getName(),CommandAdapterType.MOVE));
+                SendMessage(p,new CommandAdapter(p.getName(),CommandAdapterType.MOVE,MacroGameLogic.getInstance().GetGameState()));
             }
             WaitForCommands();
 

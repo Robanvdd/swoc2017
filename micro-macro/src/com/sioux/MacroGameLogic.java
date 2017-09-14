@@ -37,10 +37,10 @@ public class MacroGameLogic {
         SolarSystem solarSystem = new SolarSystem(1,"sp1",new Point(10,10),planets);
 
         ArrayList ufos = new ArrayList<Ufo>();
-        ufos.add(new Ufo(1,UfoType.FIGHTER,false,new Point.Double(10,10)));
-        ufos.add(new Ufo(1,UfoType.FIGHTER,false,new Point.Double(10,10)));
-        ufos.add(new Ufo(1, UfoType.FIGHTER,false,new Point.Double(10,10)));
-        ufos.add(new Ufo(1,UfoType.FIGHTER,false,new Point.Double(10,10)));
+        ufos.add(new Ufo(1,UfoType.FIGHTER,false,new Point.Double(10,10),10));
+        ufos.add(new Ufo(1,UfoType.FIGHTER,false,new Point.Double(10,10),10));
+        ufos.add(new Ufo(1, UfoType.FIGHTER,false,new Point.Double(10,10),10));
+        ufos.add(new Ufo(1,UfoType.FIGHTER,false,new Point.Double(10,10),10));
 
         Game game = new Game(1,"macroBatle",(1000/60),solarSystem,null);
 

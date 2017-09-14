@@ -48,6 +48,10 @@ public class Engine implements Runnable {
         ExecuteCommands();
     }
 
+    private void SendUpdateToPlayer(){
+        botShepherd.SendGameUpdate();
+    }
+
     private void SaveGameState(long timeStamp) {
         final String path = "C://testDirSavesFiles/tick_" + timeStamp + ".json";
         Game game = botShepherd.GetGameState();
@@ -74,6 +78,7 @@ public class Engine implements Runnable {
             currentTimestamp = System.currentTimeMillis();
             if((currentTimestamp - previousTimestamp) >= MAX_LOOP_TIME){
                 UpdateGame();
+                SendUpdateToPlayer();
                 SaveGameState(currentTimestamp);
                 previousTimestamp = currentTimestamp;
             }
