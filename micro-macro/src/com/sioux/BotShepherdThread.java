@@ -17,7 +17,8 @@ public class BotShepherdThread implements Runnable {
     private Map<String, BotProcess> bots;
     private Gson gson;
     private String[] botArgs;
-
+    private static final int FPS = 60;
+    private static final long MAX_LOOP_TIME = (2000 / FPS);
 
     public BotShepherdThread(String[] botArgs){
         this.receiveQueue = new LinkedList<ICommand>();
@@ -55,7 +56,8 @@ public class BotShepherdThread implements Runnable {
 
     private void TransformToCommand(CommandAdapter command){
         switch (command.type) {
-            case MOVE: AddCommandsToReceiveQueue(new MoveCommand(MacroGameLogic.getInstance()));
+            case MOVE: AddCommandsToReceiveQueue(new MoveCommand(MacroGameLogic.getInstance(), command.playerID,command.ufoId,command.solarSystemName,command.planetName));
+            case CONQUER: AddCommandsToReceiveQueue(new ConquerCommand(MacroGameLogic.getInstance(), command.playerID,command.ufoId,command.solarSystemName,command.planetName));
         }
     }
 
@@ -73,18 +75,29 @@ public class BotShepherdThread implements Runnable {
         return null;
     }
 
-    private void WaitForCommands(){
-        ArrayList<Player> players = MacroGameLogic.getInstance().getPlayers();
-        for (Player player: players){
-            String input;
-            input = bots.get(player.getName()).readLine(1000);
-            if(input != null) {
-                System.out.print(input);
-            }
-            //TODO
-            //CommandAdapter inputCommand = gson.fromJson(input,CommandAdapter.class);
-            //TransformToCommand(inputCommand);
+    public void SendGameUpdate(){
+        Game _game = GetGameState();
+        for (Player p: _game.getPlayers()) {;
+            SendMessage(p,new CommandAdapter(p.getName(),CommandAdapterType.GameUpdate, _game));
         }
+    }
+
+    private void WaitForCommands(){
+        try{
+            mutex.acquire();
+            ArrayList<Player> players = MacroGameLogic.getInstance().getPlayers();
+            mutex.release();
+
+            for (Player player: players){
+                String input;
+                input = bots.get(player.getName()).readLine(1000);
+                if(input != null) {
+                    System.out.print(input);
+                }
+                CommandAdapter inputCommand = gson.fromJson(input,CommandAdapter.class);
+                TransformToCommand(inputCommand);
+            }
+        } catch (Exception e){ e.printStackTrace(); }
     }
 
     private void SendMessage(Player p, CommandAdapter commandAdapter){
@@ -96,18 +109,30 @@ public class BotShepherdThread implements Runnable {
     private void CommunicationLoop(){
         int counterForTesting = 0;
 
-        while(!Thread.currentThread().isInterrupted()){
-            // for testing.
+        long previousTimestamp = System.currentTimeMillis();
+        long currentTimestamp;
+        while(!Thread.currentThread().isInterrupted())
+        {
+            currentTimestamp = System.currentTimeMillis();
+            if((currentTimestamp - previousTimestamp) >= MAX_LOOP_TIME){
+                //add planetRotate command once in a while
+                AddCommandsToReceiveQueue(new PlanetRotateCommand(MacroGameLogic.getInstance()));
+                previousTimestamp = currentTimestamp;
+            }
+
+            //testing code
             for (Player p : MacroGameLogic.getInstance().getPlayers()){
-                SendMessage(p,new CommandAdapter(p.getName(),CommandAdapterType.MOVE));
+                SendMessage(p,new CommandAdapter(p.getName(),CommandAdapterType.MOVE,MacroGameLogic.getInstance().GetGameState()));
             }
             WaitForCommands();
+
             if(10 >= counterForTesting) {
-                AddCommandsToReceiveQueue(new MoveCommand(MacroGameLogic.getInstance()));
+                AddCommandsToReceiveQueue(new MoveCommand(MacroGameLogic.getInstance(),"",10,"",""));
                 counterForTesting++;
             }
         }
     }
+
 
     private void AddCommandsToReceiveQueue(ICommand command){
         try{

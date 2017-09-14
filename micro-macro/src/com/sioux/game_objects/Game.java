@@ -1,6 +1,8 @@
 package com.sioux.game_objects;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Michael on 07/06/2017.
@@ -12,17 +14,15 @@ public class Game implements Serializable{
     private String name;
     private int tick;
     private SolarSystem solarSystem;
-    private Player playerOne;
-    private Player playerTwo;
+    private ArrayList<Player> players;
     private Battle battle;
 
-    public Game(int id, String name, int tick, SolarSystem solarSystem, Player playerOne, Player playerTwo, Battle battle) {
+    public Game(int id, String name, int tick, SolarSystem solarSystem, Battle battle) {
         this.id = id;
         this.name = name;
         this.tick = tick;
         this.solarSystem = solarSystem;
-        this.playerOne = playerOne;
-        this.playerTwo = playerTwo;
+        this .players = new ArrayList<>();
         this.battle = battle;
     }
 
@@ -58,20 +58,14 @@ public class Game implements Serializable{
         this.solarSystem = solarSystem;
     }
 
-    public Player getPlayerOne() {
-        return playerOne;
+    public ArrayList<Player> getPlayers() {
+        return players;
     }
 
-    public void setPlayerOne(Player playerOne) {
-        this.playerOne = playerOne;
-    }
-
-    public Player getPlayerTwo() {
-        return playerTwo;
-    }
-
-    public void setPlayerTwo(Player playerTwo) {
-        this.playerTwo = playerTwo;
+    public void AddPlayer(Player p){
+        if(p != null){
+            players.add(p);
+        }
     }
 
     public Battle getBattle() {

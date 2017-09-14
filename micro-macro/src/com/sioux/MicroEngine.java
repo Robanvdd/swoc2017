@@ -27,6 +27,7 @@ public class MicroEngine {
     private GsonBuilder gsonBuilder;
     private Integer tickCounter;
     private Boolean gameRunning;
+    private Random random;
 
     public MicroEngine() {
         this.state = new MicroTick();
@@ -35,6 +36,7 @@ public class MicroEngine {
         this.gsonBuilder.registerTypeAdapter(Point.Double.class, new PointAdapter());
         this.gson = this.gsonBuilder.create();
         this.tickCounter = 0;
+        this.random = new Random();
     }
 
     public GameResult Run(Game start) {
@@ -60,51 +62,114 @@ public class MicroEngine {
         return new GameResult(GetGame(), GetWinner());
     }
 
-    private void Initialize(Game start) {
-        // TODO Game data -> MicroTick state
+    private int GetTotalNumberOfBots(int[] playerNrBots)
+    {
+        int sumBots = 0;
+        for (int i = 0; i < playerNrBots.length; i++)
+            sumBots += playerNrBots[i];
+        return sumBots;
+    }
 
-        final int botRadius = 15;
+    private void DetermineArenaSize(int nrBots, int botRadius)
+    {
         final int baseArenaHeight = 1000;
         final int baseArenaWidth = 1000;
         final int extraArenaHeightPerBot = botRadius * 2;
         final int extraArenaWidthPerBot = botRadius * 2;
 
-        int nrPlayers = 2;
-        String[] playerNames = {"Player1", "Player2"};
-        String[] playerColors = {"#32FF0000", "#320000FF"};
-        int[] playerNrBots = {5, 5};
-
-        int sumBots = 0;
-        for (int i = 0; i < playerNrBots.length; i++)
-            sumBots += playerNrBots[i];
-
         state.arena.width = baseArenaWidth;
         state.arena.height = baseArenaHeight;
-        if (sumBots > 16)
+        if (nrBots > 16)
         {
-            state.arena.width += (sumBots - 16) * extraArenaWidthPerBot;
-            state.arena.height += (sumBots - 16) * extraArenaHeightPerBot;
+            state.arena.width += (nrBots - 16) * extraArenaWidthPerBot;
+            state.arena.height += (nrBots - 16) * extraArenaHeightPerBot;
+        }
+    }
+
+    private void InitPlayers(String[] playerNames, String[] playerColors)
+    {
+        for (int i = 0; i < playerNames.length; i++) {
+            MicroPlayer player = new MicroPlayer(playerNames[i], playerColors[i]);
+            state.Add(player);
+        }
+    }
+
+    private ArrayList<Point.Double> GetRandomPositionsInArena(int nrBots, int botRadius)
+    {
+        ArrayList<Point.Double> positions = new ArrayList<>();
+        for (int i = 0; i < nrBots; i++)
+        {
+            int x = random.nextInt(state.arena.width - botRadius) + botRadius;
+            int y = random.nextInt(state.arena.height - botRadius) + botRadius;
+            positions.add(new Point.Double(x, y));
+        }
+        return positions;
+    }
+
+    private boolean BotsCollide(ArrayList<Point.Double> positions, int botRadius)
+    {
+        int botRadiusSquared = botRadius*botRadius;
+        for (int i = 0; i < positions.size(); i++)
+        {
+            for (int j = 0; j < positions.size(); j++)
+            {
+                int dx = (int)positions.get(i).x - (int)positions.get(j).x;
+                int dy = (int)positions.get(i).y - (int)positions.get(j).y;
+                int distanceSquared = dx*dx + dy*dy;
+                if (distanceSquared < botRadiusSquared)
+                    return true;
+            }
         }
 
-        for (int i = 0; i < nrPlayers; i++) {
-            MicroPlayer player = new MicroPlayer(playerNames[i], playerColors[i]);
+        return false;
+    }
 
-            for (int j = 0; j < playerNrBots[i]; j++) {
-                Point.Double position = new Point.Double(10 * i, 10 * j);
-                player.Add(new MicroBot("bot" + j, 100, position, botRadius));
+    private void PlaceBots(int[] playerNrBots, int botRadius)
+    {
+        final int botHealthPoints = 100;
+
+        int nrBots = GetTotalNumberOfBots(playerNrBots);
+        ArrayList<Point.Double> positions = GetRandomPositionsInArena(nrBots, botRadius);
+        while (BotsCollide(positions, botRadius))
+            positions = GetRandomPositionsInArena(nrBots, botRadius);
+
+        int index = 0;
+        for (int i = 0; i < playerNrBots.length; i++)
+        {
+            for (int j = 0; j < playerNrBots[i]; j++)
+            {
+                MicroBot bot = new MicroBot("bot" + j, botHealthPoints, positions.get(index), botRadius);
+                state.players.get(i).Add(bot);
             }
+        }
+    }
 
-            state.Add(player);
-
+    private void StartScripts(String[] playerNames)
+    {
+        for (int i = 0; i < playerNames.length; i++) {
             final String dir = "../test-scripts/readyplayerone/1/micro/";
             final String cmd = "python3.5 ./code/micro.py"; //"./run.sh";
 
             try {
-                scripts.put(player.name, new BotProcess(dir, cmd));
+                scripts.put(playerNames[i], new BotProcess(dir, cmd));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void Initialize(Game start) {
+        // TODO Game data -> MicroTick state
+        final int botRadius = 15;
+
+        String[] playerNames = {"Player1", "Player2"};
+        String[] playerColors = {"#32FF0000", "#320000FF"};
+        int[] playerNrBots = {5, 5};
+
+        DetermineArenaSize(GetTotalNumberOfBots(playerNrBots), botRadius);
+        InitPlayers(playerNames, playerColors);
+        PlaceBots(playerNrBots, botRadius);
+        StartScripts(playerNames);
 
         gameRunning = true;
     }

@@ -48,15 +48,18 @@ public class Engine implements Runnable {
         ExecuteCommands();
     }
 
-    private void SaveGameState(long timeStamp) {
+    private void SendUpdateToPlayer(){
+        botShepherd.SendGameUpdate();
+    }
 
-        final String path = "tick_" + timeStamp + ".json";
+    private void SaveGameState(long timeStamp) {
+        final String path = "C://testDirSavesFiles/tick_" + timeStamp + ".json";
         Game game = botShepherd.GetGameState();
         final String data = gson.toJson(game, Game.class);
 
         try {
             File file = new File(path);
-//            file.getParentFile().mkdir();
+            file.getParentFile().mkdir();
             file.createNewFile();
             FileWriter writer = new FileWriter(file);
             writer.write(data);
@@ -75,6 +78,7 @@ public class Engine implements Runnable {
             currentTimestamp = System.currentTimeMillis();
             if((currentTimestamp - previousTimestamp) >= MAX_LOOP_TIME){
                 UpdateGame();
+                SendUpdateToPlayer();
                 SaveGameState(currentTimestamp);
                 previousTimestamp = currentTimestamp;
             }
