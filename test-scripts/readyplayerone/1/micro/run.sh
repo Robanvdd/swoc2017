@@ -1,1 +1,1 @@
-python3.5 ./code/micro.py
+python %~dp0/code/micro.py
