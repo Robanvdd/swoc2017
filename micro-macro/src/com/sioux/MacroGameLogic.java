@@ -110,7 +110,8 @@ public class MacroGameLogic {
         System.out.print("[Game]::Doing a Move\n");
     }
 
-    public void Conquer() {
+    public void Conquer(String playerID, int ufoId, String solarSystemName, String planetName) {
+        //Todo
         System.out.print("[Game]::Going to Conquer\n");
     }
 }

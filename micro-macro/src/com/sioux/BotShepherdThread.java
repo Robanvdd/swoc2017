@@ -57,6 +57,7 @@ public class BotShepherdThread implements Runnable {
     private void TransformToCommand(CommandAdapter command){
         switch (command.type) {
             case MOVE: AddCommandsToReceiveQueue(new MoveCommand(MacroGameLogic.getInstance(), command.playerID,command.ufoId,command.solarSystemName,command.planetName));
+            case CONQUER: AddCommandsToReceiveQueue(new ConquerCommand(MacroGameLogic.getInstance(), command.playerID,command.ufoId,command.solarSystemName,command.planetName));
         }
     }
 
@@ -107,10 +108,12 @@ public class BotShepherdThread implements Runnable {
         {
             currentTimestamp = System.currentTimeMillis();
             if((currentTimestamp - previousTimestamp) >= MAX_LOOP_TIME){
+                //add planetRotate command once in a while
                 AddCommandsToReceiveQueue(new PlanetRotateCommand(MacroGameLogic.getInstance()));
                 previousTimestamp = currentTimestamp;
             }
 
+            //testing code
             for (Player p : MacroGameLogic.getInstance().getPlayers()){
                 SendMessage(p,new CommandAdapter(p.getName(),CommandAdapterType.MOVE));
             }
