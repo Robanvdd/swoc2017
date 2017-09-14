@@ -27,7 +27,7 @@ public class InitialState {
         List<Ufo> ufos = new ArrayList<>();
 
         for(int i = 0; i< 10; i++){
-            ufos.add(new Ufo(i, UfoType.FIGHTER,false,new Point(0,0)));
+            ufos.add(new Ufo(i, UfoType.FIGHTER,false,new Point.Double(0,0), 10));
         }
 
         List<Planet> planets = new ArrayList<Planet>();
