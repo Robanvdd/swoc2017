@@ -147,7 +147,7 @@ public class MicroEngine {
     {
         for (int i = 0; i < playerNames.length; i++) {
             final String dir = "../test-scripts/readyplayerone/1/micro/";
-            final String cmd = "python ./code/micro.py"; //"./run.sh";
+            final String cmd = "./run.cmd";
 
             try {
                 scripts.put(playerNames[i], new BotProcess(dir, cmd));
@@ -193,7 +193,9 @@ public class MicroEngine {
             String inputJson = scripts.get(player.name).readLine(1000);
             MicroInput input = gson.fromJson(inputJson, MicroInput.class);
 
-            ExecuteCommands(player, input);
+            if (input != null) {
+                ExecuteCommands(player, input);
+            }
         }
     }
 
