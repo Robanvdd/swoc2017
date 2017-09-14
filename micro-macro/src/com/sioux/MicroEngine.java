@@ -8,7 +8,6 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import com.sioux.game_objects.Game;
 import com.sioux.game_objects.GameResult;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.awt.Point;
 import java.io.File;
@@ -240,10 +239,15 @@ public class MicroEngine {
         return new Point.Double(x, y);
     }
 
-    private Point.Double ArenaBoundsCheck(Point.Double pos) {
+    private Point.Double ArenaBoundsClamp(Point.Double pos) {
         Double x = Math.min(Math.max(pos.x, 0), this.state.arena.width);
         Double y = Math.min(Math.max(pos.y, 0), this.state.arena.height);
         return new Point.Double(x, y);
+    }
+
+    private Boolean BotInsideArena(MicroBot bot) {
+        return (bot.position.x - bot.radius > 0 || bot.position.x + bot.radius < this.state.arena.width)
+                || (bot.position.y - bot.radius < 0 || bot.position.y + bot.radius < this.state.arena.width);
     }
 
     private void SaveGameState() {
@@ -344,9 +348,13 @@ public class MicroEngine {
         public void Move(Move cmd) {
             if (cmd == null || !this.isAlive()) return;
             Point.Double newPos = PolarToCartesian(cmd.speed, cmd.direction);
-            newPos = ArenaBoundsCheck(newPos);
+            newPos = ArenaBoundsClamp(newPos);
             this.position.x += newPos.x;
             this.position.y += newPos.y;
+
+            if (!BotInsideArena(this)) {
+                this.hitpoints = 0;
+            }
         }
 
         public void Shoot(Shoot cmd, String source) {
