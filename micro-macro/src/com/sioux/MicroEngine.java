@@ -111,7 +111,7 @@ public class MicroEngine {
         int botRadiusSquared = botRadius*botRadius;
         for (int i = 0; i < positions.size(); i++)
         {
-            for (int j = 0; j < positions.size(); j++)
+            for (int j = i+1; j < positions.size(); j++)
             {
                 int dx = (int)positions.get(i).x - (int)positions.get(j).x;
                 int dy = (int)positions.get(i).y - (int)positions.get(j).y;
@@ -148,7 +148,7 @@ public class MicroEngine {
     {
         for (int i = 0; i < playerNames.length; i++) {
             final String dir = "../test-scripts/readyplayerone/1/micro/";
-            final String cmd = "python3.5 ./code/micro.py"; //"./run.sh";
+            final String cmd = "python ./code/micro.py"; //"./run.sh";
 
             try {
                 scripts.put(playerNames[i], new BotProcess(dir, cmd));
