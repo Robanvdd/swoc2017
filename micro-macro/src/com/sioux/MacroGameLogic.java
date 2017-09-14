@@ -11,11 +11,10 @@ public class MacroGameLogic {
     private static Object mutex = new Object();
     private static MacroGameLogic instance;
     private Game gameState;
-    private ArrayList<Player> players;
 
-    private MacroGameLogic(){
-        this.players = new ArrayList<>();
+    private MacroGameLogic() {
     }
+
 
     public static MacroGameLogic getInstance(){
         if(instance==null){
@@ -38,18 +37,19 @@ public class MacroGameLogic {
         SolarSystem solarSystem = new SolarSystem(1,"sp1",new Point(10,10),planets);
 
         ArrayList ufos = new ArrayList<Ufo>();
-        ufos.add(new Ufo(1,UfoType.FIGHTER,false,new Point(10,10)));
-        ufos.add(new Ufo(1,UfoType.FIGHTER,false,new Point(10,10)));
-        ufos.add(new Ufo(1, UfoType.FIGHTER,false,new Point(10,10)));
-        ufos.add(new Ufo(1,UfoType.FIGHTER,false,new Point(10,10)));
+        ufos.add(new Ufo(1,UfoType.FIGHTER,false,new Point.Double(10,10)));
+        ufos.add(new Ufo(1,UfoType.FIGHTER,false,new Point.Double(10,10)));
+        ufos.add(new Ufo(1, UfoType.FIGHTER,false,new Point.Double(10,10)));
+        ufos.add(new Ufo(1,UfoType.FIGHTER,false,new Point.Double(10,10)));
 
-        Game game = new Game(1,"macroBatle",(1000/60),solarSystem,players.get(0),players.get(1),null);
+        Game game = new Game(1,"macroBatle",(1000/60),solarSystem,null);
 
         gameState = game;
     }
 
     private Player GetPlayer(String playerName){
-        for (Player p: players) {
+        ArrayList<Player> playerList = gameState.getPlayers();
+        for (Player p: playerList) {
             if(p.getName() == playerName) return p;
         }
         System.out.print("[MacroGameLogic]::No such player found");
@@ -57,18 +57,55 @@ public class MacroGameLogic {
     }
 
     public ArrayList<Player> getPlayers() {
-        return players;
+        return gameState.getPlayers();
     }
 
     public Game GetGameState(){
         return this.gameState;
     }
 
-    public void AddPlayerToGame(Player p){
-        players.add(p);
+    public void AddPlayerToGame(Player p) {
+        gameState.AddPlayer(p);
+    }
+
+    public void RotatePlanets(){
+        SolarSystem system = gameState.getSolarSystem();
+        for(Planet planet:system.getPlanets()){
+            planet.setOrbitRotated(planet.getOrbitRotated()+2);
+        }
+    }
+
+    public Point.Double PolarToCartesian (double  radius, double angle){
+        double radian = Math.toRadians(angle);
+        double x = Math.cos( radian ) * radius;
+        double y = Math.sin( radian ) * radius;
+        return new Point.Double(x,y);
+    }
+
+    public PolarPoint CartesianToPolar(Point p){
+        double x = p.getX();
+        double y = p.getY();
+
+        double r     = Math.sqrt((x*x + y*y));
+        double theta = Math.toDegrees(Math.atan((y / x)));
+
+        return new PolarPoint(r, theta);
     }
 
     public void Move(String playerId, int ufoId, String SolarSystem, String ToPlanet){
+        Player player = GetPlayer(playerId);
+        Ufo ufo = player.GetUfoById(ufoId);
+        Point.Double p = ufo.getCoordinate();
+        for (Planet planet:gameState.getSolarSystem().getPlanets()) {
+            if (planet.getName() == ToPlanet){
+                Point.Double planetPoint = PolarToCartesian(planet.getOrbitDistance(), planet.getOrbitRotated());
+                double distance = planetPoint.distance(ufo.getCoordinate());
+                double distanceToMove = (distance / 10); //1/10 every tick
+                double newX = p.getX() + distanceToMove * Math.cos((planet.getOrbitRotated() * Math.PI / 180));
+                double newY = p.getY() + distanceToMove * Math.sin((planet.getOrbitRotated() * Math.PI / 180));
+                ufo.setCoordinate(new Point.Double(newX,newY));
+            }
+        }
 
         System.out.print("[Game]::Doing a Move\n");
     }

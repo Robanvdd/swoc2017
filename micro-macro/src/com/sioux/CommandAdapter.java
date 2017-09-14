@@ -3,13 +3,15 @@ package com.sioux;
 public class CommandAdapter {
 
     CommandAdapter(String playerName, CommandAdapterType t){
-        this.fromPlayer = playerName;
+        this.playerID = playerName;
         this.type = t;
     }
 
-    String fromPlayer;
-    CommandAdapterType type;
 
-
+    public CommandAdapterType type;
+    public String playerID;
+    public int ufoId;
+    public String solarSystemName;
+    public String planetName;
 
 }

@@ -10,9 +10,9 @@ public class Ufo {
     private int id;
     private UfoType ufoType;
     private boolean InFight;
-    private Point coordinate;
+    private Point.Double coordinate;
 
-    public Ufo(int id, UfoType ufoType, boolean inFight, Point coordinate) {
+    public Ufo(int id, UfoType ufoType, boolean inFight, Point.Double coordinate) {
         this.id = id;
         this.ufoType = ufoType;
         InFight = inFight;
@@ -43,11 +43,11 @@ public class Ufo {
         InFight = inFight;
     }
 
-    public Point getCoordinate() {
+    public Point.Double getCoordinate() {
         return coordinate;
     }
 
-    public void setCoordinate(Point coordinate) {
+    public void setCoordinate(Point.Double coordinate) {
         this.coordinate = coordinate;
     }
 }
