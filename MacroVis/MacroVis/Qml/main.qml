@@ -17,20 +17,50 @@ ApplicationWindow {
     }
 
     Universe {
-        id: universe
+        id: universeFlick
         anchors.fill: parent
     }
 
-    Button {
-        id: loadFileButton
-        text: "Load file"
-        onClicked: {
-            fileDialogLoader.load()
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.NoButton
+        onWheel: {
+            universeFlick.universe.scale *= 1 + 0.1*(wheel.angleDelta.y / 120)
         }
     }
 
-    GameStateTable {
-        id: gameStateTable
-        anchors.top: loadFileButton.bottom
+    Column {
+
+        Button {
+            id: loadFileButton
+            text: "Load file"
+            onClicked: {
+                fileDialogLoader.load()
+            }
+        }
+
+        Button {
+            id: zoomInButton
+            text: "Zoom in"
+            onClicked: {
+                universeFlick.universe.scale *= 1.1;
+
+                universeFlick.returnToBounds()
+            }
+        }
+
+        Button {
+            id: zoomOutButton
+            text: "Zoom out"
+            onClicked: {
+                universeFlick.universe.scale *= 0.9;
+
+                universeFlick.returnToBounds()
+            }
+        }
+
+        GameStateTable {
+            id: gameStateTable
+        }
     }
 }

@@ -1,8 +1,8 @@
 import QtQuick 2.7
 
 Item {
-    width: childrenRect.width + childrenRect.x + planet.width
-    height: childrenRect.height + childrenRect.y + planet.height
+    width: 2*modelData.orbitDistance + planet.width
+    height: width
     Rectangle {
         id: orbitCircle
         radius: 0.5*width
@@ -16,21 +16,14 @@ Item {
     }
     Image {
         id: planet
-        x: orbitDistance * Math.cos(orbitRotation) - 0.5*width
-        y: orbitDistance * Math.sin(orbitRotation) - 0.5*height
+        x: orbitDistance * Math.cos(orbitRotation * (Math.PI / 180.0)) - 0.5*width
+        y: orbitDistance * Math.sin(orbitRotation * (Math.PI / 180.0)) - 0.5*height
         property real orbitDistance: modelData.orbitDistance// - 0.5 * width
         property real orbitRotation: modelData.orbitRotation
-        Behavior on orbitRotation { NumberAnimation { duration: 100 } }
+        Behavior on orbitRotation { NumberAnimation { duration: 1100 } }
         width: 32
         height: 32
         mipmap: true
         source: planetImageProvider.getRandomPlanet()
-        Component.onCompleted: print("planet created")
-        Timer {
-            interval: 100
-            running: true
-            repeat: true
-            onTriggered: planet.orbitRotation += 0.01
-        }
     }
 }

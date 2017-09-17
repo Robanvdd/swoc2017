@@ -1,8 +1,8 @@
 import QtQuick 2.7
 
 Item {
-    x: modelData.coords.x * 4
-    y: modelData.coords.y * 4
+    x: modelData.coords.x
+    y: modelData.coords.y
     width: childrenRect.width + childrenRect.x
     height: childrenRect.height + childrenRect.y
 
