@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MicroBot.Protocol
+namespace Bot.Protocol
 {
     public struct Position
     {

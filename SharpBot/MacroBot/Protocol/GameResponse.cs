@@ -4,16 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MicroBot.Protocol
+namespace MacroBot.Protocol
 {
     public sealed class GameResponse
     {
-        public GameResponse()
-        {
-            Bots = new List<BotAction>();
-        }
-
-        public List<BotAction> Bots { get; set; }
+        public string Command { get; set; }
+        public List<int> Ufos { get; set; }
+        public int PlanetId { get; set; }
+        public int Amount { get; set; }
 
         public string ToJson(Formatting formatting = Formatting.None)
         {

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBot", "SharpBot\SharpB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroBot", "MicroBot\MicroBot.csproj", "{E5CD5984-7611-4B8D-8EF0-3BFB78751352}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MacroBot", "MacroBot\MacroBot.csproj", "{AA351B2B-BFCB-42E3-BEDA-1B2296EB5F2C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,14 @@ Global
 		{E5CD5984-7611-4B8D-8EF0-3BFB78751352}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E5CD5984-7611-4B8D-8EF0-3BFB78751352}.Release|x86.ActiveCfg = Release|Any CPU
 		{E5CD5984-7611-4B8D-8EF0-3BFB78751352}.Release|x86.Build.0 = Release|Any CPU
+		{AA351B2B-BFCB-42E3-BEDA-1B2296EB5F2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA351B2B-BFCB-42E3-BEDA-1B2296EB5F2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA351B2B-BFCB-42E3-BEDA-1B2296EB5F2C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AA351B2B-BFCB-42E3-BEDA-1B2296EB5F2C}.Debug|x86.Build.0 = Debug|Any CPU
+		{AA351B2B-BFCB-42E3-BEDA-1B2296EB5F2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA351B2B-BFCB-42E3-BEDA-1B2296EB5F2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA351B2B-BFCB-42E3-BEDA-1B2296EB5F2C}.Release|x86.ActiveCfg = Release|Any CPU
+		{AA351B2B-BFCB-42E3-BEDA-1B2296EB5F2C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

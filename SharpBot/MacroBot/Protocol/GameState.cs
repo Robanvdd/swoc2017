@@ -4,20 +4,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MicroBot.Protocol
+namespace MacroBot.Protocol
 {
     public sealed class GameState
     {
-        public Arena Arena { get; set; }
-
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int Tick { get; set; }
+        public List<SolarSystem> SolarSystems { get; set; }
         public List<Player> Players { get; set; }
-
-        public List<Projectile> Projectiles { get; set; }
-
-        public override string ToString()
-        {
-            return String.Format("{0}\n{1}\n{2}\n", Arena, String.Join("\n", Players), String.Join("\n", Projectiles));
-        }
+        public List<Fight> Fights { get; set; }
 
         public string ToJson(Formatting formatting = Formatting.Indented)
         {

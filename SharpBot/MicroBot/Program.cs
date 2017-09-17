@@ -78,7 +78,8 @@ namespace MicroBot
                 Movement = new Protocol.Movement { Direction = 52.2f, Speed = 1.2f },
                 Shoot = new Protocol.Shoot { Direction = 200f },
             });
-            Console.WriteLine("GameResponse:\n" + gameReponse.ToJson() + "\n");
+            Console.WriteLine("GameResponse:\n" + gameReponse.ToJson(Formatting.Indented) + "\n");
+            Console.WriteLine("GameResponse:\n" + gameReponse.ToJson());
 
             Console.ReadKey();
         }

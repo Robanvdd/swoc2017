@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E5CD5984-7611-4B8D-8EF0-3BFB78751352}</ProjectGuid>
+    <ProjectGuid>{AA351B2B-BFCB-42E3-BEDA-1B2296EB5F2C}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>MicroBot</RootNamespace>
-    <AssemblyName>MicroBot</AssemblyName>
+    <RootNamespace>MacroBot</RootNamespace>
+    <AssemblyName>MacroBot</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -48,15 +48,14 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Protocol\Arena.cs" />
-    <Compile Include="Protocol\Bot.cs" />
-    <Compile Include="Protocol\BotAction.cs" />
+    <Compile Include="Protocol\Fight.cs" />
     <Compile Include="Protocol\GameResponse.cs" />
     <Compile Include="Protocol\GameState.cs" />
-    <Compile Include="Protocol\Movement.cs" />
+    <Compile Include="Protocol\Planet.cs" />
     <Compile Include="Protocol\Player.cs" />
-    <Compile Include="Protocol\Projectile.cs" />
-    <Compile Include="Protocol\Shoot.cs" />
+    <Compile Include="Protocol\SolarSystem.cs" />
+    <Compile Include="Protocol\Ufo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
