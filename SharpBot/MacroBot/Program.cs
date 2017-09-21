@@ -157,14 +157,42 @@ namespace MacroBot
 
             var gameState = JsonConvert.DeserializeObject<Protocol.GameState>(json);
 
-            var gameResponse = new Protocol.GameResponse
+            var gameResponseMoveToPlanet = new Protocol.GameResponseMoveToPlanet
             {
-                Command = "moveToPlanet",
                 Ufos = new List<int> { 1, 2, 3 },
                 PlanetId = 1324,
             };
-            Console.WriteLine(gameResponse.ToJson(Formatting.Indented));
-            Console.WriteLine(gameResponse.ToJson());
+            Console.WriteLine(gameResponseMoveToPlanet.ToJson(Formatting.Indented));
+            Console.WriteLine(gameResponseMoveToPlanet.ToJson());
+
+            var gameResponseMoveToCoord = new Protocol.GameResponseMoveToCoord
+            {
+                Ufos = new List<int> { 1, 2, 3 },
+                Coord = new Bot.Protocol.Position { X = 2, Y = 3 },
+            };
+            Console.WriteLine(gameResponseMoveToCoord.ToJson(Formatting.Indented));
+            Console.WriteLine(gameResponseMoveToCoord.ToJson());
+
+            var gameResponseConquer = new Protocol.GameResponseConquer
+            {
+                PlanetId = 1234,
+            };
+            Console.WriteLine(gameResponseConquer.ToJson(Formatting.Indented));
+            Console.WriteLine(gameResponseConquer.ToJson());
+
+            var gameResponseBuy = new Protocol.GameResponseBuy
+            {
+                Amount = 1,
+                PlanetId = 1324,
+            };
+            Console.WriteLine(gameResponseBuy.ToJson(Formatting.Indented));
+            Console.WriteLine(gameResponseBuy.ToJson());
+
+            Console.WriteLine("Starting macro engine");
+            var engine = new MacroEngine();
+            engine.Run();
+
+
             Console.ReadKey();
         }
     }

@@ -6,12 +6,10 @@ using System.Text;
 
 namespace MacroBot.Protocol
 {
-    public sealed class GameResponse
+    public sealed class GameResponseConquer
     {
-        public string Command { get; set; }
-        public List<int> Ufos { get; set; }
+        public string Command { get { return "conquer"; } }
         public int PlanetId { get; set; }
-        public int Amount { get; set; }
 
         public string ToJson(Formatting formatting = Formatting.None)
         {
