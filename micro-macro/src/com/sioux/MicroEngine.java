@@ -41,7 +41,7 @@ public class MicroEngine {
     public GameResult Run(Game start) {
         Initialize(start);
 
-        while (true) {
+        while (gameRunning) {
             if (!this.state.arena.Playable()) {
                 break;
             }
@@ -273,8 +273,32 @@ public class MicroEngine {
         return null;
     }
 
+    private void CheckForWinner()
+    {
+        ArrayList<MicroPlayer> playersWithBots = new ArrayList<MicroPlayer>();
+        for (int i = 0; i < state.players.size(); i++)
+        {
+            if (state.players.get(i).bots.size() > 0)
+                playersWithBots.add(state.players.get(i));
+        }
+
+        if (playersWithBots.size() <= 1) // 1 -> winner, 0 -> draw
+        {
+            gameRunning = false;
+        }
+    }
+
     private String GetWinner() {
-        return new String();
+        String winner = new String();
+        for (int i = 0; i < state.players.size(); i++)
+        {
+            if (state.players.get(i).bots.size() > 0)
+            {
+                winner = state.players.get(i).name;
+                break;
+            }
+        }
+        return winner;
     }
 
     private class MicroTick {
@@ -375,6 +399,8 @@ public class MicroEngine {
 
             if (( dx * dx ) + ( dy * dy ) < radii * radii) {
                 this.hitpoints -= projectile.damage;
+                if (hitpoints <= 0)
+                    CheckForWinner();
                 return true;
             }
             return false;
