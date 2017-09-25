@@ -173,7 +173,7 @@ public class MicroEngine {
         {
             for (int j = 0; j < playerNrBots[i]; j++)
             {
-                MicroBot bot = new MicroBot("bot" + j, botHealthPoints, positions.get(index), botRadius);
+                MicroBot bot = new MicroBot("bot" + j, botHealthPoints, positions.get(index++), botRadius);
                 state.getPlayers().get(i).Add(bot);
             }
         }
