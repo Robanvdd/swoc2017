@@ -17,7 +17,11 @@ public class Utils {
     }
 
     public static Boolean BotInsideArena(MicroBot bot, MicroArena arena) {
-        return (bot.getPosition().x - bot.getRadius() > 0 || bot.getPosition().x + bot.getRadius() < arena.getWidth())
-                || (bot.getPosition().y - bot.getRadius() < 0 || bot.getPosition().y + bot.getRadius() < arena.getHeight());
+        int radius = bot.getRadius();
+        double x = bot.getPosition().x;
+        double y = bot.getPosition().y;
+
+        return (x - radius> 0 || x + radius < arena.getWidth())
+                || (y - radius < 0 || y + radius < arena.getHeight());
     }
 }

@@ -3,27 +3,29 @@ package com.sioux.Micro;
 import java.awt.*;
 
 class MicroArena {
-    private Dimension size;
+    private int width;
+    private int height;
 
     public MicroArena(Dimension size)
     {
-        this.size = size;
+        this.width = size.width;
+        this.height = size.height;
     }
 
     public Integer getWidth() {
-        return size.width;
+        return width;
     }
 
     public Integer getHeight() {
-        return size.height;
+        return height;
     }
 
     public void Shrink(Integer delta) {
-        size.height = Math.max(size.height - delta, 0);
-        size.width = Math.max(size.width - delta, 0);
+        height = Math.max(height - delta, 0);
+        width = Math.max(width - delta, 0);
     }
 
     public boolean Playable() {
-        return size.height > 0 && size.width > 0;
+        return height > 0 && width > 0;
     }
 }
