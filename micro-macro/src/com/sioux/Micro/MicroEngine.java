@@ -50,6 +50,7 @@ public class MicroEngine {
      */
     public GameResult Run(Game start) {
         Initialize(start);
+        SaveGameState();
 
         while (gameRunning) {
             if (!this.state.getArena().Playable()) {
@@ -72,7 +73,6 @@ public class MicroEngine {
         }
 
         Uninitialize();
-
         return new GameResult(GetGame(), GetWinner());
     }
 
@@ -199,9 +199,11 @@ public class MicroEngine {
 
     private void SendGameState() {
         for (MicroPlayer player : state.getPlayers()) {
+            this.state.setPlayer(player.getName());
             String stateJson = gson.toJson(this.state, MicroTick.class);
             scripts.get(player.getName()).writeLine(stateJson);
         }
+        this.state.setPlayer("");
     }
 
     private void WaitForCommands() {
