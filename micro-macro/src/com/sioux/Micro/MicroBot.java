@@ -11,14 +11,16 @@ class MicroBot {
     private Point.Double position;
 
     // Non-serialized members (transient)
-    private transient int tickShoot;
+    private transient int cooldownShoot;
+    private transient int lastShoot;
     private transient int radius;
 
     public MicroBot(String name, Integer hp, Point.Double pos, Integer radius) {
         this.name = name;
         this.hitpoints = hp;
         this.position = pos;
-        this.tickShoot = 0;
+        this.cooldownShoot = 30;
+        this.lastShoot = 0;
         this.radius = radius;
     }
 
@@ -34,30 +36,36 @@ class MicroBot {
         return position;
     }
 
-    public int getTickShoot() {
-        return tickShoot;
-    }
-
     public int getRadius() {
         return radius;
     }
 
-    public void Move(Move cmd, MicroArena arena) {
-        if (cmd == null || !this.isAlive()) return;
-        Point.Double newPos = Utils.PolarToCartesian(cmd.getSpeed(), cmd.getDirection());
-        newPos = Utils.ClampPoint(newPos, 0, arena.getHeight(), 0, arena.getWidth());
-        position.x += newPos.x;
-        position.y += newPos.y;
-
-        if (!Utils.BotInsideArena(this, arena)) {
-            hitpoints = 0;
-        }
+    public boolean isAlive() {
+        return hitpoints > 0;
     }
 
-    public MicroProjectile Shoot(Shoot cmd, String source, int tick) {
-        if (cmd == null || !this.isAlive() || !this.canShoot(tick))  return null;
-        else tickShoot = tick;
-        return new MicroProjectile(this.position, cmd.getDirection(), source);
+    public void destroy() {
+        hitpoints = 0;
+    }
+
+    public boolean canMove() {
+        return isAlive();
+    }
+
+    public boolean canShoot(int tickShoot) {
+        return isAlive() && (lastShoot == 0 || ((lastShoot + cooldownShoot) < tickShoot));
+    }
+
+    public void Move(Move cmd) {
+        if (cmd == null) return;
+
+        Point.Double newPos = Utils.PolarToCartesian(cmd.getSpeed(), cmd.getDirection());
+        position.x += newPos.x;
+        position.y += newPos.y;
+    }
+
+    public void Shoot(int tickShoot) {
+        lastShoot = tickShoot;
     }
 
     public Boolean Hit(MicroProjectile projectile) {
@@ -73,13 +81,5 @@ class MicroBot {
             return true;
         }
         return false;
-    }
-
-    public Boolean isAlive() {
-        return hitpoints > 0;
-    }
-
-    public Boolean canShoot(int tick) {
-        return (tickShoot + 30) < tick;
     }
 }

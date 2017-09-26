@@ -1,84 +1,58 @@
 """
 Example micro bot script.
 
-Input from micro game:
-"arena" {
-    //TODO
-},
-players: [
-
-]
-
-
-Output to micro game:
-
-"bots": [
-    {
-        "name": "bot_name"
-        "move": {
-            "direction": "0-360",
-            "speed": "0-10"
-        },
-        "shoot": {
-            "direction": "0-360"
-        }
-    }
-]
 """
 
-import json
 import sys
-import traceback
+import json
+import logging
 
 
-angle = 0
+fh = logging.FileHandler('script.log')
+fh.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('%(asctime)s - %(message)s')
+fh.setFormatter(formatter)
+
+logger = logging.getLogger('script')
+logger.setLevel(logging.DEBUG)
+logger.addHandler(fh)
+
 
 def game_loop():
     # Wait for input from micro.
     micro_json = input()
+    logger.info('input' + micro_json)
     micro = json.loads(micro_json)
-    print(micro, file=sys.stderr)
 
-    print(micro_json, file=sys.stderr)
-    print(micro, file=sys.stderr)
-
-    # Bot logic
-    global angle
-    angle = (angle + 1) % 360
+    arenaWidth = micro['arena']['width']
+    arenaHeight = micro['arena']['height']
+    player = micro['player']
+    
+    bots = []
+    for p in micro['players']:
+        if p['name'] == player:
+            bots = p['bots']
 
     commands = {
-        "bots": [
-            {
-                "name": "bot0",
-            },
-            {
-                "name": "bot1",
-                "move": {
-                    "direction": angle,
-                    "speed": "5"
-                }
-            },
-            {
-                "name": "bot2",
-                "shoot": {
-                    "direction": angle
-                }
-            },
-            {
-                "name": "bot1",
-                "move": {
-                    "direction": angle,
-                    "speed": "5"
-                },
-                "shoot": {
-                    "direction": angle
-                }
-            },
-        ]
+        'commands': []
     }
+
+    for bot in bots:
+        commands['commands'].append({
+            'name': bot['name'],
+            'move': {
+                'direction': 0,
+                'speed': 10
+            },
+            'shoot': {
+                'direction': 180,
+            }
+        })
 
     # Send output to micro.
     commands_json = json.dumps(commands)
+    logger.info('output' + commands_json)
     print(commands_json)
 
 
@@ -86,8 +60,8 @@ def main():
     while True:
         try:
             game_loop()
-        except BaseException:
-            traceback.print_exc()
+        except:
+            logger.exception()
 
 
 if __name__ == '__main__':

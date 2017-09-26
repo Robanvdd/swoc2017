@@ -3,9 +3,12 @@ package com.sioux.Micro;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sioux.BotProcess;
+import com.sioux.Micro.Command.Move;
+import com.sioux.Micro.Command.Shoot;
 import com.sioux.game_objects.Game;
 import com.sioux.game_objects.GameResult;
 
+import javax.rmi.CORBA.Util;
 import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
@@ -49,30 +52,34 @@ public class MicroEngine {
      * @return End state of the game and the winner
      */
     public GameResult Run(Game start) {
-        Initialize(start);
-        SaveGameState();
-
-        while (gameRunning) {
-            if (!this.state.getArena().Playable()) {
-                break;
-            }
-            else if (this.tickCounter > 1000) {
-                this.state.getArena().Shrink(10);
-            }
-
-            System.err.printf("[Tick %d, Arena %d-%d]%n",
-                    this.tickCounter,
-                    this.state.getArena().getHeight(),
-                    this.state.getArena().getWidth());
-
-            SendGameState();
-            WaitForCommands();
+        try {
+            Initialize(start);
             SaveGameState();
 
-            this.tickCounter++;
+            while (gameRunning) {
+                if (!this.state.getArena().Playable()) {
+                    break;
+                } else if (this.tickCounter > 1000) {
+                    this.state.getArena().Shrink(10);
+                }
+
+                System.err.printf("[Tick %d, Arena %d-%d]%n",
+                        this.tickCounter,
+                        this.state.getArena().getHeight(),
+                        this.state.getArena().getWidth());
+
+                SendGameState();
+                WaitForCommands();
+                SaveGameState();
+
+                this.tickCounter++;
+            }
+        } catch (Exception e) {
+            e.printStackTrace(System.err);
+        } finally {
+            Uninitialize();
         }
 
-        Uninitialize();
         return new GameResult(GetGame(), GetWinner());
     }
 
@@ -86,7 +93,7 @@ public class MicroEngine {
         final int botRadius = 15;
         String[] playerNames = {"Player1", "Player2"};
         String[] playerColors = {"#32FF0000", "#320000FF"};
-        int[] playerNrBots = {5, 5};
+        int[] playerNrBots = {1, 1};
 
         int numberOfBots = GetTotalNumberOfBots(playerNrBots);
         Dimension size = DetermineArenaSize(numberOfBots, botRadius);
@@ -182,8 +189,8 @@ public class MicroEngine {
     private void StartScripts(String[] playerNames)
     {
         for (int i = 0; i < playerNames.length; i++) {
-            final String dir = "../test-scripts/readyplayerone/1/micro/";
-            final String cmd = "./run.cmd";
+            final String dir = "D:/Projects/swoc2017/test-scripts/readyplayerone/1/micro/";
+            final String cmd = "run.cmd";
 
             try {
                 scripts.put(playerNames[i], new BotProcess(dir, cmd));
@@ -199,11 +206,13 @@ public class MicroEngine {
 
     private void SendGameState() {
         for (MicroPlayer player : state.getPlayers()) {
-            this.state.setPlayer(player.getName());
-            String stateJson = gson.toJson(this.state, MicroTick.class);
-            scripts.get(player.getName()).writeLine(stateJson);
+            state.setPlayer(player.getName());
+            String stateJson = gson.toJson(state, MicroTick.class);
+            if(!scripts.get(player.getName()).writeLine(stateJson)) {
+                System.err.println("Failed to send game state to " + player.getName());
+            }
         }
-        this.state.setPlayer("");
+        state.setPlayer("");
     }
 
     private void WaitForCommands() {
@@ -211,45 +220,68 @@ public class MicroEngine {
             String inputJson = scripts.get(player.getName()).readLine(1000);
             MicroInput input = gson.fromJson(inputJson, MicroInput.class);
 
-            if (input != null) {
-                ExecuteCommands(player, input);
+            if (input == null) {
+                System.err.println("Failed to receive commands from " + player.getName());
+                continue;
             }
+
+            ExecuteCommands(player, input);
+            ProcessCollisions();
+            ProcessProjectiles();
+            ProcessHits();
+            CheckForWinner(state.getPlayers());
         }
     }
 
     private void ExecuteCommands(MicroPlayer player, MicroInput input) {
-        for (BotInput command : input.getCommands()) {
-            if (command.getName() == null) continue;
+        for (BotInput commands : input.getCommands()) {
+            if (commands.getName() == null) continue;
+
             Optional<MicroBot> result = player.getBots().stream()
-                    .filter(bot -> bot.getName().equals(command.getName())).findFirst();
-
+                    .filter(bot -> bot.getName().equals(commands.getName())).findFirst();
             if (!result.isPresent()) continue;
+
             MicroBot bot = result.get();
+            if (!bot.isAlive()) continue;
 
-            bot.Move(command.getMove(), this.state.getArena());
+            Move moveCmd = commands.getMove();
+            if (moveCmd != null && bot.canMove()) {
+                bot.Move(moveCmd);
+            }
 
-            MicroProjectile projectile = bot.Shoot(command.getShoot(), player.getName(), this.tickCounter);
-            if (projectile != null) {
-                state.Add(projectile);
+            Shoot shootCmd = commands.getShoot();
+            if (shootCmd != null && bot.canShoot(tickCounter)) {
+                bot.Shoot(tickCounter);
+                state.Add(new MicroProjectile(bot.getPosition(), shootCmd.getDirection(), player.getName()));
             }
         }
-        ProcessHits();
+    }
+
+    private void ProcessCollisions() {
+        for (MicroPlayer player : state.getPlayers()) {
+            for (MicroBot bot : player.getBots()) {
+                if (bot.isAlive() && !Utils.BotInsideArena(bot, state.getArena())) {
+                    bot.destroy();
+                }
+            }
+        }
+    }
+
+    private void ProcessProjectiles() {
+        for (MicroProjectile projectile : state.getProjectiles()) {
+            projectile.Move();
+        }
     }
 
     private void ProcessHits() {
-        for (MicroProjectile projectile : this.state.getProjectiles()) {
-            Point.Double newPos = Utils.PolarToCartesian(5.0, projectile.getDirection());
-            projectile.Move(newPos.x, newPos.y);
-        }
-        for (MicroPlayer player : this.state.getPlayers()) {
-            List<MicroProjectile> targets = this.state.getProjectiles().stream()
+        for (MicroPlayer player : state.getPlayers()) {
+            List<MicroProjectile> targets = state.getProjectiles().stream()
                     .filter(p -> !p.getSource().equalsIgnoreCase(player.getName())).collect(Collectors.toList());
             for (MicroProjectile projectile : targets) {
                 if (!player.getName().equalsIgnoreCase(projectile.getSource())) {
                     for (MicroBot bot : player.getBots()) {
                         if (bot.Hit(projectile)) {
-                            this.state.getProjectiles().remove(projectile);
-                            CheckForWinner(this.state.getPlayers());
+                            state.getProjectiles().remove(projectile);
                         }
                     }
                 }

@@ -21,7 +21,7 @@ public class Utils {
         double x = bot.getPosition().x;
         double y = bot.getPosition().y;
 
-        return (x - radius> 0 || x + radius < arena.getWidth())
-                || (y - radius < 0 || y + radius < arena.getHeight());
+        return (x - radius > 0 && x + radius < arena.getWidth())
+                && (y - radius > 0 && y + radius < arena.getHeight());
     }
 }

@@ -93,6 +93,7 @@ The input received from micro has the following format:
         "height": "integer",
         "width": "integer"
     },
+    "player": "string",
     "players": [
         {
             "name": "string",
@@ -122,6 +123,7 @@ Input example:
         "height": "1000",
         "width": "1000"
     },
+    "player": "player0",
     "players": [
         {
             "name": "player0",
@@ -174,7 +176,7 @@ The output sent to micro has the following format:
 
 ```json
 {
-    "bots": [
+    "commands": [
         {
             "name": "string",
             "move": {
@@ -193,7 +195,7 @@ Output example:
 
 ```json
 {
-    "bots": [
+    "commands": [
         {
             "name": "bot0",
         },
