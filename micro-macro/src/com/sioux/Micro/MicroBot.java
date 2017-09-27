@@ -71,7 +71,7 @@ class MicroBot {
     public Boolean Hit(MicroProjectile projectile) {
         if (projectile == null || !this.isAlive()) return false;
 
-        Double projectileRadius = 5.0;
+        Double projectileRadius = 7.0;
         Double dx = projectile.getPosition().getX() - this.position.getX();
         Double dy = projectile.getPosition().getY() - this.position.getY();
         Double radii = radius + projectileRadius;

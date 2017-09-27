@@ -90,7 +90,7 @@ public class MicroEngine {
     private void Initialize(Game start) {
         // TODO Game data -> MicroTick state
 
-        final int botRadius = 15;
+        final int botRadius = 16;
         String[] playerNames = {"Player1", "Player2"};
         String[] playerColors = {"#32FF0000", "#320000FF"};
         int[] playerNrBots = {1, 1};
@@ -189,7 +189,7 @@ public class MicroEngine {
     private void StartScripts(String[] playerNames)
     {
         for (int i = 0; i < playerNames.length; i++) {
-            final String dir = "D:/Projects/swoc2017/test-scripts/readyplayerone/1/micro/";
+            final String dir = "D:/SWOC/swoc2017/test-scripts/readyplayerone/1/micro/";
             final String cmd = "run.cmd";
 
             try {

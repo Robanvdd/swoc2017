@@ -18,6 +18,11 @@
 *.opendb
 *.filters
 **/build*
+**/ticks*
+*.log
+*.user
+workspace.xml
+*.autosave
 .gradle
 .DS_Store
 *.pro.user
