@@ -15,3 +15,9 @@ void Spaceship::move(int x, int y)
     emit xChanged();
     emit yChanged();
 }
+
+void Spaceship::setHp(int hp)
+{
+    m_hp = hp;
+    emit hpChanged();
+}

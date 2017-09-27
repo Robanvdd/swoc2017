@@ -71,3 +71,8 @@ QQmlListProperty<Spaceship> Player::getSpaceships()
 {
     return QQmlListProperty<Spaceship>(this, m_spaceships);
 }
+
+void Player::setSpaceshipHp(int index, int hp)
+{
+    m_spaceships.at(index)->setHp(hp);
+}
