@@ -221,8 +221,8 @@ ApplicationWindow {
                         id: aSpaceShip
                         x: xTransformForZoom(modelData.x)
                         y: yTransformForZoom(modelData.y)
-                        width: sizeTransformForZoom(64)
-                        height: sizeTransformForZoom(64)
+                        width: sizeTransformForZoom(32)
+                        height: sizeTransformForZoom(32)
 
                         ColorOverlay {
                             anchors.fill: aSpaceShip
