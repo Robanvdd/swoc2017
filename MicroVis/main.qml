@@ -206,6 +206,7 @@ ApplicationWindow {
             id: loadGameButton
             text: "Load Game"
             onClicked: {
+                gameTimer.frameUrl = ""
                 appContext.clearPlayers()
                 appContext.clearBullets()
                 fileDialogLoader.sourceComponent = fileDialogComponent
