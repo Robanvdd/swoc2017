@@ -30,6 +30,7 @@ public:
     Q_INVOKABLE int getSpaceshipCount() const;
     Q_INVOKABLE void clearSpaceships();
     QQmlListProperty<Spaceship> getSpaceships();
+    Q_INVOKABLE void setSpaceshipHp(int index, int hp);
 
 signals:
     void idChanged();

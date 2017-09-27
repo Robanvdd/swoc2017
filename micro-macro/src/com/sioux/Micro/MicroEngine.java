@@ -62,7 +62,8 @@ public class MicroEngine {
                 if (!this.state.getArena().Playable()) {
                     break;
                 } else if (this.tickCounter > 1000) {
-                    this.state.getArena().Shrink(10);
+                    final int shrinkage = 2;
+                    this.state.getArena().Shrink(shrinkage);
                 }
 
                 System.err.printf("[Tick %d, Arena %d-%d]%n",
@@ -294,17 +295,11 @@ public class MicroEngine {
 
     private void CheckForWinner(List<MicroPlayer> players)
     {
-        ArrayList<MicroPlayer> playersWithBots = new ArrayList<MicroPlayer>();
-        for (int i = 0; i < players.size(); i++)
-        {
-            if (players.get(i).getBots().size() > 0)
-                playersWithBots.add(players.get(i));
-        }
+        List<MicroPlayer> playersWithLivingBots =
+                players.stream().filter(p -> p.hasLivingBots()).collect(Collectors.toList());
 
-        if (playersWithBots.size() <= 1) // 1 -> winner, 0 -> draw
-        {
+        if (playersWithLivingBots.size() <= 1)
             gameRunning = false;
-        }
     }
 
     private void SaveGameState() {
@@ -348,13 +343,10 @@ public class MicroEngine {
 
     private String GetWinner() {
         String winner = new String();
-        for (int i = 0; i < state.getPlayers().size(); i++)
+        for (MicroPlayer player : state.getPlayers())
         {
-            if (state.getPlayers().get(i).getBots().size() > 0)
-            {
-                winner = state.getPlayers().get(i).getName();
-                break;
-            }
+            if (player.hasLivingBots())
+                winner = player.getName();
         }
         return winner;
     }

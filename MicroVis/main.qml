@@ -35,14 +35,17 @@ ApplicationWindow {
         var smallestRatio = widthRatio < heightRatio ? widthRatio : heightRatio
         if (smallestRatio < 1.0)
             appWindow.zoomFactor = smallestRatio
+        var biggestZoomFactor = 2
+        if (appWindow.zoomFactor > biggestZoomFactor)
+            appWindow.zoomFactor = biggestZoomFactor
 
         if (smallestRatio < 1.0 && heightRatio === smallestRatio)
         {
-            appWindow.horizontalOffset = (appWindow.width - (appWindow.arenaWidth + margin) * smallestRatio) / 2
+            appWindow.horizontalOffset = (appWindow.width - (appWindow.arenaWidth + margin) * appWindow.zoomFactor) / 2
         }
         else if (smallestRatio < 1.0 && widthRatio === smallestRatio)
         {
-            appWindow.verticalOffset = (appWindow.height - (appWindow.arenaHeight + margin) * smallestRatio) / 2
+            appWindow.verticalOffset = (appWindow.height - (appWindow.arenaHeight + margin) * appWindow.zoomFactor) / 2
         }
     }
 
@@ -91,8 +94,10 @@ ApplicationWindow {
             var bots = player.bots
             for (var j = 0; j < bots.length; j++)
             {
+                var hp = bots[j].hitpoints;
                 var posBot = bots[j].position.split(',')
                 appContext.players[i].moveSpaceship(j, posBot[0], posBot[1])
+                appContext.players[i].setSpaceshipHp(j, hp);
             }
             while (appContext.players[i].getSpaceshipCount > player.bots.length)
             {
@@ -201,6 +206,7 @@ ApplicationWindow {
             id: loadGameButton
             text: "Load Game"
             onClicked: {
+                gameTimer.frameUrl = ""
                 appContext.clearPlayers()
                 appContext.clearBullets()
                 fileDialogLoader.sourceComponent = fileDialogComponent
@@ -221,8 +227,9 @@ ApplicationWindow {
                         id: aSpaceShip
                         x: xTransformForZoom(modelData.x)
                         y: yTransformForZoom(modelData.y)
-                        width: sizeTransformForZoom(64)
-                        height: sizeTransformForZoom(64)
+                        width: sizeTransformForZoom(32)
+                        height: sizeTransformForZoom(32)
+                        visible: modelData.hp > 0
 
                         ColorOverlay {
                             anchors.fill: aSpaceShip

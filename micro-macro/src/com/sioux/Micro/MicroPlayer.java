@@ -29,4 +29,11 @@ class MicroPlayer {
     public void Add(MicroBot bot) {
         this.bots.add(bot);
     }
+
+    public boolean hasLivingBots() {
+        for (MicroBot bot : bots) {
+            if (bot.isAlive()) return true;
+        }
+        return false;
+    }
 }
