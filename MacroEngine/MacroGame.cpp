@@ -29,7 +29,7 @@ MacroGame::MacroGame(QList<PlayerBotFolders*> playerBotFolders, Universe* univer
         player->giveUfo(new Ufo());
         player->giveUfo(new Ufo());
         m_universe->addPlayer(player);
-        auto bot = new MacroBot(playerBotFolder->getMacroBotFolder() + "/run.cmd", "", this);
+        auto bot = new MacroBot(playerBotFolder->getMacroBotFolder() + "/run.sh", "", this);
         m_macroBots << bot;
         m_playerBotMap[player] = bot;
         m_botPlayerMap[bot] = player;
