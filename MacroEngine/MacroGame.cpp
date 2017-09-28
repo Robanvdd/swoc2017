@@ -9,6 +9,7 @@
 #include <QJsonDocument>
 #include <QTextStream>
 #include <iostream>
+#include <exception>
 
 MacroGame::MacroGame(QString executable, Universe* universe, QObject *parent)
     : GameObject(parent)
@@ -185,5 +186,5 @@ std::unique_ptr<CommandBase> MacroGame::createCommand(const QJsonObject object)
     {
         return std::make_unique<ConquerCommand>();
     }
-    throw std::exception("Stuff broke");
+    throw std::exception();
 }
