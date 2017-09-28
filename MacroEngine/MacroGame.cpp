@@ -11,9 +11,9 @@
 #include <iostream>
 #include <exception>
 
-MacroGame::MacroGame(QString executable, Universe* universe, QObject *parent)
+MacroGame::MacroGame(QList<PlayerBotFolders*> playerBotFolders, Universe* universe, QObject *parent)
     : GameObject(parent)
-    , m_executable(executable)
+    , m_playerBotFolders(playerBotFolders)
     , m_universe(universe)
     , m_tickTimer(new QTimer(this))
     , m_currentTick(1)
@@ -22,30 +22,18 @@ MacroGame::MacroGame(QString executable, Universe* universe, QObject *parent)
 {
     m_universe->setParent(this);
 
-//    auto player1 = new Player("dwight", this);
-//    player1->giveUfo(new Ufo());
-//    player1->giveUfo(new Ufo());
-//    player1->giveUfo(new Ufo());
-//    //auto bot1 = new MacroBot("C:/Users/Gebruiker/Desktop/Debug/MacroBot.exe", this);
-//    auto bot1 = new MacroBot("python", "D:\\helloWorld.py", this);
-    //auto bot1 = new MacroBot(executable, this);
-    auto player2 = new Player("Bot2", this);
-    player2->giveUfo(new Ufo());
-    player2->giveUfo(new Ufo());
-    player2->giveUfo(new Ufo());
-    //auto bot2 = new MacroBot("python", "D:\\helloWorld.py /C", this);
-    auto bot2 = new MacroBot("cmd.exe", "Z:\\Release\\MacroBot.exe", this);
-    //"python D:\\helloWorld.py"
-    //auto bot2 = new MacroBot("cmd.exe", "-v", this);
-
-    //m_universe->addPlayer(player1);
-    m_universe->addPlayer(player2);
-    m_macroBots << bot2; //bot1 << bot2;
-
-    //m_playerBotMap[player1] = bot1;
-    m_playerBotMap[player2] = bot2;
-    //m_botPlayerMap[bot1] = player1;
-    m_botPlayerMap[bot2] = player2;
+    foreach (auto playerBotFolder, m_playerBotFolders)
+    {
+        auto player = new Player(playerBotFolder->getPlayerName(), this);
+        player->giveUfo(new Ufo());
+        player->giveUfo(new Ufo());
+        player->giveUfo(new Ufo());
+        m_universe->addPlayer(player);
+        auto bot = new MacroBot(playerBotFolder->getMacroBotFolder() + "/run.cmd", "", this);
+        m_macroBots << bot;
+        m_playerBotMap[player] = bot;
+        m_botPlayerMap[bot] = player;
+    }
 
     connect(m_tickTimer, &QTimer::timeout, this, [this]() { handleTick(); });
 }

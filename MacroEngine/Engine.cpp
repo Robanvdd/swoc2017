@@ -3,15 +3,19 @@
 #include <QTimer>
 #include <iostream>
 
-Engine::Engine(QString executable, QObject *parent)
+Engine::Engine(QList<PlayerBotFolders*> playerBotFolders, QObject *parent)
     : QObject(parent)
-    , m_executable(executable)
+    , m_playerBotFolders(playerBotFolders)
 {
+    foreach (auto playerBotFolders, m_playerBotFolders)
+    {
+        playerBotFolders->setParent(this);
+    }
 }
 
 void Engine::startNewMacroGame()
 {
-    auto newMacroGame = new MacroGame(m_executable, m_universeBuilder.buildUniverse(), this);
+    auto newMacroGame = new MacroGame(m_playerBotFolders, m_universeBuilder.buildUniverse(), this);
     m_macroGames << newMacroGame;
     connect(newMacroGame, &MacroGame::finished, this, [this, newMacroGame]()
     {

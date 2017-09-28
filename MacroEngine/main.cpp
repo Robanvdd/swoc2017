@@ -1,3 +1,5 @@
+#include "PlayerBotFolders.h"
+
 #include <QCoreApplication>
 #include <QTimer>
 #include <iostream>
@@ -7,13 +9,24 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-    if (argc < 2)
+    if ((argc - 1) % 3 != 0)
     {
-        std::cout << "Need path to executable as argument" << std::endl;
+        std::cout << "Need multiple of three arguments: <player1> <macrobot1> <microbot1> <player2> <macrobot2> <microbot2> ..." << std::endl;
         return -1;
     }
 
-    Engine* engine = new Engine(argv[1], &a);
+    QList<PlayerBotFolders*> playerBotFolders;
+    for (int i = 0; i < (argc - 1) / 3; i++)
+    {
+        PlayerBotFolders* player = new PlayerBotFolders();
+        player->setPlayerName(argv[i*3 + 1]);
+        player->setMacroBotFolder(argv[i*3 + 2]);
+        player->setMicroBotFolder(argv[i*3 + 3]);
+        playerBotFolders.append(player);
+    }
+
+    Engine* engine = new Engine(playerBotFolders, &a);
+
     QObject::connect(engine, &Engine::finished, &a, [&a]() { a.quit(); });
     QObject::connect(engine, &Engine::errorOccured, &a, [&a]() { a.quit(); });
     QObject::connect(engine, &Engine::destroyed, &a, [&a]() { a.quit(); });

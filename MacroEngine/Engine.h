@@ -2,6 +2,7 @@
 #define ENGINE_H
 
 #include "MacroGame.h"
+#include "PlayerBotFolders.h"
 #include "UniverseBuilder.h"
 
 #include <QObject>
@@ -12,7 +13,7 @@ class Engine : public QObject
 {
     Q_OBJECT
 public:
-    explicit Engine(QString executable, QObject *parent = 0);
+    explicit Engine(QList<PlayerBotFolders*> playerBotFolders, QObject *parent = 0);
 
 signals:
     void finished();
@@ -23,6 +24,7 @@ public slots:
 
 private:
     QString m_executable;
+    QList<PlayerBotFolders*> m_playerBotFolders;
     QList<MacroGame*> m_macroGames;
     UniverseBuilder m_universeBuilder;
 };

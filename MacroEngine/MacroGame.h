@@ -6,6 +6,7 @@
 #include "MicroGame.h"
 #include "Universe.h"
 #include "CommandBase.h"
+#include "PlayerBotFolders.h"
 
 #include <QElapsedTimer>
 #include <QMap>
@@ -17,7 +18,7 @@ class MacroGame : public GameObject
 {
     Q_OBJECT
 public:
-    MacroGame(QString executable, Universe *universe, QObject *parent = nullptr);
+    MacroGame(QList<PlayerBotFolders*> playerBotFolders, Universe *universe, QObject *parent = nullptr);
     void run();
 
 signals:
@@ -27,7 +28,7 @@ signals:
 public slots:
 
 private:
-    QString m_executable;
+    QList<PlayerBotFolders*> m_playerBotFolders;
     Universe* m_universe;
 
     QTimer* m_tickTimer;
