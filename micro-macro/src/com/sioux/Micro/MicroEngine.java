@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.sioux.BotProcess;
 import com.sioux.Micro.Command.Move;
 import com.sioux.Micro.Command.Shoot;
+import com.sioux.Micro.Command.ShootAt;
 import com.sioux.game_objects.Game;
 import com.sioux.game_objects.GameResult;
 
@@ -254,6 +255,14 @@ public class MicroEngine {
             if (shootCmd != null && bot.canShoot(tickCounter)) {
                 bot.Shoot(tickCounter);
                 state.Add(new MicroProjectile(bot.getPosition(), shootCmd.getDirection(), player.getName()));
+            }
+
+            ShootAt shootAtCmd = commands.getShootAt();
+            if (shootAtCmd != null && bot.canShoot(tickCounter)) {
+                bot.Shoot(tickCounter);
+                Point.Double target = new Point.Double(shootAtCmd.getX(), shootAtCmd.getY());
+                double direction = Utils.DirectionBetweenPoints(bot.getPosition(), target);
+                state.Add(new MicroProjectile(bot.getPosition(), direction, player.getName()));
             }
         }
     }

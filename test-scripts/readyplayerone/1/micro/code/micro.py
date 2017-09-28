@@ -6,7 +6,7 @@ Example micro bot script.
 import sys
 import json
 import logging
-
+import math
 
 fh = logging.FileHandler('script.log')
 fh.setLevel(logging.DEBUG)
@@ -18,6 +18,7 @@ logger = logging.getLogger('script')
 logger.setLevel(logging.DEBUG)
 logger.addHandler(fh)
 
+time = 0
 
 def game_loop():
     # Wait for input from micro.
@@ -28,11 +29,27 @@ def game_loop():
     arenaWidth = micro['arena']['width']
     arenaHeight = micro['arena']['height']
     player = micro['player']
+
+    global time
+    time = time + 0.1
     
     bots = []
     for p in micro['players']:
         if p['name'] == player:
             bots = p['bots']
+
+    otherBots = []
+    for p in micro['players']:
+        if p['name'] != player:
+            otherBots += p['bots']
+
+    targetX = 0
+    targetY = 0
+    if otherBots != []:
+        targetBot = otherBots[0]
+        target = [float(i) for i in targetBot['position'].split(',')]
+        targetX = target[0]
+        targetY = target[1]
 
     commands = {
         'commands': []
@@ -42,12 +59,16 @@ def game_loop():
         commands['commands'].append({
             'name': bot['name'],
             'move': {
-                'direction': 0,
-                'speed': 10
+                'direction': math.cos(time) * 180,
+                'speed': math.sin(time) * 10
             },
-            'shoot': {
-                'direction': 180,
-            }
+#            'shoot': {
+#                'direction': 180
+#            }
+			'shootAt': {
+				'x': targetX,
+				'y': targetY
+			}
         })
 
     # Send output to micro.
