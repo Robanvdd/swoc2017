@@ -24,4 +24,13 @@ public class Utils {
         return (x - radius > 0 && x + radius < arena.getWidth())
                 && (y - radius > 0 && y + radius < arena.getHeight());
     }
+
+    public static boolean ProjectileInsideArena(MicroProjectile projectile, MicroArena arena) {
+        int radius = projectile.getRadius();
+        double x = projectile.getPosition().x;
+        double y = projectile.getPosition().y;
+
+        return (x - radius > 0 && x + radius < arena.getWidth())
+                && (y - radius > 0 && y + radius < arena.getHeight());
+    }
 }

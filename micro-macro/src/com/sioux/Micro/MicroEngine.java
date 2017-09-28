@@ -269,6 +269,12 @@ public class MicroEngine {
                 }
             }
         }
+
+        for (MicroProjectile projectile : state.getProjectiles()) {
+            if (!Utils.ProjectileInsideArena(projectile, state.getArena())) {
+                state.Remove(projectile);
+            }
+        }
     }
 
     private void ProcessProjectiles() {

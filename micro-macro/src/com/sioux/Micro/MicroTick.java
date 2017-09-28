@@ -39,4 +39,8 @@ class MicroTick {
     public void Add(MicroProjectile projectile) {
         projectiles.add(projectile);
     }
+
+    public void Remove(MicroProjectile projectile) {
+        projectiles.remove(projectile);
+    }
 }
