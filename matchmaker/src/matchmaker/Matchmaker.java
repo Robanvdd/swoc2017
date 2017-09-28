@@ -14,6 +14,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import org.bson.types.ObjectId;
 
 /**
@@ -174,24 +175,23 @@ public class Matchmaker implements AutoCloseable {
             Process p = Runtime.getRuntime().exec("java -jar micro-macro.jar " + botString);
 
             BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            String lastLine = "";
             String line;
             while ((line = input.readLine()) != null) {
-                sb.append(line);
-                sb.append('\n');
-                lastLine = line;
+                System.out.println(line);
+                if (line.startsWith("player ")) {
+                    String[] playerScore = line.substring("player ".length()).split(" ");
+                    if (playerScore.length != 2) throw new InvalidArgumentException(playerScore);
+                    String player = playerScore[0];
+                    String score = playerScore[1];
+                    System.out.println("Parsed score for player: " + player + " with score: " + score);
+                }
             }
             p.waitFor();
             input.close();
-            
-//            matchId = new ObjectId(lastLine);
-            System.out.println(sb.toString());
         }
         catch (Exception err) {
             System.err.println("Exception when running match.");
             err.printStackTrace();
-            System.err.println("Output of engine was:");
-            System.err.print(sb.toString());
         }
 //        return matchId;
     }

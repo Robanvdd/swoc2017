@@ -3,6 +3,8 @@ package com.sioux.Micro;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sioux.BotProcess;
+import com.sioux.Macro.MacroInput;
+import com.sioux.Macro.MacroOutput;
 import com.sioux.Micro.Command.Move;
 import com.sioux.Micro.Command.Shoot;
 import com.sioux.Micro.Command.ShootAt;
@@ -52,9 +54,9 @@ public class MicroEngine {
      * @param start Starting state of the game
      * @return End state of the game and the winner
      */
-    public GameResult Run(Game start) {
+    public MacroOutput Run(MacroInput input) {
         try {
-            Initialize(start);
+            Initialize(input);
             SaveGameState();
 
             while (gameRunning) {
@@ -82,15 +84,16 @@ public class MicroEngine {
             Uninitialize();
         }
 
-        return new GameResult(GetGame(), GetWinner());
+        // TODO MicroTick state -> MacroOutput data
+        return new MacroOutput(input.getPlayers(), input.getGameId(), 0);
     }
 
     /**
      * Lifecycle
      */
 
-    private void Initialize(Game start) {
-        // TODO Game data -> MicroTick state
+    private void Initialize(MacroInput input) {
+        // TODO MacroInput data -> MicroTick state
 
         final int botRadius = 16;
         String[] playerNames = {"Player1", "Player2"};
@@ -273,6 +276,12 @@ public class MicroEngine {
                 if (bot.isAlive() && !Utils.BotInsideArena(bot, state.getArena())) {
                     bot.destroy();
                 }
+            }
+        }
+
+        for (MicroProjectile projectile : state.getProjectiles()) {
+            if (!Utils.ProjectileInsideArena(projectile, state.getArena())) {
+                state.Remove(projectile);
             }
         }
     }

@@ -1,28 +1,30 @@
 package com.sioux;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.sioux.Macro.MacroInput;
+import com.sioux.Macro.MacroOutput;
 import com.sioux.Micro.MicroEngine;
 
+import java.util.Scanner;
+
 public class Main {
+    private static Scanner scanner;
+    private static GsonBuilder gsonBuilder;
+    private static Gson gson;
 
     public static void main(String[] botArgs) {
-//        BotShepherdThread bot = new BotShepherdThread(botArgs);//starts the bots
-//        Thread botThread = new Thread(bot);
-//        Engine e = new Engine(bot);
-//        Thread engineThread = new Thread(e);
-//
-//        botThread.start();
-//        engineThread.start();
-//
-//        //Sleep for testing
-//        try { Thread.sleep(20000);} catch (InterruptedException e1) { e1.printStackTrace(); }
-//
-//        try {
-//            botThread.interrupt();
-//            engineThread.interrupt();
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
+        scanner = new Scanner(System.in);
+        gsonBuilder = new GsonBuilder();
+        gson = gsonBuilder.create();
+
+        String macroInputJson = scanner.nextLine();
+        MacroInput macroInput = gson.fromJson(macroInputJson, MacroInput.class);
+
         MicroEngine micro = new MicroEngine();
-        micro.Run(null);
+        MacroOutput macroOutput = micro.Run(macroInput);
+
+        String macroOutputJson = gson.toJson(macroOutput, MacroOutput.class);
+        System.out.println(macroOutputJson);
     }
 }
