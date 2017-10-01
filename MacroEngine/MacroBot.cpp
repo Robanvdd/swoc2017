@@ -13,6 +13,11 @@ MacroBot::MacroBot(QString executable, QString arguments, QObject *parent)
 void MacroBot::startProcess()
 {
     m_process = new QProcess(this);
+    QObject::connect(m_process, &QProcess::errorOccurred, this, [this]()
+    {
+        std::cerr << "Error occured " << m_process->errorString().toStdString() << std::endl;
+        std::cerr << m_executable.toStdString() << std::endl;
+    });
     m_process->start(m_executable);
 }
 
@@ -28,7 +33,6 @@ void MacroBot::sendGameState(QString state)
     {
         state = state + "\n";
     }
-    std::cout << "Writing " << state.length() << " characters: " << state.toStdString();
     QByteArray ba = state.toLatin1();
     const char *c_str2 = ba.data();
     if (m_process->state() == QProcess::Running)
@@ -39,16 +43,11 @@ void MacroBot::sendGameState(QString state)
 
 QStringList MacroBot::receiveCommands()
 {
-    //qDebug() << QString::fromLocal8Bit(m_process->readLine();
-    QString data(m_process->readAllStandardOutput());
-    std::cout << data.toStdString() << std::endl;
     QStringList result;
-    //    while (m_process->canReadLine())
-    //    {
-    //        //result.append(QString::fromLocal8Bit(m_process->readLine()));
-    //        //std::cout << "Received " << result.last().length() << " characters" << std::endl;
-    //        //std::cout << result.last().toStdString();
-    //    }
+    while (m_process->canReadLine())
+    {
+        result.append(QString::fromLocal8Bit(m_process->readLine()));
+    }
     return result;
 }
 

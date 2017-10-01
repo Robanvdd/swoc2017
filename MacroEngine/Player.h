@@ -4,7 +4,9 @@
 #include "GameObject.h"
 #include "Ufo.h"
 
+#include <QColor>
 #include <QObject>
+
 
 class Player : public GameObject
 {
@@ -24,6 +26,11 @@ public:
 
     void writeState(QJsonObject& gameState);
 
+    QList<Ufo*> getUfos() const;
+
+    QColor getColor() const;
+    void setColor(const QColor& color);
+
 signals:
 
 public slots:
@@ -32,6 +39,7 @@ private:
     double m_credits;
     QString m_name;
     QList<Ufo*> m_ufos;
+    QColor m_color;
 };
 
 #endif // PLAYER_H

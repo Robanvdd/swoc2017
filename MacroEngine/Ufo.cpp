@@ -22,3 +22,13 @@ void Ufo::writeState(QJsonObject& gameState)
     coords["y"] = m_coord.y();
     gameState["coord"] = coords;
 }
+
+QPoint Ufo::getCoord() const
+{
+    return m_coord;
+}
+
+bool Ufo::getInFight() const
+{
+    return m_inFight;
+}

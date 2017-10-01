@@ -10,6 +10,10 @@ public:
     void readCommand(const QJsonObject jsonObject);
     void printCommand();
 
+    int getAmount() const;
+
+    int getPlanetId() const;
+
 private:
     int m_amount;
     int m_planetId;

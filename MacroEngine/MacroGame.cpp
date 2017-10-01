@@ -2,6 +2,7 @@
 #include "CommandBase.h"
 #include "ConquerCommand.h"
 #include "MacroGame.h"
+#include "MicroGameInput.h"
 #include "MoveToCoordCommand.h"
 #include "MoveToPlanetCommand.h"
 #include <QFile>
@@ -10,6 +11,16 @@
 #include <QTextStream>
 #include <iostream>
 #include <exception>
+
+#ifdef __linux__
+#define RUN_FILE "/run.sh"
+#endif
+#ifdef _WIN32_
+#define RUN_FILE "\\run.bat"
+#endif
+#ifdef _WIN64
+#define RUN_FILE "\\run.bat"
+#endif
 
 MacroGame::MacroGame(QList<PlayerBotFolders*> playerBotFolders, Universe* universe, QObject *parent)
     : GameObject(parent)
@@ -29,10 +40,11 @@ MacroGame::MacroGame(QList<PlayerBotFolders*> playerBotFolders, Universe* univer
         player->giveUfo(new Ufo());
         player->giveUfo(new Ufo());
         m_universe->addPlayer(player);
-        auto bot = new MacroBot(playerBotFolder->getMacroBotFolder() + "/run.bat", "", this);
+        auto bot = new MacroBot(playerBotFolder->getMacroBotFolder() + RUN_FILE, "", this);
         m_macroBots << bot;
         m_playerBotMap[player] = bot;
         m_botPlayerMap[bot] = player;
+        m_playerMicroBotFolder[player] = playerBotFolder->getMicroBotFolder();
     }
 
     connect(m_tickTimer, &QTimer::timeout, this, [this]() { handleTick(); });
@@ -118,20 +130,83 @@ void MacroGame::communicateWithBot(Player* player, QJsonDocument gameStateDoc)
     auto macroBot = m_playerBotMap[player];
     macroBot->sendGameState(gameStateDoc.toJson(QJsonDocument::Compact));
 
-    // Handle all commands
+    // Collect all commands
     QStringList commands = macroBot->receiveCommands();
     for (auto commandString : commands)
     {
-        // Handle command
+        // Parse command
         QJsonParseError error;
         auto doc = QJsonDocument::fromJson(commandString.toUtf8(), &error);
         if (error.error == QJsonParseError::NoError)
         {
             auto object = doc.object();
             std::unique_ptr<CommandBase> command = createCommand(object);
-            command->readCommand(object);
-            command->printCommand();
+            handleCommand(player, command);
         }
+    }
+}
+
+void MacroGame::handleBuyCommand(BuyCommand* buyCommand, Player* player)
+{
+    m_ufoShop.buyUfos(player, m_universe->getPlanet(buyCommand->getPlanetId()), buyCommand->getAmount());
+}
+
+void MacroGame::handleConquerCommand(Player* player, ConquerCommand* conquerCommand)
+{
+    auto planet = m_universe->getPlanet(conquerCommand->getPlanetId());
+    if (planet == nullptr || player == nullptr)
+        return;
+    // Planet not yet claimed
+    if (planet->getOwnedBy() == -1)
+        planet->takeOverBy(player);
+
+    // Prepare fight
+    Player* currentOwner = m_universe->getPlayers().value(planet->getOwnedBy(), nullptr);
+    if (currentOwner == nullptr)
+    {
+        throw std::logic_error("Planet is owned, but not by an existing player");
+    }
+
+    SolarSystem* solarSystem = m_universe->getCorrespondingSolarSystem(planet);
+    QPointF location = solarSystem->getPlanetLocation(*planet);
+    QList<Ufo*> nearbyUfosPlayer = solarSystem->getUfosNearLocation(location, *player);
+    QList<Ufo*> nearbyUfosCurrentOwner = solarSystem->getUfosNearLocation(location, *currentOwner);
+    startMicroGame(player, nearbyUfosPlayer, currentOwner, nearbyUfosCurrentOwner);
+}
+
+void MacroGame::startMicroGame(Player* playerA, QList<Ufo*> ufosPlayerA, Player* playerB, QList<Ufo*> ufosPlayerB)
+{
+    MicroGameInput input(playerA, ufosPlayerA, m_playerMicroBotFolder[playerA],
+                         playerB, ufosPlayerB, m_playerMicroBotFolder[playerB]);
+
+    MicroGame* microGame = new MicroGame("TODO", input);
+    microGame->startProcess();
+
+    m_microGames << microGame;
+}
+
+void MacroGame::handleCommand(Player* player, std::unique_ptr<CommandBase>& command)
+{
+    command->printCommand();
+    BuyCommand* buyCommand = dynamic_cast<BuyCommand*>(command.get());
+    if (buyCommand)
+    {
+        handleBuyCommand(buyCommand, player);
+    }
+    ConquerCommand* conquerCommand = dynamic_cast<ConquerCommand*>(command.get());
+    if (conquerCommand)
+    {
+        handleConquerCommand(player, conquerCommand);
+    }
+    MoveToPlanetCommand* moveToPlanetCommand = dynamic_cast<MoveToPlanetCommand*>(command.get());
+    if (moveToPlanetCommand)
+    {
+        // TODO
+    }
+    MoveToCoordCommand* moveToCoordCommand = dynamic_cast<MoveToCoordCommand*>(command.get());
+    if (moveToCoordCommand)
+    {
+        // TODO
     }
 }
 
@@ -157,22 +232,27 @@ QJsonObject MacroGame::generateGameState()
 
 std::unique_ptr<CommandBase> MacroGame::createCommand(const QJsonObject object)
 {
-    auto command = object["Command"].toString();
-    if (command == "moveToPlanet")
+    auto commandString = object["Command"].toString();
+    std::unique_ptr<CommandBase> command;
+    if (commandString == "moveToPlanet")
     {
-        return std::make_unique<MoveToPlanetCommand>();
+        command = std::make_unique<MoveToPlanetCommand>();
     }
-    else if (command == "moveToCoord")
+    else if (commandString == "moveToCoord")
     {
-        return std::make_unique<MoveToCoordCommand>();
+        command = std::make_unique<MoveToCoordCommand>();
     }
-    else if (command == "buy")
+    else if (commandString == "buy")
     {
-        return std::make_unique<BuyCommand>();
+        command = std::make_unique<BuyCommand>();
     }
-    else if (command == "conquer")
+    else if (commandString == "conquer")
     {
-        return std::make_unique<ConquerCommand>();
+        command = std::make_unique<ConquerCommand>();
     }
-    throw std::exception();
+    else {
+        throw std::exception();
+    }
+    command->readCommand(object);
+    return command;
 }

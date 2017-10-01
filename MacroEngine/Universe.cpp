@@ -2,7 +2,7 @@
 
 #include <QJsonArray>
 
-Universe::Universe(QList<SolarSystem *> solarSystems, QObject *parent)
+Universe::Universe(QMap<int, SolarSystem *> solarSystems, QObject *parent)
     : GameObject(parent)
     , m_solarSystems(solarSystems)
     , m_baseIncomePerSecond(5000)
@@ -48,22 +48,44 @@ void Universe::applyTick(double durationInSeconds)
 
 void Universe::addPlayer(Player* player)
 {
-    m_players << player;
+    m_players[player->getId()] = player;
 }
 
-QList<SolarSystem*> Universe::getSolarSystems() const
+QMap<int, SolarSystem *> Universe::getSolarSystems() const
 {
     return m_solarSystems;
 }
 
-QList<Player*> Universe::getPlayers() const
+Planet *Universe::getPlanet(int id) const
+{
+    foreach (auto solarSystem, m_solarSystems)
+    {
+        if (solarSystem->getPlanets().contains(id))
+        {
+            return solarSystem->getPlanets()[id];
+        }
+    }
+    return nullptr;
+}
+
+QMap<int, Player *> Universe::getPlayers() const
 {
     return m_players;
 }
 
-QList<Fight*> Universe::getFights() const
+QMap<int, Fight *> Universe::getFights() const
 {
     return m_fights;
+}
+
+SolarSystem*Universe::getCorrespondingSolarSystem(Planet* planet)
+{
+    foreach (auto solarSystem, m_solarSystems)
+    {
+        if (solarSystem->getPlanets().key(planet, -1) != -1)
+            return solarSystem;
+    }
+    throw std::logic_error("No SolarSystem exists that contains planet: " + QString::number(planet->getId()).toStdString());
 }
 
 void Universe::addCredits(Player* player, double durationInSeconds)

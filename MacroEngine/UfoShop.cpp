@@ -6,14 +6,20 @@ UfoShop::UfoShop(QObject *parent)
 {
 }
 
-void UfoShop::buyUfo(Player* player, Planet planet)
+void UfoShop::buyUfo(Player* player, const Planet* planet)
 {
-    Q_UNUSED(planet)
-    if (player->getCredits() > m_ufoPrice)
+    if (planet == nullptr || player == nullptr || player->getCredits() < m_ufoPrice)
+        return;
+    player->removeCredits(m_ufoPrice);
+    auto ufo = new Ufo();
+    // TODO planet location
+    player->giveUfo(ufo);
+}
+
+void UfoShop::buyUfos(Player* player, const Planet* planet, int amount)
+{
+    for (int i=0; i < amount; i++)
     {
-        player->removeCredits(m_ufoPrice);
-        auto ufo = new Ufo();
-        // TODO planet location
-        player->giveUfo(ufo);
+        buyUfo(player, planet);
     }
 }

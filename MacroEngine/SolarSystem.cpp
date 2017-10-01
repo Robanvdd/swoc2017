@@ -1,9 +1,10 @@
+#include "Player.h"
 #include "SolarSystem.h"
 
 #include <QJsonArray>
 #include <QJsonObject>
 
-SolarSystem::SolarSystem(QString name, QPoint coord, QList<Planet *> planets, QObject *parent)
+SolarSystem::SolarSystem(QString name, QPoint coord, QMap<int, Planet *> planets, QObject *parent)
     : GameObject(parent)
     , m_name(name)
     , m_coord(coord)
@@ -39,7 +40,27 @@ void SolarSystem::applyTick(double durationInSeconds)
     }
 }
 
-QList<Planet*> SolarSystem::getPlanets()
+QMap<int, Planet *> SolarSystem::getPlanets()
 {
     return m_planets;
+}
+
+QPointF SolarSystem::getPlanetLocation(const Planet& planet) const
+{
+    return planet.getCartesianCoordinates() + m_coord;
+}
+
+QList<Ufo*> SolarSystem::getUfosNearLocation(const QPointF& location, const Player& player)
+{
+    QList<Ufo*> result;
+    foreach (Ufo* ufo, player.getUfos())
+    {
+        QPointF distanceDiff = ufo->getCoord() - location;
+        double squaredDistance = std::pow(distanceDiff.x(), 2) + std::pow(distanceDiff.y(), 2);
+        if ( squaredDistance < std::pow(64, 2) && !ufo->getInFight())
+        {
+            result << ufo;
+        }
+    }
+    return result;
 }

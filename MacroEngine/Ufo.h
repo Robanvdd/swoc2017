@@ -15,6 +15,10 @@ public:
     void applyTick(double durationInSeconds);
     void writeState(QJsonObject& gameState);
 
+    QPoint getCoord() const;
+
+    bool getInFight() const;
+
 signals:
 
 public slots:

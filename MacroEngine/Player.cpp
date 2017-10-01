@@ -61,3 +61,18 @@ void Player::writeState(QJsonObject& gameState)
     }
     gameState["ufos"] = ufoArray;
 }
+
+QList<Ufo*> Player::getUfos() const
+{
+    return m_ufos;
+}
+
+QColor Player::getColor() const
+{
+    return m_color;
+}
+
+void Player::setColor(const QColor& color)
+{
+    m_color = color;
+}

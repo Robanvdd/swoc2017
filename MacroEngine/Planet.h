@@ -4,7 +4,9 @@
 #include "GameObject.h"
 
 #include <QObject>
+#include <QPoint>
 
+class Player;
 class Planet : public GameObject
 {
     Q_OBJECT
@@ -13,6 +15,13 @@ public:
     void writeState(QJsonObject& gameState) const;
     void applyTick(double durationInSeconds);
     int getOwnedBy();
+    void takeOverBy(Player* player);
+
+    double getOrbitRotation() const;
+
+    int getOrbitDistance() const;
+
+    QPointF getCartesianCoordinates() const;
 
 signals:
 

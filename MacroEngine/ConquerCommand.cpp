@@ -18,3 +18,8 @@ void ConquerCommand::printCommand()
 {
     std::cout << "Conquer >> PlanetId: " << m_planetId << std::endl;
 }
+
+int ConquerCommand::getPlanetId() const
+{
+    return m_planetId;
+}

@@ -20,3 +20,13 @@ void BuyCommand::printCommand()
 {
     std::cout << "Buy >> Amount: " << m_amount << ", PlanetId: " << m_planetId << std::endl;
 }
+
+int BuyCommand::getAmount() const
+{
+    return m_amount;
+}
+
+int BuyCommand::getPlanetId() const
+{
+    return m_planetId;
+}

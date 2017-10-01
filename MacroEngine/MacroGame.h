@@ -7,6 +7,9 @@
 #include "Universe.h"
 #include "CommandBase.h"
 #include "PlayerBotFolders.h"
+#include "UfoShop.h"
+#include "BuyCommand.h"
+#include "ConquerCommand.h"
 
 #include <QElapsedTimer>
 #include <QMap>
@@ -20,6 +23,8 @@ class MacroGame : public GameObject
 public:
     MacroGame(QList<PlayerBotFolders*> playerBotFolders, Universe *universe, QObject *parent = nullptr);
     void run();
+
+    void handleBuyCommand(Player* player, BuyCommand* buyCommand);
 
 signals:
     void finished();
@@ -39,7 +44,9 @@ private:
     double m_tickDurationInSeconds;
     QMap<Player*, MacroBot*> m_playerBotMap;
     QMap<MacroBot*, Player*> m_botPlayerMap;
+    QMap<Player*, QString> m_playerMicroBotFolder;
     QString m_name;
+    UfoShop m_ufoShop;
 
     void startBots();
     void killBots();
@@ -52,6 +59,11 @@ private:
     void writeGameState(QJsonDocument doc);
     void communicateWithBot(Player* player, QJsonDocument gameStateDoc);
     std::unique_ptr<CommandBase> createCommand(const QJsonObject object);
+    void handleCommand(Player *player, std::unique_ptr<CommandBase> &command);
+    void handleBuyCommand(BuyCommand* buyCommand, Player* player);
+    void handleConquerCommand(Player* player, ConquerCommand* conquerCommand);
+
+    void startMicroGame(Player* playerA, QList<Ufo*> ufosPlayerA, Player* playerB, QList<Ufo*> ufosPlayerB);
 };
 
 #endif // MACROGAME_H

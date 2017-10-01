@@ -1,16 +1,18 @@
 #ifndef MICROGAME_H
 #define MICROGAME_H
 
+#include "GameObject.h"
+#include "MicroGameInput.h"
+
 #include <QObject>
 #include <QProcess>
 
-class MicroGame : public QObject
+class MicroGame : public GameObject
 {
     Q_OBJECT
 public:
     MicroGame(QString executablePathMicroEngine,
-              QString executablePathMicroBot1,
-              QString executablePathMicroBot2,
+              MicroGameInput input,
               QObject *parent = nullptr);
     void startProcess();
     void stopProcess();
@@ -22,8 +24,7 @@ public slots:
 
 private:
     QString m_executablePathMicroEngine;
-    QString m_executablePathMicroBot1;
-    QString m_executablePathMicroBot2;
+    MicroGameInput m_input;
     QProcess* m_process;
 };
 

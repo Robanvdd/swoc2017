@@ -9,6 +9,8 @@ public:
     explicit ConquerCommand(QObject* parent = nullptr);
     void readCommand(const QJsonObject jsonObject);
     void printCommand();
+    int getPlanetId() const;
+
 private:
     int m_planetId;
 };

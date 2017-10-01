@@ -6,7 +6,6 @@
 Bot::Bot(QObject *parent) : QObject(parent)
   , in(stdin)
 {
-    system("touch test.txt");
 }
 
 void Bot::run()
