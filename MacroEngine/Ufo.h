@@ -19,6 +19,8 @@ public:
 
     bool getInFight() const;
 
+    void setInFight(bool inFight);
+
 signals:
 
 public slots:

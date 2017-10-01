@@ -32,3 +32,8 @@ bool Ufo::getInFight() const
 {
     return m_inFight;
 }
+
+void Ufo::setInFight(bool inFight)
+{
+    m_inFight = inFight;
+}

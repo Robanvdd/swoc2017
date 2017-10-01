@@ -146,7 +146,7 @@ void MacroGame::communicateWithBot(Player* player, QJsonDocument gameStateDoc)
     }
 }
 
-void MacroGame::handleBuyCommand(BuyCommand* buyCommand, Player* player)
+void MacroGame::handleBuyCommand(Player* player, BuyCommand* buyCommand)
 {
     m_ufoShop.buyUfos(player, m_universe->getPlanet(buyCommand->getPlanetId()), buyCommand->getAmount());
 }
@@ -174,10 +174,29 @@ void MacroGame::handleConquerCommand(Player* player, ConquerCommand* conquerComm
     startMicroGame(player, nearbyUfosPlayer, currentOwner, nearbyUfosCurrentOwner);
 }
 
+void MacroGame::handleMoveToPlanetCommand(Player* player, MoveToPlanetCommand* moveToPlanetCommand)
+{
+    // TODO
+}
+
+void MacroGame::handleMoveToCoordCommand(Player* player, MoveToCoordCommand* moveToCoordCommand)
+{
+    // TODO
+}
+
 void MacroGame::startMicroGame(Player* playerA, QList<Ufo*> ufosPlayerA, Player* playerB, QList<Ufo*> ufosPlayerB)
 {
     MicroGameInput input(playerA, ufosPlayerA, m_playerMicroBotFolder[playerA],
                          playerB, ufosPlayerB, m_playerMicroBotFolder[playerB]);
+
+    foreach (auto ufo, ufosPlayerA)
+    {
+        ufo->setInFight(true);
+    }
+    foreach (auto ufo, ufosPlayerB)
+    {
+        ufo->setInFight(true);
+    }
 
     MicroGame* microGame = new MicroGame("TODO", input);
     microGame->startProcess();
@@ -191,7 +210,7 @@ void MacroGame::handleCommand(Player* player, std::unique_ptr<CommandBase>& comm
     BuyCommand* buyCommand = dynamic_cast<BuyCommand*>(command.get());
     if (buyCommand)
     {
-        handleBuyCommand(buyCommand, player);
+        handleBuyCommand(player, buyCommand);
     }
     ConquerCommand* conquerCommand = dynamic_cast<ConquerCommand*>(command.get());
     if (conquerCommand)
@@ -201,12 +220,12 @@ void MacroGame::handleCommand(Player* player, std::unique_ptr<CommandBase>& comm
     MoveToPlanetCommand* moveToPlanetCommand = dynamic_cast<MoveToPlanetCommand*>(command.get());
     if (moveToPlanetCommand)
     {
-        // TODO
+        handleMoveToPlanetCommand(player, moveToPlanetCommand);
     }
     MoveToCoordCommand* moveToCoordCommand = dynamic_cast<MoveToCoordCommand*>(command.get());
     if (moveToCoordCommand)
     {
-        // TODO
+        handleMoveToCoordCommand(player, moveToCoordCommand);
     }
 }
 

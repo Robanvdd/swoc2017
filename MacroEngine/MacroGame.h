@@ -10,6 +10,8 @@
 #include "UfoShop.h"
 #include "BuyCommand.h"
 #include "ConquerCommand.h"
+#include "MoveToPlanetCommand.h"
+#include "MoveToCoordCommand.h"
 
 #include <QElapsedTimer>
 #include <QMap>
@@ -60,8 +62,10 @@ private:
     void communicateWithBot(Player* player, QJsonDocument gameStateDoc);
     std::unique_ptr<CommandBase> createCommand(const QJsonObject object);
     void handleCommand(Player *player, std::unique_ptr<CommandBase> &command);
-    void handleBuyCommand(BuyCommand* buyCommand, Player* player);
+    void handleBuyCommand(Player* player, BuyCommand* buyCommand);
     void handleConquerCommand(Player* player, ConquerCommand* conquerCommand);
+    void handleMoveToPlanetCommand(Player* player, MoveToPlanetCommand* moveToPlanetCommand);
+    void handleMoveToCoordCommand(Player* player, MoveToCoordCommand* moveToCoordCommand);
 
     void startMicroGame(Player* playerA, QList<Ufo*> ufosPlayerA, Player* playerB, QList<Ufo*> ufosPlayerB);
 };
