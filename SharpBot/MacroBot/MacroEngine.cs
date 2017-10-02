@@ -6,24 +6,30 @@ using MacroBot.Protocol;
 
 namespace MacroBot
 {
-    public sealed class MacroEngine : Engine
+    public sealed class MacroEngine : Engine<Protocol.GameState>
     {
         public override void Response(GameState gameState)
         {
-            var mePlayer = gameState.Players.Single(player => player.Name == "dwight");
-            var planet0 = gameState.SolarSystems.SelectMany(sys => sys.Planets).First();
+            //var mePlayer = gameState.Players.Single(player => player.Name == "dwight");
+            //var planet0 = gameState.SolarSystems.SelectMany(sys => sys.Planets).First();
 
             WriteMessage(new Protocol.GameResponseBuy
             {
-                Amount = 1,
-                PlanetId = planet0.Id,
+                Amount =  2,
+                PlanetId = 42,
             });
 
-            var ufo = mePlayer.Ufos.First();
+            //var ufo = mePlayer.Ufos.First();
             WriteMessage(new Protocol.GameResponseMoveToPlanet
             {
-                PlanetId = planet0.Id,
-                Ufos = new List<int> { ufo.Id },
+                PlanetId = 43,
+                Ufos = new List<int> { 24 },
+            });
+
+            WriteMessage(new Protocol.GameResponseMoveToCoord
+            {
+                Coord = new Bot.Protocol.Position { X = 42, Y = 24 },
+                Ufos = new List<int> { 12 },
             });
         }
     }

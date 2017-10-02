@@ -6,7 +6,7 @@ namespace MacroBot.Protocol
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int Credits { get; set; }
+        public double Credits { get; set; }
         public List<Ufo> Ufos { get; set; }
     }
 }
