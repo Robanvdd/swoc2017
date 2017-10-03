@@ -26,8 +26,6 @@ public:
     MacroGame(QList<PlayerBotFolders*> playerBotFolders, Universe *universe, QObject *parent = nullptr);
     void run();
 
-    void handleBuyCommand(Player* player, BuyCommand* buyCommand);
-
 signals:
     void finished();
     void errorOccured();

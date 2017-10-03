@@ -1,3 +1,4 @@
+#include "Ufo.h"
 #include "UfoShop.h"
 
 UfoShop::UfoShop(QObject *parent)
@@ -6,20 +7,21 @@ UfoShop::UfoShop(QObject *parent)
 {
 }
 
-void UfoShop::buyUfo(Player* player, const Planet* planet)
+void UfoShop::buyUfo(Player* player, Planet* planet, Universe* universe)
 {
-    if (planet == nullptr || player == nullptr || player->getCredits() < m_ufoPrice)
+    if (planet == nullptr || player == nullptr || player->getCredits() < m_ufoPrice || planet->getOwnedBy() != player->getId())
         return;
     player->removeCredits(m_ufoPrice);
     auto ufo = new Ufo();
-    // TODO planet location
+    ufo->setCoord(universe->getCorrespondingSolarSystem(planet)->getPlanetLocation(*planet));
+    ufo->setUniverse(universe);
     player->giveUfo(ufo);
 }
 
-void UfoShop::buyUfos(Player* player, const Planet* planet, int amount)
+void UfoShop::buyUfos(Player* player, Planet* planet, Universe* universe, int amount)
 {
     for (int i=0; i < amount; i++)
     {
-        buyUfo(player, planet);
+        buyUfo(player, planet, universe);
     }
 }

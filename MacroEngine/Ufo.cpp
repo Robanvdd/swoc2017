@@ -1,16 +1,37 @@
 #include "Ufo.h"
 
 #include <QJsonObject>
+#include <QVector2D>
 
-Ufo::Ufo(QObject *parent) : GameObject(parent)
+Ufo::Ufo(QObject *parent)
+    : GameObject(parent)
+    , m_speedInUnitsPerSecond(16.0)
+    , m_epsilon(24)
 {
-
 }
 
 void Ufo::applyTick(double durationInSeconds)
 {
-    // TODO
-    Q_UNUSED(durationInSeconds)
+    if (m_FlyingToCoord)
+    {
+        QVector2D directionVector(m_targetCoord - m_coord);
+        if (directionVector.lengthSquared() < 16*16)
+            return;
+        directionVector.normalize();
+        directionVector *= (m_speedInUnitsPerSecond * durationInSeconds);
+        m_coord += directionVector.toPointF();
+    }
+    else if (m_FlyingToPlanet)
+    {
+        auto solarSystem = m_universe->getCorrespondingSolarSystem(m_targetPlanet);
+        auto targetCoord = solarSystem->getPlanetLocation(*m_targetPlanet);
+        QVector2D directionVector(targetCoord - m_coord);
+        if (directionVector.lengthSquared() < 16*16)
+            return;
+        directionVector.normalize();
+        directionVector *= (m_speedInUnitsPerSecond * durationInSeconds);
+        m_coord += directionVector.toPointF();
+    }
 }
 
 void Ufo::writeState(QJsonObject& gameState)
@@ -23,7 +44,7 @@ void Ufo::writeState(QJsonObject& gameState)
     gameState["coord"] = coords;
 }
 
-QPoint Ufo::getCoord() const
+QPointF Ufo::getCoord() const
 {
     return m_coord;
 }
@@ -36,4 +57,36 @@ bool Ufo::getInFight() const
 void Ufo::setInFight(bool inFight)
 {
     m_inFight = inFight;
+}
+
+void Ufo::setUniverse(Universe* universe)
+{
+    m_universe = universe;
+}
+
+void Ufo::setTargetPlanet(Planet* targetPlanet)
+{
+    m_targetPlanet = targetPlanet;
+}
+
+void Ufo::setTargetCoord(const QPoint& targetCoord)
+{
+    m_targetCoord = targetCoord;
+}
+
+void Ufo::setFlyingToCoord(bool FlyingToCoord)
+{
+    m_FlyingToCoord = FlyingToCoord;
+    m_FlyingToPlanet = !FlyingToCoord;
+}
+
+void Ufo::setFlyingToPlanet(bool FlyingToPlanet)
+{
+    m_FlyingToPlanet = FlyingToPlanet;
+    m_FlyingToCoord = !FlyingToPlanet;
+}
+
+void Ufo::setCoord(const QPointF& coord)
+{
+    m_coord = coord;
 }

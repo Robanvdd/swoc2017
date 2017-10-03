@@ -33,3 +33,13 @@ void MoveToCoordCommand::printCommand()
     }
     std::cout << std::endl;
 }
+
+QList<int> MoveToCoordCommand::getUfos() const
+{
+    return m_ufos;
+}
+
+QPoint MoveToCoordCommand::getCoords() const
+{
+    return m_coords;
+}

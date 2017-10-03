@@ -2,12 +2,12 @@
 #define SOLARSYSTEM_H
 
 #include "Planet.h"
-#include "Ufo.h"
 
 #include <QMap>
 #include <QObject>
 #include <QPoint>
 
+class Ufo;
 class SolarSystem : public GameObject
 {
     Q_OBJECT

@@ -14,7 +14,7 @@ public:
     Planet(QString name, int orbitDistance, double orbitRotation, double orbitSpeed, QObject *parent = nullptr);
     void writeState(QJsonObject& gameState) const;
     void applyTick(double durationInSeconds);
-    int getOwnedBy();
+    int getOwnedBy() const;
     void takeOverBy(Player* player);
 
     double getOrbitRotation() const;

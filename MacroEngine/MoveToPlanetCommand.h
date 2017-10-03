@@ -11,6 +11,10 @@ public:
     void readCommand(const QJsonObject jsonObject) override;
     void printCommand() override;
 
+    QList<int> getUfos() const;
+
+    int getPlanetId() const;
+
 private:
     QList<int> m_ufos;
     int m_planetId;

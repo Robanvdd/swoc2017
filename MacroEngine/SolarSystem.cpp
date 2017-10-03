@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "SolarSystem.h"
+#include "Ufo.h"
 
 #include <QJsonArray>
 #include <QJsonObject>
