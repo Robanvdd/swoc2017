@@ -32,6 +32,10 @@ class MicroProjectile {
         position.y += newPos.y;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public Point.Double getPosition() {
         return position;
     }
