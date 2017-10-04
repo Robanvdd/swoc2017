@@ -25,6 +25,8 @@ workspace.xml
 .gradle
 .DS_Store
 *.class
+*.user
+*.pro.user
 micro-macro/tick_*.json
 temp/macro_app.jar
 temp/matchmaker.jar

@@ -58,7 +58,7 @@ QList<Ufo*> SolarSystem::getUfosNearLocation(const QPointF& location, const Play
     {
         QPointF distanceDiff = ufo->getCoord() - location;
         double squaredDistance = std::pow(distanceDiff.x(), 2) + std::pow(distanceDiff.y(), 2);
-        if ( squaredDistance < std::pow(64, 2) && !ufo->getInFight())
+        if ( squaredDistance < std::pow(256, 2) && !ufo->getInFight())
         {
             result << ufo;
         }

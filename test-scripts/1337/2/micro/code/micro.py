@@ -46,11 +46,9 @@ def game_loop():
     targetX = 0
     targetY = 0
     if otherBots != []:
-        for bot in otherBots:
-            if bot['hitpoints'] > 0:
-                targetBot = bot
-                targetX = targetBot['position']['x']
-                targetY = targetBot['position']['y']
+        targetBot = otherBots[0]
+        targetX = targetBot['position']['x']
+        targetY = targetBot['position']['y']
 
     commands = {
         'commands': []
@@ -60,8 +58,8 @@ def game_loop():
         commands['commands'].append({
             'id': bot['id'],
             'move': {
-                'direction': math.cos(time) * 180,
-                'speed': math.sin(time) * 10
+                'direction': math.sin(time * 3) * 180,
+                'speed': math.sin(time) * 4
             },
 #                'shoot': {
 #                    'direction': 180

@@ -16,7 +16,7 @@ class AppContext : public QObject
 public:
     explicit AppContext(QObject *parent = nullptr);
 
-    Q_INVOKABLE void addPlayer(QString id, QColor color);
+    Q_INVOKABLE void addPlayer(int id, QString name, QColor color);
     Q_INVOKABLE void clearPlayers();
     QQmlListProperty<Player> getPlayers();
 
@@ -25,6 +25,7 @@ public:
     Q_INVOKABLE void removeBullet(int id);
     Q_INVOKABLE int getBulletCount() const;
     Q_INVOKABLE void clearBullets();
+    Q_INVOKABLE bool hasBullet(int id);
     QQmlListProperty<Bullet> getBullets();
 
 signals:

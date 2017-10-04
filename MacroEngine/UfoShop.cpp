@@ -18,6 +18,16 @@ void UfoShop::buyUfo(Player* player, Planet* planet, Universe* universe)
     player->giveUfo(ufo);
 }
 
+void UfoShop::giveUfo(Player* player, Universe* universe)
+{
+    if (player == nullptr || universe == nullptr)
+        return;
+    auto ufo = new Ufo();
+    ufo->setCoord(QPointF(6000, 6000));
+    ufo->setUniverse(universe);
+    player->giveUfo(ufo);
+}
+
 void UfoShop::buyUfos(Player* player, Planet* planet, Universe* universe, int amount)
 {
     for (int i=0; i < amount; i++)
@@ -25,3 +35,5 @@ void UfoShop::buyUfos(Player* player, Planet* planet, Universe* universe, int am
         buyUfo(player, planet, universe);
     }
 }
+
+

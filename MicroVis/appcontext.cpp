@@ -6,9 +6,9 @@ AppContext::AppContext(QObject *parent) : QObject(parent)
 {
 }
 
-void AppContext::addPlayer(QString id, QColor color)
+void AppContext::addPlayer(int id, QString name, QColor color)
 {
-    m_players << new Player(id, color);
+    m_players << new Player(id, name, color);
     emit playersChanged();
 }
 
@@ -39,6 +39,8 @@ void AppContext::moveBullet(int id, int x, int y)
 
 void AppContext::removeBullet(int id)
 {
+    if (!hasBullet(id))
+        return;
     Bullet* bullet = m_bulletMap[id];
     m_bulletMap.remove(id);
     ReconstructBulletList();
@@ -53,10 +55,16 @@ int AppContext::getBulletCount() const
 
 void AppContext::clearBullets()
 {
-    auto backup = m_bullets;
-    m_bullets.clear();
+    auto bulletMap = m_bulletMap;
+    m_bulletMap.clear();
+    ReconstructBulletList();
     emit bulletsChanged();
-    qDeleteAll(backup);
+    qDeleteAll(bulletMap);
+}
+
+bool AppContext::hasBullet(int id)
+{
+    return m_bulletMap.contains(id);
 }
 
 QQmlListProperty<Bullet> AppContext::getBullets()

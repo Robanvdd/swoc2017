@@ -39,13 +39,23 @@ Flickable {
                     Repeater {
                         model: modelData.ufos
                         delegate: Image {
-                            x: modelData.coord.x
-                            y: modelData.coord.y
-                            width: 20
-                            height: 20
+                            id: image
+                            property int ufoId: modelData.objectId
+                            x: modelData.coord.x - 0.5*width
+                            y: modelData.coord.y - 0.5*height
+                            Behavior on x { NumberAnimation { duration: tickDuration } }
+                            Behavior on y { NumberAnimation { duration: tickDuration } }
+                            width: 48
+                            height: 48
                             smooth: true
                             mipmap: true
                             source: "qrc:/images/spaceship.png"
+
+                            Label {
+                                anchors.centerIn: parent
+                                text: image.ufoId
+                                font.pointSize: 64
+                            }
                         }
                     }
                 }

@@ -11,7 +11,7 @@ class Player : public GameObject
 {
     Q_OBJECT
 public:
-    explicit Player(QString name, QObject *parent = nullptr);
+    explicit Player(int hue, QString name, QObject *parent = nullptr);
 
     double getCredits() const;
     void addCredits(double credits);
@@ -33,6 +33,7 @@ public:
     void setColor(const QColor& color);
 
     Ufo*getUfo(int id) const;
+    QString getColorName();
 signals:
 
 public slots:

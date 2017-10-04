@@ -66,7 +66,9 @@ ApplicationWindow {
     {
         for (var l = 0; l < jsonObject.players.length; l++)
         {
-            appContext.addPlayer(jsonObject.players[l].name, jsonObject.players[l].color)
+            var player = jsonObject.players[l]
+
+            appContext.addPlayer(player.id, player.name, player.color)
         }
     }
 
@@ -74,12 +76,13 @@ ApplicationWindow {
     {
         for (var l = 0; l < jsonObject.players.length; l++)
         {
+            var player = appContext.players[l]
             var spaceships = jsonObject.players[l].bots
             for (var m = 0; m < spaceships.length; m++)
             {
-                var posShip = spaceships[m].position
-                var player = appContext.players[l]
-                player.addSpaceship(posShip.x, posShip.y)
+                var spaceship = spaceships[m]
+                player.addSpaceship(spaceship.id, spaceship.name,
+                  spaceship.position.x, spaceship.position.y)
                 nrUfos++;
             }
         }
@@ -96,9 +99,9 @@ ApplicationWindow {
                 var hp = bots[j].hitpoints;
                 var posBot = bots[j].position
                 appContext.players[i].moveSpaceship(j, posBot.x, posBot.y)
-                appContext.players[i].setSpaceshipHp(j, hp);
-                if (hp <= 0)
+                if (appContext.players[i].getSpaceshipIsAlive(j) && hp <= 0)
                     nrUfos--
+                appContext.players[i].setSpaceshipHp(j, hp);
             }
         }
     }
@@ -110,7 +113,7 @@ ApplicationWindow {
         {
             var bullet = bullets[k];
             var posBul = bullet.position
-            if (appContext.getBulletCount() <= k)
+            if (!appContext.hasBullet(bullet.id))
             {
                 appContext.addBullet(bullet.id, posBul.x, posBul.y)
                 nrBullets++
@@ -169,10 +172,21 @@ ApplicationWindow {
         LaserFence {
             id: laserFence
             visible: false
-            x: xTransformForZoom(15)
-            y: yTransformForZoom(35)
+            x: xTransformForZoom(0)
+            y: yTransformForZoom(0)
             width: sizeTransformForZoom(appWindow.arenaWidth)
             height: sizeTransformForZoom(appWindow.arenaHeight)
+        }
+
+        Rectangle {
+            id: debugFence
+            visible: showDebug
+            x: xTransformForZoom(0)
+            y: yTransformForZoom(0)
+            width: sizeTransformForZoom(appWindow.arenaWidth)
+            height: sizeTransformForZoom(appWindow.arenaHeight)
+            border.color: "red"
+            color: "transparent"
         }
 
         FileIO {
@@ -186,7 +200,7 @@ ApplicationWindow {
 
         Timer {
             id: gameTimer
-            interval: 1000/2
+            interval: 1000/30
             running: frameUrl != ""
             repeat: true
             property url frameUrl: ""
@@ -240,16 +254,41 @@ ApplicationWindow {
                         height: sizeTransformForZoom(32)
                         visible: modelData.hp > 0
 
-                        Label {
-                            anchors.centerIn: parent
-                            text: "(" + modelData.x + ", " + modelData.y + ")"
-                            visible: showDebug
+                        Column {
+                            anchors.bottom: parent.top
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.bottomMargin: 5
+
+                            Label {
+                                visible: showDebug
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                text: "id: " + modelData.id + ", pos: (" + modelData.x + ", " + modelData.y + ")"
+                            }
+
+                            Rectangle {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                color: "red"
+                                width: 50
+                                height: 8
+                                border.color: "white"
+                                border.width: 1
+
+                                Rectangle {
+                                    color: "green"
+                                    anchors.left: parent.left
+                                    anchors.top: parent.top
+                                    anchors.bottom: parent.bottom
+                                    anchors.margins: 1
+                                    width: (parent.width * modelData.hp / 100.0) - 2 * parent.border.width
+                                }
+                            }
                         }
 
                         ColorOverlay {
                             anchors.fill: aSpaceShip
                             source: aSpaceShip
                             color: aSpaceShip.playerColor
+                            opacity: 0.3
                         }
                     }
                 }
@@ -265,8 +304,9 @@ ApplicationWindow {
                 height: sizeTransformForZoom(16)
 
                 Label {
-                    anchors.centerIn: parent
-                    text: "(" + modelData.x + ", " + modelData.y + ")"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.bottom: parent.top
+                    text: "id: " + modelData.id + ", pos: (" + modelData.x + ", " + modelData.y + ")"
                     visible: showDebug
                 }
             }
@@ -283,6 +323,9 @@ ApplicationWindow {
 
                 onClicked: {
                     gameTimer.frameUrl = ""
+                    tick = 0
+                    nrUfos = 0
+                    nrBullets = 0
                     appContext.clearPlayers()
                     appContext.clearBullets()
                     fileDialogLoader.sourceComponent = fileDialogComponent

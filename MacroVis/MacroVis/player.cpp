@@ -47,3 +47,8 @@ void Player::destroyUfo(int ufoId)
         ufo->deleteLater();
     }
 }
+
+//QColor Player::getColor() const
+//{
+//    return m_color;
+//}

@@ -5,7 +5,10 @@
 
 Ufo::Ufo(QObject *parent)
     : GameObject(parent)
-    , m_speedInUnitsPerSecond(16.0)
+    , m_inFight(false)
+    , m_FlyingToPlanet(false)
+    , m_FlyingToCoord(false)
+    , m_speedInUnitsPerSecond(128.0)
     , m_epsilon(24)
 {
 }
@@ -15,7 +18,7 @@ void Ufo::applyTick(double durationInSeconds)
     if (m_FlyingToCoord)
     {
         QVector2D directionVector(m_targetCoord - m_coord);
-        if (directionVector.lengthSquared() < 16*16)
+        if (directionVector.lengthSquared() < 32*32)
             return;
         directionVector.normalize();
         directionVector *= (m_speedInUnitsPerSecond * durationInSeconds);
@@ -26,7 +29,7 @@ void Ufo::applyTick(double durationInSeconds)
         auto solarSystem = m_universe->getCorrespondingSolarSystem(m_targetPlanet);
         auto targetCoord = solarSystem->getPlanetLocation(*m_targetPlanet);
         QVector2D directionVector(targetCoord - m_coord);
-        if (directionVector.lengthSquared() < 16*16)
+        if (directionVector.lengthSquared() < 32*32)
             return;
         directionVector.normalize();
         directionVector *= (m_speedInUnitsPerSecond * durationInSeconds);
