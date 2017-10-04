@@ -287,7 +287,7 @@ public class MicroEngine {
                 if (!(player.getId() == projectile.getSource())) {
                     for (MicroBot bot : player.getBots()) {
                         if (bot.Hit(projectile)) {
-                            state.getProjectiles().remove(projectile);
+                            state.Remove(projectile);
                         }
                     }
                 }

@@ -9,16 +9,4 @@ Image {
     visible: true
     property int defaultWidth: 64
     property int defaultHeight: 64
-
-    Behavior on x {
-        NumberAnimation {
-            id: spaceXAnimation
-            duration: 1000/30
-        }
-    }
-    Behavior on y {
-        NumberAnimation {
-            duration: 1000/30
-        }
-    }
 }
