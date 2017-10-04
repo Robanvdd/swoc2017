@@ -10,13 +10,18 @@ public class MacroPlayer {
     private String name;
     private String bot;
     private List<Integer> ufos;
+    private List<Integer> survivors;
+    private List<Integer> casualties;
     private String color;
 
-    public MacroPlayer(int id, String name, String bot, List<Integer> ufos, String color) {
+    public MacroPlayer(int id, String name, String bot, List<Integer> ufos,
+                       List<Integer> survivors, List<Integer> casualties, String color) {
         this.id = id;
         this.name = name;
         this.bot = bot;
         this.ufos = ufos;
+        this.survivors = survivors;
+        this.casualties = casualties;
         this.color = color;
     }
 

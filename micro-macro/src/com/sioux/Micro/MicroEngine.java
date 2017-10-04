@@ -342,13 +342,17 @@ public class MicroEngine {
         List<MacroPlayer> players = new ArrayList<>();
 
         for (MicroPlayer micro : state.getPlayers()) {
-            List<Integer> ufos = new ArrayList<>();
+            List<Integer> survivors = new ArrayList<>();
+            List<Integer> casualties = new ArrayList<>();
             for (MicroBot bot : micro.getBots()) {
                 if (bot.isAlive()) {
-                    ufos.add(bot.getId());
+                    survivors.add(bot.getId());
+                } else {
+                    casualties.add(bot.getId());
                 }
             }
-            players.add(new MacroPlayer(micro.getId(), micro.getName(), micro.getScript(), ufos, micro.getColor()));
+            players.add(new MacroPlayer(micro.getId(), micro.getName(), micro.getScript(), Collections.EMPTY_LIST,
+                    survivors, casualties, micro.getColor()));
         }
 
         return new MacroOutput(players, state.getGameId(), GetWinner());
