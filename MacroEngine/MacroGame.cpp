@@ -34,9 +34,11 @@ MacroGame::MacroGame(QList<PlayerBotFolders*> playerBotFolders, Universe* univer
 {
     m_universe->setParent(this);
 
+    int hue = 0;
+    int hueJump = 255 / m_playerBotFolders.size();
     foreach (auto playerBotFolder, m_playerBotFolders)
     {
-        auto player = new Player(playerBotFolder->getPlayerName(), this);
+        auto player = new Player(hue, playerBotFolder->getPlayerName(), this);
         m_ufoShop.giveUfo(player, m_universe);
         m_ufoShop.giveUfo(player, m_universe);
         m_ufoShop.giveUfo(player, m_universe);
@@ -46,6 +48,7 @@ MacroGame::MacroGame(QList<PlayerBotFolders*> playerBotFolders, Universe* univer
         m_playerBotMap[player] = bot;
         m_botPlayerMap[bot] = player;
         m_playerMicroBotFolder[player] = playerBotFolder->getMicroBotFolder();
+        hue += hueJump;
     }
 
     connect(m_tickTimer, &QTimer::timeout, this, [this]() { handleTick(); });

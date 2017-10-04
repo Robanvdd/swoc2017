@@ -4,13 +4,12 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-Player::Player(QString name, QObject *parent)
+Player::Player(int hue, QString name, QObject *parent)
     : GameObject(parent)
     , m_credits(0)
     , m_name(name)
 {
-    int h = rand() % 256;
-    m_color = QColor::fromHsv(h, 255, 255);
+    m_color = QColor::fromHsv(hue, 255, 255);
 }
 
 double Player::getCredits() const
