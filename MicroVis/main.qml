@@ -21,6 +21,8 @@ ApplicationWindow {
     property int nrUfos: 0
     property int nrBullets: 0
     property bool showDebug: false
+    property int framesPerSecond: 30
+    property bool paused: false
 
     function calculateTransforms(jsonObject)
     {
@@ -203,8 +205,8 @@ ApplicationWindow {
 
         Timer {
             id: gameTimer
-            interval: 1000/30
-            running: frameUrl != ""
+            interval: 1000 / framesPerSecond
+            running: frameUrl != "" && !paused
             repeat: true
             property url frameUrl: ""
             property bool firstTrigger: false
@@ -348,6 +350,20 @@ ApplicationWindow {
                 id: debugButton
                 text: showDebug ? "Hide debug" : "Show debug"
                 onClicked: showDebug = !showDebug
+                Material.background: "#3F51B5"
+            }
+
+            Button {
+                id: fpsButton
+                text: "FPS: " + framesPerSecond
+                onClicked: framesPerSecond == 30 ? framesPerSecond = 3 : framesPerSecond = 30
+                Material.background: "#3F51B5"
+            }
+
+            Button {
+                id: pauseButton
+                text: paused ? "Continue" : "Pause"
+                onClicked: paused = !paused
                 Material.background: "#3F51B5"
             }
 
