@@ -255,16 +255,31 @@ ApplicationWindow {
 
                         Column {
                             anchors.bottom: parent.top
-                            visible: showDebug
-                            Label {
-                                text: modelData.id + ": " + modelData.name
-                            }
-                            Label {
-                                text: "HP: " + modelData.hp
-                            }
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.bottomMargin: 5
 
                             Label {
-                                text: "(" + modelData.x + ", " + modelData.y + ")"
+                                visible: showDebug
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                text: "id: " + modelData.id + ", pos: (" + modelData.x + ", " + modelData.y + ")"
+                            }
+
+                            Rectangle {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                color: "red"
+                                width: 50
+                                height: 8
+                                border.color: "white"
+                                border.width: 1
+
+                                Rectangle {
+                                    color: "green"
+                                    anchors.left: parent.left
+                                    anchors.top: parent.top
+                                    anchors.bottom: parent.bottom
+                                    anchors.margins: 1
+                                    width: (parent.width * modelData.hp / 100.0) - 2 * parent.border.width
+                                }
                             }
                         }
 
@@ -287,8 +302,9 @@ ApplicationWindow {
                 height: sizeTransformForZoom(16)
 
                 Label {
+                    anchors.horizontalCenter: parent.horizontalCenter
                     anchors.bottom: parent.top
-                    text: modelData.id + ": (" + modelData.x + ", " + modelData.y + ")"
+                    text: "id: " + modelData.id + ", pos: (" + modelData.x + ", " + modelData.y + ")"
                     visible: showDebug
                 }
             }
