@@ -44,14 +44,14 @@ void Player::addSpaceship(int x, int y)
 void Player::moveSpaceship(int index, int x, int y)
 {
     m_spaceships.at(index)->move(x, y);
-    emit spaceshipsChanged();
 }
 
 void Player::removeSpaceship()
 {
-    delete m_spaceships.back();
+    Spaceship* spaceship = m_spaceships.back();
     m_spaceships.pop_back();
     emit spaceshipsChanged();
+    spaceship->deleteLater();
 }
 
 int Player::getSpaceshipCount() const

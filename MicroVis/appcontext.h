@@ -27,8 +27,6 @@ public:
     Q_INVOKABLE void clearBullets();
     QQmlListProperty<Bullet> getBullets();
 
-    Q_INVOKABLE void processFrame();
-
 signals:
     void helloWorldChanged();
     void bulletsChanged();
@@ -37,7 +35,10 @@ signals:
 public slots:
 
 private:
+    void ReconstructBulletList();
+
     QList<Player*> m_players;
+    QMap<int, Bullet*> m_bulletMap;
     QList<Bullet*> m_bullets;
 };
 

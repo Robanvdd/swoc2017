@@ -10,7 +10,7 @@ class Bullet : public QObject
     Q_PROPERTY(int y MEMBER m_y NOTIFY yChanged)
 public:
     explicit Bullet(QObject *parent = nullptr);
-    Bullet(int x, int y, QObject *parent = nullptr);
+    Bullet(int id, int x, int y, QObject *parent = nullptr);
 
     int x() const;
     void setX(int x);
@@ -27,6 +27,7 @@ signals:
 public slots:
 
 private:
+    int m_id;
     int m_x;
     int m_y;
 };

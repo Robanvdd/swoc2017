@@ -5,8 +5,8 @@ Bullet::Bullet(QObject *parent) :
 {
 }
 
-Bullet::Bullet(int x, int y, QObject *parent) :
-    QObject(parent), m_x(x), m_y(y)
+Bullet::Bullet(int id, int x, int y, QObject *parent) :
+    QObject(parent), m_id(id), m_x(x), m_y(y)
 {
 }
 
