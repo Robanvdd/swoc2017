@@ -33,6 +33,7 @@ public:
     void setColor(const QColor& color);
 
     Ufo*getUfo(int id) const;
+    QString getColorName();
 signals:
 
 public slots:

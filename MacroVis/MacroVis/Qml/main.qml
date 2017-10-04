@@ -11,7 +11,7 @@ ApplicationWindow {
     height: 968
     title: qsTr("MacroVis")
     color: "black"
-
+    property int tickDuration: 250
     GameLoader {
         id: fileDialogLoader
     }

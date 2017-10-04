@@ -28,7 +28,7 @@ Item {
 
     Timer {
         id: tickTimer
-        interval: 1000
+        interval: tickDuration
         repeat: true
         onTriggered: loadNextTick()
     }

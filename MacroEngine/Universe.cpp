@@ -43,6 +43,7 @@ void Universe::applyTick(double durationInSeconds)
     }
     foreach (Player* player, m_players) {
         addCredits(player, durationInSeconds);
+        player->applyTick(durationInSeconds);
     }
 }
 
