@@ -262,10 +262,15 @@ public class MicroEngine {
             }
         }
 
+        ArrayList<MicroProjectile> projectilesToRemove = new ArrayList<>();
         for (MicroProjectile projectile : state.getProjectiles()) {
             if (!Utils.ProjectileInsideArena(projectile, state.getArena())) {
-                state.Remove(projectile);
+                projectilesToRemove.add(projectile);
             }
+        }
+
+        for (MicroProjectile projectile : projectilesToRemove) {
+            state.Remove(projectile);
         }
     }
 
