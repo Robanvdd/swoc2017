@@ -20,9 +20,9 @@ public:
     Q_INVOKABLE void clearPlayers();
     QQmlListProperty<Player> getPlayers();
 
-    Q_INVOKABLE void addBullet(int x, int y);
-    Q_INVOKABLE void moveBullet(int index, int x, int y);
-    Q_INVOKABLE void removeBullet();
+    Q_INVOKABLE void addBullet(int id, int x, int y);
+    Q_INVOKABLE void moveBullet(int id, int x, int y);
+    Q_INVOKABLE void removeBullet(int id);
     Q_INVOKABLE int getBulletCount() const;
     Q_INVOKABLE void clearBullets();
     QQmlListProperty<Bullet> getBullets();

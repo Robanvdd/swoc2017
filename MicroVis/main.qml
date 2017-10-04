@@ -164,7 +164,7 @@ ApplicationWindow {
 
         Timer {
             id: gameTimer
-            interval: 1000/30
+            interval: 1000/2
             running: frameUrl != ""
             repeat: true
             property url frameUrl: ""
