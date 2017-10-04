@@ -67,6 +67,7 @@ ApplicationWindow {
         for (var l = 0; l < jsonObject.players.length; l++)
         {
             var player = jsonObject.players[l]
+
             appContext.addPlayer(player.id, player.name, player.color)
         }
     }
@@ -287,6 +288,7 @@ ApplicationWindow {
                             anchors.fill: aSpaceShip
                             source: aSpaceShip
                             color: aSpaceShip.playerColor
+                            opacity: 0.3
                         }
                     }
                 }

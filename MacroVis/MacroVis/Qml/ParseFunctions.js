@@ -21,10 +21,10 @@ function parseGameJSON(gameJSON) {
         parsePlayer(playerJSON, playerCpp)
     }
 
-    for (var fightI = 0; fightI < gameJSON.fights.length; fightI++) {
-        var fightJSON = gameJSON.fights[fightI]
-        parseFight(fightJSON)
-    }
+//    for (var fightI = 0; fightI < gameJSON.fights.length; fightI++) {
+//        var fightJSON = gameJSON.fights[fightI]
+//        parseFight(fightJSON)
+//    }
 }
 
 function parseFight(fightJSON) {
@@ -51,7 +51,6 @@ function parsePlayer(playerJSON, playerCpp) {
 }
 
 function parseUfo(ufoJSON, ufoCpp) {
-    ufoCpp.type = ufoJSON.type
     ufoCpp.inFight = ufoJSON.inFight
     ufoCpp.coord.x = ufoJSON.coord.x
     ufoCpp.coord.y = ufoJSON.coord.y

@@ -17,12 +17,12 @@ Item {
     Image {
         id: planet
         x: orbitDistance * Math.cos(orbitRotation * (Math.PI / 180.0)) - 0.5*width
-        y: orbitDistance * Math.sin(orbitRotation * (Math.PI / 180.0)) - 0.5*height
+        y: orbitDistance * -Math.sin(orbitRotation * (Math.PI / 180.0)) - 0.5*height
         property real orbitDistance: modelData.orbitDistance// - 0.5 * width
         property real orbitRotation: modelData.orbitRotation
-        Behavior on orbitRotation { NumberAnimation { duration: 1100 } }
-        width: 32
-        height: 32
+        Behavior on orbitRotation { NumberAnimation { duration: tickDuration } }
+        width: 48
+        height: 48
         mipmap: true
         source: planetImageProvider.getRandomPlanet()
     }

@@ -9,6 +9,8 @@ Player::Player(QString name, QObject *parent)
     , m_credits(0)
     , m_name(name)
 {
+    int h = rand() % 256;
+    m_color = QColor::fromHsv(h, 255, 255);
 }
 
 double Player::getCredits() const
@@ -75,6 +77,7 @@ void Player::writeState(QJsonObject& gameState)
     gameState["id"] = m_id;
     gameState["name"] = m_name;
     gameState["credits"] = m_credits;
+    gameState["color"] = m_color.name(QColor::HexArgb);
     QJsonArray ufoArray;
     foreach (Ufo* ufo, m_ufos) {
         QJsonObject ufoObject;
@@ -87,6 +90,11 @@ void Player::writeState(QJsonObject& gameState)
 QList<Ufo*> Player::getUfos() const
 {
     return m_ufos;
+}
+
+QString Player::getColorName()
+{
+    return m_color.name(QColor::HexArgb);
 }
 
 QColor Player::getColor() const
