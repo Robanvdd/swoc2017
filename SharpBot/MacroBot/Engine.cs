@@ -3,54 +3,84 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using static SwocIO.Pipeline;
+using System.Threading;
 
 namespace MacroBot
 {
     public abstract class Engine<GameStateTemplate> where GameStateTemplate : class
     {
+        private readonly Thread readThread;
+        private readonly List<GameStateTemplate> gameStates = new List<GameStateTemplate>();
+
+        public Engine()
+        {
+            readThread = new Thread(new ThreadStart(PollState));
+        }
+
         public void Run()
         {
             mStop = false;
+            readThread.Start();
             while (!mStop)
             {
-                GameStateTemplate gameState = ReadMessage<GameStateTemplate>();
-                Response(gameState);
+                var states = GameStates();
+                if (states.Count > 0)
+                {
+                    Response(states);
+                }
             }
         }
 
-        public abstract void Response(GameStateTemplate gameState);
+        private void PollState()
+        {
+            while (!mStop)
+            {
+                var state = ReadMessage<GameStateTemplate>();
+                lock (gameStates)
+                {
+                    gameStates.Add(state);
+                }
+            }
+        }
+
+        private List<GameStateTemplate> GameStates()
+        {
+            lock (gameStates)
+            {
+                var states = gameStates.ToList();
+                gameStates.Clear();
+                return states;
+            }
+        }
+
+        public abstract void Response(List<GameStateTemplate> gameStates);
 
         private bool mStop;
         public void Stop()
         {
             mStop = true;
+            readThread.Join();
         }
 
-        public static T ReadMessage<T>()
+        private static T ReadMessage<T>()
         {
-            var line = ReadLine();
+            string line = Console.ReadLine();
             if (String.IsNullOrEmpty(line))
-            {
-                System.Windows.Forms.MessageBox.Show("Null message read");
                 return default(T);
-            }
 
             try
             {
                 return JsonConvert.DeserializeObject<T>(line);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                System.Windows.Forms.MessageBox.Show("Failed to deserialize " + line);
-                System.Windows.Forms.MessageBox.Show("Failed to deserialize " + ex.Message);
                 return default(T);
             }
         }
 
         public static void WriteMessage<T>(T message)
         {
-            WriteLine(JsonConvert.SerializeObject(message, Formatting.None));
+            Console.WriteLine(JsonConvert.SerializeObject(message, Formatting.None));
         }
     }
 }

@@ -28,4 +28,14 @@ catch (std::exception& ex)
 	throw gcnew System::Exception("Readline failed");
 }
 
+bool Pipeline::HasInput()
+try
+{
+	return std::cin.rdbuf()->in_avail();
+}
+catch (std::exception& ex)
+{
+	throw gcnew System::Exception("HasInput failed");
+}
+
 }

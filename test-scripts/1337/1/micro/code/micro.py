@@ -28,19 +28,19 @@ def game_loop():
 
     arenaWidth = micro['arena']['width']
     arenaHeight = micro['arena']['height']
-    player = micro['player']
+    player = micro['playerId']
 
     global time
     time = time + 0.1
     
     bots = []
     for p in micro['players']:
-        if p['name'] == player:
+        if p['id'] == player:
             bots = p['bots']
 
     otherBots = []
     for p in micro['players']:
-        if p['name'] != player:
+        if p['id'] != player:
             otherBots += p['bots']
 
     targetX = 0
@@ -57,7 +57,7 @@ def game_loop():
 
     for bot in bots:
         commands['commands'].append({
-            'name': bot['name'],
+            'id': bot['id'],
             'move': {
                 'direction': math.cos(time) * 180,
                 'speed': math.sin(time) * 10
