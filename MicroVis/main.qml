@@ -171,10 +171,21 @@ ApplicationWindow {
         LaserFence {
             id: laserFence
             visible: false
-            x: xTransformForZoom(15)
-            y: yTransformForZoom(35)
+            x: xTransformForZoom(0)
+            y: yTransformForZoom(0)
             width: sizeTransformForZoom(appWindow.arenaWidth)
             height: sizeTransformForZoom(appWindow.arenaHeight)
+        }
+
+        Rectangle {
+            id: debugFence
+            visible: showDebug
+            x: xTransformForZoom(0)
+            y: yTransformForZoom(0)
+            width: sizeTransformForZoom(appWindow.arenaWidth)
+            height: sizeTransformForZoom(appWindow.arenaHeight)
+            border.color: "red"
+            color: "transparent"
         }
 
         FileIO {
