@@ -1,10 +1,12 @@
 #include "Player.h"
+#include "Ufo.h"
 
 #include <QJsonArray>
 #include <QJsonObject>
 
 Player::Player(QString name, QObject *parent)
     : GameObject(parent)
+    , m_credits(0)
     , m_name(name)
 {
 }
@@ -34,6 +36,26 @@ void Player::removeUfo(Ufo* ufo)
 {
     m_ufos.removeOne(ufo);
     ufo->deleteLater();
+}
+
+bool Player::hasUfo(int id) const
+{
+    foreach (auto ufo, m_ufos)
+    {
+        if (ufo->getId() == id)
+            return true;
+    }
+    return false;
+}
+
+Ufo* Player::getUfo(int id) const
+{
+    foreach (auto ufo, m_ufos)
+    {
+        if (ufo->getId() == id)
+            return ufo;
+    }
+    throw std::logic_error("Player does not have ufo requested ufo");
 }
 
 void Player::applyTick(double durationInSeconds)

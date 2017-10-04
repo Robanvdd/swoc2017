@@ -148,7 +148,7 @@ void MacroGame::communicateWithBot(Player* player, QJsonDocument gameStateDoc)
 
 void MacroGame::handleBuyCommand(Player* player, BuyCommand* buyCommand)
 {
-    m_ufoShop.buyUfos(player, m_universe->getPlanet(buyCommand->getPlanetId()), buyCommand->getAmount());
+    m_ufoShop.buyUfos(player, m_universe->getPlanet(buyCommand->getPlanetId()), m_universe, buyCommand->getAmount());
 }
 
 void MacroGame::handleConquerCommand(Player* player, ConquerCommand* conquerCommand)
@@ -171,17 +171,48 @@ void MacroGame::handleConquerCommand(Player* player, ConquerCommand* conquerComm
     QPointF location = solarSystem->getPlanetLocation(*planet);
     QList<Ufo*> nearbyUfosPlayer = solarSystem->getUfosNearLocation(location, *player);
     QList<Ufo*> nearbyUfosCurrentOwner = solarSystem->getUfosNearLocation(location, *currentOwner);
+    if (nearbyUfosCurrentOwner.size() == 0)
+        planet->takeOverBy(player);
+    if (nearbyUfosPlayer.size() == 0)
+        return;
     startMicroGame(player, nearbyUfosPlayer, currentOwner, nearbyUfosCurrentOwner);
 }
 
 void MacroGame::handleMoveToPlanetCommand(Player* player, MoveToPlanetCommand* moveToPlanetCommand)
 {
-    // TODO
+    if (player == nullptr || moveToPlanetCommand == nullptr)
+        throw std::logic_error("Got nullptr player or moveToPlanetCommand");
+
+    auto planetId = moveToPlanetCommand->getPlanetId();
+    auto planet = m_universe->getPlanet(planetId);
+    if (planet == nullptr)
+        return;
+
+    foreach (auto ufoId, moveToPlanetCommand->getUfos())
+    {
+        if (player->hasUfo(ufoId))
+        {
+            auto ufo = player->getUfo(ufoId);
+            ufo->setFlyingToPlanet(true);
+            ufo->setTargetPlanet(planet);
+        }
+    }
 }
 
 void MacroGame::handleMoveToCoordCommand(Player* player, MoveToCoordCommand* moveToCoordCommand)
 {
-    // TODO
+    if (player == nullptr || moveToCoordCommand == nullptr)
+        throw std::logic_error("Got nullptr player or moveToCoordCommand");
+
+    foreach (auto ufoId, moveToCoordCommand->getUfos())
+    {
+        if (player->hasUfo(ufoId))
+        {
+            auto ufo = player->getUfo(ufoId);
+            ufo->setFlyingToCoord(true);
+            ufo->setTargetCoord(moveToCoordCommand->getCoords());
+        }
+    }
 }
 
 void MacroGame::startMicroGame(Player* playerA, QList<Ufo*> ufosPlayerA, Player* playerB, QList<Ufo*> ufosPlayerB)

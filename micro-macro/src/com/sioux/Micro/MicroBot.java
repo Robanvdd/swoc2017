@@ -6,6 +6,7 @@ import com.sioux.Micro.Command.Shoot;
 import java.awt.*;
 
 class MicroBot {
+    private int id;
     private String name;
     private int hitpoints;
     private Point.Double position;
@@ -15,13 +16,18 @@ class MicroBot {
     private transient int lastShoot;
     private transient int radius;
 
-    public MicroBot(String name, Integer hp, Point.Double pos, Integer radius) {
+    public MicroBot(int id, String name, Integer hp, Point.Double pos, Integer radius) {
+        this.id = id;
         this.name = name;
         this.hitpoints = hp;
         this.position = pos;
         this.cooldownShoot = 30;
         this.lastShoot = 0;
         this.radius = radius;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getName() {

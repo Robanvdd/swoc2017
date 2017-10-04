@@ -33,3 +33,13 @@ void MoveToPlanetCommand::printCommand()
     std::cout << std::endl;
 
 }
+
+QList<int> MoveToPlanetCommand::getUfos() const
+{
+    return m_ufos;
+}
+
+int MoveToPlanetCommand::getPlanetId() const
+{
+    return m_planetId;
+}

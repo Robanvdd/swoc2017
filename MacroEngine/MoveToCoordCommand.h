@@ -12,6 +12,10 @@ public:
     void readCommand(const QJsonObject jsonObject);
     void printCommand();
 
+    QList<int> getUfos() const;
+
+    QPoint getCoords() const;
+
 private:
     QList<int> m_ufos;
     QPoint m_coords;

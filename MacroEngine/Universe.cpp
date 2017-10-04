@@ -16,19 +16,19 @@ Universe::Universe(QMap<int, SolarSystem *> solarSystems, QObject *parent)
 
 void Universe::writeState(QJsonObject& gameState)
 {
-//    QJsonArray solarSystemArray;
-//    foreach (const SolarSystem* solarSystem, m_solarSystems) {
-//        QJsonObject solarSystemObject;
-//        solarSystem->writeState(solarSystemObject);
-//        solarSystemArray.append(solarSystemObject);
-//    }
-//    gameState["solarSystems"] = solarSystemArray;
+    QJsonArray solarSystemArray;
+    foreach (const SolarSystem* solarSystem, m_solarSystems) {
+        QJsonObject solarSystemObject;
+        solarSystem->writeState(solarSystemObject);
+        solarSystemArray.append(solarSystemObject);
+    }
+    gameState["solarSystems"] = solarSystemArray;
     QJsonArray playerArray;
-//    foreach (Player* player, m_players) {
-//        QJsonObject playerObject;
-//        player->writeState(playerObject);
-//        playerArray.append(playerObject);
-//    }
+    foreach (Player* player, m_players) {
+        QJsonObject playerObject;
+        player->writeState(playerObject);
+        playerArray.append(playerObject);
+    }
     gameState["players"] = playerArray;
 
     // TODO

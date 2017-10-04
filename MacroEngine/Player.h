@@ -2,12 +2,11 @@
 #define PLAYER_H
 
 #include "GameObject.h"
-#include "Ufo.h"
 
 #include <QColor>
 #include <QObject>
 
-
+class Ufo;
 class Player : public GameObject
 {
     Q_OBJECT
@@ -20,6 +19,8 @@ public:
     void giveUfo(Ufo* ufo);
     void removeUfo(Ufo* ufo);
 
+    bool hasUfo(int id) const;
+
     void applyTick(double durationInSeconds);
 
     QString getName() const;
@@ -31,6 +32,7 @@ public:
     QColor getColor() const;
     void setColor(const QColor& color);
 
+    Ufo*getUfo(int id) const;
 signals:
 
 public slots:

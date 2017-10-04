@@ -12,6 +12,14 @@ public class MacroPlayer {
     private List<Integer> ufos;
     private String color;
 
+    public MacroPlayer(int id, String name, String bot, List<Integer> ufos, String color) {
+        this.id = id;
+        this.name = name;
+        this.bot = bot;
+        this.ufos = ufos;
+        this.color = color;
+    }
+
     public int getId() {
         return id;
     }
