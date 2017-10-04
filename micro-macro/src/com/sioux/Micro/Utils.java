@@ -64,6 +64,7 @@ public class Utils {
 
     public static double DirectionBetweenPoints(Point.Double from, Point.Double to)
     {
+        if (from.x == to.x && from.y == to.y) return 0.0;
         Point.Double vectorPoints = VectorBetweenPoints(from, to);
         NormalizeVector(vectorPoints);
         Point.Double zeroVector = new Point.Double(-1, 0);
