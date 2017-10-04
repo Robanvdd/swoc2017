@@ -7,7 +7,7 @@ public class Utils {
         Double radian = Math.toRadians(angle);
         Double x = radius * Math.cos(radian);
         Double y = radius * Math.sin(radian);
-        return new Point.Double(x, y);
+        return new Point.Double(x, -y);
     }
 
     public static Point.Double ClampPoint(Point.Double pos, int xMin, int xMax, int yMin, int yMax) {
@@ -57,11 +57,6 @@ public class Utils {
         return Math.atan2(PerpDotProduct(vFrom, vTo), DotProduct(vFrom, vTo));
     }
 
-    public static double RadiansToDegrees(double radians)
-    {
-        return radians * 180.0 / Math.PI;
-    }
-
     public static double DirectionBetweenPoints(Point.Double from, Point.Double to)
     {
         if (from.x == to.x && from.y == to.y) return 0.0;
@@ -69,7 +64,7 @@ public class Utils {
         NormalizeVector(vectorPoints);
         Point.Double zeroVector = new Point.Double(-1, 0);
         double angleRadians = AngleBetweenUnitVectors(zeroVector, vectorPoints);
-        double angleDegrees = RadiansToDegrees(angleRadians);
+        double angleDegrees = Math.toDegrees(angleRadians);
         return (180.0 - angleDegrees) % 360.0;
     }
 
