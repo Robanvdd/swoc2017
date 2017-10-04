@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class MicroEngine {
     // Game specific stuff
     private MicroTick state;
-    private Map<String, BotProcess> scripts;
+    private Map<Integer, BotProcess> scripts;
     private boolean gameRunning;
 
     // Game independent things
@@ -50,7 +50,7 @@ public class MicroEngine {
 
     /**
      * Start a micro game. Takes an starting game state and returns the resulting end game state and winner.
-     * @param start Starting state of the game
+     * @param input Starting state of the game
      * @return End state of the game and the winner
      */
     public MacroOutput Run(MacroInput input) {
@@ -103,7 +103,7 @@ public class MicroEngine {
     }
 
     private void Uninitialize() {
-        for (Map.Entry<String, BotProcess> entry : scripts.entrySet()) {
+        for (Map.Entry<Integer, BotProcess> entry : scripts.entrySet()) {
             if (entry.getValue().isRunning()) {
                 entry.getValue().close();
             }
@@ -145,8 +145,7 @@ public class MicroEngine {
         Iterator<Point.Double> positions = GetRandomPositionsInArena(nrOfBots, Bot.Radius);
 
         for (MacroPlayer macro : players) {
-            String playerName = macro.getName() + macro.getId();
-            MicroPlayer micro = new MicroPlayer(macro.getId(), playerName, macro.getColor(), macro.getBot());
+            MicroPlayer micro = new MicroPlayer(macro.getId(), macro.getName(), macro.getColor(), macro.getBot());
 
             for (int botID : macro.getUfos()) {
                 String botName = Bot.GenericName + botID;
@@ -182,7 +181,7 @@ public class MicroEngine {
             try {
                 final String dir = player.getScript();
                 final String cmd = Script.GetScriptCommand();
-                scripts.put(player.getName(), new BotProcess(dir, cmd));
+                scripts.put(player.getId(), new BotProcess(dir, cmd));
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (Exception e) {
@@ -199,8 +198,8 @@ public class MicroEngine {
         for (MicroPlayer player : state.getPlayers()) {
             state.setPlayer(player.getId(), player.getName());
             String stateJson = gson.toJson(state, MicroTick.class);
-            if(!scripts.get(player.getName()).writeLine(stateJson)) {
-                System.err.println("Failed to send game state to " + player.getName());
+            if(!scripts.get(player.getId()).writeLine(stateJson)) {
+                System.err.println("Failed to send game state to " + player.getId());
             }
         }
         state.clearPlayer();
@@ -208,11 +207,11 @@ public class MicroEngine {
 
     private void WaitForCommands() {
         for (MicroPlayer player : state.getPlayers()) {
-            String inputJson = scripts.get(player.getName()).readLine(1000);
+            String inputJson = scripts.get(player.getId()).readLine(1000);
             MicroInput input = gson.fromJson(inputJson, MicroInput.class);
 
             if (input == null) {
-                System.err.println("Failed to receive commands from " + player.getName());
+                System.err.println("Failed to receive commands from " + player.getId());
                 continue;
             }
 
@@ -226,10 +225,8 @@ public class MicroEngine {
 
     private void ExecuteCommands(MicroPlayer player, MicroInput input) {
         for (BotInput commands : input.getCommands()) {
-            if (commands.getName() == null) continue;
-
             Optional<MicroBot> result = player.getBots().stream()
-                    .filter(bot -> bot.getName().equals(commands.getName())).findFirst();
+                    .filter(bot -> bot.getId() == commands.getId()).findFirst();
             if (!result.isPresent()) continue;
 
             MicroBot bot = result.get();
@@ -243,7 +240,7 @@ public class MicroEngine {
             Shoot shootCmd = commands.getShoot();
             if (shootCmd != null && bot.canShoot(state.getTick())) {
                 bot.Shoot(state.getTick());
-                state.Add(new MicroProjectile(bot.getPosition(), shootCmd.getDirection(), player.getName()));
+                state.Add(new MicroProjectile(bot.getPosition(), shootCmd.getDirection(), player.getId()));
             }
 
             ShootAt shootAtCmd = commands.getShootAt();
@@ -251,7 +248,7 @@ public class MicroEngine {
                 bot.Shoot(state.getTick());
                 Point.Double target = new Point.Double(shootAtCmd.getX(), shootAtCmd.getY());
                 double direction = Utils.DirectionBetweenPoints(bot.getPosition(), target);
-                state.Add(new MicroProjectile(bot.getPosition(), direction, player.getName()));
+                state.Add(new MicroProjectile(bot.getPosition(), direction, player.getId()));
             }
         }
     }
@@ -281,9 +278,9 @@ public class MicroEngine {
     private void ProcessHits() {
         for (MicroPlayer player : state.getPlayers()) {
             List<MicroProjectile> targets = state.getProjectiles().stream()
-                    .filter(p -> !p.getSource().equalsIgnoreCase(player.getName())).collect(Collectors.toList());
+                    .filter(p -> !(p.getSource() == player.getId())).collect(Collectors.toList());
             for (MicroProjectile projectile : targets) {
-                if (!player.getName().equalsIgnoreCase(projectile.getSource())) {
+                if (!(player.getId() == projectile.getSource())) {
                     for (MicroBot bot : player.getBots()) {
                         if (bot.Hit(projectile)) {
                             state.getProjectiles().remove(projectile);

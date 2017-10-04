@@ -5,13 +5,13 @@ import com.sioux.Micro.Command.Shoot;
 import com.sioux.Micro.Command.ShootAt;
 
 class BotInput {
-    private String name;
+    private int id;
     private Move move;
     private Shoot shoot;
     private ShootAt shootAt;
 
-    public String getName() {
-        return name;
+    public int getId() {
+        return id;
     }
 
     public Move getMove() {

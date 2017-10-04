@@ -7,12 +7,12 @@ class MicroProjectile {
     private double direction;
 
     // Non-serialized members (transient)
-    private transient String source;
+    private transient int source;
     private transient int damage;
     private transient double speed;
     private transient int radius;
 
-    public MicroProjectile(Point.Double position, Double direction, String source) {
+    public MicroProjectile(Point.Double position, Double direction, int source) {
         this.position = new Point.Double(position.x, position.y);
         this.direction = direction;
         this.source = source;
@@ -35,7 +35,7 @@ class MicroProjectile {
         return direction;
     }
 
-    public String getSource() {
+    public int getSource() {
         return source;
     }
 

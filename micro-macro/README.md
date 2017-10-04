@@ -187,7 +187,7 @@ The output sent to micro has the following format:
 {
     "commands": [
         {
-            "name": "string",
+            "id": "integer",
             "move": {
                 "direction": "float",
                 "speed": "float"
@@ -206,23 +206,23 @@ Output example:
 {
     "commands": [
         {
-            "name": "bot0",
+            "id": 0,
         },
         {
-            "name": "bot1",
+            "id": 1,
             "move": {
                 "direction": "0",
                 "speed": "10"
             }
         },
         {
-            "name": "bot2",
+            "id": 2,
             "shoot": {
                 "direction": "90"
             }
         },
         {
-            "name": "bot3",
+            "id": 3,
             "move": {
                 "direction": "180",
                 "speed": "10"
