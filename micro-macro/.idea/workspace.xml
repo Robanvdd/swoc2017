@@ -114,8 +114,8 @@
       <file leaf-file-name="MicroEngine.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/sioux/Micro/MicroEngine.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="203">
-              <caret line="265" column="67" lean-forward="true" selection-start-line="265" selection-start-column="67" selection-end-line="265" selection-end-column="67" />
+            <state relative-caret-position="140">
+              <caret line="262" column="9" lean-forward="true" selection-start-line="262" selection-start-column="9" selection-end-line="262" selection-end-column="9" />
               <folding />
             </state>
           </provider>
@@ -825,8 +825,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/sioux/Micro/MicroEngine.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="203">
-          <caret line="265" column="67" lean-forward="true" selection-start-line="265" selection-start-column="67" selection-end-line="265" selection-end-column="67" />
+        <state relative-caret-position="140">
+          <caret line="262" column="9" lean-forward="true" selection-start-line="262" selection-start-column="9" selection-end-line="262" selection-end-column="9" />
           <folding />
         </state>
       </provider>
