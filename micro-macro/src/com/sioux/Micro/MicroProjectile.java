@@ -5,16 +5,19 @@ import com.sioux.Micro.Configuration.Projectile;
 import java.awt.*;
 
 class MicroProjectile {
+    private int id;
     private Point.Double position;
     private double direction;
 
     // Non-serialized members (transient)
+    private static transient int staticCounter = 0;
     private transient int source;
     private transient int damage;
     private transient double speed;
     private transient int radius;
 
     public MicroProjectile(Point.Double position, Double direction, int source) {
+        this.id = staticCounter++;
         this.position = new Point.Double(position.x, position.y);
         this.direction = direction;
         this.source = source;
