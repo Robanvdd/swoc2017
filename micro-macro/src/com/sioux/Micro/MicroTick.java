@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 class MicroTick {
+    private int tick;
     private int gameId;
     private MicroArena arena;
     private List<MicroPlayer> players;
@@ -14,12 +15,17 @@ class MicroTick {
     private String playerName;
 
     public MicroTick(int gameId, MicroArena arena) {
+        this.tick = 0;
         this.gameId = gameId;
         this.arena = arena;
         this.players = new ArrayList<>();
         this.projectiles = new ArrayList<>();
 
         clearPlayer();
+    }
+
+    public int getTick() {
+        return tick;
     }
 
     public int getGameId() {
@@ -58,5 +64,9 @@ class MicroTick {
 
     public void Remove(MicroProjectile projectile) {
         projectiles.remove(projectile);
+    }
+
+    public void IncreaseTick() {
+        tick++;
     }
 }

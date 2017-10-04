@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
  */
 public class MicroEngine {
     // Game specific stuff
-    private Integer tickCounter;
     private MicroTick state;
     private Map<String, BotProcess> scripts;
     private boolean gameRunning;
@@ -40,7 +39,6 @@ public class MicroEngine {
         // Game specific stuff
         this.state = null;
         this.scripts = null;
-        this.tickCounter = 0;
         this.gameRunning = false;
 
         // Game independent things
@@ -61,22 +59,22 @@ public class MicroEngine {
             SaveGameState();
 
             while (gameRunning) {
-                if (!this.state.getArena().Playable()) {
+                if (!state.getArena().Playable()) {
                     break;
-                } else if (this.tickCounter > Arena.ShrinkThreshold) {
-                    this.state.getArena().Shrink(Arena.ShrinkFactor);
+                } else if (state.getTick() > Arena.ShrinkThreshold) {
+                    state.getArena().Shrink(Arena.ShrinkFactor);
                 }
 
                 System.err.printf("[Tick %d, Arena %d-%d]%n",
-                        this.tickCounter,
-                        this.state.getArena().getHeight(),
-                        this.state.getArena().getWidth());
+                        state.getTick(),
+                        state.getArena().getHeight(),
+                        state.getArena().getWidth());
 
                 SendGameState();
                 WaitForCommands();
                 SaveGameState();
 
-                this.tickCounter++;
+                state.IncreaseTick();
             }
         } catch (Exception e) {
             e.printStackTrace(System.err);
@@ -101,7 +99,6 @@ public class MicroEngine {
         InitPlayers(input.getPlayers());
         StartScripts();
 
-        this.tickCounter = 0;
         this.gameRunning = true;
     }
 
@@ -244,14 +241,14 @@ public class MicroEngine {
             }
 
             Shoot shootCmd = commands.getShoot();
-            if (shootCmd != null && bot.canShoot(tickCounter)) {
-                bot.Shoot(tickCounter);
+            if (shootCmd != null && bot.canShoot(state.getTick())) {
+                bot.Shoot(state.getTick());
                 state.Add(new MicroProjectile(bot.getPosition(), shootCmd.getDirection(), player.getName()));
             }
 
             ShootAt shootAtCmd = commands.getShootAt();
-            if (shootAtCmd != null && bot.canShoot(tickCounter)) {
-                bot.Shoot(tickCounter);
+            if (shootAtCmd != null && bot.canShoot(state.getTick())) {
+                bot.Shoot(state.getTick());
                 Point.Double target = new Point.Double(shootAtCmd.getX(), shootAtCmd.getY());
                 double direction = Utils.DirectionBetweenPoints(bot.getPosition(), target);
                 state.Add(new MicroProjectile(bot.getPosition(), direction, player.getName()));
@@ -307,7 +304,7 @@ public class MicroEngine {
     }
 
     private void SaveGameState() {
-        final String path = Script.GetTickFolder(state.getGameId()) + "tick_" + this.tickCounter + ".json";
+        final String path = Script.GetTickFolder(state.getGameId()) + "tick_" + state.getTick() + ".json";
         final String data = gson.toJson(state, MicroTick.class);
 
         try {

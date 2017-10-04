@@ -18,13 +18,17 @@ public class Main {
         gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
 
-        String macroInputJson = scanner.nextLine();
-        MacroInput macroInput = gson.fromJson(macroInputJson, MacroInput.class);
+        try {
+            String macroInputJson = scanner.nextLine();
+            MacroInput macroInput = gson.fromJson(macroInputJson, MacroInput.class);
 
-        MicroEngine micro = new MicroEngine();
-        MacroOutput macroOutput = micro.Run(macroInput);
+            MicroEngine micro = new MicroEngine();
+            MacroOutput macroOutput = micro.Run(macroInput);
 
-        String macroOutputJson = gson.toJson(macroOutput, MacroOutput.class);
-        System.out.println(macroOutputJson);
+            String macroOutputJson = gson.toJson(macroOutput, MacroOutput.class);
+            System.out.println(macroOutputJson);
+        } catch (Exception e) {
+            e.printStackTrace(System.err);
+        }
     }
 }
