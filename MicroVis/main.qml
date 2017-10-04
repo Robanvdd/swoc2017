@@ -248,8 +248,8 @@ ApplicationWindow {
                     delegate: Spaceship {
                         property color playerColor: parent.playerColor
                         id: aSpaceShip
-                        x: xTransformForZoom(modelData.x)
-                        y: yTransformForZoom(modelData.y)
+                        x: xTransformForZoom(modelData.x) - 0.5 * width
+                        y: yTransformForZoom(modelData.y) - 0.5 * height
                         width: sizeTransformForZoom(32)
                         height: sizeTransformForZoom(32)
                         visible: modelData.hp > 0
@@ -267,14 +267,21 @@ ApplicationWindow {
 
                             Rectangle {
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                color: "red"
+                                gradient: Gradient {
+                                    GradientStop { position: 0.0; color: "#FF660000" }
+                                    GradientStop { position: 1.0; color: "#FFFF6666" }
+                                }
                                 width: 50
                                 height: 8
                                 border.color: "white"
                                 border.width: 1
 
                                 Rectangle {
-                                    color: "green"
+                                    gradient: Gradient {
+                                        GradientStop { position: 0.0; color: "#FF006600" }
+                                        GradientStop { position: 1.0; color: "#FF66FF66" }
+                                    }
+
                                     anchors.left: parent.left
                                     anchors.top: parent.top
                                     anchors.bottom: parent.bottom
@@ -298,8 +305,8 @@ ApplicationWindow {
         Repeater {
             model: appContext.bullets
             delegate: Bullet {
-                x: xTransformForZoom(modelData.x)
-                y: yTransformForZoom(modelData.y)
+                x: xTransformForZoom(modelData.x) - 0.5 * width
+                y: yTransformForZoom(modelData.y) - 0.5 * height
                 width: sizeTransformForZoom(16)
                 height: sizeTransformForZoom(16)
 

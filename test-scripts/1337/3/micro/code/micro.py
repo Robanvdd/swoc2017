@@ -60,8 +60,8 @@ def game_loop():
         commands['commands'].append({
             'id': bot['id'],
             'move': {
-                'direction': math.sin(time * 2) * 120,
-                'speed': math.sin(time * 0.5) * 6
+                'direction': math.sin(time * 2) * 70,
+                'speed': math.sin(time * 0.2) * 4
             },
 #                'shoot': {
 #                    'direction': 180
