@@ -92,7 +92,7 @@ public class MicroEngine {
         int numberOfBots = GetTotalNumberOfBots(input.getPlayers());
         Dimension size = DetermineArenaSize(numberOfBots, Bot.Radius);
         MicroArena arena = new MicroArena(size);
-        this.state = new MicroTick(input.getGameId(), arena);
+        this.state = new MicroTick(input.getGameId(), input.getTicks(), arena);
         this.scripts = new HashMap<>();
 
         InitPlayers(input.getPlayers());
@@ -305,7 +305,7 @@ public class MicroEngine {
     }
 
     private void SaveGameState() {
-        final String path = Script.GetTickFolder(state.getGameId()) + "tick_" + state.getTick() + ".json";
+        final String path = state.getTicksFolder() + "tick_" + state.getTick() + ".json";
         final String data = gson.toJson(state, MicroTick.class);
 
         try {

@@ -15,13 +15,17 @@ class MicroTick {
     private int playerId;
     private String playerName;
 
-    public MicroTick(int gameId, MicroArena arena) {
+    // Non-serialized members (transient)
+    private transient String ticksFolder;
+
+    public MicroTick(int gameId, String ticksFolder, MicroArena arena) {
         this.tick = 0;
         this.gameId = gameId;
         this.arena = arena;
         this.players = new ArrayList<>();
         this.projectiles = new ArrayList<>();
         this.hits = new ArrayList<>();
+        this.ticksFolder = ticksFolder;
 
         clearPlayer();
     }
@@ -44,6 +48,10 @@ class MicroTick {
 
     public List<MicroProjectile> getProjectiles() {
         return projectiles;
+    }
+
+    public String getTicksFolder() {
+        return ticksFolder;
     }
 
     public void setPlayer(int id, String name) {
