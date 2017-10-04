@@ -35,6 +35,7 @@ public:
     Q_INVOKABLE void clearSpaceships();
     QQmlListProperty<Spaceship> getSpaceships();
     Q_INVOKABLE void setSpaceshipHp(int index, int hp);
+    Q_INVOKABLE bool getSpaceshipIsAlive(int index);
 
 signals:
     void idChanged();

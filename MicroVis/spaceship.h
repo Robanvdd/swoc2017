@@ -22,7 +22,9 @@ public:
     void setName(QString name);
 
     void move(int x, int y);
+
     void setHp(int hp);
+    int getHp() const;
 
 signals:
     void xChanged();

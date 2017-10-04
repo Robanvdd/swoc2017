@@ -98,9 +98,9 @@ ApplicationWindow {
                 var hp = bots[j].hitpoints;
                 var posBot = bots[j].position
                 appContext.players[i].moveSpaceship(j, posBot.x, posBot.y)
-                appContext.players[i].setSpaceshipHp(j, hp);
-                if (hp <= 0)
+                if (appContext.players[i].getSpaceshipIsAlive(j) && hp <= 0)
                     nrUfos--
+                appContext.players[i].setSpaceshipHp(j, hp);
             }
         }
     }
@@ -188,7 +188,7 @@ ApplicationWindow {
 
         Timer {
             id: gameTimer
-            interval: 1000/2
+            interval: 1000/30
             running: frameUrl != ""
             repeat: true
             property url frameUrl: ""
@@ -294,6 +294,9 @@ ApplicationWindow {
 
                 onClicked: {
                     gameTimer.frameUrl = ""
+                    tick = 0
+                    nrUfos = 0
+                    nrBullets = 0
                     appContext.clearPlayers()
                     appContext.clearBullets()
                     fileDialogLoader.sourceComponent = fileDialogComponent

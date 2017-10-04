@@ -39,6 +39,8 @@ void AppContext::moveBullet(int id, int x, int y)
 
 void AppContext::removeBullet(int id)
 {
+    if (!m_bulletMap.contains(id))
+        return;
     Bullet* bullet = m_bulletMap[id];
     m_bulletMap.remove(id);
     ReconstructBulletList();
@@ -53,10 +55,11 @@ int AppContext::getBulletCount() const
 
 void AppContext::clearBullets()
 {
-    auto backup = m_bullets;
-    m_bullets.clear();
+    auto bulletMap = m_bulletMap;
+    m_bulletMap.clear();
+    ReconstructBulletList();
     emit bulletsChanged();
-    qDeleteAll(backup);
+    qDeleteAll(bulletMap);
 }
 
 QQmlListProperty<Bullet> AppContext::getBullets()

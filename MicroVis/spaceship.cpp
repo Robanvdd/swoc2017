@@ -41,3 +41,8 @@ void Spaceship::setHp(int hp)
     m_hp = hp;
     emit hpChanged();
 }
+
+int Spaceship::getHp() const
+{
+    return m_hp;
+}

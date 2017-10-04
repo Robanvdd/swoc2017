@@ -87,3 +87,8 @@ void Player::setSpaceshipHp(int index, int hp)
 {
     m_spaceships.at(index)->setHp(hp);
 }
+
+bool Player::getSpaceshipIsAlive(int index)
+{
+    return m_spaceships.at(index)->getHp() > 0;
+}
