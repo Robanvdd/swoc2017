@@ -48,9 +48,8 @@ def game_loop():
     targetY = 0
     if otherBots != []:
         targetBot = otherBots[0]
-        target = [float(i) for i in targetBot['position'].split(',')]
-        targetX = target[0]
-        targetY = target[1]
+        targetX = targetBot['position']['x']
+        targetY = targetBot['position']['y']
 
     commands = {
         'commands': []

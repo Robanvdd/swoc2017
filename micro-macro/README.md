@@ -89,6 +89,7 @@ The input received from micro has the following format:
 
 ```json
 {
+    "tick": "integer",
     "arena": {
         "height": "integer",
         "width": "integer"
@@ -103,14 +104,20 @@ The input received from micro has the following format:
                     "id": "integer",
                     "name": "string",
                     "hitpoints": "float",
-                    "position": "float,float"
+                    "position": {
+                        "x": "float",
+                        "y": "float"
+                    }
                 }
             ]
         }
     ],
     "projectiles": [
         {
-            "position": "float,float",
+            "position": {
+                "x": "float",
+                "y": "float"
+            }
             "direction": "float",
         },
     ]
@@ -121,9 +128,10 @@ Input example:
 
 ```json
 {
+    "tick": 10
     "arena": {
-        "height": "1000",
-        "width": "1000"
+        "height": 1000,
+        "width": 1000
     },
     "playerId": 0,
     "playerName": "player0",
@@ -135,14 +143,20 @@ Input example:
                 {
                     "id": 0,
                     "name": "bot0",
-                    "hitpoints": "20",
-                    "position": "25,25"
+                    "hitpoints": 20,
+                    "position": {
+                        "x": 25,
+                        "y": 25
+                    }
                 },
                 {
                     "id": 1,
                     "name": "bot1",
-                    "hitpoints": "10",
-                    "position": "25,50"
+                    "hitpoints": 10,
+                    "position": {
+                        "x": 25,
+                        "y": 25
+                    }
                 }
             ]
         },
@@ -153,14 +167,20 @@ Input example:
                 {
                     "id": 0,
                     "name": "bot0",
-                    "hitpoints": "15",
-                    "position": "75,75"
+                    "hitpoints": 15,
+                    "position": {
+                        "x": 75,
+                        "y": 75
+                    }
                 },
                 {
                     "id": 1,
                     "name": "bot1",
-                    "hitpoints": "15",
-                    "position": "50,75"
+                    "hitpoints": 15,
+                    "position": {
+                        "x": 50,
+                        "y": 75
+                    }
                 }
             ]
         }
@@ -171,8 +191,11 @@ Input example:
             "direction": "32",
         },
         {
-            "position":"15,17",
-            "direction": "32"
+            "position": {
+                "x": 25,
+                "y": 25
+            },
+            "direction": 32
         }
     ]
 }
@@ -211,24 +234,24 @@ Output example:
         {
             "id": 1,
             "move": {
-                "direction": "0",
-                "speed": "10"
+                "direction": 0,
+                "speed": 10
             }
         },
         {
             "id": 2,
             "shoot": {
-                "direction": "90"
+                "direction": 90
             }
         },
         {
             "id": 3,
             "move": {
-                "direction": "180",
-                "speed": "10"
+                "direction": 180,
+                "speed": 10
             },
             "shoot": {
-                "direction": "270"
+                "direction": 270
             }
         },
     ]

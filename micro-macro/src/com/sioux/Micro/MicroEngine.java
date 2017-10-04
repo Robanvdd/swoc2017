@@ -43,7 +43,6 @@ public class MicroEngine {
 
         // Game independent things
         this.gsonBuilder = new GsonBuilder();
-        this.gsonBuilder.registerTypeAdapter(Point.Double.class, new PointAdapter());
         this.gson = this.gsonBuilder.create();
         this.random = new Random();
     }
