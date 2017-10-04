@@ -60,9 +60,8 @@ public class MicroEngine {
             while (gameRunning) {
                 if (!state.getArena().Playable()) {
                     break;
-                } else if (state.getTick() > Arena.ShrinkThreshold) {
-                    state.getArena().Shrink(Arena.ShrinkFactor);
                 }
+                state.getArena().UpdateArena(state.getTick());
 
                 System.err.printf("[Tick %d, Arena %d-%d]%n",
                         state.getTick(),
@@ -91,7 +90,7 @@ public class MicroEngine {
     private void Initialize(MacroInput input) {
         int numberOfBots = GetTotalNumberOfBots(input.getPlayers());
         Dimension size = DetermineArenaSize(numberOfBots, Bot.Radius);
-        MicroArena arena = new MicroArena(size);
+        MicroArena arena = new MicroArena(size, Arena.ShrinkFactor, Arena.ShrinkThreshold);
         this.state = new MicroTick(input.getGameId(), input.getTicks(), arena);
         this.scripts = new HashMap<>();
 
