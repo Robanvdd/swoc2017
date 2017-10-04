@@ -96,9 +96,11 @@ The input received from micro has the following format:
     "player": "string",
     "players": [
         {
+            "id": "integer",
             "name": "string",
             "bots": [
                 {
+                    "id": "integer",
                     "name": "string",
                     "hitpoints": "float",
                     "position": "float,float"
@@ -123,17 +125,21 @@ Input example:
         "height": "1000",
         "width": "1000"
     },
-    "player": "player0",
+    "playerId": 0,
+    "playerName": "player0",
     "players": [
         {
+            "id": 0,
             "name": "player0",
             "bots": [
                 {
+                    "id": 0,
                     "name": "bot0",
                     "hitpoints": "20",
                     "position": "25,25"
                 },
                 {
+                    "id": 1,
                     "name": "bot1",
                     "hitpoints": "10",
                     "position": "25,50"
@@ -141,14 +147,17 @@ Input example:
             ]
         },
         {
+            "id": 1,
             "name": "player1",
             "bots": [
                 {
+                    "id": 0,
                     "name": "bot0",
                     "hitpoints": "15",
                     "position": "75,75"
                 },
                 {
+                    "id": 1,
                     "name": "bot1",
                     "hitpoints": "15",
                     "position": "50,75"

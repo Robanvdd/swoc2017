@@ -4,24 +4,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 class MicroTick {
+    private int gameId;
     private MicroArena arena;
-    private String player;
     private List<MicroPlayer> players;
     private List<MicroProjectile> projectiles;
 
-    public MicroTick(MicroArena arena) {
+    // Quick hax to include current player's id and name in the tick.
+    private int playerId;
+    private String playerName;
+
+    public MicroTick(int gameId, MicroArena arena) {
+        this.gameId = gameId;
         this.arena = arena;
-        this.player = new String();
         this.players = new ArrayList<>();
         this.projectiles = new ArrayList<>();
+
+        clearPlayer();
+    }
+
+    public int getGameId() {
+        return gameId;
     }
 
     public MicroArena getArena() {
         return arena;
-    }
-
-    public void setPlayer(String player) {
-        this.player = player;
     }
 
     public List<MicroPlayer> getPlayers() {
@@ -30,6 +36,16 @@ class MicroTick {
 
     public List<MicroProjectile> getProjectiles() {
         return projectiles;
+    }
+
+    public void setPlayer(int id, String name) {
+        this.playerId = id;
+        this.playerName = name;
+    }
+
+    public void clearPlayer() {
+        this.playerId = 0;
+        this.playerName = "";
     }
 
     public void Add(MicroPlayer player) {

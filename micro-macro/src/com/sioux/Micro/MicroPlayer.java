@@ -4,14 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 class MicroPlayer {
+    private  int id;
     private String name;
     private String color;
     private List<MicroBot> bots;
 
-    public MicroPlayer(String name, String color) {
+    // Non-serialized members (transient)
+    private transient String script;
+
+    public MicroPlayer(int id, String name, String color, String script) {
+        this.id = id;
         this.name = name;
         this.color = color;
         this.bots = new ArrayList<>();
+        this.script = script;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getName() {
@@ -26,7 +36,11 @@ class MicroPlayer {
         return bots;
     }
 
-    public void Add(MicroBot bot) {
+    public String getScript() {
+        return script;
+    }
+
+    public void addBot(MicroBot bot) {
         this.bots.add(bot);
     }
 

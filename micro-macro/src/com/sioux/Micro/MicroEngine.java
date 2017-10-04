@@ -5,13 +5,14 @@ import com.google.gson.GsonBuilder;
 import com.sioux.BotProcess;
 import com.sioux.Macro.MacroInput;
 import com.sioux.Macro.MacroOutput;
+import com.sioux.Macro.MacroPlayer;
 import com.sioux.Micro.Command.Move;
 import com.sioux.Micro.Command.Shoot;
 import com.sioux.Micro.Command.ShootAt;
-import com.sioux.game_objects.Game;
-import com.sioux.game_objects.GameResult;
+import com.sioux.Micro.Configuration.Arena;
+import com.sioux.Micro.Configuration.Bot;
+import com.sioux.Micro.Configuration.Script;
 
-import javax.rmi.CORBA.Util;
 import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
@@ -62,9 +63,8 @@ public class MicroEngine {
             while (gameRunning) {
                 if (!this.state.getArena().Playable()) {
                     break;
-                } else if (this.tickCounter > 1000) {
-                    final int shrinkage = 2;
-                    this.state.getArena().Shrink(shrinkage);
+                } else if (this.tickCounter > Arena.ShrinkThreshold) {
+                    this.state.getArena().Shrink(Arena.ShrinkFactor);
                 }
 
                 System.err.printf("[Tick %d, Arena %d-%d]%n",
@@ -84,8 +84,7 @@ public class MicroEngine {
             Uninitialize();
         }
 
-        // TODO MicroTick state -> MacroOutput data
-        return new MacroOutput(input.getPlayers(), input.getGameId(), 0);
+        return GetGameResult();
     }
 
     /**
@@ -93,22 +92,14 @@ public class MicroEngine {
      */
 
     private void Initialize(MacroInput input) {
-        // TODO MacroInput data -> MicroTick state
-
-        final int botRadius = 16;
-        String[] playerNames = {"Player1", "Player2"};
-        String[] playerColors = {"#32FF0000", "#320000FF"};
-        int[] playerNrBots = {1, 1};
-
-        int numberOfBots = GetTotalNumberOfBots(playerNrBots);
-        Dimension size = DetermineArenaSize(numberOfBots, botRadius);
+        int numberOfBots = GetTotalNumberOfBots(input.getPlayers());
+        Dimension size = DetermineArenaSize(numberOfBots, Bot.Radius);
         MicroArena arena = new MicroArena(size);
-        this.state = new MicroTick(arena);
+        this.state = new MicroTick(input.getGameId(), arena);
         this.scripts = new HashMap<>();
 
-        InitPlayers(playerNames, playerColors);
-        PlaceBots(playerNrBots, botRadius);
-        StartScripts(playerNames);
+        InitPlayers(input.getPlayers());
+        StartScripts();
 
         this.tickCounter = 0;
         this.gameRunning = true;
@@ -126,18 +117,18 @@ public class MicroEngine {
      *  Construction
      * */
 
-    private int GetTotalNumberOfBots(int[] playerNrBots)
+    private int GetTotalNumberOfBots(List<MacroPlayer> players)
     {
-        int sumBots = 0;
-        for (int i = 0; i < playerNrBots.length; i++)
-            sumBots += playerNrBots[i];
-        return sumBots;
+        return players.stream().map(MacroPlayer::getUfos)
+                .filter(ufos -> ufos != null)
+                .mapToInt(List::size)
+                .sum();
     }
 
     private Dimension DetermineArenaSize(int nrBots, int botRadius)
     {
-        final int baseArenaWidth = 1000;
-        final int baseArenaHeight = 1000;
+        final int baseArenaWidth = Arena.Width;
+        final int baseArenaHeight = Arena.Height;
         final int extraArenaHeightPerBot = botRadius * 2;
         final int extraArenaWidthPerBot = botRadius * 2;
 
@@ -151,55 +142,53 @@ public class MicroEngine {
         return size;
     }
 
-    private void InitPlayers(String[] playerNames, String[] playerColors)
+    private void InitPlayers(List<MacroPlayer> players)
     {
-        for (int i = 0; i < playerNames.length; i++) {
-            MicroPlayer player = new MicroPlayer(playerNames[i], playerColors[i]);
-            state.Add(player);
-        }
-    }
+        int nrOfBots = GetTotalNumberOfBots(players);
+        Iterator<Point.Double> positions = GetRandomPositionsInArena(nrOfBots, Bot.Radius);
 
-    private ArrayList<Point.Double> GetRandomPositionsInArena(int nrBots, int botRadius)
-    {
-        ArrayList<Point.Double> positions = new ArrayList<>();
-        for (int i = 0; i < nrBots; i++)
-        {
-            int x = random.nextInt(state.getArena().getWidth() - botRadius) + botRadius;
-            int y = random.nextInt(state.getArena().getHeight() - botRadius) + botRadius;
-            positions.add(new Point.Double(x, y));
-        }
-        return positions;
-    }
+        for (MacroPlayer macro : players) {
+            String playerName = macro.getName() + macro.getId();
+            MicroPlayer micro = new MicroPlayer(macro.getId(), playerName, macro.getColor(), macro.getBot());
 
-    private void PlaceBots(int[] playerNrBots, int botRadius)
-    {
-        final int botHealthPoints = 100;
-
-        int nrBots = GetTotalNumberOfBots(playerNrBots);
-        ArrayList<Point.Double> positions = GetRandomPositionsInArena(nrBots, botRadius);
-        while (BotsCollide(positions, botRadius))
-            positions = GetRandomPositionsInArena(nrBots, botRadius);
-
-        int index = 0;
-        for (int i = 0; i < playerNrBots.length; i++)
-        {
-            for (int j = 0; j < playerNrBots[i]; j++)
-            {
-                MicroBot bot = new MicroBot("bot" + j, botHealthPoints, positions.get(index++), botRadius);
-                state.getPlayers().get(i).Add(bot);
+            for (int botID : macro.getUfos()) {
+                String botName = Bot.GenericName + botID;
+                micro.addBot(new MicroBot(botID, botName, Bot.HitPoints, positions.next(), Bot.Radius));
             }
+
+            state.Add(micro);
         }
     }
 
-    private void StartScripts(String[] playerNames)
+    private Iterator<Point.Double> GetRandomPositionsInArena(int nrBots, int botRadius)
     {
-        for (int i = 0; i < playerNames.length; i++) {
-            final String dir = "D:/SWOC/swoc2017/test-scripts/readyplayerone/1/micro/";
-            final String cmd = "run.cmd";
+        int retries = 10;
+        ArrayList<Point.Double> positions;
+
+        do {
+            positions = new ArrayList<>();
+
+            for (int i = 0; i < nrBots; i++) {
+                int x = random.nextInt(state.getArena().getWidth() - botRadius) + botRadius;
+                int y = random.nextInt(state.getArena().getHeight() - botRadius) + botRadius;
+                positions.add(new Point.Double(x, y));
+            }
+        } while (BotsCollide(positions, Bot.Radius) && retries-- > 0);
+
+        return positions.listIterator();
+    }
+
+    private void StartScripts()
+    {
+        for (MicroPlayer player : state.getPlayers()) {
 
             try {
-                scripts.put(playerNames[i], new BotProcess(dir, cmd));
+                final String dir = player.getScript();
+                final String cmd = Script.GetScriptCommand();
+                scripts.put(player.getName(), new BotProcess(dir, cmd));
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -211,13 +200,13 @@ public class MicroEngine {
 
     private void SendGameState() {
         for (MicroPlayer player : state.getPlayers()) {
-            state.setPlayer(player.getName());
+            state.setPlayer(player.getId(), player.getName());
             String stateJson = gson.toJson(state, MicroTick.class);
             if(!scripts.get(player.getName()).writeLine(stateJson)) {
                 System.err.println("Failed to send game state to " + player.getName());
             }
         }
-        state.setPlayer("");
+        state.clearPlayer();
     }
 
     private void WaitForCommands() {
@@ -318,7 +307,7 @@ public class MicroEngine {
     }
 
     private void SaveGameState() {
-        final String path = "../test-scripts/readyplayerone/1/micro/ticks/tick_" + this.tickCounter + ".json";
+        final String path = Script.GetTickFolder(state.getGameId()) + "tick_" + this.tickCounter + ".json";
         final String data = gson.toJson(state, MicroTick.class);
 
         try {
@@ -352,16 +341,28 @@ public class MicroEngine {
         return false;
     }
 
-    private Game GetGame() {
-        return null;
+    private MacroOutput GetGameResult() {
+        List<MacroPlayer> players = new ArrayList<>();
+
+        for (MicroPlayer micro : state.getPlayers()) {
+            List<Integer> ufos = new ArrayList<>();
+            for (MicroBot bot : micro.getBots()) {
+                if (bot.isAlive()) {
+                    ufos.add(bot.getId());
+                }
+            }
+            players.add(new MacroPlayer(micro.getId(), micro.getName(), micro.getScript(), ufos, micro.getColor()));
+        }
+
+        return new MacroOutput(players, state.getGameId(), GetWinner());
     }
 
-    private String GetWinner() {
-        String winner = new String();
+    private int GetWinner() {
+        int winner = 0;
         for (MicroPlayer player : state.getPlayers())
         {
             if (player.hasLivingBots())
-                winner = player.getName();
+                winner = player.getId();
         }
         return winner;
     }
