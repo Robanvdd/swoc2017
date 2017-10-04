@@ -16,7 +16,7 @@ class AppContext : public QObject
 public:
     explicit AppContext(QObject *parent = nullptr);
 
-    Q_INVOKABLE void addPlayer(QString id, QColor color);
+    Q_INVOKABLE void addPlayer(int id, QString name, QColor color);
     Q_INVOKABLE void clearPlayers();
     QQmlListProperty<Player> getPlayers();
 

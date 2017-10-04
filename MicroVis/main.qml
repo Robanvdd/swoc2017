@@ -66,7 +66,8 @@ ApplicationWindow {
     {
         for (var l = 0; l < jsonObject.players.length; l++)
         {
-            appContext.addPlayer(jsonObject.players[l].name, jsonObject.players[l].color)
+            var player = jsonObject.players[l]
+            appContext.addPlayer(player.id, player.name, player.color)
         }
     }
 
@@ -74,12 +75,13 @@ ApplicationWindow {
     {
         for (var l = 0; l < jsonObject.players.length; l++)
         {
+            var player = appContext.players[l]
             var spaceships = jsonObject.players[l].bots
             for (var m = 0; m < spaceships.length; m++)
             {
-                var posShip = spaceships[m].position
-                var player = appContext.players[l]
-                player.addSpaceship(posShip.x, posShip.y)
+                var spaceship = spaceships[m]
+                player.addSpaceship(spaceship.id, spaceship.name,
+                  spaceship.position.x, spaceship.position.y)
                 nrUfos++;
             }
         }
@@ -240,10 +242,19 @@ ApplicationWindow {
                         height: sizeTransformForZoom(32)
                         visible: modelData.hp > 0
 
-                        Label {
-                            anchors.centerIn: parent
-                            text: "(" + modelData.x + ", " + modelData.y + ")"
+                        Column {
+                            anchors.bottom: parent.top
                             visible: showDebug
+                            Label {
+                                text: modelData.id + ": " + modelData.name
+                            }
+                            Label {
+                                text: "HP: " + modelData.hp
+                            }
+
+                            Label {
+                                text: "(" + modelData.x + ", " + modelData.y + ")"
+                            }
                         }
 
                         ColorOverlay {
@@ -265,8 +276,8 @@ ApplicationWindow {
                 height: sizeTransformForZoom(16)
 
                 Label {
-                    anchors.centerIn: parent
-                    text: "(" + modelData.x + ", " + modelData.y + ")"
+                    anchors.bottom: parent.top
+                    text: modelData.id + ": (" + modelData.x + ", " + modelData.y + ")"
                     visible: showDebug
                 }
             }

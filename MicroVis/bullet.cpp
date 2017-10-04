@@ -1,7 +1,7 @@
 #include "bullet.h"
 
 Bullet::Bullet(QObject *parent) :
-    QObject(parent)
+    QObject(parent), m_id(0), m_x(0), m_y(0)
 {
 }
 
@@ -30,6 +30,16 @@ void Bullet::setY(int y)
 {
     m_y = y;
     emit yChanged();
+}
+
+int Bullet::id() const
+{
+    return m_id;
+}
+
+void Bullet::setId(int id)
+{
+    m_id = id;
 }
 
 void Bullet::move(int x, int y)
