@@ -8,4 +8,5 @@ public final class Arena {
     public static int Height = 1000;
     public static int ShrinkFactor = 2;
     public static int ShrinkThreshold = 1000;
+    public static int SizeModifierThreshold = 16;
 }

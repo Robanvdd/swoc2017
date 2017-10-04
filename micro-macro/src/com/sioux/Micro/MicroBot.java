@@ -2,6 +2,7 @@ package com.sioux.Micro;
 
 import com.sioux.Micro.Command.Move;
 import com.sioux.Micro.Command.Shoot;
+import com.sioux.Micro.Configuration.Bot;
 
 import java.awt.*;
 
@@ -21,7 +22,7 @@ class MicroBot {
         this.name = name;
         this.hitpoints = hp;
         this.position = pos;
-        this.cooldownShoot = 30;
+        this.cooldownShoot = Bot.ShootCooldown;
         this.lastShoot = 0;
         this.radius = radius;
     }

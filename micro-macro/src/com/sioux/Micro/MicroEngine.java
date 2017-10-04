@@ -130,10 +130,10 @@ public class MicroEngine {
         final int extraArenaWidthPerBot = botRadius * 2;
 
         Dimension size = new Dimension(baseArenaWidth, baseArenaHeight);
-        if (nrBots > 16)
+        if (nrBots > Arena.SizeModifierThreshold)
         {
-            size.width += (nrBots - 16) * extraArenaWidthPerBot;
-            size.height += (nrBots - 16) * extraArenaHeightPerBot;
+            size.width += (nrBots - Arena.SizeModifierThreshold) * extraArenaWidthPerBot;
+            size.height += (nrBots - Arena.SizeModifierThreshold) * extraArenaHeightPerBot;
         }
 
         return size;
