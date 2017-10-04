@@ -126,8 +126,11 @@ ApplicationWindow {
         var removedBulletIds = jsonObject.hits;
         for (var l = 0; l < removedBulletIds.length; l++)
         {
-            appContext.removeBullet(removedBulletIds[l])
-            nrBullets--
+            if (appContext.hasBullet(removedBulletIds[l]))
+            {
+                appContext.removeBullet(removedBulletIds[l])
+                nrBullets--
+            }
         }
     }
 
