@@ -28,6 +28,7 @@ namespace MacroBot
                 {
                     Response(states);
                 }
+                Thread.Sleep(100);
             }
         }
 

@@ -6,6 +6,7 @@
 #include "MoveToCoordCommand.h"
 #include "MoveToPlanetCommand.h"
 #include <QFile>
+#include <QDebug>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QTextStream>
@@ -28,23 +29,26 @@ MacroGame::MacroGame(QList<PlayerBotFolders*> playerBotFolders, Universe* univer
     , m_universe(universe)
     , m_tickTimer(new QTimer(this))
     , m_currentTick(1)
-    , m_tickDurationInSeconds(1.0)
+    , m_tickDurationInSeconds(0.25)
     , m_name("Match ###")
 {
     m_universe->setParent(this);
 
+    int hue = 0;
+    int hueJump = 255 / m_playerBotFolders.size();
     foreach (auto playerBotFolder, m_playerBotFolders)
     {
-        auto player = new Player(playerBotFolder->getPlayerName(), this);
-        player->giveUfo(new Ufo());
-        player->giveUfo(new Ufo());
-        player->giveUfo(new Ufo());
+        auto player = new Player(hue, playerBotFolder->getPlayerName(), this);
+        m_ufoShop.giveUfo(player, m_universe);
+        m_ufoShop.giveUfo(player, m_universe);
+        m_ufoShop.giveUfo(player, m_universe);
         m_universe->addPlayer(player);
         auto bot = new MacroBot(playerBotFolder->getMacroBotFolder() + RUN_FILE, "", this);
         m_macroBots << bot;
         m_playerBotMap[player] = bot;
         m_botPlayerMap[bot] = player;
         m_playerMicroBotFolder[player] = playerBotFolder->getMicroBotFolder();
+        hue += hueJump;
     }
 
     connect(m_tickTimer, &QTimer::timeout, this, [this]() { handleTick(); });
@@ -158,7 +162,10 @@ void MacroGame::handleConquerCommand(Player* player, ConquerCommand* conquerComm
         return;
     // Planet not yet claimed
     if (planet->getOwnedBy() == -1)
+    {
         planet->takeOverBy(player);
+        return;
+    }
 
     // Prepare fight
     Player* currentOwner = m_universe->getPlayers().value(planet->getOwnedBy(), nullptr);
@@ -171,10 +178,13 @@ void MacroGame::handleConquerCommand(Player* player, ConquerCommand* conquerComm
     QPointF location = solarSystem->getPlanetLocation(*planet);
     QList<Ufo*> nearbyUfosPlayer = solarSystem->getUfosNearLocation(location, *player);
     QList<Ufo*> nearbyUfosCurrentOwner = solarSystem->getUfosNearLocation(location, *currentOwner);
-    if (nearbyUfosCurrentOwner.size() == 0)
-        planet->takeOverBy(player);
     if (nearbyUfosPlayer.size() == 0)
         return;
+    if (nearbyUfosCurrentOwner.size() == 0)
+    {
+        planet->takeOverBy(player);
+        return;
+    }
     startMicroGame(player, nearbyUfosPlayer, currentOwner, nearbyUfosCurrentOwner);
 }
 
@@ -229,8 +239,21 @@ void MacroGame::startMicroGame(Player* playerA, QList<Ufo*> ufosPlayerA, Player*
         ufo->setInFight(true);
     }
 
-    MicroGame* microGame = new MicroGame("TODO", input);
+    MicroGame* microGame = new MicroGame("java -jar D:\\micro.jar", input);
     microGame->startProcess();
+
+    QObject::connect(microGame, &MicroGame::dataAvailable, this, [this, microGame]() {
+        if (microGame->canReadLine())
+        {
+            qDebug() << "Data available";
+            // TODO parse output
+            auto result = microGame->readLine();
+            qDebug() << result;
+            microGame->stopProcess();
+            m_microGames.removeAll(microGame);
+            microGame->deleteLater();
+        }
+    });
 
     m_microGames << microGame;
 }
@@ -262,7 +285,6 @@ void MacroGame::handleCommand(Player* player, std::unique_ptr<CommandBase>& comm
 
 void MacroGame::communicateWithBots(QJsonDocument gameStateDoc)
 {
-    std::cout << "Talking" << std::endl;
     for (auto player : m_universe->getPlayers())
     {
         communicateWithBot(player, gameStateDoc);

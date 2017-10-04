@@ -2,17 +2,37 @@
 
 #include <QCoreApplication>
 #include <QTimer>
+#include <QDebug>
 #include <iostream>
 
 #include <Engine.h>
 
+#include <stdlib.h>
+#include <time.h>
+
 int main(int argc, char *argv[])
 {
+    srand (time(NULL));
+
     QCoreApplication a(argc, argv);
     if ((argc - 1) % 3 != 0)
     {
         std::cout << "Need multiple of three arguments: <player1> <macrobot1> <microbot1> <player2> <macrobot2> <microbot2> ..." << std::endl;
         return -1;
+    }
+
+    QProcess p;
+    p.start("java -jar D:\\micro.jar");
+
+
+    p.waitForStarted(1000);
+
+    if (p.state() != QProcess::Running)
+    {
+        qDebug() << p.errorString();
+        throw std::exception();
+    } else {
+        p.kill();
     }
 
     QList<PlayerBotFolders*> playerBotFolders;

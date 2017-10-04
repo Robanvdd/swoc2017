@@ -46,9 +46,11 @@ def game_loop():
     targetX = 0
     targetY = 0
     if otherBots != []:
-        targetBot = otherBots[0]
-        targetX = targetBot['position']['x']
-        targetY = targetBot['position']['y']
+        for bot in otherBots:
+            if bot['hitpoints'] > 0:
+                targetBot = bot
+                targetX = targetBot['position']['x']
+                targetY = targetBot['position']['y']
 
     commands = {
         'commands': []

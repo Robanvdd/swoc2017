@@ -2,7 +2,9 @@
 #include "Player.h"
 
 #include <QJsonObject>
+#define _USE_MATH_DEFINES
 #include <math.h>
+
 
 Planet::Planet(QString name, int orbitDistance, double orbitRotation, double orbitSpeed, QObject *parent)
     : GameObject(parent)
@@ -51,5 +53,5 @@ int Planet::getOrbitDistance() const
 
 QPointF Planet::getCartesianCoordinates() const
 {
-    return QPointF(m_orbitDistance * cos(m_orbitRotation), m_orbitDistance * sin(m_orbitRotation));
+    return QPointF(m_orbitDistance * cos( M_PI * (m_orbitRotation / 180.0)), -m_orbitDistance * sin(M_PI * (m_orbitRotation/ 180.0)));
 }

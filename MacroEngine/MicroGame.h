@@ -17,8 +17,12 @@ public:
     void startProcess();
     void stopProcess();
     bool running();
+    bool getFinished() const;
+    bool canReadLine() const;
+    QString readLine() const;
 
 signals:
+    void dataAvailable();
 
 public slots:
 
@@ -26,6 +30,7 @@ private:
     QString m_executablePathMicroEngine;
     MicroGameInput m_input;
     QProcess* m_process;
+    bool m_dataAvailable;
 };
 
 #endif // MICROGAME_H

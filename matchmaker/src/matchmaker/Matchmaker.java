@@ -14,7 +14,6 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import org.bson.types.ObjectId;
 
 /**
@@ -172,7 +171,7 @@ public class Matchmaker implements AutoCloseable {
 
         try {
 			//botString should be player_name/id macro_path micro_path
-            Process p = Runtime.getRuntime().exec("java -jar micro-macro.jar " + botString);
+            Process p = Runtime.getRuntime().exec("MacroEngine.exe " + botString);
 
             BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String line;
@@ -180,7 +179,7 @@ public class Matchmaker implements AutoCloseable {
                 System.out.println(line);
                 if (line.startsWith("player ")) {
                     String[] playerScore = line.substring("player ".length()).split(" ");
-                    if (playerScore.length != 2) throw new InvalidArgumentException(playerScore);
+                    if (playerScore.length != 2) throw new Exception("Could not parse playerscore");
                     String player = playerScore[0];
                     String score = playerScore[1];
                     System.out.println("Parsed score for player: " + player + " with score: " + score);

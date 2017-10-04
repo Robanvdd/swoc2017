@@ -69,7 +69,7 @@ namespace MacroBot
         public static CartesianCoord AsCartesianCoord(double radius, double angle, AngleType type = AngleType.Radian)
         {
             var angleRadian = type == AngleType.Degree ? MathEx.DegreeToRadian(angle) : angle;
-            return new CartesianCoord(radius * Math.Cos(angleRadian), radius * Math.Sin(angleRadian));
+            return new CartesianCoord(radius * Math.Cos(angleRadian), -radius * Math.Sin(angleRadian));
         }
     }
 }

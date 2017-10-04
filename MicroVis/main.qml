@@ -21,6 +21,8 @@ ApplicationWindow {
     property int nrUfos: 0
     property int nrBullets: 0
     property bool showDebug: false
+    property int framesPerSecond: 30
+    property bool paused: false
 
     function calculateTransforms(jsonObject)
     {
@@ -67,6 +69,7 @@ ApplicationWindow {
         for (var l = 0; l < jsonObject.players.length; l++)
         {
             var player = jsonObject.players[l]
+
             appContext.addPlayer(player.id, player.name, player.color)
         }
     }
@@ -125,8 +128,11 @@ ApplicationWindow {
         var removedBulletIds = jsonObject.hits;
         for (var l = 0; l < removedBulletIds.length; l++)
         {
-            appContext.removeBullet(removedBulletIds[l])
-            nrBullets--
+            if (appContext.hasBullet(removedBulletIds[l]))
+            {
+                appContext.removeBullet(removedBulletIds[l])
+                nrBullets--
+            }
         }
     }
 
@@ -199,8 +205,8 @@ ApplicationWindow {
 
         Timer {
             id: gameTimer
-            interval: 1000/30
-            running: frameUrl != ""
+            interval: 1000 / framesPerSecond
+            running: frameUrl != "" && !paused
             repeat: true
             property url frameUrl: ""
             property bool firstTrigger: false
@@ -247,24 +253,46 @@ ApplicationWindow {
                     delegate: Spaceship {
                         property color playerColor: parent.playerColor
                         id: aSpaceShip
-                        x: xTransformForZoom(modelData.x)
-                        y: yTransformForZoom(modelData.y)
+                        x: xTransformForZoom(modelData.x) - 0.5 * width
+                        y: yTransformForZoom(modelData.y) - 0.5 * height
                         width: sizeTransformForZoom(32)
                         height: sizeTransformForZoom(32)
                         visible: modelData.hp > 0
 
                         Column {
                             anchors.bottom: parent.top
-                            visible: showDebug
-                            Label {
-                                text: modelData.id + ": " + modelData.name
-                            }
-                            Label {
-                                text: "HP: " + modelData.hp
-                            }
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.bottomMargin: 5
 
                             Label {
-                                text: "(" + modelData.x + ", " + modelData.y + ")"
+                                visible: showDebug
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                text: "id: " + modelData.id + ", pos: (" + modelData.x + ", " + modelData.y + ")"
+                            }
+
+                            Rectangle {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                gradient: Gradient {
+                                    GradientStop { position: 0.0; color: "#FF660000" }
+                                    GradientStop { position: 1.0; color: "#FFFF6666" }
+                                }
+                                width: 50
+                                height: 8
+                                border.color: "white"
+                                border.width: 1
+
+                                Rectangle {
+                                    gradient: Gradient {
+                                        GradientStop { position: 0.0; color: "#FF006600" }
+                                        GradientStop { position: 1.0; color: "#FF66FF66" }
+                                    }
+
+                                    anchors.left: parent.left
+                                    anchors.top: parent.top
+                                    anchors.bottom: parent.bottom
+                                    anchors.margins: 1
+                                    width: (parent.width * modelData.hp / 100.0) - 2 * parent.border.width
+                                }
                             }
                         }
 
@@ -272,6 +300,7 @@ ApplicationWindow {
                             anchors.fill: aSpaceShip
                             source: aSpaceShip
                             color: aSpaceShip.playerColor
+                            opacity: 0.3
                         }
                     }
                 }
@@ -281,14 +310,15 @@ ApplicationWindow {
         Repeater {
             model: appContext.bullets
             delegate: Bullet {
-                x: xTransformForZoom(modelData.x)
-                y: yTransformForZoom(modelData.y)
+                x: xTransformForZoom(modelData.x) - 0.5 * width
+                y: yTransformForZoom(modelData.y) - 0.5 * height
                 width: sizeTransformForZoom(16)
                 height: sizeTransformForZoom(16)
 
                 Label {
+                    anchors.horizontalCenter: parent.horizontalCenter
                     anchors.bottom: parent.top
-                    text: modelData.id + ": (" + modelData.x + ", " + modelData.y + ")"
+                    text: "id: " + modelData.id + ", pos: (" + modelData.x + ", " + modelData.y + ")"
                     visible: showDebug
                 }
             }
@@ -320,6 +350,20 @@ ApplicationWindow {
                 id: debugButton
                 text: showDebug ? "Hide debug" : "Show debug"
                 onClicked: showDebug = !showDebug
+                Material.background: "#3F51B5"
+            }
+
+            Button {
+                id: fpsButton
+                text: "FPS: " + framesPerSecond
+                onClicked: framesPerSecond == 30 ? framesPerSecond = 3 : framesPerSecond = 30
+                Material.background: "#3F51B5"
+            }
+
+            Button {
+                id: pauseButton
+                text: paused ? "Continue" : "Pause"
+                onClicked: paused = !paused
                 Material.background: "#3F51B5"
             }
 
