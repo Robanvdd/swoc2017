@@ -1,5 +1,7 @@
 package com.sioux.Micro;
 
+import com.sioux.Micro.Configuration.Projectile;
+
 import java.awt.*;
 
 class MicroProjectile {
@@ -16,9 +18,9 @@ class MicroProjectile {
         this.position = new Point.Double(position.x, position.y);
         this.direction = direction;
         this.source = source;
-        this.damage = 5;
-        this.speed = 15;
-        this.radius = 5;
+        this.damage = Projectile.Damage;
+        this.speed = Projectile.Speed;
+        this.radius = Projectile.Radius;
     }
 
     public void Move() {
