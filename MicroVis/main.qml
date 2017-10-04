@@ -1,8 +1,7 @@
-import QtQuick 2.7
-import QtQuick.Controls 2.0
+import QtQuick 2.8
+import QtQuick.Controls 2.1
+import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts 1.0
-import QtQuick.Controls 1.4
-import QtQuick.Controls.Styles 1.4
 import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.0
 import SWOC 1.0
@@ -12,17 +11,16 @@ ApplicationWindow {
     visible: true
     width: 1024
     height: 768
-    style: ApplicationWindowStyle {
-            background: Image {
-                source: "qrc:///Images/background.png"
-            }
-        }
     title: qsTr("MicroVis")
     property real zoomFactor: 1.0
     property int horizontalOffset: 0
     property int verticalOffset: 0
     property int arenaWidth: 1000
     property int arenaHeight: 700
+    property int tick: 0
+    property int nrUfos: 0
+    property int nrBullets: 0
+    property bool showDebug: false
 
     function calculateTransforms(jsonObject)
     {
@@ -79,9 +77,10 @@ ApplicationWindow {
             var spaceships = jsonObject.players[l].bots
             for (var m = 0; m < spaceships.length; m++)
             {
-                var posShip = spaceships[m].position.split(',')
+                var posShip = spaceships[m].position
                 var player = appContext.players[l]
-                player.addSpaceship(posShip[0], posShip[1])
+                player.addSpaceship(posShip.x, posShip.y)
+                nrUfos++;
             }
         }
     }
@@ -95,14 +94,11 @@ ApplicationWindow {
             for (var j = 0; j < bots.length; j++)
             {
                 var hp = bots[j].hitpoints;
-                var posBot = bots[j].position.split(',')
-                appContext.players[i].moveSpaceship(j, posBot[0], posBot[1])
+                var posBot = bots[j].position
+                appContext.players[i].moveSpaceship(j, posBot.x, posBot.y)
                 appContext.players[i].setSpaceshipHp(j, hp);
-            }
-            while (appContext.players[i].getSpaceshipCount > player.bots.length)
-            {
-                // Only remove. Players never get new spaceships after a micro game started
-                appContext.players[i].removeSpaceship()
+                if (hp <= 0)
+                    nrUfos--
             }
         }
     }
@@ -113,15 +109,22 @@ ApplicationWindow {
         for (var k = 0; k < bullets.length; k++)
         {
             var bullet = bullets[k];
-            var posBul = bullet.position.split(',')
+            var posBul = bullet.position
             if (appContext.getBulletCount() <= k)
-                appContext.addBullet(bullet.id, posBul[0], posBul[1])
+            {
+                appContext.addBullet(bullet.id, posBul.x, posBul.y)
+                nrBullets++
+            }
             else
-                appContext.moveBullet(bullet.id, posBul[0], posBul[1])
+            {
+                appContext.moveBullet(bullet.id, posBul.x, posBul.y)
+            }
         }
-        while (appContext.getBulletCount() > jsonObject.projectiles)
+        var removedBulletIds = jsonObject.hits;
+        for (var l = 0; l < removedBulletIds.length; l++)
         {
-            appContext.removeBullet()
+            appContext.removeBullet(removedBulletIds[l])
+            nrBullets--
         }
     }
 
@@ -129,6 +132,8 @@ ApplicationWindow {
     {
         try
         {
+            tick = jsonObject.tick
+
             if (firstFrame)
             {
                 laserFence.visible = true
@@ -153,6 +158,22 @@ ApplicationWindow {
     Item {
         id: root
         anchors.fill: parent
+
+        Image {
+            id: background
+            anchors.fill: parent
+            fillMode: Image.Tile
+            source: "qrc:///Images/background.png"
+        }
+
+        LaserFence {
+            id: laserFence
+            visible: false
+            x: xTransformForZoom(15)
+            y: yTransformForZoom(35)
+            width: sizeTransformForZoom(appWindow.arenaWidth)
+            height: sizeTransformForZoom(appWindow.arenaHeight)
+        }
 
         FileIO {
             id: fileIO
@@ -203,19 +224,6 @@ ApplicationWindow {
             }
         }
 
-        Button {
-            id: loadGameButton
-            text: "Load Game"
-            onClicked: {
-                gameTimer.frameUrl = ""
-                appContext.clearPlayers()
-                appContext.clearBullets()
-                fileDialogLoader.sourceComponent = fileDialogComponent
-                fileDialogLoader.fileDialog.visible = true
-            }
-            z: 1
-        }
-
         Repeater {
             id: outerRepeater
             model: appContext.players
@@ -231,6 +239,12 @@ ApplicationWindow {
                         width: sizeTransformForZoom(32)
                         height: sizeTransformForZoom(32)
                         visible: modelData.hp > 0
+
+                        Label {
+                            anchors.centerIn: parent
+                            text: "(" + modelData.x + ", " + modelData.y + ")"
+                            visible: showDebug
+                        }
 
                         ColorOverlay {
                             anchors.fill: aSpaceShip
@@ -249,26 +263,68 @@ ApplicationWindow {
                 y: yTransformForZoom(modelData.y)
                 width: sizeTransformForZoom(16)
                 height: sizeTransformForZoom(16)
+
+                Label {
+                    anchors.centerIn: parent
+                    text: "(" + modelData.x + ", " + modelData.y + ")"
+                    visible: showDebug
+                }
             }
         }
-    }
 
-    LaserFence {
-        id: laserFence
-        visible: false
-        x: xTransformForZoom(15)
-        y: yTransformForZoom(35)
-        width: sizeTransformForZoom(appWindow.arenaWidth)
-        height: sizeTransformForZoom(appWindow.arenaHeight)
-    }
+        Column {
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.margins: 16
 
-    MessageDialog {
-        id: messageDialog
-        title: "Error occurred!"
-        onAccepted: {
-            visible = false
+            Button {
+                id: loadGameButton
+                text: "Load Game"
+
+                onClicked: {
+                    gameTimer.frameUrl = ""
+                    appContext.clearPlayers()
+                    appContext.clearBullets()
+                    fileDialogLoader.sourceComponent = fileDialogComponent
+                    fileDialogLoader.fileDialog.visible = true
+                }
+                Material.background: "#3F51B5"
+            }
+
+            Button {
+                id: debugButton
+                text: showDebug ? "Hide debug" : "Show debug"
+                onClicked: showDebug = !showDebug
+                Material.background: "#3F51B5"
+            }
+
+            Label {
+                id: tickCounter
+                text: "Ticks: " + tick
+                visible: showDebug
+            }
+
+            Label {
+                id: ufoCounter
+                text: "UFOs: " + nrUfos
+                visible: showDebug
+            }
+
+            Label {
+                id: bulletCounter
+                text: "Bullets: " + nrBullets
+                visible: showDebug
+            }
         }
 
-        visible: false
+        MessageDialog {
+            id: messageDialog
+            title: "Error occurred!"
+            onAccepted: {
+                visible = false
+            }
+
+            visible: false
+        }
     }
 }
