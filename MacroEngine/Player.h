@@ -11,7 +11,7 @@ class Player : public GameObject
 {
     Q_OBJECT
 public:
-    explicit Player(int hue, QString name, QObject *parent = nullptr);
+    explicit Player(QString name, int hue, QObject *parent = nullptr);
 
     double getCredits() const;
     void addCredits(double credits);

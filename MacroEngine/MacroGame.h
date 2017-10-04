@@ -65,7 +65,7 @@ private:
     void handleMoveToPlanetCommand(Player* player, MoveToPlanetCommand* moveToPlanetCommand);
     void handleMoveToCoordCommand(Player* player, MoveToCoordCommand* moveToCoordCommand);
 
-    void startMicroGame(Player* playerA, QList<Ufo*> ufosPlayerA, Player* playerB, QList<Ufo*> ufosPlayerB);
+    void startMicroGame(Planet* planet, Player* playerA, QList<Ufo*> ufosPlayerA, Player* playerB, QList<Ufo*> ufosPlayerB);
 };
 
 #endif // MACROGAME_H

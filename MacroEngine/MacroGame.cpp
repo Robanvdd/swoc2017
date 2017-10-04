@@ -3,6 +3,7 @@
 #include "ConquerCommand.h"
 #include "MacroGame.h"
 #include "MicroGameInput.h"
+#include "MicroGameOutput.h"
 #include "MoveToCoordCommand.h"
 #include "MoveToPlanetCommand.h"
 #include <QFile>
@@ -38,7 +39,7 @@ MacroGame::MacroGame(QList<PlayerBotFolders*> playerBotFolders, Universe* univer
     int hueJump = 255 / m_playerBotFolders.size();
     foreach (auto playerBotFolder, m_playerBotFolders)
     {
-        auto player = new Player(hue, playerBotFolder->getPlayerName(), this);
+        auto player = new Player(playerBotFolder->getPlayerName(), hue, this);
         m_ufoShop.giveUfo(player, m_universe);
         m_ufoShop.giveUfo(player, m_universe);
         m_ufoShop.giveUfo(player, m_universe);
@@ -185,7 +186,7 @@ void MacroGame::handleConquerCommand(Player* player, ConquerCommand* conquerComm
         planet->takeOverBy(player);
         return;
     }
-    startMicroGame(player, nearbyUfosPlayer, currentOwner, nearbyUfosCurrentOwner);
+    startMicroGame(planet, player, nearbyUfosPlayer, currentOwner, nearbyUfosCurrentOwner);
 }
 
 void MacroGame::handleMoveToPlanetCommand(Player* player, MoveToPlanetCommand* moveToPlanetCommand)
@@ -225,7 +226,7 @@ void MacroGame::handleMoveToCoordCommand(Player* player, MoveToCoordCommand* mov
     }
 }
 
-void MacroGame::startMicroGame(Player* playerA, QList<Ufo*> ufosPlayerA, Player* playerB, QList<Ufo*> ufosPlayerB)
+void MacroGame::startMicroGame(Planet* planet, Player* playerA, QList<Ufo*> ufosPlayerA, Player* playerB, QList<Ufo*> ufosPlayerB)
 {
     MicroGameInput input(playerA, ufosPlayerA, m_playerMicroBotFolder[playerA],
                          playerB, ufosPlayerB, m_playerMicroBotFolder[playerB]);
@@ -242,13 +243,37 @@ void MacroGame::startMicroGame(Player* playerA, QList<Ufo*> ufosPlayerA, Player*
     MicroGame* microGame = new MicroGame("java -jar D:\\micro.jar", input);
     microGame->startProcess();
 
-    QObject::connect(microGame, &MicroGame::dataAvailable, this, [this, microGame]() {
+    QObject::connect(microGame, &MicroGame::dataAvailable, this, [this, microGame, planet]() {
         if (microGame->canReadLine())
         {
             qDebug() << "Data available";
             // TODO parse output
             auto result = microGame->readLine();
-            qDebug() << result;
+
+            MicroGameOutput parsedOutput;
+            parsedOutput.readOutput(result);
+            if (parsedOutput.getGameId() < 0)
+            {
+                throw std::exception("We do something wrong with parsing micro game output, or blame Ferdi");
+            }
+
+            planet->takeOverBy(m_universe->getPlayers()[parsedOutput.getWinner()]);
+            foreach (auto playerOutput, parsedOutput.getPlayers())
+            {
+                auto player = m_universe->getPlayers()[playerOutput.getId()];
+                foreach (auto ufoId, playerOutput.getCasualties())
+                {
+                    player->removeUfo(player->getUfo(ufoId));
+                }
+            }
+
+            QFile file("microOutput_" + QString::number(microGame->getId()) + ".json");
+            if (file.open(QIODevice::ReadWrite))
+            {
+                QTextStream stream(&file);
+                stream << result;
+            }
+
             microGame->stopProcess();
             m_microGames.removeAll(microGame);
             microGame->deleteLater();
