@@ -112,7 +112,7 @@ ApplicationWindow {
         {
             var bullet = bullets[k];
             var posBul = bullet.position
-            if (appContext.getBulletCount() <= k)
+            if (!appContext.hasBullet(bullet.id))
             {
                 appContext.addBullet(bullet.id, posBul.x, posBul.y)
                 nrBullets++

@@ -19,7 +19,6 @@ logger.setLevel(logging.DEBUG)
 logger.addHandler(fh)
 
 time = 0
-shotOnce = False
 
 def game_loop():
     # Wait for input from micro.
@@ -55,25 +54,21 @@ def game_loop():
         'commands': []
     }
     
-    global shotOnce
-    if not shotOnce:
-        for bot in bots:
-            commands['commands'].append({
-                'id': bot['id'],
-                'move': {
-                    'direction': math.cos(time) * 180,
-                    'speed': math.sin(time) * 10
-                },
+    for bot in bots:
+        commands['commands'].append({
+            'id': bot['id'],
+            'move': {
+                'direction': math.cos(time) * 180,
+                'speed': math.sin(time) * 10
+            },
 #                'shoot': {
 #                    'direction': 180
 #                }
-                'shootAt': {
-                    'x': targetX,
-                    'y': targetY
-                }
-            })
-    
-    shotOnce = True
+            'shootAt': {
+                'x': targetX,
+                'y': targetY
+            }
+        })
 
     # Send output to micro.
     commands_json = json.dumps(commands)

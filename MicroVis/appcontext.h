@@ -25,6 +25,7 @@ public:
     Q_INVOKABLE void removeBullet(int id);
     Q_INVOKABLE int getBulletCount() const;
     Q_INVOKABLE void clearBullets();
+    Q_INVOKABLE bool hasBullet(int id);
     QQmlListProperty<Bullet> getBullets();
 
 signals:
