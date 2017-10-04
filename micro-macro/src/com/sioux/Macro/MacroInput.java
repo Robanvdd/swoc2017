@@ -8,6 +8,7 @@ import java.util.List;
 public class MacroInput {
     private List<MacroPlayer> players;
     private int gameId;
+    private String ticks;
 
     public List<MacroPlayer> getPlayers() {
         return players;
@@ -15,5 +16,9 @@ public class MacroInput {
 
     public int getGameId() {
         return gameId;
+    }
+
+    public String getTicks() {
+        return ticks;
     }
 }
