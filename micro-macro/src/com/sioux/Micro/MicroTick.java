@@ -21,6 +21,7 @@ class MicroTick {
         this.arena = arena;
         this.players = new ArrayList<>();
         this.projectiles = new ArrayList<>();
+        this.hits = new ArrayList<>();
 
         clearPlayer();
     }
@@ -64,8 +65,8 @@ class MicroTick {
     }
 
     public void Remove(MicroProjectile projectile) {
-        projectiles.remove(projectile);
         hits.add(projectile.getId());
+        projectiles.remove(projectile);
     }
 
     public void IncreaseTick() {
