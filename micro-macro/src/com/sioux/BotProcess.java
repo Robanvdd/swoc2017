@@ -32,7 +32,7 @@ public class BotProcess implements AutoCloseable
             throw new IllegalArgumentException("Working directory does not exist");
         }
 
-        System.out.println("Starting new bot process " + command + " in " + parent);
+        System.err.println("Starting new bot process " + command + " in " + parent);
 
         child = Runtime.getRuntime().exec(workingDir + "\\" + command, null, parent);
 
