@@ -9,6 +9,7 @@ class MicroTick {
     private MicroArena arena;
     private List<MicroPlayer> players;
     private List<MicroProjectile> projectiles;
+    private List<Integer> hits;
 
     // Quick hax to include current player's id and name in the tick.
     private int playerId;
@@ -64,9 +65,11 @@ class MicroTick {
 
     public void Remove(MicroProjectile projectile) {
         projectiles.remove(projectile);
+        hits.add(projectile.getId());
     }
 
     public void IncreaseTick() {
+        hits.clear();
         tick++;
     }
 }
