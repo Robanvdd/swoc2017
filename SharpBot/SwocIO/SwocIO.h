@@ -11,6 +11,7 @@ public ref class Pipeline sealed abstract
 public:
 	static void WriteLine(System::String^ value);
 	static System::String^ ReadLine();
+	static bool Pipeline::HasInput();
 };
 
 }
