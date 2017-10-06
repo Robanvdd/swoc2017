@@ -26,8 +26,8 @@ workspace.xml
 .DS_Store
 *.class
 *.user
-*.pro.user.*
-*.pro.user
+*.pro.user.* #no.pro.user files in git, they are used per pc, with absolute path for build folders etc.
+*.pro.user #no.pro.user files in git, they are used per pc, with absolute path for build folders etc.
 micro-macro/tick_*.json
 temp/macro_app.jar
 temp/matchmaker.jar
