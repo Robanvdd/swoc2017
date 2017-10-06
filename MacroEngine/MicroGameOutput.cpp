@@ -21,7 +21,7 @@ void MicroGameOutput::readOutput(const QString& jsonString)
         m_winner = object["winner"].toInt(-1);
         m_gameId = object["gameId"].toInt(-1);
         QJsonArray playerArray = object["players"].toArray();
-        for (int i = 0; i < playerArray.size(); i++)
+        for (int i = 0; i < playerArray.count(); i++)
         {
             QJsonObject playerJson = playerArray[i].toObject();
             MicroGameOutputPlayer player;
@@ -32,6 +32,7 @@ void MicroGameOutput::readOutput(const QString& jsonString)
             {
                 player.appendCasualty(casualtiesArray[j].toInt());
             }
+            m_players.append(player);
         }
     }
 }
