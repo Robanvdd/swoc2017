@@ -13,6 +13,7 @@
 #include <QTextStream>
 #include <iostream>
 #include <exception>
+#include <QDir>
 
 #ifdef __linux__
 #define RUN_FILE "/run.sh"
@@ -50,6 +51,13 @@ MacroGame::MacroGame(QList<PlayerBotFolders*> playerBotFolders, Universe* univer
         m_botPlayerMap[bot] = player;
         m_playerMicroBotFolder[player] = playerBotFolder->getMicroBotFolder();
         hue += hueJump;
+    }
+
+    QDir dir(m_name);
+    if (!dir.exists())
+    {
+        auto result = dir.mkdir(m_name);
+
     }
 
     connect(m_tickTimer, &QTimer::timeout, this, [this]() { handleTick(); });
@@ -257,7 +265,8 @@ void MacroGame::startMicroGame(Planet* planet, Player* playerA, QList<Ufo*> ufos
                 throw std::exception("We do something wrong with parsing micro game output, or blame Ferdi");
             }
 
-            planet->takeOverBy(m_universe->getPlayers()[parsedOutput.getWinner()]);
+            if (parsedOutput.getWinner() > 0)
+                planet->takeOverBy(m_universe->getPlayers()[parsedOutput.getWinner()]);
             foreach (auto playerOutput, parsedOutput.getPlayers())
             {
                 auto player = m_universe->getPlayers()[playerOutput.getId()];

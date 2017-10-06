@@ -26,6 +26,7 @@ workspace.xml
 .DS_Store
 *.class
 *.user
+*.pro.user.*
 *.pro.user
 micro-macro/tick_*.json
 temp/macro_app.jar

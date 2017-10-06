@@ -18,6 +18,20 @@ Flickable {
         height: childrenRect.height
         scale: 0.1
 
+//        Rectangle {
+//            id: red
+//            color: "red"
+//            width: 1000 / universe.scale
+//            height: 500 / universe.scale
+//        }
+//        Rectangle {
+//            id: blue
+//            color: "blue"
+//            anchors.left: red.right
+//            width: 1000 / universe.scale
+//            height: 500 / universe.scale
+//        }
+
         Item {
             width: childrenRect.width + childrenRect.x
             height: childrenRect.height + childrenRect.y

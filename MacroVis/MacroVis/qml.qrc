@@ -22,5 +22,7 @@
         <file>Qml/GameLoader.qml</file>
         <file>Qml/GameStateTable.qml</file>
         <file>images/spaceship.png</file>
+        <file>images/background.png</file>
+        <file>images/background.jpg</file>
     </qresource>
 </RCC>

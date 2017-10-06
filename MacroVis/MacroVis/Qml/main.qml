@@ -12,6 +12,14 @@ ApplicationWindow {
     title: qsTr("MacroVis")
     color: "black"
     property int tickDuration: 250
+
+    Image {
+        id: background
+        anchors.fill: parent
+        source: "qrc:/images/background.jpg"
+        fillMode: Image.Tile
+    }
+
     GameLoader {
         id: fileDialogLoader
     }
@@ -24,8 +32,23 @@ ApplicationWindow {
     MouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.NoButton
+        hoverEnabled: true
         onWheel: {
+            var contentX = universeFlick.contentX
+            contentX *= 1 + 0.1*(wheel.angleDelta.y / 120)
+            var contentY = universeFlick.contentY
+            contentY *= 1 + 0.1*(wheel.angleDelta.y / 120)
+
+            var old = universeFlick.contentWidth
+
             universeFlick.universe.scale *= 1 + 0.1*(wheel.angleDelta.y / 120)
+
+            var newCW = universeFlick.contentWidth
+
+            print(old + " " + newCW)
+
+            universeFlick.contentX = contentX + (mouseX * 0.1*(wheel.angleDelta.y / 120))
+            universeFlick.contentY = contentY + (mouseY * 0.1*(wheel.angleDelta.y / 120))
         }
     }
 
