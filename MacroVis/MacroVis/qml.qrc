@@ -21,8 +21,10 @@
         <file>Qml/ParseFunctions.js</file>
         <file>Qml/GameLoader.qml</file>
         <file>Qml/GameStateTable.qml</file>
-        <file>images/spaceship.png</file>
         <file>images/background.png</file>
         <file>images/background.jpg</file>
+        <file>images/spaceship.gif</file>
+        <file>images/spaceship-cockpit.png</file>
+        <file>Qml/UfoImage.qml</file>
     </qresource>
 </RCC>

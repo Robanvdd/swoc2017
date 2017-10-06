@@ -7,6 +7,8 @@ Flickable {
     contentWidth: universe.width*universe.scale
     property var universe: universe
 
+    property var following: undefined
+
     ScrollBar.vertical: ScrollBar { }
     ScrollBar.horizontal: ScrollBar { }
 
@@ -17,20 +19,6 @@ Flickable {
         width: childrenRect.width
         height: childrenRect.height
         scale: 0.1
-
-//        Rectangle {
-//            id: red
-//            color: "red"
-//            width: 1000 / universe.scale
-//            height: 500 / universe.scale
-//        }
-//        Rectangle {
-//            id: blue
-//            color: "blue"
-//            anchors.left: red.right
-//            width: 1000 / universe.scale
-//            height: 500 / universe.scale
-//        }
 
         Item {
             width: childrenRect.width + childrenRect.x
@@ -52,23 +40,41 @@ Flickable {
                     height: childrenRect.height + childrenRect.y
                     Repeater {
                         model: modelData.ufos
-                        delegate: Image {
+                        delegate: UfoImage {
                             id: image
+                            hue: 0.6
                             property int ufoId: modelData.objectId
                             x: modelData.coord.x - 0.5*width
                             y: modelData.coord.y - 0.5*height
                             Behavior on x { NumberAnimation { duration: tickDuration } }
                             Behavior on y { NumberAnimation { duration: tickDuration } }
-                            width: 48
-                            height: 48
-                            smooth: true
-                            mipmap: true
-                            source: "qrc:/images/spaceship.png"
+                            width: 64
+                            height: 64
 
                             Label {
-                                anchors.centerIn: parent
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.bottom: parent.top
                                 text: image.ufoId
                                 font.pointSize: 64
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                acceptedButtons: Qt.LeftButton
+                                onClicked: {
+                                    if (flick.following === image)
+                                    {
+                                        flick.contentX = flick.contentX
+                                        flick.contentY = flick.contentY
+                                        flick.following = undefined
+                                    }
+                                    else
+                                    {
+                                        flick.contentX = Qt.binding(function() { return image.x * universe.scale - (0.5*flick.width) - 32 })
+                                        flick.contentY = Qt.binding(function() { return image.y * universe.scale - (0.5*flick.height) - 32 })
+                                        flick.following = image
+                                    }
+                                }
                             }
                         }
                     }
