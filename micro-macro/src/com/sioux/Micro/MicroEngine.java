@@ -359,7 +359,7 @@ public class MicroEngine {
     }
 
     private int GetWinner() {
-        int winner = 0;
+        int winner = -1;
         for (MicroPlayer player : state.getPlayers())
         {
             if (player.hasLivingBots())
