@@ -124,4 +124,3 @@ public class BotProcess implements AutoCloseable
         return builder.toString();
     }
 }
-

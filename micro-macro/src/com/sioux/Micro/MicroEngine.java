@@ -69,6 +69,7 @@ public class MicroEngine {
 
                 SendGameState();
                 WaitForCommands();
+                CheckScriptErrors();
                 SaveGameState();
 
                 state.IncreaseTick();
@@ -195,7 +196,9 @@ public class MicroEngine {
         for (MicroPlayer player : state.getPlayers()) {
             state.setPlayer(player.getId(), player.getName());
             String stateJson = gson.toJson(state, MicroTick.class);
-            if(!scripts.get(player.getId()).writeLine(stateJson)) {
+
+            BotProcess script = scripts.get(player.getId());
+            if(!script.writeLine(stateJson)) {
                 Debug.Print(Debug.DebugMode.Micro, "Failed to send game state to player %d", player.getId());
             }
         }
@@ -204,7 +207,8 @@ public class MicroEngine {
 
     private void WaitForCommands() {
         for (MicroPlayer player : state.getPlayers()) {
-            String inputJson = scripts.get(player.getId()).readLine(1000);
+            BotProcess script = scripts.get(player.getId());
+            String inputJson = script.readLine(1000);
             MicroInput input = gson.fromJson(inputJson, MicroInput.class);
 
             if (input == null) {
@@ -290,6 +294,22 @@ public class MicroEngine {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private void CheckScriptErrors() {
+        for (MicroPlayer player : state.getPlayers()) {
+            BotProcess script = scripts.get(player.getId());
+
+            if (script.isRunning()) {
+                String errors = script.getErrors();
+                if (!errors.isEmpty()) {
+                    Debug.Print(Debug.DebugMode.Script, "Player %d script error output:\n %s",
+                            player.getId(), errors);
+                }
+            } else {
+                Debug.Print(Debug.DebugMode.Micro, "Player %d script not running!", player.getId());
             }
         }
     }
