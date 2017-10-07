@@ -11,7 +11,7 @@ import com.sioux.Micro.Command.Shoot;
 import com.sioux.Micro.Command.ShootAt;
 import com.sioux.Micro.Configuration.Arena;
 import com.sioux.Micro.Configuration.Bot;
-import com.sioux.Micro.Configuration.Dev;
+import com.sioux.Micro.Configuration.Debug;
 import com.sioux.Micro.Configuration.Script;
 
 import java.awt.*;
@@ -64,7 +64,7 @@ public class MicroEngine {
                 }
                 state.getArena().UpdateArena(state.getTick());
 
-                Dev.Print(Dev.DebugMode.Script, "Tick %d, Arena %d-%d",state.getTick(),
+                Debug.Print(Debug.DebugMode.Micro, "Tick %d, Arena %d-%d",state.getTick(),
                         state.getArena().getWidth(), state.getArena().getHeight());
 
                 SendGameState();
@@ -196,7 +196,7 @@ public class MicroEngine {
             state.setPlayer(player.getId(), player.getName());
             String stateJson = gson.toJson(state, MicroTick.class);
             if(!scripts.get(player.getId()).writeLine(stateJson)) {
-                Dev.Print(Dev.DebugMode.Micro, "Failed to send game state to player %d", player.getId());
+                Debug.Print(Debug.DebugMode.Micro, "Failed to send game state to player %d", player.getId());
             }
         }
         state.clearPlayer();
@@ -208,7 +208,7 @@ public class MicroEngine {
             MicroInput input = gson.fromJson(inputJson, MicroInput.class);
 
             if (input == null) {
-                Dev.Print(Dev.DebugMode.Micro, "Failed to receive commands from player %d", player.getId());
+                Debug.Print(Debug.DebugMode.Micro, "Failed to receive commands from player %d", player.getId());
                 continue;
             }
 

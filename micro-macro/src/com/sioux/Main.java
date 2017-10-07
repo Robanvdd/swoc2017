@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sioux.Macro.MacroInput;
 import com.sioux.Macro.MacroOutput;
-import com.sioux.Micro.Configuration.Dev;
+import com.sioux.Micro.Configuration.Debug;
 import com.sioux.Micro.MicroEngine;
 
 import java.util.Scanner;
@@ -18,17 +18,17 @@ public class Main {
         for (String arg : botArgs) {
             switch (arg) {
                 case "--debug": // All debug modes relevant to the user
-                    Dev.EnableDebugMode(Dev.DebugMode.Micro);
-                    Dev.EnableDebugMode(Dev.DebugMode.Script);
+                    Debug.EnableDebugMode(Debug.DebugMode.Micro);
+                    Debug.EnableDebugMode(Debug.DebugMode.Script);
                     break;
                 case "--debug-dev":
-                    Dev.EnableDebugMode(Dev.DebugMode.Dev);
+                    Debug.EnableDebugMode(Debug.DebugMode.Dev);
                     break;
                 case "--debug-micro":
-                    Dev.EnableDebugMode(Dev.DebugMode.Micro);
+                    Debug.EnableDebugMode(Debug.DebugMode.Micro);
                     break;
                 case "--debug-script":
-                    Dev.EnableDebugMode(Dev.DebugMode.Script);
+                    Debug.EnableDebugMode(Debug.DebugMode.Script);
                     break;
                 default:
                     break;

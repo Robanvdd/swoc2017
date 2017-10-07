@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * Created by Ferdinand on 7-10-17.
  */
-public final class Dev {
+public final class Debug {
     public enum DebugMode { Dev, Micro, Script }
     private static boolean DebugDevEnabled = false;
     private static boolean DebugMicroEnabled = false;
