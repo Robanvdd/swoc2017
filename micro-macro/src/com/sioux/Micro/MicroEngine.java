@@ -11,6 +11,7 @@ import com.sioux.Micro.Command.Shoot;
 import com.sioux.Micro.Command.ShootAt;
 import com.sioux.Micro.Configuration.Arena;
 import com.sioux.Micro.Configuration.Bot;
+import com.sioux.Micro.Configuration.Dev;
 import com.sioux.Micro.Configuration.Script;
 
 import java.awt.*;
@@ -63,10 +64,8 @@ public class MicroEngine {
                 }
                 state.getArena().UpdateArena(state.getTick());
 
-                System.err.printf("[Tick %d, Arena %d-%d]%n",
-                        state.getTick(),
-                        state.getArena().getHeight(),
-                        state.getArena().getWidth());
+                Dev.Print(Dev.DebugMode.Script, "Tick %d, Arena %d-%d",state.getTick(),
+                        state.getArena().getWidth(), state.getArena().getHeight());
 
                 SendGameState();
                 WaitForCommands();
@@ -181,9 +180,9 @@ public class MicroEngine {
                 final String cmd = Script.GetScriptCommand();
                 scripts.put(player.getId(), new BotProcess(dir, cmd));
             } catch (IOException e) {
-                e.printStackTrace();
+                e.printStackTrace(System.err);
             } catch (Exception e) {
-                e.printStackTrace();
+                e.printStackTrace(System.err);
             }
         }
     }
@@ -197,7 +196,7 @@ public class MicroEngine {
             state.setPlayer(player.getId(), player.getName());
             String stateJson = gson.toJson(state, MicroTick.class);
             if(!scripts.get(player.getId()).writeLine(stateJson)) {
-                System.err.println("Failed to send game state to " + player.getId());
+                Dev.Print(Dev.DebugMode.Micro, "Failed to send game state to player %d", player.getId());
             }
         }
         state.clearPlayer();
@@ -209,7 +208,7 @@ public class MicroEngine {
             MicroInput input = gson.fromJson(inputJson, MicroInput.class);
 
             if (input == null) {
-                System.err.println("Failed to receive commands from " + player.getId());
+                Dev.Print(Dev.DebugMode.Micro, "Failed to receive commands from player %d", player.getId());
                 continue;
             }
 
@@ -317,7 +316,7 @@ public class MicroEngine {
             writer.flush();
             writer.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
     }
 
