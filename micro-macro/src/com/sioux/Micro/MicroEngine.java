@@ -214,11 +214,12 @@ public class MicroEngine {
             }
 
             ExecuteCommands(player, input);
-            ProcessCollisions();
-            ProcessProjectiles();
-            ProcessHits();
-            CheckForWinner(state.getPlayers());
         }
+
+        ProcessCollisions();
+        ProcessProjectiles();
+        ProcessHits();
+        CheckForWinner(state.getPlayers());
     }
 
     private void ExecuteCommands(MicroPlayer player, MicroInput input) {
