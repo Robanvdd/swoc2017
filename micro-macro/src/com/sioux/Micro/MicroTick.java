@@ -11,10 +11,6 @@ class MicroTick {
     private List<MicroProjectile> projectiles;
     private List<Integer> hits;
 
-    // Quick hax to include current player's id and name in the tick.
-    private int playerId;
-    private String playerName;
-
     // Non-serialized members (transient)
     private transient String ticksFolder;
 
@@ -26,8 +22,6 @@ class MicroTick {
         this.projectiles = new ArrayList<>();
         this.hits = new ArrayList<>();
         this.ticksFolder = ticksFolder;
-
-        clearPlayer();
     }
 
     public int getTick() {
@@ -52,16 +46,6 @@ class MicroTick {
 
     public String getTicksFolder() {
         return ticksFolder;
-    }
-
-    public void setPlayer(int id, String name) {
-        this.playerId = id;
-        this.playerName = name;
-    }
-
-    public void clearPlayer() {
-        this.playerId = 0;
-        this.playerName = "";
     }
 
     public void Add(MicroPlayer player) {

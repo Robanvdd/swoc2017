@@ -2,6 +2,7 @@ package com.sioux.Micro;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.sioux.BotProcess;
 import com.sioux.Macro.MacroInput;
 import com.sioux.Macro.MacroOutput;
@@ -194,15 +195,16 @@ public class MicroEngine {
 
     private void SendGameState() {
         for (MicroPlayer player : state.getPlayers()) {
-            state.setPlayer(player.getId(), player.getName());
-            String stateJson = gson.toJson(state, MicroTick.class);
+            JsonElement element = gson.toJsonTree(state, MicroTick.class);
+            element.getAsJsonObject().addProperty("playerId", player.getId());
+            element.getAsJsonObject().addProperty("playerName", player.getName());
+            String stateJson = gson.toJson(element);
 
             BotProcess script = scripts.get(player.getId());
             if(!script.writeLine(stateJson)) {
                 Debug.Print(Debug.DebugMode.Micro, "Failed to send game state to player %d", player.getId());
             }
         }
-        state.clearPlayer();
     }
 
     private void WaitForCommands() {
