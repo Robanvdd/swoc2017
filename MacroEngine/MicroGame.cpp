@@ -2,6 +2,7 @@
 
 #include <QJsonDocument>
 #include <QDebug>
+#include <QDir>
 
 MicroGame::MicroGame(QString executablePathMicroEngine,
                      MicroGameInput input,
@@ -9,13 +10,13 @@ MicroGame::MicroGame(QString executablePathMicroEngine,
     : GameObject(parent)
     , m_executablePathMicroEngine(executablePathMicroEngine)
     , m_input(input)
+    , m_process(new QProcess(this))
     , m_dataAvailable(false)
 {
 }
 
 void MicroGame::startProcess()
 {
-    m_process = new QProcess(this);
     m_process->setReadChannel(QProcess::StandardOutput);
 
     QObject::connect(m_process, &QProcess::readyReadStandardOutput, this, [this]()
@@ -56,6 +57,11 @@ void MicroGame::startProcess()
         qDebug() << m_process->errorString();
         throw std::exception();
     }
+}
+
+void MicroGame::setWorkingDir(const QString& workingDir)
+{
+    m_process->setWorkingDirectory(workingDir);
 }
 
 void MicroGame::stopProcess()

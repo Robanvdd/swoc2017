@@ -15,6 +15,7 @@ public:
               MicroGameInput input,
               QObject *parent = nullptr);
     void startProcess();
+    void setWorkingDir(const QString& workingDir);
     void stopProcess();
     bool running();
     bool getFinished() const;

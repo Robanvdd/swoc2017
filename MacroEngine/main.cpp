@@ -3,6 +3,7 @@
 #include <QCoreApplication>
 #include <QTimer>
 #include <QDebug>
+#include <QDir>
 #include <iostream>
 
 #include <Engine.h>
@@ -19,20 +20,6 @@ int main(int argc, char *argv[])
     {
         std::cout << "Need multiple of three arguments: <player1> <macrobot1> <microbot1> <player2> <macrobot2> <microbot2> ..." << std::endl;
         return -1;
-    }
-
-    QProcess p;
-    p.start("java -jar D:\\micro.jar");
-
-
-    p.waitForStarted(1000);
-
-    if (p.state() != QProcess::Running)
-    {
-        qDebug() << p.errorString();
-        throw std::exception();
-    } else {
-        p.kill();
     }
 
     QList<PlayerBotFolders*> playerBotFolders;

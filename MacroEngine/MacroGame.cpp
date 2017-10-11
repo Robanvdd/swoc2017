@@ -32,9 +32,9 @@ MacroGame::MacroGame(QList<PlayerBotFolders*> playerBotFolders, Universe* univer
     , m_tickTimer(new QTimer(this))
     , m_currentTick(1)
     , m_tickDurationInSeconds(0.25)
-    , m_name("Match ###")
 {
     m_universe->setParent(this);
+    setNameAndLogDir();
 
     int hue = 0;
     int hueJump = 255 / m_playerBotFolders.size();
@@ -53,14 +53,29 @@ MacroGame::MacroGame(QList<PlayerBotFolders*> playerBotFolders, Universe* univer
         hue += hueJump;
     }
 
-    QDir dir(m_name);
-    if (!dir.exists())
-    {
-        auto result = dir.mkdir(m_name);
-
-    }
 
     connect(m_tickTimer, &QTimer::timeout, this, [this]() { handleTick(); });
+}
+
+void MacroGame::setNameAndLogDir()
+{
+    QDir dir;
+    auto previousDirs = dir.entryList(QStringList("Match*"), QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
+    auto matchN = 1;
+    foreach (auto previousDir, previousDirs)
+    {
+        previousDir.remove("Match");
+        bool sane = false;
+        auto previousMatch = previousDir.toInt(&sane);
+        if (sane && previousMatch >= matchN)
+            matchN = previousMatch + 1;
+    }
+    m_name = "Match" + QString::number(matchN);
+
+    if (dir.mkpath(m_name + "/MacroTicks"))
+        m_logDir = QDir(m_name + "/MacroTicks");
+    else
+        throw std::exception("Can't create log dir");
 }
 
 void MacroGame::run()
@@ -130,7 +145,7 @@ void MacroGame::handleTick()
 void MacroGame::writeGameState(QJsonDocument gameStateDoc)
 {
     auto gameStateJson = gameStateDoc.toJson(QJsonDocument::Indented);
-    QFile file("macro_" + QString::number(m_currentTick) + ".json");
+    QFile file(m_logDir.filePath("tick" + QString::number(m_currentTick) + ".json"));
     if (file.open(QIODevice::ReadWrite))
     {
         QTextStream stream(&file);
@@ -248,7 +263,11 @@ void MacroGame::startMicroGame(Planet* planet, Player* playerA, QList<Ufo*> ufos
         ufo->setInFight(true);
     }
 
+    static int nextMicroGame = 0;
     MicroGame* microGame = new MicroGame("java -jar D:\\micro.jar", input);
+    QDir microLogFolder(m_logDir.filePath("../MicroGame" + QString::number(++nextMicroGame)));
+    m_logDir.mkpath(microLogFolder.absolutePath());
+    microGame->setWorkingDir(microLogFolder.absolutePath());
     microGame->startProcess();
 
     QObject::connect(microGame, &MicroGame::dataAvailable, this, [this, microGame, planet]() {

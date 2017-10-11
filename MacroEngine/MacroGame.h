@@ -13,6 +13,7 @@
 #include "MoveToPlanetCommand.h"
 #include "MoveToCoordCommand.h"
 
+#include <QDir>
 #include <QElapsedTimer>
 #include <QMap>
 #include <QObject>
@@ -47,6 +48,7 @@ private:
     QMap<Player*, QString> m_playerMicroBotFolder;
     QString m_name;
     UfoShop m_ufoShop;
+    QDir m_logDir;
 
     void startBots();
     void killBots();
@@ -66,6 +68,7 @@ private:
     void handleMoveToCoordCommand(Player* player, MoveToCoordCommand* moveToCoordCommand);
 
     void startMicroGame(Planet* planet, Player* playerA, QList<Ufo*> ufosPlayerA, Player* playerB, QList<Ufo*> ufosPlayerB);
+    void setNameAndLogDir();
 };
 
 #endif // MACROGAME_H
