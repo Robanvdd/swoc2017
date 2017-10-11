@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sioux.Macro.MacroInput;
 import com.sioux.Macro.MacroOutput;
+import com.sioux.Micro.Configuration.Debug;
 import com.sioux.Micro.MicroEngine;
 
 import java.util.Scanner;
@@ -14,6 +15,26 @@ public class Main {
     private static Gson gson;
 
     public static void main(String[] botArgs) {
+        for (String arg : botArgs) {
+            switch (arg) {
+                case "--debug": // All debug modes relevant to the user
+                    Debug.EnableDebugMode(Debug.DebugMode.Micro);
+                    Debug.EnableDebugMode(Debug.DebugMode.Script);
+                    break;
+                case "--debug-dev":
+                    Debug.EnableDebugMode(Debug.DebugMode.Dev);
+                    break;
+                case "--debug-micro":
+                    Debug.EnableDebugMode(Debug.DebugMode.Micro);
+                    break;
+                case "--debug-script":
+                    Debug.EnableDebugMode(Debug.DebugMode.Script);
+                    break;
+                default:
+                    break;
+            }
+        }
+
         scanner = new Scanner(System.in);
         gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();

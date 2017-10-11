@@ -1,9 +1,10 @@
 package com.sioux;
 
+import com.sioux.Micro.Configuration.Debug;
+
 import java.io.IOException;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.concurrent.BlockingQueue;
@@ -34,7 +35,7 @@ class StreamGobbler implements Runnable
         }
         catch (InterruptedException e)
         {
-            System.err.println("Readline timed out.");
+            Debug.Print(Debug.DebugMode.Dev, "Read line timed out");
             return null;
         }
     }
@@ -53,7 +54,7 @@ class StreamGobbler implements Runnable
         }
         catch (IOException | InterruptedException ioe)
         {
-            ioe.printStackTrace();
+            ioe.printStackTrace(System.err);
         }
     }
 }

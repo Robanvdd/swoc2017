@@ -1,5 +1,7 @@
 package com.sioux;
 
+import com.sioux.Micro.Configuration.Debug;
+
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -8,9 +10,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 import java.io.File;
-import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.concurrent.TimeUnit;
 
 public class BotProcess implements AutoCloseable
 {
@@ -32,7 +32,7 @@ public class BotProcess implements AutoCloseable
             throw new IllegalArgumentException("Working directory does not exist");
         }
 
-        System.err.println("Starting new bot process " + command + " in " + parent);
+        Debug.Print(Debug.DebugMode.Dev, "Starting new bot process %s in %s", command, parent);
 
         child = Runtime.getRuntime().exec(workingDir + "\\" + command, null, parent);
 
@@ -54,18 +54,21 @@ public class BotProcess implements AutoCloseable
         try
         {
             child.waitFor();
+            Debug.Print(Debug.DebugMode.Dev, "Waiting for bot process");
         }
         catch (InterruptedException e)
         {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
 
         try
         {
             outputWriter.close();
+            Debug.Print(Debug.DebugMode.Dev, "Closing bot process");
         }
         catch (IOException e)
         {
+            e.printStackTrace(System.err);
         }
     }
 
@@ -121,4 +124,3 @@ public class BotProcess implements AutoCloseable
         return builder.toString();
     }
 }
-

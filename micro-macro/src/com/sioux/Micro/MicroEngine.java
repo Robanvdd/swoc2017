@@ -2,6 +2,7 @@ package com.sioux.Micro;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.sioux.BotProcess;
 import com.sioux.Macro.MacroInput;
 import com.sioux.Macro.MacroOutput;
@@ -11,6 +12,7 @@ import com.sioux.Micro.Command.Shoot;
 import com.sioux.Micro.Command.ShootAt;
 import com.sioux.Micro.Configuration.Arena;
 import com.sioux.Micro.Configuration.Bot;
+import com.sioux.Micro.Configuration.Debug;
 import com.sioux.Micro.Configuration.Script;
 
 import java.awt.*;
@@ -63,13 +65,12 @@ public class MicroEngine {
                 }
                 state.getArena().UpdateArena(state.getTick());
 
-                System.err.printf("[Tick %d, Arena %d-%d]%n",
-                        state.getTick(),
-                        state.getArena().getHeight(),
-                        state.getArena().getWidth());
+                Debug.Print(Debug.DebugMode.Micro, "Tick %d, Arena %d-%d",state.getTick(),
+                        state.getArena().getWidth(), state.getArena().getHeight());
 
                 SendGameState();
                 WaitForCommands();
+                CheckScriptErrors();
                 SaveGameState();
 
                 state.IncreaseTick();
@@ -181,9 +182,9 @@ public class MicroEngine {
                 final String cmd = Script.GetScriptCommand();
                 scripts.put(player.getId(), new BotProcess(dir, cmd));
             } catch (IOException e) {
-                e.printStackTrace();
+                e.printStackTrace(System.err);
             } catch (Exception e) {
-                e.printStackTrace();
+                e.printStackTrace(System.err);
             }
         }
     }
@@ -194,31 +195,36 @@ public class MicroEngine {
 
     private void SendGameState() {
         for (MicroPlayer player : state.getPlayers()) {
-            state.setPlayer(player.getId(), player.getName());
-            String stateJson = gson.toJson(state, MicroTick.class);
-            if(!scripts.get(player.getId()).writeLine(stateJson)) {
-                System.err.println("Failed to send game state to " + player.getId());
+            JsonElement element = gson.toJsonTree(state, MicroTick.class);
+            element.getAsJsonObject().addProperty("playerId", player.getId());
+            element.getAsJsonObject().addProperty("playerName", player.getName());
+            String stateJson = gson.toJson(element);
+
+            BotProcess script = scripts.get(player.getId());
+            if(!script.writeLine(stateJson)) {
+                Debug.Print(Debug.DebugMode.Micro, "Failed to send game state to player %d", player.getId());
             }
         }
-        state.clearPlayer();
     }
 
     private void WaitForCommands() {
         for (MicroPlayer player : state.getPlayers()) {
-            String inputJson = scripts.get(player.getId()).readLine(1000);
+            BotProcess script = scripts.get(player.getId());
+            String inputJson = script.readLine(1000);
             MicroInput input = gson.fromJson(inputJson, MicroInput.class);
 
             if (input == null) {
-                System.err.println("Failed to receive commands from " + player.getId());
+                Debug.Print(Debug.DebugMode.Micro, "Failed to receive commands from player %d", player.getId());
                 continue;
             }
 
             ExecuteCommands(player, input);
-            ProcessCollisions();
-            ProcessProjectiles();
-            ProcessHits();
-            CheckForWinner(state.getPlayers());
         }
+
+        ProcessCollisions();
+        ProcessProjectiles();
+        ProcessHits();
+        CheckForWinner(state.getPlayers());
     }
 
     private void ExecuteCommands(MicroPlayer player, MicroInput input) {
@@ -294,6 +300,22 @@ public class MicroEngine {
         }
     }
 
+    private void CheckScriptErrors() {
+        for (MicroPlayer player : state.getPlayers()) {
+            BotProcess script = scripts.get(player.getId());
+
+            if (script.isRunning()) {
+                String errors = script.getErrors();
+                if (!errors.isEmpty()) {
+                    Debug.Print(Debug.DebugMode.Script, "Player %d script error output:\n %s",
+                            player.getId(), errors);
+                }
+            } else {
+                Debug.Print(Debug.DebugMode.Micro, "Player %d script not running!", player.getId());
+            }
+        }
+    }
+
     private void CheckForWinner(List<MicroPlayer> players)
     {
         List<MicroPlayer> playersWithLivingBots =
@@ -316,7 +338,7 @@ public class MicroEngine {
             writer.flush();
             writer.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
     }
 
