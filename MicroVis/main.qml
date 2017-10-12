@@ -135,6 +135,7 @@ ApplicationWindow {
                 nrBullets--
             }
         }
+        appContext.reconstructBulletList()
     }
 
     function parseJson(jsonObject, firstFrame)
@@ -339,6 +340,7 @@ ApplicationWindow {
                     nrBullets = 0
                     appContext.clearPlayers()
                     appContext.clearBullets()
+                    appContext.reconstructBulletList()
                     fileDialogLoader.sourceComponent = fileDialogComponent
                     fileDialogLoader.fileDialog.visible = true
                 }

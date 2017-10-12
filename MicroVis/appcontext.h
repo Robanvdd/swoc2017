@@ -28,6 +28,8 @@ public:
     Q_INVOKABLE bool hasBullet(int id);
     QQmlListProperty<Bullet> getBullets();
 
+    Q_INVOKABLE void reconstructBulletList();
+
 signals:
     void helloWorldChanged();
     void bulletsChanged();
@@ -36,8 +38,6 @@ signals:
 public slots:
 
 private:
-    void ReconstructBulletList();
-
     QList<Player*> m_players;
     QMap<int, Bullet*> m_bulletMap;
     QList<Bullet*> m_bullets;

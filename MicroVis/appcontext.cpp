@@ -28,8 +28,6 @@ QQmlListProperty<Player> AppContext::getPlayers()
 void AppContext::addBullet(int id, int x, int y)
 {
     m_bulletMap.insert(id, new Bullet(id, x, y, this));
-    ReconstructBulletList();
-    emit bulletsChanged();
 }
 
 void AppContext::moveBullet(int id, int x, int y)
@@ -43,8 +41,6 @@ void AppContext::removeBullet(int id)
         return;
     Bullet* bullet = m_bulletMap[id];
     m_bulletMap.remove(id);
-    ReconstructBulletList();
-    emit bulletsChanged();
     bullet->deleteLater();
 }
 
@@ -57,8 +53,6 @@ void AppContext::clearBullets()
 {
     auto bulletMap = m_bulletMap;
     m_bulletMap.clear();
-    ReconstructBulletList();
-    emit bulletsChanged();
     qDeleteAll(bulletMap);
 }
 
@@ -72,11 +66,12 @@ QQmlListProperty<Bullet> AppContext::getBullets()
     return QQmlListProperty<Bullet>(this, m_bullets);
 }
 
-void AppContext::ReconstructBulletList()
+void AppContext::reconstructBulletList()
 {
     m_bullets.clear();
     for (auto bullet : m_bulletMap.keys())
     {
         m_bullets << m_bulletMap.value(bullet);
     }
+    emit bulletsChanged();
 }

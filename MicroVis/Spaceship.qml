@@ -11,27 +11,34 @@ Item {
     property real hue
     property int myRotation
 
-    AnimatedImage {
-        id: image
-        anchors.fill: parent
-        fillMode: Image.Stretch
-        playing: true
-        smooth: true
-        mipmap: true
-        source: "qrc:/Images/spaceship.gif"
-    }
+    Item {
+        rotation: spaceshipImage.myRotation
+        transformOrigin: Item.Center
+        width: parent.width
+        height: parent.height
 
-    Colorize {
-        anchors.fill: image
-        source: image
-        hue: spaceshipImage.hue
-        saturation: 0.5
-        lightness: -0.3
-    }
+        AnimatedImage {
+            id: image
+            anchors.fill: parent
+            fillMode: Image.Stretch
+            playing: true
+            smooth: true
+            mipmap: true
+            source: "qrc:/Images/spaceship.gif"
+        }
 
-    Image {
-        anchors.fill: parent
-        fillMode: Image.Stretch
-        source: "qrc:/Images/spaceship-cockpit.png"
+        Colorize {
+            anchors.fill: image
+            source: image
+            hue: spaceshipImage.hue
+            saturation: 0.5
+            lightness: -0.3
+        }
+
+        Image {
+            anchors.fill: parent
+            fillMode: Image.Stretch
+            source: "qrc:/Images/spaceship-cockpit.png"
+        }
     }
 }
