@@ -23,6 +23,7 @@ ApplicationWindow {
     property bool showDebug: false
     property int framesPerSecond: 30
     property bool paused: false
+    property int rotationSpeed: 2
 
     function calculateTransforms(jsonObject)
     {
@@ -258,6 +259,8 @@ ApplicationWindow {
                         width: sizeTransformForZoom(32)
                         height: sizeTransformForZoom(32)
                         visible: modelData.hp > 0
+                        hue: 0.3
+                        myRotation: (tick * rotationSpeed) % 360
 
                         Column {
                             anchors.bottom: parent.top
@@ -294,13 +297,6 @@ ApplicationWindow {
                                     width: (parent.width * modelData.hp / 100.0) - 2 * parent.border.width
                                 }
                             }
-                        }
-
-                        ColorOverlay {
-                            anchors.fill: aSpaceShip
-                            source: aSpaceShip
-                            color: aSpaceShip.playerColor
-                            opacity: 0.3
                         }
                     }
                 }
