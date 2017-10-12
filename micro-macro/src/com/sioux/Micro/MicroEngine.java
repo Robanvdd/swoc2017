@@ -144,7 +144,8 @@ public class MicroEngine {
         Iterator<Point.Double> positions = GetRandomPositionsInArena(nrOfBots, Bot.Radius);
 
         for (MacroPlayer macro : players) {
-            MicroPlayer micro = new MicroPlayer(macro.getId(), macro.getName(), macro.getColor(), macro.getBot());
+            MicroPlayer micro = new MicroPlayer(macro.getId(), macro.getName(),
+                    macro.getColor(), macro.getHue(), macro.getBot());
 
             for (int botID : macro.getUfos()) {
                 String botName = Bot.GenericName + botID;
