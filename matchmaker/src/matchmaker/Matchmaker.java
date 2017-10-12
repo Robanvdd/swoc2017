@@ -8,6 +8,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.util.*;
@@ -15,24 +16,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bson.types.ObjectId;
+import utils.Zipper;
 
 /**
  *
  * @author The Robbert-Jan
  */
 public class Matchmaker implements AutoCloseable {
-
-    private class Bot {
-        Bot(DBObject user,  DBObject micro, DBObject macro) {
-			this.user = user;
-            this.micro = micro;
-            this.macro = macro;
-        }
-		final DBObject user;
-        final DBObject micro;
-        final DBObject macro;
-    }
-
 
     /**
      * @param args the command line arguments
@@ -54,13 +44,13 @@ public class Matchmaker implements AutoCloseable {
     private MongoClient mongoClient;
     private final DB db;
 
-    private final String BOTTABLE = "bots";
-    private final String MATCHTABLE = "matches";
-    private final String USERTABLE = "users";
-    private final String WINNERFIELDNAME = "winnerBot";
-    private final String RANKINGFIELDNAME = "ranking";
+    private static final String BOTTABLE = "bots";
+    private static final String MATCHTABLE = "matches";
+    private static final String USERTABLE = "users";
+    private static final String WINNERFIELDNAME = "winnerBot";
+    private static final String RANKINGFIELDNAME = "ranking";
 
-    public Matchmaker(String dbName)
+    private Matchmaker(String dbName)
     {
         db = createDBConnection(dbName);
     }
@@ -70,12 +60,12 @@ public class Matchmaker implements AutoCloseable {
     {
         mongoClient.close();
     }
-    
-    public void run()
+
+    private void run()
     {
         if (db != null)
         {
-            makeMatches(getHighestVersionBots(db));
+            makeMatches(getHighestVersionBots());
         }
         System.out.println("Matchmaker done");
     }
@@ -93,47 +83,31 @@ public class Matchmaker implements AutoCloseable {
         return null;
     }
     
-    private DBCollection getMatchTable(DB database) {
-        DBCollection coll = database.getCollection(MATCHTABLE);
-        return coll;
+    private DBCollection getMatchTable() {
+        return db.getCollection(MATCHTABLE);
     }
     
-    private DBCollection getBotTable(DB database) {
-        DBCollection coll = database.getCollection(BOTTABLE);
-        return coll;
+    private DBCollection getBotTable() {
+        return db.getCollection(BOTTABLE);
     }
 
-    private DBCollection getUserTable(DB database) {
-        DBCollection coll = database.getCollection(USERTABLE);
-        return coll;
-    }
-    
-    private DBObject getMatchfromTable(DBCollection table, ObjectId matchId) {
-        BasicDBObject query = new BasicDBObject("_id", matchId);
-        return table.findOne(query);
-    }
-    //TODO needs to get the score of the match
-    private ObjectId getWinnerOfMatch(DBCollection coll, ObjectId matchId) {
-        DBObject match = getMatchfromTable(coll, matchId);
-        if (!match.containsField(WINNERFIELDNAME)) {
-            throw new IllegalArgumentException("No winnerBot field in this match entry!");
-        }
-        return (ObjectId)match.get(WINNERFIELDNAME);
+    private DBCollection getUserTable() {
+        return db.getCollection(USERTABLE);
     }
 
 
-    private List<Bot> getHighestVersionBots(DB database) {
-        DBCollection allBotsColl = getBotTable(database);
+    private List<Bot> getHighestVersionBots() {
+        DBCollection allBotsColl = getBotTable();
         
         List<ObjectId> userList = allBotsColl.distinct("user");
         
-        List<Bot> botList = new LinkedList<Bot>();
+        List<Bot> botList = new LinkedList<>();
         for (ObjectId user: userList) {
-            DBCollection userColl = getUserTable(database);
+            DBCollection userColl = getUserTable();
             BasicDBObject userQuery = new BasicDBObject("_id", user);
             DBCursor userCursor = userColl.find(userQuery);
 
-            DBCollection coll = getBotTable(database);
+            DBCollection coll = getBotTable();
             BasicDBObject macroQuery = new BasicDBObject("user", user).append("kind","macro");
             BasicDBObject microQuery = new BasicDBObject("user", user).append("kind","micro");
             
@@ -157,9 +131,8 @@ public class Matchmaker implements AutoCloseable {
         return botList;
     }
     
-    private void runMatch(List<Bot> botList) {
-        ObjectId matchId = null;
-        StringBuilder sb = new StringBuilder();
+    private GameResult runMatch(List<Bot> botList) {
+        GameResult result = null;
 
         String botString = "";
 
@@ -172,18 +145,28 @@ public class Matchmaker implements AutoCloseable {
         try {
 			//botString should be player_name/id macro_path micro_path
             Process p = Runtime.getRuntime().exec("MacroEngine.exe " + botString);
+            BufferedReader error = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+            String errorLine;
+            while ((errorLine = error.readLine()) != null) {
+                System.out.println(errorLine);
+            }
 
             BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String line;
             while ((line = input.readLine()) != null) {
                 System.out.println(line);
-                if (line.startsWith("player ")) {
-                    String[] playerScore = line.substring("player ".length()).split(" ");
-                    if (playerScore.length != 2) throw new Exception("Could not parse playerscore");
-                    String player = playerScore[0];
-                    String score = playerScore[1];
-                    System.out.println("Parsed score for player: " + player + " with score: " + score);
+                String[] words = line.split(" ");
+                int wordCount = words.length;
+                if (wordCount < 6 || wordCount % 2 != 0 )throw new Exception("Could not parse engine output");
+                List<PlayerScore> playerScores = new ArrayList<>();
+                int gameId = Integer.getInteger(words[0]);
+                String gameDir = words[1];
+                for(int i=0; i < wordCount;) {
+                    String playerName = words[i++];
+                    int playerScore = Integer.getInteger(words[i++]);
+                    playerScores.add(new PlayerScore(playerName, playerScore));
                 }
+                result = new GameResult(gameId, gameDir, playerScores);
             }
             p.waitFor();
             input.close();
@@ -192,7 +175,7 @@ public class Matchmaker implements AutoCloseable {
             System.err.println("Exception when running match.");
             err.printStackTrace();
         }
-//        return matchId;
+        return result;
     }
     
     private void makeAMatch(List<Bot> botList) {
@@ -206,15 +189,18 @@ public class Matchmaker implements AutoCloseable {
         }
 
         System.out.println(botString);
-        /*ObjectId matchId = */runMatch(botList);
-//
-//        if (matchId == null)
-//        {
-//            System.out.println("The match has not finished succesfully");
-//            return;
-//        }
-//
-//        System.out.println("The match has finished succesfully");
+        GameResult gameResult = runMatch(botList);
+
+        if (gameResult == null)
+        {
+            System.out.println("The match has not finished successfully");
+            return;
+        } else {
+            updateBotData(botList, gameResult);
+            updateMatchData(botList, gameResult);
+        }
+
+        System.out.println("The match has finished succesfully");
     }
 
     private void makeMatches(List<Bot> botList) {
@@ -227,9 +213,9 @@ public class Matchmaker implements AutoCloseable {
         System.out.println("Made the match between "+ count +" bots");
     }
     
-    private DBObject getLatestBotData(DB database, ObjectId botId)
+    private DBObject getLatestBotData(ObjectId botId)
     {
-        DBCollection bots = getBotTable(database);
+        DBCollection bots = getBotTable();
 
         DBObject bot = bots.findOne(new BasicDBObject("_id", botId));
         ObjectId user = (ObjectId)bot.get("user");
@@ -241,16 +227,57 @@ public class Matchmaker implements AutoCloseable {
         return latestBot;
     }
     
-    private void updateBotData(DB database, ObjectId botId, int newRanking)
+    private void updateBotData(List<Bot> botList, GameResult gameResult)
     {
-        DBCollection coll = getBotTable(database);
+        DBCollection coll = getBotTable();
+        for(Bot bot : botList) {
+            Integer newRanking = null;
+            for(PlayerScore playerScore : gameResult.playerScores) {
+                if (playerScore.name == bot.user.get("username")) {
+                    newRanking = playerScore.score;
+                }
+            }
 
-        BasicDBObject query = new BasicDBObject("_id", botId);
+            BasicDBObject macro_query = new BasicDBObject("_id", bot.macro.get("_id"));
+            BasicDBObject micro_query = new BasicDBObject("_id", bot.micro.get("_id"));
 
-        BasicDBObject updateObject = new BasicDBObject();
-        updateObject.append("$set", new BasicDBObject(RANKINGFIELDNAME, newRanking));
+            BasicDBObject update_macro = new BasicDBObject();
+            BasicDBObject update_micro = new BasicDBObject();
+            update_macro.append("$set", new BasicDBObject(RANKINGFIELDNAME, newRanking));
+            update_micro.append("$set", new BasicDBObject(RANKINGFIELDNAME, newRanking));
+            coll.update(macro_query, update_macro);
+            coll.update(micro_query, update_micro);
+        }
+    }
 
-        coll.update(query, updateObject);
+    private void updateMatchData(List<Bot> botList, GameResult gameResult) {
+        Date now = Calendar.getInstance().getTime();
+        String winner = getWinner(gameResult);
+        String log = gameResult.dir + "/log.zip";
+        try {
+            Zipper.zip(gameResult.dir, log);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        DBCollection matchCol = getMatchTable();
+        DBObject match = new BasicDBObject("_id", gameResult.id);
+        match.put("time", now);
+        match.put("winner", winner);
+        match.put("log", log);
+        matchCol.insert(match);
+        //TODO insert entries into match-users table with individual scores
+    }
+
+    private String getWinner(GameResult gameResult) {
+        int highestScore = 0;
+        String winner = "";
+        for(PlayerScore playerScore : gameResult.playerScores) {
+            if (playerScore.score > highestScore) {
+                winner = playerScore.name;
+                highestScore = playerScore.score;
+            }
+        }
+        return winner;
     }
 
     private String getBotName(DBObject bot)
@@ -263,18 +290,36 @@ public class Matchmaker implements AutoCloseable {
         return username + " v" + version;
     }
 
-    private double calculateExpectedResult(double rankingA, double rankingB)
-    {
-        double qa = Math.pow(10, rankingA / 400);
-        double qb = Math.pow(10, rankingB / 400);
-        
-        return qa / (qa + qb);
+    private class PlayerScore {
+        final String name;
+        final int score;
+        PlayerScore(String name, int score) {
+            this.name = name;
+            this.score=score;
+        }
     }
-    
-    private static final double EloK = 16;
-    
-    private double calculateNewRanking(double oldRanking, double expectedResult, double actualResult)
-    {
-        return  oldRanking + EloK * (actualResult - expectedResult);
+
+    private class GameResult {
+        final int id;
+        final String dir;
+        final List<PlayerScore> playerScores;
+        GameResult(int id, String dir, List<PlayerScore> playerScores) {
+            this.id = id;
+            this.dir = dir;
+            this.playerScores = playerScores;
+        }
     }
+
+    private class Bot {
+        Bot(DBObject user,  DBObject micro, DBObject macro) {
+            this.user = user;
+            this.micro = micro;
+            this.macro = macro;
+        }
+        final DBObject user;
+        final DBObject micro;
+        final DBObject macro;
+    }
+
+
 }
