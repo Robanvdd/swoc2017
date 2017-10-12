@@ -210,6 +210,9 @@ void MacroGame::handleConquerCommand(Player* player, ConquerCommand* conquerComm
         throw std::logic_error("Planet is owned, but not by an existing player");
     }
 
+    if (currentOwner == player)
+        return;
+
     SolarSystem* solarSystem = m_universe->getCorrespondingSolarSystem(planet);
     QPointF location = solarSystem->getPlanetLocation(*planet);
     QList<Ufo*> nearbyUfosPlayer = solarSystem->getUfosNearLocation(location, *player);
