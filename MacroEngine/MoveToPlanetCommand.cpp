@@ -25,12 +25,12 @@ void MoveToPlanetCommand::readCommand(const QJsonObject jsonObject)
 
 void MoveToPlanetCommand::printCommand()
 {
-    std::cout << "MoveToPlanet >> Planet: " << m_planetId << "\nUfos: " << std::endl;
+    std::cerr << "MoveToPlanet >> Planet: " << m_planetId << "\nUfos: " << std::endl;
     for (int ufo : m_ufos)
     {
-        std::cout << ufo << " ";
+        std::cerr << ufo << " ";
     }
-    std::cout << std::endl;
+    std::cerr << std::endl;
 
 }
 

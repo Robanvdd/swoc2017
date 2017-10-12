@@ -26,12 +26,12 @@ void MoveToCoordCommand::readCommand(const QJsonObject jsonObject)
 
 void MoveToCoordCommand::printCommand()
 {
-    std::cout << "MoveToCoord >>  Coord: ("  << m_coords.x() << "," << m_coords.y()  << ")\nUfos: " << std::endl;
+    std::cerr << "MoveToCoord >>  Coord: ("  << m_coords.x() << "," << m_coords.y()  << ")\nUfos: " << std::endl;
     for (int ufo : m_ufos)
     {
-        std::cout << ufo << " ";
+        std::cerr << ufo << " ";
     }
-    std::cout << std::endl;
+    std::cerr << std::endl;
 }
 
 QList<int> MoveToCoordCommand::getUfos() const
