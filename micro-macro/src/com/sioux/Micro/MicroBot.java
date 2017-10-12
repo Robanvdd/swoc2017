@@ -23,7 +23,7 @@ class MicroBot {
         this.hitpoints = hp;
         this.position = pos;
         this.cooldownShoot = Bot.ShootCooldown;
-        this.lastShoot = 0;
+        this.lastShoot = -1;
         this.radius = radius;
     }
 
@@ -60,7 +60,7 @@ class MicroBot {
     }
 
     public boolean canShoot(int tickShoot) {
-        return isAlive() && (lastShoot == 0 || ((lastShoot + cooldownShoot) < tickShoot));
+        return isAlive() && (lastShoot == -1 || ((lastShoot + cooldownShoot) < tickShoot));
     }
 
     public void Move(Move cmd) {
