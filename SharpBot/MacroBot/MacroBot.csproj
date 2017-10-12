@@ -80,6 +80,7 @@
     <Compile Include="Protocol\GameResponseMoveToCoord.cs" />
     <Compile Include="Protocol\GameResponseMoveToPlanet.cs" />
     <Compile Include="Protocol\GameState.cs" />
+    <Compile Include="Protocol\Helpers.cs" />
     <Compile Include="Protocol\Planet.cs" />
     <Compile Include="Protocol\Player.cs" />
     <Compile Include="Protocol\SolarSystem.cs" />

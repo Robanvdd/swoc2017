@@ -23,6 +23,11 @@ void MacroBot::startProcess()
         std::cerr << "Error occured " << m_process->errorString().toStdString() << std::endl;
         std::cerr << m_executable.toStdString() << std::endl;
     });
+
+    QObject::connect(m_process, &QProcess::readyReadStandardError, this, [this]()
+    {
+        std::cerr << m_process->readAllStandardError().toStdString() << std::endl;
+    });
     m_process->start(m_executable);
 }
 
