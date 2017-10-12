@@ -14,9 +14,10 @@ class Player : public QObject
     Q_PROPERTY(int id MEMBER m_id NOTIFY idChanged)
     Q_PROPERTY(QString name MEMBER m_name NOTIFY nameChanged)
     Q_PROPERTY(QColor color MEMBER m_color NOTIFY colorChanged)
+    Q_PROPERTY(double hue MEMBER m_hue NOTIFY hueChanged)
 public:
     explicit Player(QObject *parent = nullptr);
-    Player(int id, QString name, QColor color, QObject *parent = nullptr);
+    Player(int id, QString name, QColor color, double hue, QObject *parent = nullptr);
     virtual ~Player();
 
     void setId(int id);
@@ -27,6 +28,9 @@ public:
 
     void setColor(QColor color);
     QColor getColor();
+
+    void setHue(double hue);
+    double getHue() const;
 
     Q_INVOKABLE void addSpaceship(int id, QString name, int x, int y);
     Q_INVOKABLE void moveSpaceship(int index, int x, int y);
@@ -42,6 +46,7 @@ signals:
     void spaceshipsChanged();
     void colorChanged();
     void nameChanged();
+    void hueChanged();
 
 public slots:
 
@@ -49,6 +54,7 @@ private:
     int m_id;
     QString m_name;
     QColor m_color;
+    double m_hue;
     QList<Spaceship*> m_spaceships;
 };
 

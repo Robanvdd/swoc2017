@@ -1,8 +1,9 @@
 <RCC>
     <qresource prefix="/">
         <file>Images/bullet.png</file>
-        <file>Images/ufo.png</file>
         <file>Images/background.png</file>
         <file>Images/laserfence.png</file>
+        <file>Images/spaceship.gif</file>
+        <file>Images/spaceship-cockpit.png</file>
     </qresource>
 </RCC>

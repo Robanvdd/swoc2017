@@ -13,9 +13,10 @@ public class MacroPlayer {
     private List<Integer> survivors;
     private List<Integer> casualties;
     private String color;
+    private double hue; // Huehueheuhue!
 
     public MacroPlayer(int id, String name, String bot, List<Integer> ufos,
-                       List<Integer> survivors, List<Integer> casualties, String color) {
+                       List<Integer> survivors, List<Integer> casualties, String color, double hue) {
         this.id = id;
         this.name = name;
         this.bot = bot;
@@ -23,6 +24,7 @@ public class MacroPlayer {
         this.survivors = survivors;
         this.casualties = casualties;
         this.color = color;
+        this.hue = hue;
     }
 
     public int getId() {
@@ -43,5 +45,9 @@ public class MacroPlayer {
 
     public String getColor() {
         return color;
+    }
+
+    public double getHue() {
+        return hue;
     }
 }
