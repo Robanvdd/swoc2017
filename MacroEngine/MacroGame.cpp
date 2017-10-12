@@ -354,7 +354,6 @@ void MacroGame::communicateWithBots(QJsonDocument gameStateDoc)
     {
         communicateWithBot(player, gameStateDoc);
     }
-    std::cout << std::flush;
 }
 
 QJsonObject MacroGame::generateGameState()

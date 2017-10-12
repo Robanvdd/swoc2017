@@ -16,7 +16,7 @@ void ConquerCommand::readCommand(const QJsonObject jsonObject)
 
 void ConquerCommand::printCommand()
 {
-    std::cout << "Conquer >> PlanetId: " << m_planetId << std::endl;
+    std::cerr << "Conquer >> PlanetId: " << m_planetId << std::endl;
 }
 
 int ConquerCommand::getPlanetId() const

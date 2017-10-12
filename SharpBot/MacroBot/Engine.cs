@@ -19,6 +19,18 @@ namespace MacroBot
 
         public void Run()
         {
+            try
+            {
+                DoRun();
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine("Run failure: " + ex.Message);
+            }
+        }
+
+        private void DoRun()
+        {
             mStop = false;
             readThread.Start();
             while (!mStop)
@@ -33,6 +45,18 @@ namespace MacroBot
         }
 
         private void PollState()
+        {
+            try
+            {
+                DoPollState();
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine("Poll state failure: " + ex.Message);
+            }
+        }
+
+        private void DoPollState()
         {
             while (!mStop)
             {

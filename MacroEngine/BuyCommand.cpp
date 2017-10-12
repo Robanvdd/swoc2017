@@ -18,7 +18,7 @@ void BuyCommand::readCommand(const QJsonObject jsonObject)
 
 void BuyCommand::printCommand()
 {
-    std::cout << "Buy >> Amount: " << m_amount << ", PlanetId: " << m_planetId << std::endl;
+    std::cerr << "Buy >> Amount: " << m_amount << ", PlanetId: " << m_planetId << std::endl;
 }
 
 int BuyCommand::getAmount() const

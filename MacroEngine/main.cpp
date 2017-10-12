@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
     if ((argc - 1) % 3 != 0)
     {
-        std::cout << "Need multiple of three arguments: <player1> <macrobot1> <microbot1> <player2> <macrobot2> <microbot2> ..." << std::endl;
+        std::cerr << "Need multiple of three arguments: <player1> <macrobot1> <microbot1> <player2> <macrobot2> <microbot2> ..." << std::endl;
         return -1;
     }
 
