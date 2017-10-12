@@ -24,6 +24,12 @@
 #ifdef __WIN64__
 #define RUN_FILE "\\run.bat"
 #endif
+#ifdef _WIN32_
+#define RUN_FILE "\\run.bat"
+#endif
+#ifdef _WIN64
+#define RUN_FILE "\\run.bat"
+#endif
 
 MacroGame::MacroGame(QList<PlayerBotFolders*> playerBotFolders, Universe* universe, QObject *parent)
     : GameObject(parent)

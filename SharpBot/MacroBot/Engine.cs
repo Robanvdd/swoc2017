@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using static SwocIO.Pipeline;
 
 namespace MacroBot
 {
@@ -89,7 +90,7 @@ namespace MacroBot
 
         private static T ReadMessage<T>()
         {
-            string line = Console.ReadLine();
+            string line = ReadLine();
             if (String.IsNullOrEmpty(line))
                 return default(T);
 
@@ -105,7 +106,7 @@ namespace MacroBot
 
         public static void WriteMessage<T>(T message)
         {
-            Console.WriteLine(JsonConvert.SerializeObject(message, Formatting.None));
+            WriteLine(JsonConvert.SerializeObject(message, Formatting.None));
         }
     }
 }
