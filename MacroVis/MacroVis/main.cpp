@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QApplication>
+#include <QDebug>
 
 #include "fileio.h"
 #include "customfiledialog.h"
