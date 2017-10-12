@@ -71,7 +71,7 @@ ApplicationWindow {
         {
             var player = jsonObject.players[l]
 
-            appContext.addPlayer(player.id, player.name, player.color)
+            appContext.addPlayer(player.id, player.name, player.color, player.hue)
         }
     }
 
@@ -249,17 +249,19 @@ ApplicationWindow {
             model: appContext.players
             delegate: Item {
                 property color playerColor: color
+                property real playerHue: hue
                 Repeater {
                     model: modelData.spaceships
                     delegate: Spaceship {
                         property color playerColor: parent.playerColor
+                        property real playerHue: parent.playerHue
                         id: aSpaceShip
                         x: xTransformForZoom(modelData.x) - 0.5 * width
                         y: yTransformForZoom(modelData.y) - 0.5 * height
                         width: sizeTransformForZoom(32)
                         height: sizeTransformForZoom(32)
                         visible: modelData.hp > 0
-                        hue: 0.3
+                        hue: playerHue
                         myRotation: (tick * rotationSpeed) % 360
 
                         Column {
@@ -271,6 +273,7 @@ ApplicationWindow {
                                 visible: showDebug
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 text: "id: " + modelData.id + ", pos: (" + modelData.x + ", " + modelData.y + ")"
+                                color: playerColor
                             }
 
                             Rectangle {
@@ -351,7 +354,7 @@ ApplicationWindow {
 
             Button {
                 id: fpsButton
-                text: "FPS: " + framesPerSecond
+                text: "Max FPS: " + framesPerSecond
                 onClicked: framesPerSecond == 30 ? framesPerSecond = 3 : framesPerSecond = 30
                 Material.background: "#3F51B5"
             }
@@ -379,6 +382,21 @@ ApplicationWindow {
                 id: bulletCounter
                 text: "Bullets: " + nrBullets
                 visible: showDebug
+            }
+
+            Label {
+                id: playerLabel
+                text: "Players:"
+                visible: showDebug
+            }
+
+            Repeater {
+                model: appContext.players
+                delegate: Label {
+                    text: "  " + modelData.name
+                    color: modelData.color
+                    visible: showDebug
+                }
             }
         }
 
