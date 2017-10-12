@@ -18,10 +18,10 @@
 #ifdef __linux__
 #define RUN_FILE "/run.sh"
 #endif
-#ifdef _WIN32_
+#ifdef __WIN32__
 #define RUN_FILE "\\run.bat"
 #endif
-#ifdef _WIN64
+#ifdef __WIN64__
 #define RUN_FILE "\\run.bat"
 #endif
 
@@ -79,7 +79,7 @@ void MacroGame::setNameAndLogDir()
     }
 
     else
-        throw std::exception("Can't create log dir");
+        throw std::runtime_error("Can't create log dir");
 }
 
 void MacroGame::run()
@@ -293,7 +293,7 @@ void MacroGame::startMicroGame(Planet* planet, Player* playerA, QList<Ufo*> ufos
             parsedOutput.readOutput(result);
             if (parsedOutput.getGameId() < 0)
             {
-                throw std::exception("We do something wrong with parsing micro game output, or blame Ferdi");
+                throw std::runtime_error("We do something wrong with parsing micro game output, or blame Ferdi");
             }
 
             if (parsedOutput.getWinner() > 0)
