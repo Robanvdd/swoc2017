@@ -36,7 +36,7 @@ void MicroGame::startProcess()
         {
             QJsonObject jsonInput;
             jsonInput["gameId"] = m_id;
-            jsonInput["ticks"] = "D:\\ticks" + QString::number(m_id) + "\\";
+            jsonInput["ticks"] = m_process->workingDirectory() + "/";  //"D:\\ticks" + QString::number(m_id) + "\\";
             m_input.writePlayerJson(jsonInput);
             QJsonDocument doc(jsonInput);
             m_process->write(doc.toJson(QJsonDocument::Compact) + "\n");

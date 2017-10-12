@@ -53,7 +53,6 @@ MacroGame::MacroGame(QList<PlayerBotFolders*> playerBotFolders, Universe* univer
         hue += hueJump;
     }
 
-
     connect(m_tickTimer, &QTimer::timeout, this, [this]() { handleTick(); });
 }
 
@@ -70,10 +69,15 @@ void MacroGame::setNameAndLogDir()
         if (sane && previousMatch >= matchN)
             matchN = previousMatch + 1;
     }
+    m_gameId = matchN;
     m_name = "Match" + QString::number(matchN);
 
     if (dir.mkpath(m_name + "/MacroTicks"))
-        m_logDir = QDir(m_name + "/MacroTicks");
+    {
+        m_tickDir = QDir(m_name + "/MacroTicks");
+        m_matchDir = QDir(m_name);
+    }
+
     else
         throw std::exception("Can't create log dir");
 }
@@ -117,6 +121,14 @@ void MacroGame::stopMacroGame()
     m_tickTimer->stop();
     killBots();
     killMicroGames();
+
+    std::cout << m_gameId << " " << m_matchDir.absolutePath().toStdString() << " ";
+    foreach (auto player, m_universe->getPlayers())
+    {
+        std::cout << player->getName().toStdString() << " " << player->getCredits() << " ";
+    }
+    std::cout << std::endl;
+
     deleteLater();
 }
 
@@ -145,7 +157,7 @@ void MacroGame::handleTick()
 void MacroGame::writeGameState(QJsonDocument gameStateDoc)
 {
     auto gameStateJson = gameStateDoc.toJson(QJsonDocument::Indented);
-    QFile file(m_logDir.filePath("tick" + QString::number(m_currentTick) + ".json"));
+    QFile file(m_tickDir.filePath("tick" + QString::number(m_currentTick) + ".json"));
     if (file.open(QIODevice::ReadWrite))
     {
         QTextStream stream(&file);
@@ -265,8 +277,8 @@ void MacroGame::startMicroGame(Planet* planet, Player* playerA, QList<Ufo*> ufos
 
     static int nextMicroGame = 0;
     MicroGame* microGame = new MicroGame("java -jar D:\\micro.jar", input);
-    QDir microLogFolder(m_logDir.filePath("../MicroGame" + QString::number(++nextMicroGame)));
-    m_logDir.mkpath(microLogFolder.absolutePath());
+    QDir microLogFolder(m_tickDir.filePath("../MicroGame" + QString::number(++nextMicroGame)));
+    m_tickDir.mkpath(microLogFolder.absolutePath());
     microGame->setWorkingDir(microLogFolder.absolutePath());
     microGame->startProcess();
 

@@ -10,6 +10,11 @@ MacroBot::MacroBot(QString executable, QString arguments, QObject *parent)
 {
 }
 
+MacroBot::~MacroBot()
+{
+    m_process->waitForFinished(500);
+}
+
 void MacroBot::startProcess()
 {
     m_process = new QProcess(this);
@@ -29,7 +34,7 @@ void MacroBot::startProcess()
 void MacroBot::stopProcess()
 {
     m_process->kill();
-    m_process->waitForFinished(500);
+    m_process->waitForFinished(5000);
 }
 
 void MacroBot::sendGameState(QString state)
