@@ -43,6 +43,7 @@ private:
     QString m_name;
     QList<Ufo*> m_ufos;
     QColor m_color;
+    int m_hue;
 };
 
 #endif // PLAYER_H
