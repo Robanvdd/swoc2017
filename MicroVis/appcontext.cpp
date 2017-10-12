@@ -6,9 +6,9 @@ AppContext::AppContext(QObject *parent) : QObject(parent)
 {
 }
 
-void AppContext::addPlayer(int id, QString name, QColor color)
+void AppContext::addPlayer(int id, QString name, QColor color, double hue)
 {
-    m_players << new Player(id, name, color);
+    m_players << new Player(id, name, color, hue);
     emit playersChanged();
 }
 

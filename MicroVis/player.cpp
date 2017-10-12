@@ -1,11 +1,11 @@
 #include "player.h"
 
 Player::Player(QObject *parent) : QObject(parent),
-    m_id(0), m_name("")
+    m_id(0), m_name(""), m_hue(0.0)
 {}
 
-Player::Player(int id, QString name, QColor color, QObject *parent) :
-    QObject(parent), m_id(id), m_name(name), m_color(color)
+Player::Player(int id, QString name, QColor color, double hue, QObject *parent) :
+    QObject(parent), m_id(id), m_name(name), m_color(color), m_hue(hue)
 {
 }
 
@@ -44,6 +44,17 @@ void Player::setColor(QColor color)
 QColor Player::getColor()
 {
     return m_color;
+}
+
+void Player::setHue(double hue)
+{
+    m_hue = hue;
+    emit hueChanged();
+}
+
+double Player::getHue() const
+{
+    return m_hue;
 }
 
 void Player::addSpaceship(int id, QString name, int x, int y)
