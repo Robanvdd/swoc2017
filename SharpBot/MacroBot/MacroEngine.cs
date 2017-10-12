@@ -91,6 +91,9 @@ namespace MacroBot
             foreach (var ufo in mePlayer.Ufos.Where(u => !mUfoMovingToPlanet.ContainsKey(u.Id) && !mUfoInOrbitAtPlanet.ContainsKey(u.Id)))
             {
                 var planet = NearestPlanet(gameState.SolarSystems, ufo, excludedPlanets);
+                if (planet == default(Planet))
+                    continue;
+
                 excludedPlanets.Add(planet);
                 mUfoMovingToPlanet[ufo.Id] = new SolarPlanet(GetSolarSystem(gameState.SolarSystems, planet), planet);
                 WriteMessage(new Protocol.GameResponseMoveToPlanet

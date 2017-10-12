@@ -41,9 +41,13 @@ namespace MacroBot.Protocol
         {
             var ufoCc = new CartesianCoord(ufo.Coord.X, ufo.Coord.Y);
             var planets = GetPlanetCoords(solarSystems);
-            return planets.Where(kvp => !excluded.Any(ex => ex.Id == kvp.Key.Id))
-                          .OrderBy(kvp => (kvp.Value - ufoCc).LengthSquared())
-                          .First().Key;
+            var orderedPlanetCoord = planets.Where(kvp => !excluded.Any(ex => ex.Id == kvp.Key.Id))
+                          .OrderBy(kvp => (kvp.Value - ufoCc).LengthSquared());
+
+            if (orderedPlanetCoord.Any())
+                return orderedPlanetCoord.First().Key;
+            else
+                return null;
         }
 
         public static Dictionary<Planet, CartesianCoord> GetPlanetCoords(List<SolarSystem> solarSystems)
