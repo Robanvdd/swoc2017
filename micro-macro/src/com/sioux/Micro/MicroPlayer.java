@@ -7,13 +7,13 @@ class MicroPlayer {
     private  int id;
     private String name;
     private String color;
-    private String hue;
+    private int hue;
     private List<MicroBot> bots;
 
     // Non-serialized members (transient)
     private transient String script;
 
-    public MicroPlayer(int id, String name, String color, String hue, String script) {
+    public MicroPlayer(int id, String name, String color, int hue, String script) {
         this.id = id;
         this.name = name;
         this.color = color;
@@ -34,7 +34,7 @@ class MicroPlayer {
         return color;
     }
 
-    public String getHue() {
+    public int getHue() {
         return hue;
     }
 

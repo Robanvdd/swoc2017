@@ -375,7 +375,7 @@ public class MicroEngine {
                 }
             }
             players.add(new MacroPlayer(micro.getId(), micro.getName(), micro.getScript(), Collections.EMPTY_LIST,
-                    survivors, casualties, micro.getColor()));
+                    survivors, casualties, micro.getColor(), micro.getHue()));
         }
 
         return new MacroOutput(players, state.getGameId(), GetWinner());
