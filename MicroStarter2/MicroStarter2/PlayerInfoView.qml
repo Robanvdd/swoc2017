@@ -96,7 +96,7 @@ Column {
         selectFolder: true
         onAccepted: {
             var path = fileDialog.folder.toString()
-            setProperty("bot", getCleanPath(path))
+            setProperty("bot", getCleanPath(path) + "/")
             visible = false
         }
         visible: false

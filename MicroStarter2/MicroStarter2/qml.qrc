@@ -6,5 +6,6 @@
         <file>PlayersListView.qml</file>
         <file>PlayerInfoView.qml</file>
         <file>Json.js</file>
+        <file>GameView.qml</file>
     </qresource>
 </RCC>
