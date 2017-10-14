@@ -59,8 +59,14 @@ Column {
             Layout.alignment: Qt.AlignLeft
             text: "Add"
             onClicked: {
-                if (playerTextField.text != "")
-                    playersModel.append({ "name": playerTextField.text })
+                if (playerTextField.text != "") {
+                    playersModel.append({
+                        "name": playerTextField.text,
+                        "nrUfos": 0,
+                        "hue": 0.0,
+                        "bot": "X:\\path\\to\\bot\\"
+                    })
+                }
                 playerTextField.text = ""
             }
         }

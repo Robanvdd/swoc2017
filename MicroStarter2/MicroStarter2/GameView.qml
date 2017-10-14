@@ -9,8 +9,16 @@ import "Json.js" as Json
 
 ColumnLayout {
     property PlayersModel playersModel
+    property PlayersListView playersListView
+
     property string ticksPath: "X:\\path\\to\\ticks\\"
     property string executablePath: "X:\\path\\to\\executable\\"
+
+    function toggleListViewIndex() {
+        var index = playersListView.listView.currentIndex
+        playersListView.listView.currentIndex = -1
+        playersListView.listView.currentIndex = index
+    }
 
     function getCleanPath(path) {
         path = path.replace(/^(file:\/{3})/,"")
@@ -90,6 +98,7 @@ ColumnLayout {
                 ticksPath = json.ticks
                 executablePath = json.executablePath
                 Json.jsonToListModel(json, playersModel)
+                toggleListViewIndex()
             }
         }
 

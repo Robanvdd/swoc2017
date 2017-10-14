@@ -8,9 +8,9 @@ import SWOC 1.0
 import "Json.js" as Json
 
 ApplicationWindow {
-    visible: true
     width: 800
-    height: 600
+    height: 768
+    visible: true
     title: qsTr("MicroStarter")
 
     FileIO {
@@ -37,6 +37,7 @@ ApplicationWindow {
 
         GameView {
             playersModel: playersModel
+            playersListView: playersListView
         }
     }
 }
