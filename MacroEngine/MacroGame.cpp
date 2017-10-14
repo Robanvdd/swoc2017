@@ -15,21 +15,22 @@
 #include <exception>
 #include <QDir>
 
-#ifdef __linux__
-#define RUN_FILE "/run.sh"
-#endif
-#ifdef __WIN32__
-#define RUN_FILE "\\run.bat"
-#endif
-#ifdef __WIN64__
-#define RUN_FILE "\\run.bat"
-#endif
-#ifdef _WIN32_
-#define RUN_FILE "\\run.bat"
-#endif
-#ifdef _WIN64
-#define RUN_FILE "\\run.bat"
-#endif
+//#ifdef __linux__
+//#define RUN_FILE "/run.sh"
+//#endif
+//#ifdef __WIN32__
+//#define RUN_FILE "\\run.bat"
+//#endif
+//#ifdef __WIN64__
+//#define RUN_FILE "\\run.bat"
+//#endif
+//#ifdef _WIN32_
+//#define RUN_FILE "\\run.bat"
+//#endif
+//#ifdef _WIN64
+//#define RUN_FILE "\\run.bat"
+//#endif
+#define RUN_FILE "runCommand.txt"
 
 MacroGame::MacroGame(QList<PlayerBotFolders*> playerBotFolders, Universe* universe, QObject *parent)
     : GameObject(parent)
@@ -51,7 +52,18 @@ MacroGame::MacroGame(QList<PlayerBotFolders*> playerBotFolders, Universe* univer
         m_ufoShop.giveUfo(player, m_universe);
         m_ufoShop.giveUfo(player, m_universe);
         m_universe->addPlayer(player);
-        auto bot = new MacroBot(playerBotFolder->getMacroBotFolder() + RUN_FILE, "", this);
+        auto runCommandFilename = playerBotFolder->getMacroBotFolder() + "/" + RUN_FILE;
+        QFile runCommandFile(runCommandFilename);
+        QString command;
+        if (runCommandFile.open(QFile::ReadWrite))
+        {
+            command = runCommandFile.readLine();
+        }
+        else
+        {
+            throw std::runtime_error("Can't open bot runCommand.txt");
+        }
+        auto bot = new MacroBot(command, "", this);
         m_macroBots << bot;
         m_playerBotMap[player] = bot;
         m_botPlayerMap[bot] = player;
@@ -106,15 +118,18 @@ void MacroGame::startBots()
 
 void MacroGame::killBots()
 {
+    std::cerr << "Killing Bots" << std::endl;
     for (auto it = m_macroBots.begin(); it != m_macroBots.end(); it++)
     {
         auto macroBot = *it;
         macroBot->stopProcess();
+        std::cerr << "Killed " << m_botPlayerMap[macroBot]->getName().toStdString() << std::endl;
     }
 }
 
 void MacroGame::killMicroGames()
 {
+    std::cerr << "Killing MicroGames" << std::endl;
     for (auto it = m_microGames.begin(); it != m_microGames.end(); it++)
     {
         auto microGame = *it;
@@ -124,10 +139,12 @@ void MacroGame::killMicroGames()
 
 void MacroGame::stopMacroGame()
 {
+    std::cerr << "Stopping MacroGame" << std::endl;
     m_tickTimer->stop();
     killBots();
     killMicroGames();
 
+    std::cerr << "Reporting game results" << std::endl;
     std::cout << m_gameId << " " << m_matchDir.absolutePath().toStdString() << " ";
     foreach (auto player, m_universe->getPlayers())
     {
@@ -140,7 +157,7 @@ void MacroGame::stopMacroGame()
 
 bool MacroGame::gameTimeOver()
 {
-    return m_elapsedTimer.elapsed() > 600e3;
+    return m_elapsedTimer.elapsed() > 60e3;
 }
 
 void MacroGame::handleTick()
@@ -294,8 +311,6 @@ void MacroGame::startMicroGame(Planet* planet, Player* playerA, QList<Ufo*> ufos
     QObject::connect(microGame, &MicroGame::dataAvailable, this, [this, microGame, planet]() {
         if (microGame->canReadLine())
         {
-            qDebug() << "Data available";
-            // TODO parse output
             auto result = microGame->readLine();
 
             MicroGameOutput parsedOutput;

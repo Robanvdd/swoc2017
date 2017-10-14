@@ -36,7 +36,10 @@ int main(int argc, char *argv[])
 
     QObject::connect(engine, &Engine::finished, &a, [&a]() { a.quit(); });
     QObject::connect(engine, &Engine::errorOccured, &a, [&a]() { a.quit(); });
-    QObject::connect(engine, &Engine::destroyed, &a, [&a]() { a.quit(); });
+    QObject::connect(engine, &Engine::destroyed, &a, [&a]() {
+        std::cerr << "Shutting down" << std::endl;
+        a.quit();
+    });
     QTimer::singleShot(0, engine, SLOT(startNewMacroGame()));
 
     return a.exec();

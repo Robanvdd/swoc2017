@@ -48,14 +48,14 @@ void MicroGame::startProcess()
         qDebug() << "Error occured " << m_process->errorString();
     });
 
-    m_process->start("java -jar D:\\micro.jar"/*m_executablePathMicroEngine*/);
+    m_process->start("java -jar D:\\micro.jar");
 
     m_process->waitForStarted(1000);
 
     if (m_process->state() != QProcess::Running)
     {
         qDebug() << m_process->errorString();
-        throw std::exception();
+        throw std::runtime_error("Could not start micro.jar");
     }
 }
 
@@ -66,7 +66,9 @@ void MicroGame::setWorkingDir(const QString& workingDir)
 
 void MicroGame::stopProcess()
 {
+    m_process->disconnect();
     m_process->kill();
+    m_process->waitForFinished(500);
 }
 
 bool MicroGame::running()

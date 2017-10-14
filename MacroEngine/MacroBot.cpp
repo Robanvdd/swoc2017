@@ -33,8 +33,9 @@ void MacroBot::startProcess()
 
 void MacroBot::stopProcess()
 {
+    m_process->disconnect();
     m_process->kill();
-    m_process->waitForFinished(5000);
+    m_process->waitForFinished(500);
 }
 
 void MacroBot::sendGameState(QString state)
