@@ -14,6 +14,7 @@ namespace Swoc
 
         public Engine()
         {
+            Win32IO.Init();
             readThread = new Thread(new ThreadStart(PollState));
         }
 
@@ -61,6 +62,8 @@ namespace Swoc
             while (!mStop)
             {
                 var state = ReadMessage<GameStateTemplate>();
+                if (state == null)
+                    continue;
                 lock (gameStates)
                 {
                     gameStates.Add(state);
@@ -89,7 +92,7 @@ namespace Swoc
 
         private static T ReadMessage<T>()
         {
-            string line = Console.In.ReadLine();
+            string line = Console.ReadLine();
             if (String.IsNullOrEmpty(line))
                 return default(T);
 
@@ -105,7 +108,7 @@ namespace Swoc
 
         public static void WriteMessage<T>(T message)
         {
-            Console.Out.WriteLine(JsonConvert.SerializeObject(message, Formatting.None));
+            Console.WriteLine(JsonConvert.SerializeObject(message, Formatting.None));
         }
     }
 }

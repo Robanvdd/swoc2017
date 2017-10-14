@@ -98,7 +98,7 @@ namespace MacroBot
             }
         }
 
-        private static void BuyUfos(GameState gameState, Player mePlayer)
+        private void BuyUfos(GameState gameState, Player mePlayer)
         {
             var amount = (int)(mePlayer.Credits / UfoCost);
             if (amount < 1)

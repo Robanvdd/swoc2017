@@ -70,6 +70,9 @@
     <Compile Include="..\Generic\Position.cs">
       <Link>Protocol\Position.cs</Link>
     </Compile>
+    <Compile Include="..\Generic\Win32IO.cs">
+      <Link>Win32IO.cs</Link>
+    </Compile>
     <Compile Include="Helpers.cs" />
     <Compile Include="MicroEngine.cs" />
     <Compile Include="Program.cs" />
