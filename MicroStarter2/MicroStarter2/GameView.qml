@@ -38,7 +38,7 @@ ColumnLayout {
         id: executableFileDialog
         title: "Please select the MicroGame executable"
         onAccepted: {
-            executablePath = getCleanPath(executableFileDialog.folder.toString())
+            executablePath = getCleanPath(executableFileDialog.fileUrl.toString())
             visible = false
         }
         visible: false
@@ -101,6 +101,20 @@ ColumnLayout {
                 fileIO.source = filePath
                 fileIO.write(JSON.stringify(json))
             }
+        }
+    }
+
+    Process {
+        id: microGameProcess
+        commands: "java -jar " + executablePath
+    }
+
+    Button {
+        text: "Start Game"
+        onClicked: {
+            microGameProcess.start()
+            var json = Json.listModelToJson(playersModel, ticksPath, executablePath)
+            microGameProcess.write(JSON.stringify(json))
         }
     }
 }
