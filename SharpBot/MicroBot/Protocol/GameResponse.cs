@@ -14,10 +14,5 @@ namespace MicroBot.Protocol
         }
 
         public List<BotAction> Bots { get; set; }
-
-        public string ToJson(Formatting formatting = Formatting.None)
-        {
-            return JsonConvert.SerializeObject(this, formatting);
-        }
     }
 }

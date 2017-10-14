@@ -14,10 +14,5 @@ namespace MicroBot.Protocol
     
         [JsonConverter(typeof(PositionConverter))]
         public Position Position { get; set; }
-
-        public override string ToString()
-        {
-            return String.Format("Bot name: {0}\nHitpoints: {1}\nPosition: {2}", Name, Hitpoints, Position);
-        }
     }
 }

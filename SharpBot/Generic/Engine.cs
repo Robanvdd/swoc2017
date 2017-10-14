@@ -4,9 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using static SwocIO.Pipeline;
 
-namespace MacroBot
+namespace Swoc
 {
     public abstract class Engine<GameStateTemplate> where GameStateTemplate : class
     {
@@ -90,7 +89,7 @@ namespace MacroBot
 
         private static T ReadMessage<T>()
         {
-            string line = ReadLine();
+            string line = Console.In.ReadLine();
             if (String.IsNullOrEmpty(line))
                 return default(T);
 
@@ -106,7 +105,7 @@ namespace MacroBot
 
         public static void WriteMessage<T>(T message)
         {
-            WriteLine(JsonConvert.SerializeObject(message, Formatting.None));
+            Console.Out.WriteLine(JsonConvert.SerializeObject(message, Formatting.None));
         }
     }
 }

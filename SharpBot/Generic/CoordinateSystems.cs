@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using static Swoc.MathEx;
 
-namespace MacroBot
+namespace Swoc
 {
     public struct CartesianCoord
     {
@@ -53,13 +54,13 @@ namespace MacroBot
         public PolarCoord(double radius, double angle, AngleType type = AngleType.Radian)
         {
             Radius = radius;
-            AngleRadian = type == AngleType.Degree ? MathEx.DegreeToRadian(angle) : angle;
+            AngleRadian = type == AngleType.Degree ? DegreeToRadian(angle) : angle;
         }
 
         double Radius;
         double AngleRadian;
 
-        public double AngleDegree { get { return MathEx.RadianToDegree(AngleRadian); } }
+        public double AngleDegree { get { return RadianToDegree(AngleRadian); } }
 
         public CartesianCoord AsCartesianCoord()
         {
@@ -68,7 +69,7 @@ namespace MacroBot
 
         public static CartesianCoord AsCartesianCoord(double radius, double angle, AngleType type = AngleType.Radian)
         {
-            var angleRadian = type == AngleType.Degree ? MathEx.DegreeToRadian(angle) : angle;
+            var angleRadian = type == AngleType.Degree ? DegreeToRadian(angle) : angle;
             return new CartesianCoord(radius * Math.Cos(angleRadian), -radius * Math.Sin(angleRadian));
         }
     }

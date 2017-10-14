@@ -3,16 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MacroBot.Protocol;
-using static MacroBot.Protocol.Helpers;
+using static MacroBot.Helpers;
 
 namespace MacroBot
 {
-    public sealed class MacroEngine : Engine<Protocol.GameState>
+    public sealed class MacroEngine : Swoc.Engine<Protocol.GameState>
     {
-        private readonly Random random = new Random(DateTime.Now.TimeOfDay.Milliseconds);
-
-        private const string playerName = "dwight";
-        //private const string playerName = "jesper";
+        private const string playerName = "playerName";
 
         private const int UfoCost = 100000;
 
@@ -25,9 +22,6 @@ namespace MacroBot
             catch (Exception ex)
             {
                 Console.Error.WriteLine("Response failure: " + ex.Message);
-                if (ex.InnerException != null)
-                    Console.Error.WriteLine("Response failure (2): " + ex.InnerException.Message);
-                //Console.Error.WriteLine("Response failure json " + gameStates.Last().ToJson());
             }
         }
 
@@ -90,7 +84,7 @@ namespace MacroBot
 
             foreach (var ufo in mePlayer.Ufos.Where(u => !mUfoMovingToPlanet.ContainsKey(u.Id) && !mUfoInOrbitAtPlanet.ContainsKey(u.Id)))
             {
-                var planet = NearestPlanet(gameState.SolarSystems, ufo, excludedPlanets);
+                var planet = RandomPlanet(gameState.SolarSystems, ufo, excludedPlanets);
                 if (planet == default(Planet))
                     continue;
 

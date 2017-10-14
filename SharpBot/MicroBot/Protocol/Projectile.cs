@@ -12,10 +12,5 @@ namespace MicroBot.Protocol
         [JsonConverter(typeof(PositionConverter))]
         public Position Position { get; set; }
         public float Direction { get; set; }
-
-        public override string ToString()
-        {
-            return String.Format("Projectile: \nPosition: {0}\nDirection: {1}", Position, Direction);
-        }
     }
 }

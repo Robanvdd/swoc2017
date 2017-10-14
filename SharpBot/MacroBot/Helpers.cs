@@ -1,9 +1,11 @@
-﻿using System;
+﻿using MacroBot.Protocol;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Swoc;
 
-namespace MacroBot.Protocol
+namespace MacroBot
 {
     public static class Helpers
     {
@@ -44,10 +46,14 @@ namespace MacroBot.Protocol
             var orderedPlanetCoord = planets.Where(kvp => !excluded.Any(ex => ex.Id == kvp.Key.Id))
                           .OrderBy(kvp => (kvp.Value - ufoCc).LengthSquared());
 
-            if (orderedPlanetCoord.Any())
-                return orderedPlanetCoord.First().Key;
-            else
-                return null;
+            return orderedPlanetCoord.Any() ? orderedPlanetCoord.First().Key : null;
+        }
+
+        public static Planet RandomPlanet(List<SolarSystem> solarSystems, Ufo ufo, List<Planet> excluded)
+        {
+            var planets = solarSystems.SelectMany(ss => ss.Planets).Where(p => !excluded.Any(ex => ex.Id == p.Id));
+            var count = planets.Count();
+            return count > 0 ? planets.ElementAt(new Random(DateTime.Now.Millisecond).Next(count -1)) : null;
         }
 
         public static Dictionary<Planet, CartesianCoord> GetPlanetCoords(List<SolarSystem> solarSystems)
