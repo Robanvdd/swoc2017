@@ -19,15 +19,15 @@ void Engine::startNewMacroGame()
     m_macroGames << newMacroGame;
     connect(newMacroGame, &MacroGame::finished, this, [this, newMacroGame]()
     {
-        std::cout << "MacroGame finished" << std::endl;
+        std::cerr << "MacroGame finished" << std::endl;
         m_macroGames.removeOne(newMacroGame);
     });
     connect(newMacroGame, &MacroGame::destroyed, this, [this, newMacroGame]()
     {
-        std::cout << "MacroGame destroyed" << std::endl;
-        QTimer::singleShot(5000, this, SLOT(startNewMacroGame()));
+        std::cerr << "MacroGame destroyed" << std::endl;
+        //QTimer::singleShot(5000, this, SLOT(startNewMacroGame()));
     });
-    std::cout << "Starting new MacroGame" << std::endl;
+    std::cerr << "Starting new MacroGame" << std::endl;
     newMacroGame->run();
 }
 

@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.15
+VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroBot", "MicroBot\MicroBot.csproj", "{E5CD5984-7611-4B8D-8EF0-3BFB78751352}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MacroBot", "MacroBot\MacroBot.csproj", "{AA351B2B-BFCB-42E3-BEDA-1B2296EB5F2C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SwocIO", "SwocIO\SwocIO.vcxproj", "{67FB6B6C-ADD5-484E-BA10-F7FEA02D7160}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,16 @@ Global
 		{AA351B2B-BFCB-42E3-BEDA-1B2296EB5F2C}.Release|x64.Build.0 = Release|Any CPU
 		{AA351B2B-BFCB-42E3-BEDA-1B2296EB5F2C}.Release|x86.ActiveCfg = Release|Any CPU
 		{AA351B2B-BFCB-42E3-BEDA-1B2296EB5F2C}.Release|x86.Build.0 = Release|Any CPU
+		{67FB6B6C-ADD5-484E-BA10-F7FEA02D7160}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{67FB6B6C-ADD5-484E-BA10-F7FEA02D7160}.Debug|x64.ActiveCfg = Debug|x64
+		{67FB6B6C-ADD5-484E-BA10-F7FEA02D7160}.Debug|x64.Build.0 = Debug|x64
+		{67FB6B6C-ADD5-484E-BA10-F7FEA02D7160}.Debug|x86.ActiveCfg = Debug|Win32
+		{67FB6B6C-ADD5-484E-BA10-F7FEA02D7160}.Debug|x86.Build.0 = Debug|Win32
+		{67FB6B6C-ADD5-484E-BA10-F7FEA02D7160}.Release|Any CPU.ActiveCfg = Release|Win32
+		{67FB6B6C-ADD5-484E-BA10-F7FEA02D7160}.Release|x64.ActiveCfg = Release|x64
+		{67FB6B6C-ADD5-484E-BA10-F7FEA02D7160}.Release|x64.Build.0 = Release|x64
+		{67FB6B6C-ADD5-484E-BA10-F7FEA02D7160}.Release|x86.ActiveCfg = Release|Win32
+		{67FB6B6C-ADD5-484E-BA10-F7FEA02D7160}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -5,26 +5,38 @@ ListModel {
 
     ListElement {
         name: "Bulldozer Broos"
-        nrBots: 3
+        nrUfos: 3
+        hue: 0.0
+        bot: "X:\\path\\to\\bot\\"
     }
     ListElement {
         name: "Ferdinator"
-        nrBots: 3
+        nrUfos: 3
+        hue: 0.125
+        bot: "X:\\path\\to\\bot\\"
     }
     ListElement {
         name: "Destruction Dennen"
-        nrBots: 3
+        nrUfos: 3
+        hue: 0.25
+        bot: "X:\\path\\to\\bot\\"
     }
     ListElement {
         name: "Hueling Huegens"
-        nrBots: 3
+        nrUfos: 3
+        hue: 0.375
+        bot: "X:\\path\\to\\bot\\"
     }
     ListElement {
         name: "Brawling Berendse"
-        nrBots: 3
+        nrUfos: 3
+        hue: 0.5
+        bot: "X:\\path\\to\\bot\\"
     }
     ListElement {
         name: "Banisher Beurskens"
-        nrBots: 3
+        nrUfos: 3
+        hue: 0.625
+        bot: "X:\\path\\to\\bot\\"
     }
 }

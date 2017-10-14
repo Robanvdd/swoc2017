@@ -10,6 +10,11 @@ MacroBot::MacroBot(QString executable, QString arguments, QObject *parent)
 {
 }
 
+MacroBot::~MacroBot()
+{
+    m_process->waitForFinished(500);
+}
+
 void MacroBot::startProcess()
 {
     m_process = new QProcess(this);
@@ -18,13 +23,18 @@ void MacroBot::startProcess()
         std::cerr << "Error occured " << m_process->errorString().toStdString() << std::endl;
         std::cerr << m_executable.toStdString() << std::endl;
     });
+
+    QObject::connect(m_process, &QProcess::readyReadStandardError, this, [this]()
+    {
+        std::cerr << m_process->readAllStandardError().toStdString() << std::endl;
+    });
     m_process->start(m_executable);
 }
 
 void MacroBot::stopProcess()
 {
     m_process->kill();
-    m_process->waitForFinished(500);
+    m_process->waitForFinished(5000);
 }
 
 void MacroBot::sendGameState(QString state)

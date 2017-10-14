@@ -48,7 +48,9 @@ private:
     QMap<Player*, QString> m_playerMicroBotFolder;
     QString m_name;
     UfoShop m_ufoShop;
-    QDir m_logDir;
+    int m_gameId;
+    QDir m_matchDir;
+    QDir m_tickDir;
 
     void startBots();
     void killBots();

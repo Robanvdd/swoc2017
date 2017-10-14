@@ -18,6 +18,12 @@
 #ifdef __linux__
 #define RUN_FILE "/run.sh"
 #endif
+#ifdef __WIN32__
+#define RUN_FILE "\\run.bat"
+#endif
+#ifdef __WIN64__
+#define RUN_FILE "\\run.bat"
+#endif
 #ifdef _WIN32_
 #define RUN_FILE "\\run.bat"
 #endif
@@ -53,7 +59,6 @@ MacroGame::MacroGame(QList<PlayerBotFolders*> playerBotFolders, Universe* univer
         hue += hueJump;
     }
 
-
     connect(m_tickTimer, &QTimer::timeout, this, [this]() { handleTick(); });
 }
 
@@ -70,12 +75,17 @@ void MacroGame::setNameAndLogDir()
         if (sane && previousMatch >= matchN)
             matchN = previousMatch + 1;
     }
+    m_gameId = matchN;
     m_name = "Match" + QString::number(matchN);
 
     if (dir.mkpath(m_name + "/MacroTicks"))
-        m_logDir = QDir(m_name + "/MacroTicks");
+    {
+        m_tickDir = QDir(m_name + "/MacroTicks");
+        m_matchDir = QDir(m_name);
+    }
+
     else
-        throw std::exception("Can't create log dir");
+        throw std::runtime_error("Can't create log dir");
 }
 
 void MacroGame::run()
@@ -117,6 +127,14 @@ void MacroGame::stopMacroGame()
     m_tickTimer->stop();
     killBots();
     killMicroGames();
+
+    std::cout << m_gameId << " " << m_matchDir.absolutePath().toStdString() << " ";
+    foreach (auto player, m_universe->getPlayers())
+    {
+        std::cout << player->getName().toStdString() << " " << player->getCredits() << " ";
+    }
+    std::cout << std::endl;
+
     deleteLater();
 }
 
@@ -145,7 +163,7 @@ void MacroGame::handleTick()
 void MacroGame::writeGameState(QJsonDocument gameStateDoc)
 {
     auto gameStateJson = gameStateDoc.toJson(QJsonDocument::Indented);
-    QFile file(m_logDir.filePath("tick" + QString::number(m_currentTick) + ".json"));
+    QFile file(m_tickDir.filePath("tick" + QString::number(m_currentTick) + ".json"));
     if (file.open(QIODevice::ReadWrite))
     {
         QTextStream stream(&file);
@@ -197,6 +215,9 @@ void MacroGame::handleConquerCommand(Player* player, ConquerCommand* conquerComm
     {
         throw std::logic_error("Planet is owned, but not by an existing player");
     }
+
+    if (currentOwner == player)
+        return;
 
     SolarSystem* solarSystem = m_universe->getCorrespondingSolarSystem(planet);
     QPointF location = solarSystem->getPlanetLocation(*planet);
@@ -265,8 +286,8 @@ void MacroGame::startMicroGame(Planet* planet, Player* playerA, QList<Ufo*> ufos
 
     static int nextMicroGame = 0;
     MicroGame* microGame = new MicroGame("java -jar D:\\micro.jar", input);
-    QDir microLogFolder(m_logDir.filePath("../MicroGame" + QString::number(++nextMicroGame)));
-    m_logDir.mkpath(microLogFolder.absolutePath());
+    QDir microLogFolder(m_tickDir.filePath("../MicroGame" + QString::number(++nextMicroGame)));
+    m_tickDir.mkpath(microLogFolder.absolutePath());
     microGame->setWorkingDir(microLogFolder.absolutePath());
     microGame->startProcess();
 
@@ -281,7 +302,7 @@ void MacroGame::startMicroGame(Planet* planet, Player* playerA, QList<Ufo*> ufos
             parsedOutput.readOutput(result);
             if (parsedOutput.getGameId() < 0)
             {
-                throw std::exception("We do something wrong with parsing micro game output, or blame Ferdi");
+                throw std::runtime_error("We do something wrong with parsing micro game output, or blame Ferdi");
             }
 
             if (parsedOutput.getWinner() > 0)
@@ -342,7 +363,6 @@ void MacroGame::communicateWithBots(QJsonDocument gameStateDoc)
     {
         communicateWithBot(player, gameStateDoc);
     }
-    std::cout << std::flush;
 }
 
 QJsonObject MacroGame::generateGameState()

@@ -37,5 +37,21 @@ exports = module.exports = app;
 // Logging initialization
 console.log('Swoc2017 server is listening on port ' + config.port);
 setTimeout(function() {
-console.log('Swoc2017 server loaded, db: ' + JSON.stringify(db.connection.readyState));
+	console.log('Swoc2017 server loaded, db: ' + JSON.stringify(db.connection.readyState));
+	User = mongoose.model('User');
+    mongoose = require('mongoose');
+    passport = require('passport');
+	var user = new User({
+		username: 'admin',
+		password: 'hue'
+	}); //username, password, email
+
+    // Then save the user 
+    user.save(function(err) {
+        if (err) {
+            console.log('admin already exists (or there was an error in its creation)');
+        } else {
+            console.log('admin2 created succesfully');
+        }
+    });
 }, 5000);

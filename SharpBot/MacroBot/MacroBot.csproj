@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>MacroBot</RootNamespace>
     <AssemblyName>MacroBot</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -41,6 +41,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -50,11 +51,12 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Import\net35\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\Import\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -80,10 +82,17 @@
     <Compile Include="Protocol\GameResponseMoveToCoord.cs" />
     <Compile Include="Protocol\GameResponseMoveToPlanet.cs" />
     <Compile Include="Protocol\GameState.cs" />
+    <Compile Include="Protocol\Helpers.cs" />
     <Compile Include="Protocol\Planet.cs" />
     <Compile Include="Protocol\Player.cs" />
     <Compile Include="Protocol\SolarSystem.cs" />
     <Compile Include="Protocol\Ufo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SwocIO\SwocIO.vcxproj">
+      <Project>{67fb6b6c-add5-484e-ba10-f7fea02d7160}</Project>
+      <Name>SwocIO</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

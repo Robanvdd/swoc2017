@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using static SwocIO.Pipeline;
 
 namespace MacroBot
 {
@@ -19,6 +20,18 @@ namespace MacroBot
 
         public void Run()
         {
+            try
+            {
+                DoRun();
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine("Run failure: " + ex.Message);
+            }
+        }
+
+        private void DoRun()
+        {
             mStop = false;
             readThread.Start();
             while (!mStop)
@@ -33,6 +46,18 @@ namespace MacroBot
         }
 
         private void PollState()
+        {
+            try
+            {
+                DoPollState();
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine("Poll state failure: " + ex.Message);
+            }
+        }
+
+        private void DoPollState()
         {
             while (!mStop)
             {
@@ -65,7 +90,7 @@ namespace MacroBot
 
         private static T ReadMessage<T>()
         {
-            string line = Console.ReadLine();
+            string line = ReadLine();
             if (String.IsNullOrEmpty(line))
                 return default(T);
 
@@ -81,7 +106,7 @@ namespace MacroBot
 
         public static void WriteMessage<T>(T message)
         {
-            Console.WriteLine(JsonConvert.SerializeObject(message, Formatting.None));
+            WriteLine(JsonConvert.SerializeObject(message, Formatting.None));
         }
     }
 }
