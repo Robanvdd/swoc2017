@@ -6,7 +6,7 @@ var mongoose = require('mongoose'),
 	User = mongoose.model('User'),
 	path = require('path'),
 	upload_folder_base = path.resolve('./bots_upload'),
-	run_script = 'run.sh',
+	run_script = 'runCommand.txt',
 	child_process = require('child_process'),
 	compile_script_path = path.join(upload_folder_base, 'compilebot.py'),
 	fs = require('fs');
@@ -89,7 +89,7 @@ function runCompileScript(bot_folder, callback) {
 }
 
 function readRunCommand(bot_folder, callback) {
-	var runShellScript = path.join(bot_folder, 'run.sh');
+	var runShellScript = path.join(bot_folder, 'runCommand.txt');
 	fs.readFile(runShellScript, 'utf8', callback)
 }
 
@@ -125,7 +125,7 @@ function createBot(user, file, kind, callback) {
 						if (err) {
 							callback(err, bot_folder);
 						} else {
-							console.log('Reading command from run.sh ...');
+							console.log('Reading command from runCommand.txt ...');
 							readRunCommand(bot_folder, function(err, run_command){
 								if (err) {
 									callback(err, bot_folder);

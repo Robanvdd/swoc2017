@@ -10,56 +10,17 @@ var mongoose = require('mongoose'),
  * Match Schema
  */
 var MatchSchema = new Schema({
-	whiteBot: {
-		type: Schema.ObjectId,
-		ref: 'Bot',
-		required: 'White bot id must be given'
-	},
-	blackBot: {
-		type: Schema.ObjectId,
-		ref: 'Bot',
-		required: 'Black bot id must be given'
-	},
-	winnerBot: {
-		type: Schema.ObjectId,
-		ref: 'Bot',
-		required: 'Winner id must be given'
-	},
-	startedOn: {
+	time: {
 		type: Date,
-		required: 'A starting date/time must be given'
+		required: 'A completion time must be given'
 	},
-	completedOn: {
-		type: Date,
-		required: 'A completion date/time must be given'
-	},
-	whiteStdin: {
+	winner: {
 		type: String,
-		required: 'StdIn from white bot must be given'
+		required: 'The winner of the match'
 	},
-	blackStdin: {
+	log: {
 		type: String,
-		required: 'StdIn from white bot must be given'
-	},
-	whiteStdOut: {
-		type: String,
-		required: 'StdOut from white bot must be given'
-	},
-	blackStdOut: {
-		type: String,
-		required: 'StdOut from black bot must be given'
-	},
-	whiteStdErr: {
-		type: String,
-		required: 'StdErr from white bot must be given'
-	},
-	blackStdErr: {
-		type: String,
-		required: 'StdErr from white bot must be given'
-	},
-	moves: {
-		type: String,
-		required: 'The game moves must be given'
+		required: 'the location of the log'
 	}
 });
 
