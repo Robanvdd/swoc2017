@@ -9,8 +9,6 @@ namespace MicroBot
 {
     public sealed class MicroEngine : Swoc.Engine<Protocol.GameState>
     {
-        private const string playerName = "playerName";
-
 
         public override void Response(List<GameState> gameStates)
         {
@@ -28,6 +26,7 @@ namespace MicroBot
         private void DoResponse(List<GameState> gameStates)
         {
             var gameState = gameStates.Last();
+            var playerName = gameState.PlayerName;
             var mePlayer = GetPlayerByName(gameState.Players, playerName);
             time += 0.1;
 

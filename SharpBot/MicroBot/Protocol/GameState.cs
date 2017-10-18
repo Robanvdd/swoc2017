@@ -12,5 +12,9 @@ namespace MicroBot.Protocol
         public List<Player> Players { get; set; }
 
         public List<Projectile> Projectiles { get; set; }
+
+        public int PlayerId { get; set; }
+
+        public string PlayerName { get; set; }
     }
 }
