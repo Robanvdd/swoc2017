@@ -312,6 +312,8 @@ void MacroGame::startMicroGame(Planet* planet, Player* playerA, QList<Ufo*> ufos
         {
             auto result = microGame->readLine();
 
+            std::cerr << result.toStdString() << std::endl;
+
             MicroGameOutput parsedOutput;
             parsedOutput.readOutput(result);
             if (parsedOutput.getGameId() < 0)

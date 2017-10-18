@@ -40,11 +40,11 @@ void MicroGame::startProcess()
         {
             QJsonObject jsonInput;
             jsonInput["gameId"] = m_id;
-            qDebug() << m_tickFolder;
             jsonInput["ticks"] = m_tickFolder + "/";
             m_input.writePlayerJson(jsonInput);
             QJsonDocument doc(jsonInput);
             m_process->write(doc.toJson(QJsonDocument::Compact) + "\n");
+            std::cerr << doc.toJson(QJsonDocument::Compact).toStdString() + "\n";
         }
     });
 
