@@ -12,7 +12,8 @@ ColumnLayout {
     property PlayersListView playersListView
 
     property string ticksPath: "X:\\path\\to\\ticks\\"
-    property string executablePath: "X:\\path\\to\\executable\\"
+    property string enginePath: "X:\\path\\to\\executable\\"
+    property string visPath: "X:\\path\\to\\executable\\"
 
     function toggleListViewIndex() {
         var index = playersListView.listView.currentIndex
@@ -43,10 +44,20 @@ ColumnLayout {
     }
 
     FileDialog {
-        id: executableFileDialog
+        id: enginePathFileDialog
         title: "Please select the MicroGame executable"
         onAccepted: {
-            executablePath = getCleanPath(executableFileDialog.fileUrl.toString())
+            enginePath = getCleanPath(enginePathFileDialog.fileUrl.toString())
+            visible = false
+        }
+        visible: false
+    }
+
+    FileDialog {
+        id: visPathFileDialog
+        title: "Please select the MicroVis executable"
+        onAccepted: {
+            visPath = getCleanPath(visPathFileDialog.fileUrl.toString())
             visible = false
         }
         visible: false
@@ -76,15 +87,33 @@ ColumnLayout {
         }
 
         TextField {
-            id: executableTextField
+            id: enginePathTextField
             Layout.fillWidth: true
             selectByMouse: true
-            placeholderText: executablePath
+            placeholderText: enginePath
         }
 
         Button {
             text: "Browse"
-            onClicked: executableFileDialog.visible = true
+            onClicked: enginePathFileDialog.visible = true
+        }
+    }
+
+    RowLayout {
+        Label {
+            text: "MicroVis executable: "
+        }
+
+        TextField {
+            id: visPathTextField
+            Layout.fillWidth: true
+            selectByMouse: true
+            placeholderText: visPath
+        }
+
+        Button {
+            text: "Browse"
+            onClicked: visPathFileDialog.visible = true
         }
     }
 
@@ -96,7 +125,8 @@ ColumnLayout {
                 fileIO.source = filePath
                 var json = JSON.parse(fileIO.read(filePath))
                 ticksPath = json.ticks
-                executablePath = json.executablePath
+                enginePath = json.enginePath
+                visPath = json.visPath
                 Json.jsonToListModel(json, playersModel)
                 toggleListViewIndex()
             }
@@ -105,7 +135,7 @@ ColumnLayout {
         Button {
             text: "Save settings"
             onClicked: {
-                var json = Json.listModelToJson(playersModel, ticksPath, executablePath)
+                var json = Json.listModelToJson(playersModel, ticksPath, enginePath, visPath)
                 var filePath = "file:///" + applicationDirPath + "/settings.json"
                 fileIO.source = filePath
                 fileIO.write(JSON.stringify(json))
@@ -115,15 +145,24 @@ ColumnLayout {
 
     Process {
         id: microGameProcess
-        commands: "java -jar " + executablePath
+        program: "java"
+        arguments: "-jar " + enginePath + " --debug"
+    }
+
+    Process {
+        id: microVisProcess
+        program: visPath
+        arguments: "tick_0.json"
     }
 
     Button {
         text: "Start Game"
         onClicked: {
             microGameProcess.start()
-            var json = Json.listModelToJson(playersModel, ticksPath, executablePath)
+            var json = Json.listModelToJson(playersModel, ticksPath, enginePath, visPath)
             microGameProcess.write(JSON.stringify(json))
+
+            microVisProcess.start()
         }
     }
 }
