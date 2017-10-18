@@ -210,8 +210,8 @@ ApplicationWindow {
             interval: 1000 / framesPerSecond
             running: frameUrl != "" && !paused
             repeat: true
-            property url frameUrl: ""
-            property bool firstTrigger: false
+            property url frameUrl: firstTick
+            property bool firstTrigger: true
             onTriggered: {
                 fileIO.source = frameUrl
                 var content = fileIO.read()

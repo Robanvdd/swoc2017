@@ -15,9 +15,14 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
 
+    QUrl firstTick("");
+    if (argc > 1)
+        firstTick = argv[1];
+
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("appContext", &appContext);
     engine.rootContext()->setContextProperty("nextFileGrabber", &nextFileGrabber);
+    engine.rootContext()->setContextProperty("firstTick", firstTick);
 
     qmlRegisterType<FileIO>("SWOC", 1, 0, "FileIO");
     qmlRegisterType<CustomFileDialog>("SWOC", 1, 0, "CustomFileDialog");
