@@ -304,7 +304,6 @@ void MacroGame::startMicroGame(Planet* planet, Player* playerA, QList<Ufo*> ufos
     static int nextMicroGame = 0;
     QDir microLogFolder(m_tickDir.filePath("../MicroGame" + QString::number(++nextMicroGame)));
     m_tickDir.mkpath(microLogFolder.absolutePath());
-    qDebug() << microLogFolder.absolutePath();
     MicroGame* microGame = new MicroGame("java -jar micro.jar", input, microLogFolder.absolutePath());
     microGame->startProcess();
 
