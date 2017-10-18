@@ -9,7 +9,7 @@ namespace MicroBot.Protocol
 {
     public sealed class Bot
     { 
-        public string Name { get; set; }
+        public int Id { get; set; }
         public float Hitpoints { get; set; }
     
         [JsonConverter(typeof(PositionConverter))]

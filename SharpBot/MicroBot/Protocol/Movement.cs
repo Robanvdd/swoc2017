@@ -2,7 +2,7 @@
 {
     public sealed class Movement
     {
-        public float Direction { get; set; }
-        public float Speed { get; set; }
+        public double Direction { get; set; }
+        public double Speed { get; set; }
     }
 }
