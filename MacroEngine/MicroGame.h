@@ -13,9 +13,9 @@ class MicroGame : public GameObject
 public:
     MicroGame(QString executablePathMicroEngine,
               MicroGameInput input,
+              QString tickFolder,
               QObject *parent = nullptr);
     void startProcess();
-    void setWorkingDir(const QString& workingDir);
     void stopProcess();
     bool running();
     bool getFinished() const;
@@ -32,6 +32,7 @@ private:
     MicroGameInput m_input;
     QProcess* m_process;
     bool m_dataAvailable;
+    QString m_tickFolder;
 };
 
 #endif // MICROGAME_H

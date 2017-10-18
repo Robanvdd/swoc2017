@@ -105,12 +105,15 @@ def create_jar_run_script(jarName):
     # Working from bot-id directory
     with open("runCommand.txt", "w") as f:
         f.write("java -jar code/" + jarName)
-    st = os.stat("runCommand.txt")
-    os.chmod("runCommand.txt", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
-    with open("runCommand.txt", "w") as f:
+
+    with open("run.sh", "w") as f:
         f.write("java -jar code/" + jarName)
-    st = os.stat("runCommand.txt")
-    os.chmod("runCommand.txt", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+    st = os.stat("run.sh")
+    os.chmod("run.sh", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+    with open("run.bat", "w") as f:
+        f.write("java -jar code/" + jarName)
+    st = os.stat("run.bat")
+    os.chmod("run.bat", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
 
 #
@@ -126,11 +129,22 @@ def get_first_exe_name():
 def create_csharp_run_script(exeName):
     # Working from bot-id directory
     with open("runCommand.txt", "w") as f:
-        f.write(os.getcwd() + "/code/" + exeName)
+        f.write("code/" + exeName)
+
+    with open("run.sh", "w") as f:
+        f.write("code/" + exeName)
     
+    st = os.stat("run.sh")
+    os.chmod("run.sh", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+
+    with open("run.bat", "w") as f:
+        f.write("code/" + exeName)
     
-#    with open("runCommand.txt", "w") as f:
-#        f.write(os.getcwd() + "\\code\\" + exeName)
+    st = os.stat("run.bat")
+    os.chmod("run.bat", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+
+    st = os.stat("code/" + exeName)
+    os.chmod("code/" + exeName, st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
 #
 # Python methods
@@ -146,12 +160,15 @@ def create_python_run_script(pyName):
     # Working from bot-id directory
     with open("runCommand.txt", "w") as f:
         f.write("python code/" + pyName)
-    st = os.stat("runCommand.txt")
-    os.chmod("runCommand.txt", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
-    with open("runCommand.txt", "w") as f:
+
+    with open("run.sh", "w") as f:
         f.write("python code/" + pyName)
-    st = os.stat("runCommand.txt")
-    os.chmod("runCommand.txt", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+    st = os.stat("run.sh")
+    os.chmod("run.sh", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+    with open("run.bat", "w") as f:
+        f.write("python code/" + pyName)
+    st = os.stat("run.bat")
+    os.chmod("run.bat", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
 #
 # Language determination
