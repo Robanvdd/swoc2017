@@ -8,12 +8,14 @@
 
 MicroGame::MicroGame(QString executablePathMicroEngine,
                      MicroGameInput input,
+                     QString tickFolder,
                      QObject *parent)
     : GameObject(parent)
     , m_executablePathMicroEngine(executablePathMicroEngine)
     , m_input(input)
     , m_process(new QProcess(this))
     , m_dataAvailable(false)
+    , m_tickFolder(tickFolder)
 {
 }
 
@@ -38,7 +40,8 @@ void MicroGame::startProcess()
         {
             QJsonObject jsonInput;
             jsonInput["gameId"] = m_id;
-            jsonInput["ticks"] = m_process->workingDirectory() + "/";
+            qDebug() << m_tickFolder;
+            jsonInput["ticks"] = m_tickFolder;
             m_input.writePlayerJson(jsonInput);
             QJsonDocument doc(jsonInput);
             m_process->write(doc.toJson(QJsonDocument::Compact) + "\n");
@@ -50,7 +53,7 @@ void MicroGame::startProcess()
         std::cerr << "Error occured " << m_process->errorString().toStdString();
     });
 
-    m_process->start("java -jar micro.jar");
+    m_process->start(m_executablePathMicroEngine);
 
     m_process->waitForStarted(1000);
 
@@ -59,11 +62,6 @@ void MicroGame::startProcess()
         std::cerr << m_process->errorString().toStdString();
         throw std::runtime_error("Could not start micro.jar");
     }
-}
-
-void MicroGame::setWorkingDir(const QString& workingDir)
-{
-    m_process->setWorkingDirectory(workingDir);
 }
 
 void MicroGame::stopProcess()
