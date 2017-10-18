@@ -8,7 +8,7 @@ import SWOC 1.0
 import "Json.js" as Json
 
 ApplicationWindow {
-    width: 800
+    width: 1024
     height: 768
     visible: true
     title: qsTr("MicroStarter")
@@ -30,6 +30,8 @@ ApplicationWindow {
             }
 
             PlayerInfoView {
+                Layout.alignment: Qt.AlignTop
+
                 playersModel: playersModel
                 playersListView: playersListView
             }
