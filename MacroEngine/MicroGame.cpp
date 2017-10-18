@@ -50,7 +50,7 @@ void MicroGame::startProcess()
         std::cerr << "Error occured " << m_process->errorString().toStdString();
     });
 
-    m_process->start("java -jar D:\\microoo.jar");
+    m_process->start("java -jar micro.jar");
 
     m_process->waitForStarted(1000);
 
