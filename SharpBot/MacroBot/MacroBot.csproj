@@ -67,13 +67,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Generic\CoordinateSystems.cs">
+      <Link>CoordinateSystems.cs</Link>
+    </Compile>
+    <Compile Include="..\Generic\Engine.cs">
+      <Link>Engine.cs</Link>
+    </Compile>
+    <Compile Include="..\Generic\MathEx.cs">
+      <Link>MathEx.cs</Link>
+    </Compile>
     <Compile Include="..\Generic\Position.cs">
       <Link>Protocol\Position.cs</Link>
     </Compile>
-    <Compile Include="CoordinateSystems.cs" />
-    <Compile Include="Engine.cs" />
+    <Compile Include="..\Generic\Win32IO.cs">
+      <Link>Win32IO.cs</Link>
+    </Compile>
+    <Compile Include="Helpers.cs" />
     <Compile Include="MacroEngine.cs" />
-    <Compile Include="MathEx.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Protocol\Fight.cs" />
@@ -82,17 +92,10 @@
     <Compile Include="Protocol\GameResponseMoveToCoord.cs" />
     <Compile Include="Protocol\GameResponseMoveToPlanet.cs" />
     <Compile Include="Protocol\GameState.cs" />
-    <Compile Include="Protocol\Helpers.cs" />
     <Compile Include="Protocol\Planet.cs" />
     <Compile Include="Protocol\Player.cs" />
     <Compile Include="Protocol\SolarSystem.cs" />
     <Compile Include="Protocol\Ufo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SwocIO\SwocIO.vcxproj">
-      <Project>{67fb6b6c-add5-484e-ba10-f7fea02d7160}</Project>
-      <Name>SwocIO</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

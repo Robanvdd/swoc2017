@@ -154,16 +154,17 @@ public class Matchmaker implements AutoCloseable {
             BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String line;
             while ((line = input.readLine()) != null) {
-                System.out.println(line);
+                System.out.println("parsing line: " + line);
                 String[] words = line.split(" ");
                 int wordCount = words.length;
                 if (wordCount < 6 || wordCount % 2 != 0 )throw new Exception("Could not parse engine output");
                 List<PlayerScore> playerScores = new ArrayList<>();
-                int gameId = Integer.getInteger(words[0]);
+                System.out.println("parsing gameId: " + words[0]);
+                int gameId = Integer.parseInt(words[0]);
                 String gameDir = words[1];
-                for(int i=0; i < wordCount;) {
+                for(int i = 2; i < wordCount;) {
                     String playerName = words[i++];
-                    int playerScore = Integer.getInteger(words[i++]);
+                    int playerScore = Integer.parseInt(words[i++]);
                     playerScores.add(new PlayerScore(playerName, playerScore));
                 }
                 result = new GameResult(gameId, gameDir, playerScores);

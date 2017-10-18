@@ -7,23 +7,17 @@ Show matches of <select ng-model="selectedUser" ng-options="user.username for us
 <table width="100%" class="table table-hover">
 	<thead>
 		<tr>
-			<th>Time</th><th>White</th><th>Black</th><th>Winner</th><th width="100px"></th>
+			<th>Time</th><th>Winner</th><th>Log</th><th width="100px"></th>
 		</tr>
 	</thead>
 	<tbody>
-		<tr ng-repeat="match in matches | orderBy:'completedOn':'true'">
-			<td>{{match.completedOn}}</td>
+		<tr ng-repeat="match in matches | orderBy:'time':'true'">
+			<td>{{match.time}}</td>
 			<td>
-				<span>{{match.whiteBot.name}}</span>
+				<span>{{match.winner}}</span>
 			</td>
 			<td>
-				<span>{{match.blackBot.name}}</span>
-			</td>
-			<td>
-				<span>{{match.winnerBot.name}}</span>
-			</td>
-			<td>
-				<a class="btn btn-primary btn-mini" href="#/detail/{{match._id}}">Show <b class="glyphicon glyphicon-search"></b></a>
+				<a href="{{match.log}}">Download log</span>
 			</td>
 		</tr>
 	</tbody>
