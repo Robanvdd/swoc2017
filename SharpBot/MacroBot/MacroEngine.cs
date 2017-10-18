@@ -29,7 +29,6 @@ namespace MacroBot
         private readonly Dictionary<int, SolarPlanet> mUfoInOrbitAtPlanet = new Dictionary<int, SolarPlanet>();
         private readonly HashSet<int> recentUfos = new HashSet<int>();
 
-        int i = 0;
         private void DoResponse(List<GameState> gameStates)
         {
             var gameState = gameStates.Last();
@@ -37,29 +36,9 @@ namespace MacroBot
 
             RemoveDestroyedUfos(mePlayer);
             BuyUfos(gameState, mePlayer);
-
-            if (i == 0)
-            {
-                WriteMessage(new Protocol.GameResponseMoveToCoord()
-                {
-                    Coord = gameState.SolarSystems[0].Coords,
-                    Ufos = new List<int> { mePlayer.Ufos.First().Id, }
-                });
-                i++;
-            }
-            else if (i == 1)
-            {
-                WriteMessage(new Protocol.GameResponseMoveToCoord()
-                {
-                    Coord = gameState.SolarSystems[0].Coords,
-                    Ufos = new List<int> { mePlayer.Ufos.First().Id, }
-                });
-                i++;
-            }
-
-            //MoveToPlanets(gameState, mePlayer);
-            //StartConquer(gameState, mePlayer);
-            //FinalizeConquer(gameState, mePlayer);
+            MoveToPlanets(gameState, mePlayer);
+            StartConquer(gameState, mePlayer);
+            FinalizeConquer(gameState, mePlayer);
         }
 
         private void FinalizeConquer(GameState gameState, Player mePlayer)
