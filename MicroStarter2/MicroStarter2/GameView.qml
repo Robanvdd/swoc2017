@@ -152,7 +152,7 @@ ColumnLayout {
     Process {
         id: microVisProcess
         program: visPath
-        arguments: "tick_0.json"
+        arguments: "file:///" + ticksPath + "tick_0.json"
     }
 
     Button {
