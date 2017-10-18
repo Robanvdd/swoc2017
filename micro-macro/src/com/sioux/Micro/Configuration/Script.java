@@ -5,7 +5,7 @@ package com.sioux.Micro.Configuration;
  */
 public final class Script {
     private static String OS = System.getProperty("os.name").toLowerCase();
-    private static String windowsCmd = "run.cmd";
+    private static String windowsCmd = "run.bat";
     private static String unixCmd = "run.sh";
 
     public static String GetScriptCommand() throws Exception {
