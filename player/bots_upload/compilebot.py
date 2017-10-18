@@ -105,12 +105,6 @@ def create_jar_run_script(jarName):
     # Working from bot-id directory
     with open("runCommand.txt", "w") as f:
         f.write("java -jar code/" + jarName)
-    st = os.stat("runCommand.txt")
-    os.chmod("runCommand.txt", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
-    with open("runCommand.txt", "w") as f:
-        f.write("java -jar code/" + jarName)
-    st = os.stat("runCommand.txt")
-    os.chmod("runCommand.txt", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
 
 #
@@ -127,10 +121,6 @@ def create_csharp_run_script(exeName):
     # Working from bot-id directory
     with open("runCommand.txt", "w") as f:
         f.write(os.getcwd() + "/code/" + exeName)
-    
-    
-#    with open("runCommand.txt", "w") as f:
-#        f.write(os.getcwd() + "\\code\\" + exeName)
 
 #
 # Python methods
@@ -146,12 +136,6 @@ def create_python_run_script(pyName):
     # Working from bot-id directory
     with open("runCommand.txt", "w") as f:
         f.write("python code/" + pyName)
-    st = os.stat("runCommand.txt")
-    os.chmod("runCommand.txt", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
-    with open("runCommand.txt", "w") as f:
-        f.write("python code/" + pyName)
-    st = os.stat("runCommand.txt")
-    os.chmod("runCommand.txt", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
 #
 # Language determination
