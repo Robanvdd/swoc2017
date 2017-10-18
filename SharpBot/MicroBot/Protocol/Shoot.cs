@@ -2,6 +2,6 @@
 {
     public sealed class Shoot
     {
-        public float Direction { get; set; }
+        public double Direction { get; set; }
     }
 }
