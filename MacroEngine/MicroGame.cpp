@@ -4,6 +4,8 @@
 #include <QDebug>
 #include <QDir>
 
+#include <iostream>
+
 MicroGame::MicroGame(QString executablePathMicroEngine,
                      MicroGameInput input,
                      QObject *parent)
@@ -27,7 +29,7 @@ void MicroGame::startProcess()
 
     QObject::connect(m_process, &QProcess::readyReadStandardError, this, [this]()
     {
-        qDebug() << m_process->readAllStandardError();
+        std::cerr << m_process->readAllStandardError().toStdString();
     });
 
     QObject::connect(m_process, &QProcess::stateChanged, this, [this]()
@@ -45,16 +47,16 @@ void MicroGame::startProcess()
 
     QObject::connect(m_process, &QProcess::errorOccurred, this, [this]()
     {
-        qDebug() << "Error occured " << m_process->errorString();
+        std::cerr << "Error occured " << m_process->errorString().toStdString();
     });
 
-    m_process->start("java -jar D:\\micro.jar");
+    m_process->start("java -jar D:\\microoo.jar");
 
     m_process->waitForStarted(1000);
 
     if (m_process->state() != QProcess::Running)
     {
-        qDebug() << m_process->errorString();
+        std::cerr << m_process->errorString().toStdString();
         throw std::runtime_error("Could not start micro.jar");
     }
 }
