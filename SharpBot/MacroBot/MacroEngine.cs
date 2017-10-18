@@ -100,6 +100,10 @@ namespace MacroBot
 
         private void BuyUfos(GameState gameState, Player mePlayer)
         {
+            const int MaxUfos = 20;
+            if (mePlayer.Ufos.Count > MaxUfos)
+                return;
+
             var amount = (int)(mePlayer.Credits / UfoCost);
             if (amount < 1)
                 return;

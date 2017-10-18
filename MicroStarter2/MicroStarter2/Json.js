@@ -30,12 +30,13 @@ function playersToJson(listModel) {
     return players
 }
 
-function listModelToJson(listModel, ticksPath, executablePath) {
+function listModelToJson(listModel, ticksPath, enginePath, visPath) {
     var json = {}
     json.players = playersToJson(listModel)
     json.gameId = 1337
     json.ticks = ticksPath
-    json.executablePath = executablePath
+    json.enginePath = enginePath
+    json.visPath = visPath
     return json
 }
 
