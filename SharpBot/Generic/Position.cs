@@ -8,8 +8,8 @@ namespace Bot.Protocol
 {
     public struct Position
     {
-        public float X;
-        public float Y;
+        public float X { get; set; }
+        public float Y { get; set; }
 
         public override string ToString()
         {
