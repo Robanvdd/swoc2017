@@ -26,7 +26,7 @@ void MicroGameInput::writePlayerJson(QJsonObject& jsonObject) const
         playerAUfos.append(ufo->getId());
     }
     playerAObject["ufos"] = playerAUfos;
-    playerAObject["bot"] = m_botAFolder + "/";
+    playerAObject["bot"] = m_botAFolder + "\\";
     playersArray.append(playerAObject);
 
     QJsonObject playerBObject;
@@ -40,7 +40,7 @@ void MicroGameInput::writePlayerJson(QJsonObject& jsonObject) const
         playerBUfos.append(ufo->getId());
     }
     playerBObject["ufos"] = playerBUfos;
-    playerBObject["bot"] = m_botBFolder + "/";
+    playerBObject["bot"] = m_botBFolder + "\\";
     playersArray.append(playerBObject);
     jsonObject["players"] = playersArray;
 }
