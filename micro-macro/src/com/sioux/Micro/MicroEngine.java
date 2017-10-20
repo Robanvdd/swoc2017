@@ -165,8 +165,8 @@ public class MicroEngine {
             positions = new ArrayList<>();
 
             for (int i = 0; i < nrBots; i++) {
-                int x = random.nextInt(state.getArena().getWidth() - botRadius) + botRadius;
-                int y = random.nextInt(state.getArena().getHeight() - botRadius) + botRadius;
+                int x = random.nextInt(state.getArena().getWidth() - botRadius * 2) + botRadius;
+                int y = random.nextInt(state.getArena().getHeight() - botRadius * 2) + botRadius;
                 positions.add(new Point.Double(x, y));
             }
         } while (BotsCollide(positions, Bot.Radius) && retries-- > 0);
