@@ -9,7 +9,6 @@ namespace MicroBot.Protocol
 {
     public class Projectile
     { 
-        [JsonConverter(typeof(PositionConverter))]
         public Position Position { get; set; }
         public float Direction { get; set; }
     }
