@@ -60,8 +60,7 @@ Flickable {
 
                             BattleImage {
                                 visible: modelData.inFight
-                                x: image.x
-                                y: image.y
+                                anchors.centerIn: parent
                                 width: image.width
                                 height: image.height
                             }
