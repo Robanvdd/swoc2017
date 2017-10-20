@@ -26,5 +26,7 @@
         <file>images/spaceship.gif</file>
         <file>images/spaceship-cockpit.png</file>
         <file>Qml/UfoImage.qml</file>
+        <file>images/battle.png</file>
+        <file>Qml/BattleImage.qml</file>
     </qresource>
 </RCC>

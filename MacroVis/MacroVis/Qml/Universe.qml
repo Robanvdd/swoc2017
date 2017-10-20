@@ -58,6 +58,14 @@ Flickable {
                                 font.pointSize: 64
                             }
 
+                            BattleImage {
+                                visible: modelData.inFight
+                                x: image.x
+                                y: image.y
+                                width: image.width
+                                height: image.height
+                            }
+
                             MouseArea {
                                 anchors.fill: parent
                                 acceptedButtons: Qt.LeftButton
