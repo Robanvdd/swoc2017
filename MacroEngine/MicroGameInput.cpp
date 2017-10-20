@@ -19,6 +19,7 @@ void MicroGameInput::writePlayerJson(QJsonObject& jsonObject) const
     playerAObject["id"] = m_playerA->getId();
     playerAObject["name"] = m_playerA->getName();
     playerAObject["color"] = m_playerA->getColorName();
+    playerAObject["hue"] = m_playerA->getHue();
     QJsonArray playerAUfos;
     foreach (auto ufo, m_ufosPlayerA)
     {
@@ -32,6 +33,7 @@ void MicroGameInput::writePlayerJson(QJsonObject& jsonObject) const
     playerBObject["id"] = m_playerB->getId();
     playerBObject["name"] = m_playerB->getName();
     playerBObject["color"] = m_playerB->getColorName();
+    playerAObject["hue"] = m_playerA->getHue();
     QJsonArray playerBUfos;
     foreach (auto ufo, m_ufosPlayerB)
     {
