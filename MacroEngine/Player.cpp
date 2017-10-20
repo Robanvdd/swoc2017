@@ -98,6 +98,11 @@ QString Player::getColorName()
     return m_color.name(QColor::HexArgb);
 }
 
+int Player::getHue() const
+{
+    return m_hue;
+}
+
 QColor Player::getColor() const
 {
     return m_color;

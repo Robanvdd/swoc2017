@@ -34,6 +34,8 @@ public:
 
     Ufo*getUfo(int id) const;
     QString getColorName();
+    int getHue() const;
+
 signals:
 
 public slots:
