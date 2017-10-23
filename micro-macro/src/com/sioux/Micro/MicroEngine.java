@@ -8,6 +8,7 @@ import com.sioux.Macro.MacroInput;
 import com.sioux.Macro.MacroOutput;
 import com.sioux.Macro.MacroPlayer;
 import com.sioux.Micro.Command.Move;
+import com.sioux.Micro.Command.MoveTo;
 import com.sioux.Micro.Command.Shoot;
 import com.sioux.Micro.Command.ShootAt;
 import com.sioux.Micro.Configuration.Arena;
@@ -239,7 +240,12 @@ public class MicroEngine {
 
             Move moveCmd = commands.getMove();
             if (moveCmd != null && bot.canMove()) {
-                bot.Move(moveCmd);
+                bot.Move(moveCmd.getSpeed(), moveCmd.getDirection());
+            }
+
+            MoveTo moveToCmd = commands.getMoveTo();
+            if (moveToCmd != null && moveCmd == null && bot.canMove()) {
+                bot.MoveTo(moveToCmd.getX(), moveToCmd.getY(), moveToCmd.getSpeed());
             }
 
             Shoot shootCmd = commands.getShoot();
