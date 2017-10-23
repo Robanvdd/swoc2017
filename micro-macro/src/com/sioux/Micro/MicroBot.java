@@ -6,6 +6,8 @@ import com.sioux.Micro.Configuration.Bot;
 
 import java.awt.*;
 
+import static com.sioux.Micro.Configuration.Bot.MaxSpeed;
+
 class MicroBot {
     private int id;
     private String name;
@@ -63,12 +65,37 @@ class MicroBot {
         return isAlive() && (lastShoot == -1 || ((lastShoot + cooldownShoot) < tickShoot));
     }
 
-    public void Move(Move cmd) {
-        if (cmd == null) return;
+    public void Move(double speed, double direction) {
+        if (speed > MaxSpeed)
+            speed = MaxSpeed;
 
-        Point.Double newPos = Utils.PolarToCartesian(cmd.getSpeed(), cmd.getDirection());
+        Point.Double newPos = Utils.PolarToCartesian(speed, direction);
         position.x += newPos.x;
         position.y += newPos.y;
+    }
+
+    public void MoveTo(double x, double y, double speed) {
+        if (speed > MaxSpeed)
+            speed = MaxSpeed;
+
+        // Delta with target
+        double dx = x - position.x;
+        double dy = y - position.y;
+        double distance = Math.sqrt(dx*dx + dy*dy);
+
+        if (distance == 0)
+            return;
+
+        // Don't pass over target
+        if (speed > distance)
+            speed = distance;
+
+        // Delta with target, taking speed into account
+        double dsx = (dx / distance) * speed;
+        double dsy = (dy / distance) * speed;
+
+        position.x += dsx;
+        position.y += dsy;
     }
 
     public void Shoot(int tickShoot) {
