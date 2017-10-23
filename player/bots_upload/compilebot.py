@@ -84,7 +84,7 @@ def extract_bot():
     print("Using zip file " + zipFileName)
 
     zipFilePath = os.path.join(os.getcwd(), zipFileName)
-    print zipFilePath
+    print(zipFilePath)
     os.mkdir(codeSubdir)
     os.chdir(codeSubdir)
     unzip(zipFilePath)
