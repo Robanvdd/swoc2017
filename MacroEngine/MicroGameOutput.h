@@ -17,10 +17,15 @@ public:
     void appendCasualty(int);
     void setCasualties(const QList<int>& ufos);
 
+    QList<int> getSurvivors() const;
+    void appendSurvivor(int);
+    void setSurvivors(const QList<int>& survivors);
+
 private:
     int m_id;
     QString m_name;
     QList<int> m_casualties;
+    QList<int> m_survivors;
 };
 
 class MicroGameOutput

@@ -32,6 +32,11 @@ void MicroGameOutput::readOutput(const QString& jsonString)
             {
                 player.appendCasualty(casualtiesArray[j].toInt());
             }
+            QJsonArray survivorsArray = playerJson["survivors"].toArray();
+            for (int j = 0; j < survivorsArray.size(); j++)
+            {
+                player.appendSurvivor(survivorsArray[j].toInt());
+            }
             m_players.append(player);
         }
     }
@@ -92,4 +97,19 @@ void MicroGameOutputPlayer::appendCasualty(int id)
 void MicroGameOutputPlayer::setCasualties(const QList<int>& ufos)
 {
     m_casualties = ufos;
+}
+
+QList<int> MicroGameOutputPlayer::getSurvivors() const
+{
+    return m_survivors;
+}
+
+void MicroGameOutputPlayer::appendSurvivor(int id)
+{
+    m_survivors.append(id);
+}
+
+void MicroGameOutputPlayer::setSurvivors(const QList<int>& survivors)
+{
+    m_survivors = survivors;
 }

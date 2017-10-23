@@ -320,7 +320,7 @@ void MacroGame::startMicroGame(Planet* planet, Player* playerA, QList<Ufo*> ufos
             parsedOutput.readOutput(result);
             if (parsedOutput.getGameId() < 0)
             {
-                throw std::runtime_error("We do something wrong with parsing micro game output, or blame Ferdi");
+                throw std::runtime_error("Parsing microgame output went horribly wrong.");
             }
 
             if (parsedOutput.getWinner() > 0)
@@ -331,6 +331,10 @@ void MacroGame::startMicroGame(Planet* planet, Player* playerA, QList<Ufo*> ufos
                 foreach (auto ufoId, playerOutput.getCasualties())
                 {
                     player->removeUfo(player->getUfo(ufoId));
+                }
+                foreach (auto ufoId, playerOutput.getSurvivors())
+                {
+                    player->getUfo(ufoId)->setInFight(false);
                 }
             }
 
