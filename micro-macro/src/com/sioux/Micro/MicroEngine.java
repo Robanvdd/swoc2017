@@ -3,6 +3,7 @@ package com.sioux.Micro;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonSyntaxException;
 import com.sioux.BotProcess;
 import com.sioux.Macro.MacroInput;
 import com.sioux.Macro.MacroOutput;
@@ -63,10 +64,11 @@ public class MicroEngine {
                 if (!state.getArena().Playable()) {
                     break;
                 }
-                state.getArena().UpdateArena(state.getTick());
 
                 Debug.Print(Debug.DebugMode.Micro, "Tick %d, Arena %d-%d",state.getTick(),
                         state.getArena().getWidth(), state.getArena().getHeight());
+
+                state.getArena().UpdateArena(state.getTick());
 
                 SendGameState();
                 WaitForCommands();
@@ -204,6 +206,7 @@ public class MicroEngine {
             BotProcess script = scripts.get(player.getId());
             if(!script.writeLine(stateJson)) {
                 Debug.Print(Debug.DebugMode.Micro, "Failed to send game state to player %d", player.getId());
+                Debug.Print(Debug.DebugMode.Micro, "Game State: %s", stateJson);
             }
         }
     }
@@ -212,14 +215,15 @@ public class MicroEngine {
         for (MicroPlayer player : state.getPlayers()) {
             BotProcess script = scripts.get(player.getId());
             String inputJson = script.readLine(1000);
-            MicroInput input = gson.fromJson(inputJson, MicroInput.class);
 
-            if (input == null) {
+            try {
+                MicroInput input = gson.fromJson(inputJson, MicroInput.class);
+                ExecuteCommands(player, input);
+            } catch (JsonSyntaxException e) {
                 Debug.Print(Debug.DebugMode.Micro, "Failed to receive commands from player %d", player.getId());
-                continue;
+                Debug.Print(Debug.DebugMode.Micro, "%s: %s", e.getCause().getMessage(), inputJson);
+                Debug.PrintStacktrace(Debug.DebugMode.Dev, "Commands Parser Stacktrace:", e);
             }
-
-            ExecuteCommands(player, input);
         }
 
         ProcessCollisions();

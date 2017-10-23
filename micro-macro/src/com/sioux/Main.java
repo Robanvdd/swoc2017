@@ -2,6 +2,7 @@ package com.sioux;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.sioux.Macro.MacroInput;
 import com.sioux.Macro.MacroOutput;
 import com.sioux.Micro.Configuration.Debug;
@@ -34,22 +35,40 @@ public class Main {
                     break;
             }
         }
+        Debug.InitializeLogger();
 
         scanner = new Scanner(System.in);
         gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
 
         try {
+            // Read input from Macro.
             String macroInputJson = scanner.nextLine();
+
+            Debug.Print(Debug.DebugMode.Micro, "Micro Input: %s", macroInputJson);
             MacroInput macroInput = gson.fromJson(macroInputJson, MacroInput.class);
 
-            MicroEngine micro = new MicroEngine();
-            MacroOutput macroOutput = micro.Run(macroInput);
+            try {
+                MicroEngine micro = new MicroEngine();
+                MacroOutput macroOutput = micro.Run(macroInput);
 
-            String macroOutputJson = gson.toJson(macroOutput, MacroOutput.class);
-            System.out.println(macroOutputJson);
-        } catch (Exception e) {
-            e.printStackTrace(System.err);
+                try {
+                    String macroOutputJson = gson.toJson(macroOutput, MacroOutput.class);
+                    Debug.Print(Debug.DebugMode.Micro, "Micro Output: %s", macroOutputJson);
+
+                    // Write output to Macro.
+                    System.out.println(macroOutputJson);
+                } catch (JsonSyntaxException e) {
+                    Debug.Print(Debug.DebugMode.Micro, "Micro Input Error: %s", e.getCause().getMessage());
+                    Debug.PrintStacktrace(Debug.DebugMode.Dev, "Micro Input Stacktrace:", e);
+                }
+            } catch (Exception e) {
+                Debug.Print(Debug.DebugMode.Micro, "Micro Error: %s", e.getCause().getMessage());
+                Debug.PrintStacktrace(Debug.DebugMode.Dev, "Micro Stacktrace:", e);
+            }
+        } catch (JsonSyntaxException e) {
+            Debug.Print(Debug.DebugMode.Micro, "Micro Output Error: %s", e.getCause().getMessage());
+            Debug.PrintStacktrace(Debug.DebugMode.Dev, "Micro Output Stacktrace:", e);
         }
     }
 }
