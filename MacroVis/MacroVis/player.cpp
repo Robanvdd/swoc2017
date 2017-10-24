@@ -1,5 +1,7 @@
 #include "player.h"
 
+#include <QDebug>
+
 Player::Player(QObject *parent) : GameObject(-1, parent)
 {   
 }
@@ -48,7 +50,18 @@ void Player::destroyUfo(int ufoId)
     }
 }
 
-//QColor Player::getColor() const
-//{
-//    return m_color;
-//}
+double Player::getHue() const
+{
+    return m_hue;
+}
+
+QColor Player::getColor() const
+{
+    return m_color;
+}
+
+void Player::setColor(const QColor& color)
+{
+    m_color = color;
+    emit colorChanged();
+}

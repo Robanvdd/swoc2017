@@ -42,8 +42,9 @@ Flickable {
                         model: modelData.ufos
                         delegate: UfoImage {
                             id: image
-                            hue: 0.6
+                            hue: modelData.hue
                             property int ufoId: modelData.objectId
+                            property bool inFight: modelData.inFight
                             x: modelData.coord.x - 0.5*width
                             y: modelData.coord.y - 0.5*height
                             Behavior on x { NumberAnimation { duration: tickDuration } }
@@ -59,7 +60,7 @@ Flickable {
                             }
 
                             BattleImage {
-                                visible: modelData.inFight
+                                visible: image.inFight
                                 anchors.centerIn: parent
                                 width: image.width
                                 height: image.height

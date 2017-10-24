@@ -52,6 +52,7 @@ Column {
             delegate: Label {
                 parent: playerCreditGrid
                 text: modelData.name
+                color: modelData.color
             }
         }
         Repeater {
