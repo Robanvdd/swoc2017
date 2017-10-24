@@ -104,14 +104,14 @@ def get_first_jar_name():
 def create_jar_run_script(jarName):
     # Working from bot-id directory
     with open("runCommand.txt", "w") as f:
-        f.write("java -jar code/" + jarName)
+        f.write("java -jar " + os.getcwd() + "\\code\\" + jarName)
 
     with open("run.sh", "w") as f:
-        f.write("java -jar code/" + jarName)
+        f.write("java -jar " + os.getcwd() + "\\code\\" + jarName)
     st = os.stat("run.sh")
     os.chmod("run.sh", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
     with open("run.bat", "w") as f:
-        f.write("java -jar code/" + jarName)
+        f.write("java -jar " + os.getcwd() + "\\code\\" + jarName)
     st = os.stat("run.bat")
     os.chmod("run.bat", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
@@ -129,16 +129,16 @@ def get_first_exe_name():
 def create_csharp_run_script(exeName):
     # Working from bot-id directory
     with open("runCommand.txt", "w") as f:
-        f.write("code/" + exeName)
+        f.write(os.getcwd() + "\\code\\" + exeName)
 
     with open("run.sh", "w") as f:
-        f.write("code/" + exeName)
+        f.write(os.getcwd() + "\\code\\" + exeName)
     
     st = os.stat("run.sh")
     os.chmod("run.sh", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
     with open("run.bat", "w") as f:
-        f.write("code/" + exeName)
+        f.write(os.getcwd() + "\\code\\" + exeName)
     
     st = os.stat("run.bat")
     os.chmod("run.bat", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
@@ -159,14 +159,14 @@ def get_first_py_name():
 def create_python_run_script(pyName):
     # Working from bot-id directory
     with open("runCommand.txt", "w") as f:
-        f.write("python code/" + pyName)
+        f.write("python " + os.getcwd() + "\\code\\" + pyName)
 
     with open("run.sh", "w") as f:
-        f.write("python code/" + pyName)
+        f.write("python " + os.getcwd() + "\\code\\" + pyName)
     st = os.stat("run.sh")
     os.chmod("run.sh", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
     with open("run.bat", "w") as f:
-        f.write("python code/" + pyName)
+        f.write("python " + os.getcwd() + "\\code\\" + pyName)
     st = os.stat("run.bat")
     os.chmod("run.bat", st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
