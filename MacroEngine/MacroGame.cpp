@@ -3,6 +3,7 @@
 #include "ConquerCommand.h"
 #include "MacroGame.h"
 #include "MicroGameInput.h"
+#include "MicroGameInputPlayer.h"
 #include "MicroGameOutput.h"
 #include "MoveToCoordCommand.h"
 #include "MoveToPlanetCommand.h"
@@ -44,7 +45,9 @@ MacroGame::MacroGame(QList<PlayerBotFolders*> playerBotFolders, Universe* univer
     setNameAndLogDir();
 
     int hue = 0;
-    int hueJump = 255 / m_playerBotFolders.size();
+    int hueJump = 0;
+    if (m_playerBotFolders.size() > 0)
+        hueJump = 255 / m_playerBotFolders.size();
     foreach (auto playerBotFolder, m_playerBotFolders)
     {
         auto player = new Player(playerBotFolder->getPlayerName(), hue, this);
@@ -157,7 +160,7 @@ void MacroGame::stopMacroGame()
 
 bool MacroGame::gameTimeOver()
 {
-    return m_elapsedTimer.elapsed() > 60e3;
+    return m_elapsedTimer.elapsed() > 600e3;
 }
 
 void MacroGame::handleTick()
@@ -214,41 +217,6 @@ void MacroGame::handleBuyCommand(Player* player, BuyCommand* buyCommand)
     m_ufoShop.buyUfos(player, m_universe->getPlanet(buyCommand->getPlanetId()), m_universe, buyCommand->getAmount());
 }
 
-void MacroGame::handleConquerCommand(Player* player, ConquerCommand* conquerCommand)
-{
-    auto planet = m_universe->getPlanet(conquerCommand->getPlanetId());
-    if (planet == nullptr || player == nullptr)
-        return;
-    // Planet not yet claimed
-    if (planet->getOwnedBy() == -1)
-    {
-        planet->takeOverBy(player);
-        return;
-    }
-
-    // Prepare fight
-    Player* currentOwner = m_universe->getPlayers().value(planet->getOwnedBy(), nullptr);
-    if (currentOwner == nullptr)
-    {
-        throw std::logic_error("Planet is owned, but not by an existing player");
-    }
-
-    if (currentOwner == player)
-        return;
-
-    SolarSystem* solarSystem = m_universe->getCorrespondingSolarSystem(planet);
-    QPointF location = solarSystem->getPlanetLocation(*planet);
-    QList<Ufo*> nearbyUfosPlayer = solarSystem->getUfosNearLocation(location, *player);
-    QList<Ufo*> nearbyUfosCurrentOwner = solarSystem->getUfosNearLocation(location, *currentOwner);
-    if (nearbyUfosPlayer.size() == 0)
-        return;
-    if (nearbyUfosCurrentOwner.size() == 0)
-    {
-        planet->takeOverBy(player);
-        return;
-    }
-    startMicroGame(planet, player, nearbyUfosPlayer, currentOwner, nearbyUfosCurrentOwner);
-}
 
 void MacroGame::handleMoveToPlanetCommand(Player* player, MoveToPlanetCommand* moveToPlanetCommand)
 {
@@ -287,20 +255,69 @@ void MacroGame::handleMoveToCoordCommand(Player* player, MoveToCoordCommand* mov
     }
 }
 
-void MacroGame::startMicroGame(Planet* planet, Player* playerA, QList<Ufo*> ufosPlayerA, Player* playerB, QList<Ufo*> ufosPlayerB)
+void MacroGame::handleConquerCommand(Player* player, ConquerCommand* conquerCommand)
 {
-    MicroGameInput input(playerA, ufosPlayerA, m_playerMicroBotFolder[playerA],
-                         playerB, ufosPlayerB, m_playerMicroBotFolder[playerB]);
+    auto planet = m_universe->getPlanet(conquerCommand->getPlanetId());
+    if (planet == nullptr || player == nullptr)
+        return;
+    // Planet not yet claimed
+    if (planet->getOwnedBy() == -1)
+    {
+        planet->takeOverBy(player);
+        return;
+    }
 
+    // Prepare fight
+    Player* currentOwner = m_universe->getPlayers().value(planet->getOwnedBy(), nullptr);
+    if (currentOwner == nullptr)
+    {
+        throw std::logic_error("Planet is owned, but not by an existing player");
+    }
+
+    if (currentOwner == player)
+        return;
+
+    SolarSystem* solarSystem = m_universe->getCorrespondingSolarSystem(planet);
+    QPointF location = solarSystem->getPlanetLocation(*planet);
+    QList<Ufo*> nearbyUfosPlayer = m_universe->getUfosNearLocation(location, *player);
+    QList<Ufo*> nearbyUfosCurrentOwner = m_universe->getUfosNearLocation(location, *currentOwner);
+    if (nearbyUfosPlayer.size() == 0)
+        return;
+    if (nearbyUfosCurrentOwner.size() == 0)
+    {
+        planet->takeOverBy(player);
+        return;
+    }
+    startMicroGame(player, location, planet);
+}
+
+void MacroGame::startMicroGame(Player* player, const QPointF& location, Planet* planet)
+{
+    if (m_universe->getUfosNearLocation(location, *player).size() <= 0)
+        return;
+
+    QMap<Player*, QList<Ufo*>> playerUfos;
+    QList<MicroGameInputPlayer> microGameInputs;
+    foreach (auto player, m_universe->getPlayers())
+    {
+        QList<Ufo*> nearbyUfos = m_universe->getUfosNearLocation(location, *player);
+        if (nearbyUfos.size() > 0)
+            microGameInputs.append(MicroGameInputPlayer(player, nearbyUfos, m_playerMicroBotFolder[player]));
+    }
+    if (microGameInputs.size() >= 2)
+        startMicroGame(MicroGameInput(microGameInputs), planet);
+}
+
+void MacroGame::startMicroGame(const MicroGameInput& input, Planet* planet)
+{
     std::cerr << "Starting MicroGame at tick " << m_currentTick << std::endl;
 
-    foreach (auto ufo, ufosPlayerA)
+    foreach (auto playerInput, input.m_microGameInputPlayers)
     {
-        ufo->setInFight(true);
-    }
-    foreach (auto ufo, ufosPlayerB)
-    {
-        ufo->setInFight(true);
+        foreach (auto ufo, playerInput.ufos)
+        {
+            ufo->setInFight(true);
+        }
     }
 
     static int nextMicroGame = 0;
@@ -309,7 +326,7 @@ void MacroGame::startMicroGame(Planet* planet, Player* playerA, QList<Ufo*> ufos
     MicroGame* microGame = new MicroGame("java -jar micro.jar", input, microLogFolder.absolutePath());
     microGame->startProcess();
 
-    QObject::connect(microGame, &MicroGame::dataAvailable, this, [this, microGame, planet]() {
+    QObject::connect(microGame, &MicroGame::dataAvailable, this, [this, microGame, planet, microLogFolder]() {
         if (microGame->canReadLine())
         {
             auto result = microGame->readLine();
@@ -338,7 +355,7 @@ void MacroGame::startMicroGame(Planet* planet, Player* playerA, QList<Ufo*> ufos
                 }
             }
 
-            QFile file("microOutput_" + QString::number(microGame->getId()) + ".json");
+            QFile file(microLogFolder.absolutePath() + QDir::separator() + "microOutput_" + QString::number(microGame->getId()) + ".json");
             if (file.open(QIODevice::ReadWrite))
             {
                 QTextStream stream(&file);

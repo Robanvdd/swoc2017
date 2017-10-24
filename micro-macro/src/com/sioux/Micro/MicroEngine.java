@@ -3,11 +3,13 @@ package com.sioux.Micro;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonSyntaxException;
 import com.sioux.BotProcess;
 import com.sioux.Macro.MacroInput;
 import com.sioux.Macro.MacroOutput;
 import com.sioux.Macro.MacroPlayer;
 import com.sioux.Micro.Command.Move;
+import com.sioux.Micro.Command.MoveTo;
 import com.sioux.Micro.Command.Shoot;
 import com.sioux.Micro.Command.ShootAt;
 import com.sioux.Micro.Configuration.Arena;
@@ -63,10 +65,11 @@ public class MicroEngine {
                 if (!state.getArena().Playable()) {
                     break;
                 }
-                state.getArena().UpdateArena(state.getTick());
 
                 Debug.Print(Debug.DebugMode.Micro, "Tick %d, Arena %d-%d",state.getTick(),
                         state.getArena().getWidth(), state.getArena().getHeight());
+
+                state.getArena().UpdateArena(state.getTick());
 
                 SendGameState();
                 WaitForCommands();
@@ -201,9 +204,13 @@ public class MicroEngine {
             element.getAsJsonObject().addProperty("playerName", player.getName());
             String stateJson = gson.toJson(element);
 
+            Debug.Print(Debug.DebugMode.Micro, "Sending game state to player %d (%s): %s",
+                    player.getId(), player.getName(), stateJson);
+
             BotProcess script = scripts.get(player.getId());
             if(!script.writeLine(stateJson)) {
-                Debug.Print(Debug.DebugMode.Micro, "Failed to send game state to player %d", player.getId());
+                Debug.Print(Debug.DebugMode.Micro, "Failed to send game state to player %d (%s)",
+                        player.getId(), player.getName());
             }
         }
     }
@@ -212,14 +219,20 @@ public class MicroEngine {
         for (MicroPlayer player : state.getPlayers()) {
             BotProcess script = scripts.get(player.getId());
             String inputJson = script.readLine(1000);
-            MicroInput input = gson.fromJson(inputJson, MicroInput.class);
 
-            if (input == null) {
-                Debug.Print(Debug.DebugMode.Micro, "Failed to receive commands from player %d", player.getId());
-                continue;
+            Debug.Print(Debug.DebugMode.Script, "Received commands from player %d (%s): %s",
+                    player.getId(), player.getName(), inputJson);
+
+            try {
+                MicroInput input = gson.fromJson(inputJson, MicroInput.class);
+                if (input != null) {
+                    ExecuteCommands(player, input);
+                }
+            } catch (JsonSyntaxException e) {
+                Debug.Print(Debug.DebugMode.Micro, "Failed to receive commands from player %d (%s). %s: %s ",
+                        player.getId(), player.getName(), e.getCause().getMessage(), inputJson);
+                Debug.PrintStacktrace(Debug.DebugMode.Dev, "Commands Parser Stacktrace:", e);
             }
-
-            ExecuteCommands(player, input);
         }
 
         ProcessCollisions();
@@ -239,7 +252,12 @@ public class MicroEngine {
 
             Move moveCmd = commands.getMove();
             if (moveCmd != null && bot.canMove()) {
-                bot.Move(moveCmd);
+                bot.Move(moveCmd.getSpeed(), moveCmd.getDirection());
+            }
+
+            MoveTo moveToCmd = commands.getMoveTo();
+            if (moveToCmd != null && moveCmd == null && bot.canMove()) {
+                bot.MoveTo(moveToCmd.getX(), moveToCmd.getY(), moveToCmd.getSpeed());
             }
 
             Shoot shootCmd = commands.getShoot();
@@ -308,11 +326,12 @@ public class MicroEngine {
             if (script.isRunning()) {
                 String errors = script.getErrors();
                 if (!errors.isEmpty()) {
-                    Debug.Print(Debug.DebugMode.Script, "Player %d script error output:\n %s",
-                            player.getId(), errors);
+                    Debug.Print(Debug.DebugMode.Script, "Player %d (%s) script error output:\n %s",
+                            player.getId(), player.getName(), errors);
                 }
             } else {
-                Debug.Print(Debug.DebugMode.Micro, "Player %d script not running!", player.getId());
+                Debug.Print(Debug.DebugMode.Micro, "Player %d (%s) script not running!",
+                        player.getId(), player.getName());
             }
         }
     }
