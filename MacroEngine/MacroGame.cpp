@@ -292,7 +292,7 @@ void MacroGame::startMicroGame(Planet* planet, Player* playerA, QList<Ufo*> ufos
     MicroGameInput input(playerA, ufosPlayerA, m_playerMicroBotFolder[playerA],
                          playerB, ufosPlayerB, m_playerMicroBotFolder[playerB]);
 
-    std::cerr << "Starting MicroGame" << std::endl;
+    std::cerr << "Starting MicroGame at tick " << m_currentTick << std::endl;
 
     foreach (auto ufo, ufosPlayerA)
     {
