@@ -326,7 +326,7 @@ void MacroGame::startMicroGame(const MicroGameInput& input, Planet* planet)
     MicroGame* microGame = new MicroGame("java -jar micro.jar", input, microLogFolder.absolutePath());
     microGame->startProcess();
 
-    QObject::connect(microGame, &MicroGame::dataAvailable, this, [this, microGame, planet]() {
+    QObject::connect(microGame, &MicroGame::dataAvailable, this, [this, microGame, planet, microLogFolder]() {
         if (microGame->canReadLine())
         {
             auto result = microGame->readLine();
@@ -355,7 +355,7 @@ void MacroGame::startMicroGame(const MicroGameInput& input, Planet* planet)
                 }
             }
 
-            QFile file("microOutput_" + QString::number(microGame->getId()) + ".json");
+            QFile file(microLogFolder.absolutePath() + QDir::separator() + "microOutput_" + QString::number(microGame->getId()) + ".json");
             if (file.open(QIODevice::ReadWrite))
             {
                 QTextStream stream(&file);
