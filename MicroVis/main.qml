@@ -389,7 +389,6 @@ ApplicationWindow {
             Label {
                 id: playerLabel
                 text: "Players:"
-                visible: showDebug
             }
 
             Repeater {
@@ -397,7 +396,6 @@ ApplicationWindow {
                 delegate: Label {
                     text: "  " + modelData.name
                     color: modelData.color
-                    visible: showDebug
                 }
             }
         }
