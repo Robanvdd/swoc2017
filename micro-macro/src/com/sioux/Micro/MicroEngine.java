@@ -217,11 +217,11 @@ public class MicroEngine {
             BotProcess script = scripts.get(player.getId());
             String inputJson = script.readLine(1000);
 
-            if (inputJson == null) continue;
-
             try {
                 MicroInput input = gson.fromJson(inputJson, MicroInput.class);
-                ExecuteCommands(player, input);
+                if (input != null) {
+                    ExecuteCommands(player, input);
+                }
             } catch (JsonSyntaxException e) {
                 Debug.Print(Debug.DebugMode.Micro, "Failed to receive commands from player %d", player.getId());
                 Debug.Print(Debug.DebugMode.Micro, "%s: %s", e.getCause().getMessage(), inputJson);
