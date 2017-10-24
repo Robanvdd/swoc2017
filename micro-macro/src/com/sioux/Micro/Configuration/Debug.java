@@ -1,8 +1,5 @@
 package com.sioux.Micro.Configuration;
 
-import com.sun.glass.ui.Window;
-import com.sun.javafx.binding.StringFormatter;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;

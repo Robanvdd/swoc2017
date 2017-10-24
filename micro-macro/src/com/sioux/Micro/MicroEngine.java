@@ -217,6 +217,8 @@ public class MicroEngine {
             BotProcess script = scripts.get(player.getId());
             String inputJson = script.readLine(1000);
 
+            if (inputJson == null) continue;
+
             try {
                 MicroInput input = gson.fromJson(inputJson, MicroInput.class);
                 ExecuteCommands(player, input);
