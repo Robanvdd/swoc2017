@@ -51,7 +51,7 @@ setTimeout(function() {
         if (err) {
             console.log('admin already exists (or there was an error in its creation)');
         } else {
-            console.log('admin2 created succesfully');
+            console.log('admin created succesfully');
         }
     });
 }, 5000);
