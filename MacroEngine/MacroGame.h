@@ -18,6 +18,7 @@
 #include <QMap>
 #include <QObject>
 #include <QTimer>
+#include <QList>
 #include <memory>
 
 class MacroGame : public GameObject
@@ -69,8 +70,9 @@ private:
     void handleMoveToPlanetCommand(Player* player, MoveToPlanetCommand* moveToPlanetCommand);
     void handleMoveToCoordCommand(Player* player, MoveToCoordCommand* moveToCoordCommand);
 
-    void startMicroGame(Planet* planet, Player* playerA, QList<Ufo*> ufosPlayerA, Player* playerB, QList<Ufo*> ufosPlayerB);
+    void startMicroGame(const MicroGameInput& input, Planet* planet);
     void setNameAndLogDir();
+    void startMicroGame(Player* player, const QPointF& location, Planet* planet);
 };
 
 #endif // MACROGAME_H

@@ -8,6 +8,7 @@
 #include <QJsonObject>
 #include <QMap>
 #include <QObject>
+#include <QList>
 
 class Universe : public GameObject
 {
@@ -18,6 +19,7 @@ public:
     void applyTick(double durationInSeconds);
 
     void addPlayer(Player* player);
+    QList<Ufo*> getUfosNearLocation(const QPointF& location, const Player& player);
 
     QMap<int, SolarSystem*> getSolarSystems() const;
     Planet* getPlanet(int id) const;

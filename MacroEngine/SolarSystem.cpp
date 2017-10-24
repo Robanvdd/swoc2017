@@ -50,18 +50,3 @@ QPointF SolarSystem::getPlanetLocation(const Planet& planet) const
 {
     return planet.getCartesianCoordinates() + m_coord;
 }
-
-QList<Ufo*> SolarSystem::getUfosNearLocation(const QPointF& location, const Player& player)
-{
-    QList<Ufo*> result;
-    foreach (Ufo* ufo, player.getUfos())
-    {
-        QPointF distanceDiff = ufo->getCoord() - location;
-        double squaredDistance = std::pow(distanceDiff.x(), 2) + std::pow(distanceDiff.y(), 2);
-        if ( squaredDistance < std::pow(256, 2) && !ufo->getInFight())
-        {
-            result << ufo;
-        }
-    }
-    return result;
-}

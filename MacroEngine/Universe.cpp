@@ -1,3 +1,4 @@
+#include "Ufo.h"
 #include "Universe.h"
 
 #include <QJsonArray>
@@ -101,4 +102,19 @@ void Universe::addCredits(Player* player, double durationInSeconds)
     }
     if (ownedPlanets > 0)
         player->addCredits(ownedPlanets * m_incomePerPlanetPerSecond * durationInSeconds);
+}
+
+QList<Ufo*> Universe::getUfosNearLocation(const QPointF& location, const Player& player)
+{
+    QList<Ufo*> result;
+    foreach (Ufo* ufo, player.getUfos())
+    {
+        QPointF distanceDiff = ufo->getCoord() - location;
+        double squaredDistance = std::pow(distanceDiff.x(), 2) + std::pow(distanceDiff.y(), 2);
+        if ( squaredDistance < std::pow(256, 2) && !ufo->getInFight())
+        {
+            result << ufo;
+        }
+    }
+    return result;
 }

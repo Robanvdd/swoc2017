@@ -1,6 +1,7 @@
 #ifndef MICROGAMEINPUT_H
 #define MICROGAMEINPUT_H
 
+#include "MicroGameInputPlayer.h"
 #include "Player.h"
 #include "Ufo.h"
 
@@ -9,16 +10,10 @@
 class MicroGameInput
 {
 public:
-    MicroGameInput(Player* playerA, QList<Ufo*> ufosPlayerA, QString botAFolder, Player* playerB, QList<Ufo*> ufosPlayerB, QString botBFolder);
+    MicroGameInput(QList<MicroGameInputPlayer> microGameInputPlayers);
     void writePlayerJson(QJsonObject& jsonObject) const;
 
-private:
-    Player* m_playerA;
-    Player* m_playerB;
-    QList<Ufo*> m_ufosPlayerA;
-    QList<Ufo*> m_ufosPlayerB;
-    QString m_botAFolder;
-    QString m_botBFolder;
+    QList<MicroGameInputPlayer> m_microGameInputPlayers;
 };
 
 #endif // MICROGAMEINPUT_H

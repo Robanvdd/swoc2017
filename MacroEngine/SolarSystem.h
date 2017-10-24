@@ -17,7 +17,6 @@ public:
     void applyTick(double durationInSeconds);
     QMap<int, Planet*> getPlanets();
     QPointF getPlanetLocation(const Planet&planet) const;
-    QList<Ufo*> getUfosNearLocation(const QPointF& location, const Player& player);
 
 signals:
 
