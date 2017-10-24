@@ -204,10 +204,13 @@ public class MicroEngine {
             element.getAsJsonObject().addProperty("playerName", player.getName());
             String stateJson = gson.toJson(element);
 
+            Debug.Print(Debug.DebugMode.Micro, "Sending game state to player %d (%s): %s",
+                    player.getId(), player.getName(), stateJson);
+
             BotProcess script = scripts.get(player.getId());
             if(!script.writeLine(stateJson)) {
-                Debug.Print(Debug.DebugMode.Micro, "Failed to send game state to player %d", player.getId());
-                Debug.Print(Debug.DebugMode.Micro, "Game State: %s", stateJson);
+                Debug.Print(Debug.DebugMode.Micro, "Failed to send game state to player %d (%s)",
+                        player.getId(), player.getName());
             }
         }
     }
@@ -217,14 +220,17 @@ public class MicroEngine {
             BotProcess script = scripts.get(player.getId());
             String inputJson = script.readLine(1000);
 
+            Debug.Print(Debug.DebugMode.Script, "Received commands from player %d (%s): %s",
+                    player.getId(), player.getName(), inputJson);
+
             try {
                 MicroInput input = gson.fromJson(inputJson, MicroInput.class);
                 if (input != null) {
                     ExecuteCommands(player, input);
                 }
             } catch (JsonSyntaxException e) {
-                Debug.Print(Debug.DebugMode.Micro, "Failed to receive commands from player %d", player.getId());
-                Debug.Print(Debug.DebugMode.Micro, "%s: %s", e.getCause().getMessage(), inputJson);
+                Debug.Print(Debug.DebugMode.Micro, "Failed to receive commands from player %d (%s). %s: %s ",
+                        player.getId(), player.getName(), e.getCause().getMessage(), inputJson);
                 Debug.PrintStacktrace(Debug.DebugMode.Dev, "Commands Parser Stacktrace:", e);
             }
         }
@@ -320,11 +326,12 @@ public class MicroEngine {
             if (script.isRunning()) {
                 String errors = script.getErrors();
                 if (!errors.isEmpty()) {
-                    Debug.Print(Debug.DebugMode.Script, "Player %d script error output:\n %s",
-                            player.getId(), errors);
+                    Debug.Print(Debug.DebugMode.Script, "Player %d (%s) script error output:\n %s",
+                            player.getId(), player.getName(), errors);
                 }
             } else {
-                Debug.Print(Debug.DebugMode.Micro, "Player %d script not running!", player.getId());
+                Debug.Print(Debug.DebugMode.Micro, "Player %d (%s) script not running!",
+                        player.getId(), player.getName());
             }
         }
     }
