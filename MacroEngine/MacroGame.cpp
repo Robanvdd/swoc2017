@@ -44,7 +44,9 @@ MacroGame::MacroGame(QList<PlayerBotFolders*> playerBotFolders, Universe* univer
     setNameAndLogDir();
 
     int hue = 0;
-    int hueJump = 255 / m_playerBotFolders.size();
+    int hueJump = 0;
+    if (m_playerBotFolders.size() > 0)
+        hueJump = 255 / m_playerBotFolders.size();
     foreach (auto playerBotFolder, m_playerBotFolders)
     {
         auto player = new Player(playerBotFolder->getPlayerName(), hue, this);
@@ -157,7 +159,7 @@ void MacroGame::stopMacroGame()
 
 bool MacroGame::gameTimeOver()
 {
-    return m_elapsedTimer.elapsed() > 60e3;
+    return m_elapsedTimer.elapsed() > 600e3;
 }
 
 void MacroGame::handleTick()
