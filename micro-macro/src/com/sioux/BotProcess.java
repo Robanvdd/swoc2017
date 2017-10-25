@@ -24,17 +24,11 @@ public class BotProcess implements AutoCloseable
     private final Thread inputThread;
     private final Thread errorThread;
 
-    public BotProcess(String workingDir, String command) throws IOException
+    public BotProcess(String command) throws IOException
     {
-        File parent = new File(workingDir);
-        if (!parent.exists())
-        {
-            throw new IllegalArgumentException("Working directory does not exist");
-        }
+        Debug.Print(Debug.DebugMode.Dev, "Starting new bot process with command: %s", command);
 
-        Debug.Print(Debug.DebugMode.Dev, "Starting new bot process %s in %s", command, parent);
-
-        child = Runtime.getRuntime().exec(workingDir + "\\" + command, null, parent);
+        child = Runtime.getRuntime().exec(command);
 
         inputReader = new StreamGobbler(child.getInputStream());
         errorReader = new StreamGobbler(child.getErrorStream());

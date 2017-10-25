@@ -86,7 +86,7 @@
     <Compile Include="Protocol\BotAction.cs" />
     <Compile Include="Protocol\GameResponse.cs" />
     <Compile Include="Protocol\GameState.cs" />
-    <Compile Include="Protocol\Movement.cs" />
+    <Compile Include="Protocol\Move.cs" />
     <Compile Include="Protocol\MoveTo.cs" />
     <Compile Include="Protocol\Player.cs" />
     <Compile Include="Protocol\Projectile.cs" />

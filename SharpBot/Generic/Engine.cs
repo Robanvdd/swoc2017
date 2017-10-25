@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -90,7 +91,14 @@ namespace Swoc
             readThread.Join();
         }
 
-        private static T ReadMessage<T>()
+        private readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
+        {
+            NullValueHandling = NullValueHandling.Ignore,
+            MissingMemberHandling = MissingMemberHandling.Ignore,
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
+        };
+
+        private T ReadMessage<T>()
         {
             string line = Console.ReadLine();
             if (String.IsNullOrEmpty(line))
@@ -98,7 +106,7 @@ namespace Swoc
 
             try
             {
-                return JsonConvert.DeserializeObject<T>(line);
+                return JsonConvert.DeserializeObject<T>(line, jsonSerializerSettings);
             }
             catch (Exception)
             {
@@ -106,9 +114,9 @@ namespace Swoc
             }
         }
 
-        public static void WriteMessage<T>(T message)
+        public void WriteMessage<T>(T message)
         {
-            Console.WriteLine(JsonConvert.SerializeObject(message, Formatting.None));
+            Console.WriteLine(JsonConvert.SerializeObject(message, Formatting.None, jsonSerializerSettings));
         }
     }
 }
