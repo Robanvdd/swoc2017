@@ -40,18 +40,18 @@ def get_first_enemy_ufo(macro):
 def command_move_to_coord(ufoIds, coord):
     x = math.floor(coord['x'])
     y = math.floor(coord['y'])
-    command = {"Command" : "moveToCoord", "Ufos" : ufoIds, "Coord" : {"X" : x, "Y" : y}}
+    command = {"command" : "moveToCoord", "ufos" : ufoIds, "coord" : {"x" : x, "y" : y}}
     logger.info('output ' + str(json.dumps(command)))
     print(json.dumps(command))
 
 def command_conquer(planetId):
-    command = {"Command" : "conquer", "PlanetId" : planetId}
+    command = {"command" : "conquer", "planetId" : planetId}
     logger.info('output ' + str(json.dumps(command)))
     print(json.dumps(command))
 
 def command_buy(credits, planetId):
     ufoCost = 100000
-    command = {"Command" : "buy", "Amount" : math.floor(credits / ufoCost), "PlanetId" : planetId}
+    command = {"command" : "buy", "amount" : math.floor(credits / ufoCost), "planetId" : planetId}
     logger.info('output ' + str(json.dumps(command)))
     print(json.dumps(command))
 
