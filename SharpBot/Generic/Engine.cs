@@ -91,19 +91,11 @@ namespace Swoc
             readThread.Join();
         }
 
-        private class LowercaseContractResolver : DefaultContractResolver
-        {
-            protected override string ResolvePropertyName(string propertyName)
-            {
-                return propertyName.ToLower();
-            }
-        }
-
         private readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
         {
             NullValueHandling = NullValueHandling.Ignore,
             MissingMemberHandling = MissingMemberHandling.Ignore,
-            ContractResolver = new LowercaseContractResolver(),
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
         };
 
         private T ReadMessage<T>()
