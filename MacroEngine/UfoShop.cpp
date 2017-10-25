@@ -9,7 +9,19 @@ UfoShop::UfoShop(QObject *parent)
 
 void UfoShop::buyUfo(Player* player, Planet* planet, Universe* universe)
 {
-    if (planet == nullptr || player == nullptr || player->getCredits() < m_ufoPrice || planet->getOwnedBy() != player->getId())
+    if (player == nullptr || player->getCredits() < m_ufoPrice)
+        return;
+
+    if (planet == nullptr)
+    {
+        auto ufo = new Ufo();
+        ufo->setCoord(QPointF(rand() % 15000, rand() % 15000));
+        ufo->setUniverse(universe);
+        player->giveUfo(ufo);
+        return;
+    }
+
+    if (planet->getOwnedBy() != player->getId())
         return;
     player->removeCredits(m_ufoPrice);
     auto ufo = new Ufo();

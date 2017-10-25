@@ -12,8 +12,8 @@ BuyCommand::BuyCommand(QObject* parent)
 
 void BuyCommand::readCommand(const QJsonObject jsonObject)
 {
-    m_amount = jsonObject["Amount"].toInt(0);
-    m_planetId = jsonObject["PlanetId"].toInt(-1);
+    m_amount = jsonObject["amount"].toInt(0);
+    m_planetId = jsonObject["planetId"].toInt(-1);
 }
 
 void BuyCommand::printCommand()

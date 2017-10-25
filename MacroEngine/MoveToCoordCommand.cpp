@@ -13,15 +13,15 @@ MoveToCoordCommand::MoveToCoordCommand(QObject* parent)
 
 void MoveToCoordCommand::readCommand(const QJsonObject jsonObject)
 {
-    QJsonArray ufoArray = jsonObject["Ufos"].toArray();
+    QJsonArray ufoArray = jsonObject["ufos"].toArray();
     for (int ufoIndex = 0; ufoIndex < ufoArray.size(); ufoIndex++)
     {
         m_ufos << ufoArray[ufoIndex].toInt(-1);
     }
 
-    QJsonObject coords = jsonObject["Coord"].toObject();
-    m_coords.setX(coords["X"].toInt(-1));
-    m_coords.setY(coords["Y"].toInt(-1));
+    QJsonObject coords = jsonObject["coord"].toObject();
+    m_coords.setX(coords["x"].toInt(-1));
+    m_coords.setY(coords["y"].toInt(-1));
 }
 
 void MoveToCoordCommand::printCommand()
