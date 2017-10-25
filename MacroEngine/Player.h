@@ -32,9 +32,9 @@ public:
     QColor getColor() const;
     void setColor(const QColor& color);
 
-    Ufo*getUfo(int id) const;
+    Ufo* getUfo(int id) const;
     QString getColorName();
-    int getHue() const;
+    double getHue() const;
 
 signals:
 
@@ -45,7 +45,7 @@ private:
     QString m_name;
     QList<Ufo*> m_ufos;
     QColor m_color;
-    int m_hue;
+    double m_hue;
 };
 
 #endif // PLAYER_H

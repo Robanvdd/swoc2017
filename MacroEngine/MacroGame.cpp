@@ -310,7 +310,7 @@ void MacroGame::startMicroGame(Player* player, const QPointF& location, Planet* 
 
 void MacroGame::startMicroGame(const MicroGameInput& input, Planet* planet)
 {
-    std::cerr << "Starting MicroGame" << std::endl;
+    std::cerr << "Starting MicroGame at tick " << m_currentTick << std::endl;
 
     foreach (auto playerInput, input.m_microGameInputPlayers)
     {
