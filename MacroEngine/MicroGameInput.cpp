@@ -2,45 +2,29 @@
 
 #include <QJsonArray>
 
-MicroGameInput::MicroGameInput(Player* playerA, QList<Ufo*> ufosPlayerA, QString botAFolder, Player* playerB, QList<Ufo*> ufosPlayerB, QString botBFolder)
-    : m_playerA(playerA)
-    , m_playerB(playerB)
-    , m_ufosPlayerA(ufosPlayerA)
-    , m_ufosPlayerB(ufosPlayerB)
-    , m_botAFolder(botAFolder)
-    , m_botBFolder(botBFolder)
+MicroGameInput::MicroGameInput(QList<MicroGameInputPlayer> microGameInputPlayers)
+    : m_microGameInputPlayers(microGameInputPlayers)
 {
 }
 
 void MicroGameInput::writePlayerJson(QJsonObject& jsonObject) const
 {
     QJsonArray playersArray;
-    QJsonObject playerAObject;
-    playerAObject["id"] = m_playerA->getId();
-    playerAObject["name"] = m_playerA->getName();
-    playerAObject["color"] = m_playerA->getColorName();
-    playerAObject["hue"] = m_playerA->getHue();
-    QJsonArray playerAUfos;
-    foreach (auto ufo, m_ufosPlayerA)
+    foreach (auto microGameInputPlayer, m_microGameInputPlayers)
     {
-        playerAUfos.append(ufo->getId());
+        QJsonObject playerObject;
+        playerObject["id"] = microGameInputPlayer.player->getId();
+        playerObject["name"] = microGameInputPlayer.player->getName();
+        playerObject["color"] = microGameInputPlayer.player->getColorName();
+        playerObject["hue"] = microGameInputPlayer.player->getHue();
+        QJsonArray playerAUfos;
+        foreach (auto ufo, microGameInputPlayer.ufos)
+        {
+            playerAUfos.append(ufo->getId());
+        }
+        playerObject["ufos"] = playerAUfos;
+        playerObject["bot"] = microGameInputPlayer.microBot + "\\";
+        playersArray.append(playerObject);
     }
-    playerAObject["ufos"] = playerAUfos;
-    playerAObject["bot"] = m_botAFolder + "\\";
-    playersArray.append(playerAObject);
-
-    QJsonObject playerBObject;
-    playerBObject["id"] = m_playerB->getId();
-    playerBObject["name"] = m_playerB->getName();
-    playerBObject["color"] = m_playerB->getColorName();
-    playerBObject["hue"] = m_playerB->getHue();
-    QJsonArray playerBUfos;
-    foreach (auto ufo, m_ufosPlayerB)
-    {
-        playerBUfos.append(ufo->getId());
-    }
-    playerBObject["ufos"] = playerBUfos;
-    playerBObject["bot"] = m_botBFolder + "\\";
-    playersArray.append(playerBObject);
     jsonObject["players"] = playersArray;
 }

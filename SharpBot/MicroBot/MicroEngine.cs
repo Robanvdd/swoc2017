@@ -40,12 +40,12 @@ namespace MicroBot
             {
                 WriteMessage(new GameResponse
                 {
-                    Bots = new List<BotAction>
+                    Commands = new List<BotAction>
                     {
                         new BotAction
                         {
                             Id = ufo.Id,
-                            Movement = new Movement { Direction = Sin(time * 2) * 70, Speed = Sin(time * 0.2) * 4 },
+                            Move = new Move { Direction = Sin(time * 2) * 70, Speed = Sin(time * 0.2) * 4 },
                             ShootAt = new ShootAt { X = targetUfo.Position.X, Y = targetUfo.Position.Y },
                         }
                     },

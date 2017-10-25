@@ -35,7 +35,7 @@ class StreamGobbler implements Runnable
         }
         catch (InterruptedException e)
         {
-            Debug.Print(Debug.DebugMode.Dev, "Read line timed out");
+            Debug.Print(Debug.DebugMode.Dev, "StreamGobbler read line timed out");
             return null;
         }
     }
