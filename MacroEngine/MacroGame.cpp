@@ -416,7 +416,7 @@ QJsonObject MacroGame::generateGameState()
 
 std::unique_ptr<CommandBase> MacroGame::createCommand(const QJsonObject object)
 {
-    auto commandString = object["Command"].toString();
+    auto commandString = object["command"].toString();
     std::unique_ptr<CommandBase> command;
     if (commandString == "moveToPlanet")
     {

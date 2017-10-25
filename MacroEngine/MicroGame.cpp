@@ -62,6 +62,10 @@ void MicroGame::startProcess()
         std::cerr << m_process->errorString().toStdString();
         throw std::runtime_error("Could not start micro.jar");
     }
+    else
+    {
+        std::cerr << "Succesfully started micro.jar";
+    }
 }
 
 void MicroGame::stopProcess()
