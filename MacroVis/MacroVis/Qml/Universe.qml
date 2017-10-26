@@ -39,14 +39,14 @@ Flickable {
                     width: childrenRect.width + childrenRect.x
                     height: childrenRect.height + childrenRect.y
                     Repeater {
-                        model: modelData.ufos
+                        model: ufos
                         delegate: UfoImage {
                             id: image
-                            hue: modelData.hue
-                            property int ufoId: modelData.objectId
-                            property bool inFight: modelData.inFight
-                            x: modelData.coord.x - 0.5*width
-                            y: modelData.coord.y - 0.5*height
+                            hue: hue
+                            property int ufoId: objectId
+                            property bool inFight: inFight
+                            x: coord.x - 0.5*width
+                            y: coord.y - 0.5*height
                             Behavior on x { NumberAnimation { duration: tickDuration } }
                             Behavior on y { NumberAnimation { duration: tickDuration } }
                             width: 64

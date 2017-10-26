@@ -12,6 +12,7 @@ Player::Player(int playerId, QObject* parent)
 {
     m_ufos = new UfosModel(this);
     emit ufosChanged();
+
 }
 
 Player::~Player()
@@ -36,11 +37,13 @@ Ufo* Player::getUfo(int ufoId) const
 void Player::destroyUfo(int ufoId)
 {
     m_ufos->destroyUfo(ufoId);
+    emit ufosChanged();
 }
 
 void Player::onlyKeepUfos(const QList<int> ufosToKeep)
 {
     m_ufos->onlyKeepUfos(ufosToKeep);
+    emit ufosChanged();
 }
 
 double Player::getHue() const

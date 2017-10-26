@@ -13,7 +13,8 @@ public:
         InFightRole,
         CoordRole,
         HueRole,
-        ColorRole
+        ColorRole,
+        ObjectIdRole
     };
 
     explicit UfosModel(QObject *parent = nullptr);

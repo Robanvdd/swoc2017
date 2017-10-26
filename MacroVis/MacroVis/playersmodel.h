@@ -7,14 +7,15 @@
 class PlayersModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(int length READ rowCount NOTIFY lengthChanged)
 public:
     enum PlayerRoles {
-            NameRole = Qt::UserRole + 1,
-            CreditsRole,
-            UfosRole,
-            HueRole,
-            ColorRole,
-        };
+        NameRole = Qt::UserRole + 1,
+        CreditsRole,
+        UfosRole,
+        HueRole,
+        ColorRole,
+    };
     explicit PlayersModel(QObject *parent = nullptr);
 
     void CreatePlayer(int playerId);
@@ -25,6 +26,9 @@ public:
     int rowCount(const QModelIndex& parent = QModelIndex()) const;
     QVariant data(const QModelIndex& index, int role) const;
     QHash<int, QByteArray> roleNames() const;
+
+signals:
+    void lengthChanged();
 
 private:
     QList<Player*> m_players;

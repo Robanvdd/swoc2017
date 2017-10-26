@@ -9,6 +9,7 @@ Game::Game(int gameId, QObject* parent)
     : GameObject(gameId, parent)
 {
     m_players = new PlayersModel(this);
+    emit playersChanged();
 }
 
 Game::~Game()

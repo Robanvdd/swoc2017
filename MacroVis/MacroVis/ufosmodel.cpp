@@ -21,8 +21,63 @@ bool UfosModel::ufoExists(int ufoId) const
 
 void UfosModel::createUfo(int ufoId)
 {
+    auto ufo = new Ufo(ufoId, this);
+
+    QObject::connect(ufo, &Ufo::coordChanged, this, [this,ufo]()
+    {
+        if (m_ufos.contains(ufo))
+        {
+            auto row = m_ufos.indexOf(ufo);
+            QVector<int> roles;
+            roles << CoordRole;
+            dataChanged(index(row), index(row), roles);
+        }
+    });
+
+    QObject::connect(ufo, &Ufo::inFightChanged, this, [this,ufo]()
+    {
+        if (m_ufos.contains(ufo))
+        {
+            auto row = m_ufos.indexOf(ufo);
+            QVector<int> roles;
+            roles << InFightRole;
+            dataChanged(index(row), index(row), roles);
+        }
+    });
+
+    QObject::connect(ufo, &Ufo::typeChanged, this, [this,ufo]()
+    {
+        if (m_ufos.contains(ufo))
+        {
+            auto row = m_ufos.indexOf(ufo);
+            QVector<int> roles;
+            roles << TypeRole;
+            dataChanged(index(row), index(row), roles);
+        }
+    });
+    QObject::connect(ufo, &Ufo::colorChanged, this, [this,ufo]()
+    {
+        if (m_ufos.contains(ufo))
+        {
+            auto row = m_ufos.indexOf(ufo);
+            QVector<int> roles;
+            roles << ColorRole;
+            dataChanged(index(row), index(row), roles);
+        }
+    });
+    QObject::connect(ufo, &Ufo::hueChanged, this, [this,ufo]()
+    {
+        if (m_ufos.contains(ufo))
+        {
+            auto row = m_ufos.indexOf(ufo);
+            QVector<int> roles;
+            roles << HueRole;
+            dataChanged(index(row), index(row), roles);
+        }
+    });
+
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
-    m_ufos.append(new Ufo(ufoId, this));
+    m_ufos.append(ufo);
     endInsertRows();
 }
 
@@ -69,7 +124,7 @@ int UfosModel::rowCount(const QModelIndex& parent) const
 
 QVariant UfosModel::data(const QModelIndex& index, int role) const
 {
-    if (index.row() < 0 || index.row() > m_ufos.count())
+    if (index.row() < 0 || index.row() >= m_ufos.count())
         return QVariant();
 
     switch (role) {
@@ -83,6 +138,8 @@ QVariant UfosModel::data(const QModelIndex& index, int role) const
         return m_ufos[index.row()]->getHue();
     case ColorRole:
         return m_ufos[index.row()]->getColor();
+    case ObjectIdRole:
+        return m_ufos[index.row()]->objectId();
     }
     return QVariant();
 }
@@ -95,5 +152,6 @@ QHash<int, QByteArray> UfosModel::roleNames() const
     roles[CoordRole] = "coord";
     roles[HueRole] = "hue";
     roles[ColorRole] = "color";
+    roles[ObjectIdRole] = "objectId";
     return roles;
 }
