@@ -46,14 +46,23 @@ MacroGame::MacroGame(QList<PlayerBotFolders*> playerBotFolders, Universe* univer
 
     int hue = 0;
     int hueJump = 0;
+    double ufoPlacement = 0.0;
+    double ufoPlacementJump = 0.0;
+    int nUfosPerPlayer = 3;
     if (m_playerBotFolders.size() > 0)
+    {
         hueJump = 255 / m_playerBotFolders.size();
+        ufoPlacementJump = 1.0 / (nUfosPerPlayer * m_playerBotFolders.size());
+    }
+
     foreach (auto playerBotFolder, m_playerBotFolders)
     {
         auto player = new Player(playerBotFolder->getPlayerName(), hue, this);
-        m_ufoShop.giveUfo(player, m_universe);
-        m_ufoShop.giveUfo(player, m_universe);
-        m_ufoShop.giveUfo(player, m_universe);
+        for (int i = 0; i < nUfosPerPlayer; i++)
+        {
+            m_ufoShop.giveUfo(player, m_universe, ufoPlacement);
+            ufoPlacement += ufoPlacementJump;
+        }
         m_universe->addPlayer(player);
         auto runCommandFilename = playerBotFolder->getMacroBotFolder() + "/" + RUN_FILE;
         QFile runCommandFile(runCommandFilename);
@@ -206,8 +215,12 @@ void MacroGame::communicateWithBot(Player* player, QJsonDocument gameStateDoc)
         if (error.error == QJsonParseError::NoError)
         {
             auto object = doc.object();
-            std::unique_ptr<CommandBase> command = createCommand(object);
-            handleCommand(player, command);
+            try {
+                std::unique_ptr<CommandBase> command = createCommand(object);
+                handleCommand(player, command);
+            } catch (const std::exception& e) {
+                std::cerr << "Exception parsing command: " << e.what() << std::endl;
+            }
         }
     }
 }

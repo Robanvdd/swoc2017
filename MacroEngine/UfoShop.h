@@ -13,7 +13,7 @@ class UfoShop : public QObject
 public:
     explicit UfoShop(QObject *parent = nullptr);
     void buyUfo(Player* player, Planet* planet, Universe* universe);
-    void giveUfo(Player* player, Universe* universe);
+    void giveUfo(Player* player, Universe* universe, double ufoPlacement);
 
     void buyUfos(Player *player, Planet* planet, Universe* universe, int amount=1);
 signals:

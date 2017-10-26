@@ -11,7 +11,7 @@ ConquerCommand::ConquerCommand(QObject* parent)
 
 void ConquerCommand::readCommand(const QJsonObject jsonObject)
 {
-    m_planetId = jsonObject["planetId"].toInt(-1);
+    m_planetId = jsonObject["planetId22"].toInt(-1);
 }
 
 void ConquerCommand::printCommand()
