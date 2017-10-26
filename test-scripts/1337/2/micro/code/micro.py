@@ -23,19 +23,19 @@ def distance(x1, y1, x2, y2):
     dy = y2-y1
     return math.sqrt(dx*dx + dy*dy)
 
-def get_my_bots(micro):
-    bots = []
+def get_my_ufos(micro):
+    ufos = []
     for p in micro['players']:
         if p['id'] == micro['playerId']:
-            bots = p['bots']
-    return bots
+            ufos = p['ufos']
+    return ufos
 
-def get_enemy_bots(micro):
-    enemyBots = []
+def get_enemy_ufos(micro):
+    enemyUfos = []
     for p in micro['players']:
         if p['id'] != micro['playerId']:
-            enemyBots += p['bots']
-    return enemyBots
+            enemyUfos += p['ufos']
+    return enemyUfos
 
 def get_corner(arenaWidth, arenaHeight, index):
     if index == 0:
@@ -47,11 +47,11 @@ def get_corner(arenaWidth, arenaHeight, index):
     if index == 3:
         return [20, arenaHeight - 20]
 
-def get_target_enemy(otherBots):
+def get_target_enemy(otherUfos):
     targetX = 0
     targetY = 0
-    if otherBots != []:
-        for bot in otherBots:
+    if otherUfos != []:
+        for bot in otherUfos:
             if bot['hitpoints'] > 0:
                 targetBot = bot
                 targetX = targetBot['position']['x']
@@ -76,34 +76,30 @@ def game_loop():
     global time
     time = time + 0.1
     
-    bots = get_my_bots(micro)
+    ufos = get_my_ufos(micro)
     
-    otherBots = get_enemy_bots(micro)
+    otherUfos = get_enemy_ufos(micro)
     
-    targetEnemy = get_target_enemy(otherBots)
+    targetEnemy = get_target_enemy(otherUfos)
     
     commands = {
         'commands': []
     }
     
     global targetLocation
-    if bots != []:
-        botx = bots[0]['position']['x']
-        boty = bots[0]['position']['y']
+    if ufos != []:
+        ufox = ufos[0]['position']['x']
+        ufoy = ufos[0]['position']['y']
         
-        logger.info('botx: ' + str(botx) + ', boty: ' + str(boty))
-        logger.info('targetLocation[0]: ' + str(targetLocation[0]) + ', targetLocation[1]: ' + str(targetLocation[1]))
-        
-        dis = distance(botx, boty, targetLocation[0], targetLocation[1])
+        dis = distance(ufox, ufoy, targetLocation[0], targetLocation[1])
         if (dis < 10):
             logger.info('distance: ' + str(dis))
             global targetCornerIndex
             targetCornerIndex += 1
-            logger.info('targetCornerIndex: ' + str(targetCornerIndex))
             targetLocation = get_corner(arenaWidth, arenaHeight, targetCornerIndex % 4)
         
         commands['commands'].append({
-            'id': bots[0]['id'],
+            'id': ufos[0]['id'],
             'moveTo': {
                 'x': targetLocation[0],
                 'y': targetLocation[1],
@@ -115,15 +111,15 @@ def game_loop():
             }
         })
     
-    for i in range(1, len(bots)):
-        bot0x = bots[0]['position']['x']
-        bot0y = bots[0]['position']['y']
+    for i in range(1, len(ufos)):
+        ufo0x = ufos[0]['position']['x']
+        ufo0y = ufos[0]['position']['y']
         
         commands['commands'].append({
-            'id': bots[i]['id'],
+            'id': ufos[i]['id'],
             'moveTo': {
-                'x': bot0x,
-                'y': bot0y,
+                'x': ufo0x,
+                'y': ufo0y,
                 'speed': 10
             },
             'shootAt': {
