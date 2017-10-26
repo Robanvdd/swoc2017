@@ -1,6 +1,5 @@
 """
 Example micro bot script.
-
 """
 
 import sys
@@ -59,6 +58,25 @@ def get_target_enemy(otherUfos):
                 break
     return [targetX, targetY]
 
+def append_move_to_command(commands, id, x, y, speed):
+    commands['commands'].append({
+        'id': id,
+        'moveTo': {
+            'x': x,
+            'y': y,
+            'speed': speed
+        }
+    })
+
+def append_shoot_at_command(commands, id, x, y):
+    commands['commands'].append({
+        'id': id,
+        'shootAt': {
+            'x': x,
+            'y': y
+        }
+    })
+
 time = 0
 targetLocation = [20, 20]
 targetCornerIndex = 0
@@ -77,9 +95,7 @@ def game_loop():
     time = time + 0.1
     
     ufos = get_my_ufos(micro)
-    
     otherUfos = get_enemy_ufos(micro)
-    
     targetEnemy = get_target_enemy(otherUfos)
     
     commands = {
@@ -98,40 +114,20 @@ def game_loop():
             targetCornerIndex += 1
             targetLocation = get_corner(arenaWidth, arenaHeight, targetCornerIndex % 4)
         
-        commands['commands'].append({
-            'id': ufos[0]['id'],
-            'moveTo': {
-                'x': targetLocation[0],
-                'y': targetLocation[1],
-                'speed': 10
-            },
-            'shootAt': {
-                'x': targetEnemy[0],
-                'y': targetEnemy[1]
-            }
-        })
+        append_shoot_at_command(commands, ufos[0]['id'], targetEnemy[0], targetEnemy[1])
+        append_move_to_command(commands, ufos[0]['id'], targetLocation[0], targetLocation[1], 10)
     
-    for i in range(1, len(ufos)):
-        ufo0x = ufos[0]['position']['x']
-        ufo0y = ufos[0]['position']['y']
-        
-        commands['commands'].append({
-            'id': ufos[i]['id'],
-            'moveTo': {
-                'x': ufo0x,
-                'y': ufo0y,
-                'speed': 10
-            },
-            'shootAt': {
-                'x': targetEnemy[0],
-                'y': targetEnemy[1]
-            }
-        })
-    
+    if len(ufos) > 1:
+        for i in range(1, len(ufos)):
+            ufo0x = ufos[0]['position']['x']
+            ufo0y = ufos[0]['position']['y']
+            
+            append_move_to_command(commands, ufos[i]['id'], ufo0x, ufo0y, 10)
+            append_shoot_at_command(commands, ufos[i]['id'], targetEnemy[0], targetEnemy[1])
     
     # Send output to micro.
     commands_json = json.dumps(commands)
-    logger.info('output' + commands_json)
+    logger.info('output ' + commands_json)
     print(commands_json)
 
 def main():
