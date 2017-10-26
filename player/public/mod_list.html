@@ -1,8 +1,6 @@
 <h1>Game Log</h1>
 <h2>History of Space Invaders</h2>
 <h3>Make the Galaxy Great Again!</h3>
-Show matches of <select ng-model="selectedUser" ng-options="user.username for user in activeUsers" ng-change="filter()"><select>
-<p></button></p>
 
 <table width="100%" class="table table-hover">
 	<thead>
@@ -17,7 +15,7 @@ Show matches of <select ng-model="selectedUser" ng-options="user.username for us
 				<span>{{match.winner}}</span>
 			</td>
 			<td>
-				<a href="{{match.log}}">Download log</span>
+				<a href="./match_logs/{{match.log}}">Download log</span>
 			</td>
 		</tr>
 	</tbody>

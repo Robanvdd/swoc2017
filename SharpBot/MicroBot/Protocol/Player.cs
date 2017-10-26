@@ -8,6 +8,6 @@ namespace MicroBot.Protocol
     public sealed class Player
     {
         public string Name { get; set; }
-        public List<Bot> Bots { get; set; }
+        public List<Ufo> Ufos { get; set; }
     }
 }
