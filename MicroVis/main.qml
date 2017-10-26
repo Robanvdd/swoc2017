@@ -80,7 +80,7 @@ ApplicationWindow {
         for (var l = 0; l < jsonObject.players.length; l++)
         {
             var player = appContext.players[l]
-            var spaceships = jsonObject.players[l].bots
+            var spaceships = jsonObject.players[l].ufos
             for (var m = 0; m < spaceships.length; m++)
             {
                 var spaceship = spaceships[m]
@@ -96,11 +96,11 @@ ApplicationWindow {
         for (var i = 0; i < jsonObject.players.length; i++)
         {
             var player = jsonObject.players[i]
-            var bots = player.bots
-            for (var j = 0; j < bots.length; j++)
+            var ufos = player.ufos
+            for (var j = 0; j < ufos.length; j++)
             {
-                var hp = bots[j].hitpoints;
-                var posBot = bots[j].position
+                var hp = ufos[j].hitpoints;
+                var posBot = ufos[j].position
                 appContext.players[i].moveSpaceship(j, posBot.x, posBot.y)
                 if (appContext.players[i].getSpaceshipIsAlive(j) && hp <= 0)
                     nrUfos--

@@ -8,7 +8,7 @@ class MicroPlayer {
     private String name;
     private String color;
     private double hue;
-    private List<MicroBot> bots;
+    private List<MicroBot> ufos;
 
     // Non-serialized members (transient)
     private transient String script;
@@ -18,7 +18,7 @@ class MicroPlayer {
         this.name = name;
         this.color = color;
         this.hue = hue;
-        this.bots = new ArrayList<>();
+        this.ufos = new ArrayList<>();
         this.script = script;
     }
 
@@ -39,7 +39,7 @@ class MicroPlayer {
     }
 
     public List<MicroBot> getBots() {
-        return bots;
+        return ufos;
     }
 
     public String getScript() {
@@ -47,11 +47,11 @@ class MicroPlayer {
     }
 
     public void addBot(MicroBot bot) {
-        this.bots.add(bot);
+        this.ufos.add(bot);
     }
 
     public boolean hasLivingBots() {
-        for (MicroBot bot : bots) {
+        for (MicroBot bot : ufos) {
             if (bot.isAlive()) return true;
         }
         return false;

@@ -29,20 +29,23 @@ public class Matchmaker implements AutoCloseable {
      */
     public static void main(String[] args)
     {
-        String dbName = "swoc-dev";
+        String matchLogFolder;
         if (args.length > 0)
         {
-            dbName = args[0];
-        }
-        
-        try (Matchmaker mm = new Matchmaker(dbName))
-        {
-            mm.run();
+            // C:\Users\Roban\Documents\swoc2016\player\public\match_logs
+            matchLogFolder = args[0];
+            try (Matchmaker mm = new Matchmaker(matchLogFolder))
+            {
+                mm.run();
+            }
+        } else {
+            System.out.println("Please specify the output path for the logs  (.../player/public/match_logs)");
         }
     }
     
     private MongoClient mongoClient;
     private final DB db;
+    private final String matchLogFolder;
 
     private static final String BOTTABLE = "bots";
     private static final String MATCHTABLE = "matches";
@@ -50,9 +53,10 @@ public class Matchmaker implements AutoCloseable {
     private static final String WINNERFIELDNAME = "winnerBot";
     private static final String RANKINGFIELDNAME = "ranking";
 
-    private Matchmaker(String dbName)
+    private Matchmaker(String matchLogFolder)
     {
-        db = createDBConnection(dbName);
+        this.matchLogFolder = matchLogFolder;
+        db = createDBConnection("swoc-dev");
     }
     
     @Override
@@ -254,9 +258,10 @@ public class Matchmaker implements AutoCloseable {
     private void updateMatchData(List<Bot> botList, GameResult gameResult) {
         Date now = Calendar.getInstance().getTime();
         String winner = getWinner(gameResult);
-        String log = gameResult.dir + "/log.zip";
+        String logFileName = "log" + gameResult.id + ".zip";
+        String logPath = matchLogFolder + "/" + logFileName;
         try {
-            Zipper.zip(gameResult.dir, log);
+            Zipper.zip(gameResult.dir, logPath);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -264,7 +269,7 @@ public class Matchmaker implements AutoCloseable {
         DBObject match = new BasicDBObject("_id", gameResult.id);
         match.put("time", now);
         match.put("winner", winner);
-        match.put("log", log);
+        match.put("log", logFileName);
         matchCol.insert(match);
         //TODO insert entries into match-users table with individual scores
     }
