@@ -7,7 +7,7 @@ using Bot.Protocol;
 
 namespace MicroBot.Protocol
 {
-    public sealed class Bot
+    public sealed class Ufo
     { 
         public int Id { get; set; }
         public string Name { get; set; }
