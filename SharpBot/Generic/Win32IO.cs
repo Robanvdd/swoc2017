@@ -39,9 +39,6 @@ namespace Swoc
 
         public static void Init()
         {
-#if DEBUG
-            Console.Error.WriteLine("Win32 IO initialized");
-#endif
         }
     }
 }

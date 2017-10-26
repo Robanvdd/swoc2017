@@ -40,9 +40,9 @@ public class BotShepherdThread implements Runnable {
                 Player p = new Player(name,10,null,id++);
                 SetUpPlayer(p);
                 if (OSInfo.getOSType() == OSInfo.OSType.WINDOWS) {
-                    bots.put(name, new BotProcess(macroPath, "run.bat"));
+                    bots.put(name, new BotProcess(macroPath + "run.bat"));
                 } else {
-                    bots.put(name, new BotProcess(macroPath, "run.sh"));
+                    bots.put(name, new BotProcess(macroPath + "run.sh"));
                 }
             }
         } catch (IOException e) {

@@ -109,12 +109,10 @@ namespace MacroBot
                 return;
 
             var planet = gameState.SolarSystems.SelectMany(ss => ss.Planets).FirstOrDefault(p => p.OwnedBy == mePlayer.Id);
-            if (planet == default(Planet))
-                return;
 
             WriteMessage(new Protocol.GameResponseBuy
             {
-                PlanetId = planet.Id,
+                PlanetId = planet != default(Planet) ? planet.Id : -1,
                 Amount = amount,
             });
         }

@@ -9,7 +9,6 @@ namespace MicroBot
     class Program
     {
         static void Main(string[] args)
-
         {
             var engine = new MicroEngine();
             engine.Run();

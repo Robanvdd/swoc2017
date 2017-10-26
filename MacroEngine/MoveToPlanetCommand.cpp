@@ -14,8 +14,8 @@ MoveToPlanetCommand::MoveToPlanetCommand(QObject* parent)
 
 void MoveToPlanetCommand::readCommand(const QJsonObject jsonObject)
 {
-    m_planetId = jsonObject["PlanetId"].toInt(-1);
-    QJsonArray ufoArray = jsonObject["Ufos"].toArray();
+    m_planetId = jsonObject["planetId"].toInt(-1);
+    QJsonArray ufoArray = jsonObject["ufos"].toArray();
 
     for (int ufoIndex = 0; ufoIndex < ufoArray.size(); ufoIndex++)
     {

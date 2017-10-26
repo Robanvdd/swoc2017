@@ -1,6 +1,5 @@
 """
 Example macro bot script.
-
 """
 
 import sys
@@ -39,18 +38,26 @@ def get_first_enemy_ufo(macro):
                 return player['ufos'][0]
 
 def command_move_to_coord(ufoIds, coord):
-    command = {"Command" : "moveToCoord", "Ufos" : otherUfoIds, "Coord" : leaderPosition}
-    logger.info('output' + command)
-    json.dumps(command)
+    x = math.floor(coord['x'])
+    y = math.floor(coord['y'])
+    command = {"Command" : "moveToCoord", "Ufos" : ufoIds, "Coord" : {"X" : x, "Y" : y}}
+    logger.info('output ' + str(json.dumps(command)))
+    print(json.dumps(command))
 
 def command_conquer(planetId):
     command = {"Command" : "conquer", "PlanetId" : planetId}
-    logger.info('output' + command)
-    json.dumps(command)
+    logger.info('output ' + str(json.dumps(command)))
+    print(json.dumps(command))
+
+def command_buy(credits, planetId):
+    ufoCost = 100000
+    command = {"Command" : "buy", "Amount" : math.floor(credits / ufoCost), "PlanetId" : planetId}
+    logger.info('output ' + str(json.dumps(command)))
+    print(json.dumps(command))
 
 def distance(coord1, coord2):
-    dx = coord1['X'] - coord2['X']
-    dy = coord1['Y'] - coord2['Y']
+    dx = coord1['x'] - coord2['x']
+    dy = coord1['y'] - coord2['y']
     return math.sqrt(dx*dx + dy*dy)
 
 def get_planet_coord(center, planet):
@@ -61,11 +68,11 @@ def get_planet_coord(center, planet):
     return {"x" : x, "y" : y}
 
 def get_nearest_planet_id(macro, coord):
-    smallestDistance = sys.maxint
+    smallestDistance = 10000000000000000
     nearestPlanetId = {}
     for solarSystem in macro['solarSystems']:
         center = solarSystem['coords']
-        for planet in solarSystem:
+        for planet in solarSystem['planets']:
             dist = distance(get_planet_coord(center, planet), coord)
             if dist < smallestDistance:
                 smallestDistance = dist
@@ -84,18 +91,25 @@ def game_loop():
     leaderPosition = get_position(leaderUfo)
     targetEnemyPosition = get_position(get_first_enemy_ufo(macro))
     
+    # Buy ufos, close to leader
+    credits = player['credits']
+    if credits >= 100000:
+        nearestPlanetId = get_nearest_planet_id(macro, leaderPosition)
+        command_buy(credits, nearestPlanetId)
+    
     # Move all my ufos towards leader ufo
     otherUfoIds = []
     for ufo in ufos:
-        if ufo['id'] != leaderUfo['id']:
+        if ufo['id'] != leaderUfo['id'] and not ufo['inFight']:
             otherUfoIds.append(ufo['id'])
     command_move_to_coord(otherUfoIds, leaderPosition)
     
     # Move leader ufo to an enemy
-    command_move_to_coord([leaderUfo['id']], targetEnemyPosition)
+    if not leaderUfo['inFight']:
+        command_move_to_coord([leaderUfo['id']], targetEnemyPosition)
     
     # Attack when close
-    if distance(leaderPosition, targetEnemyPosition) < 100:
+    if distance(leaderPosition, targetEnemyPosition) < 256:
         nearestPlanetId = get_nearest_planet_id(macro, targetEnemyPosition)
         command_conquer(nearestPlanetId)
 

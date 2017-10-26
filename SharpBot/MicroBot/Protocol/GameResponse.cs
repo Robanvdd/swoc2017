@@ -10,9 +10,9 @@ namespace MicroBot.Protocol
     {
         public GameResponse()
         {
-            Bots = new List<BotAction>();
+            Commands = new List<UfoAction>();
         }
 
-        public List<BotAction> Bots { get; set; }
+        public List<UfoAction> Commands { get; set; }
     }
 }

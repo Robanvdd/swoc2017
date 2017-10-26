@@ -183,8 +183,8 @@ public class MicroEngine {
 
             try {
                 final String dir = player.getScript();
-                final String cmd = Script.GetScriptCommand();
-                scripts.put(player.getId(), new BotProcess(dir, cmd));
+                final String cmd = Script.GetScriptCommand(dir);
+                scripts.put(player.getId(), new BotProcess(cmd));
             } catch (IOException e) {
                 e.printStackTrace(System.err);
             } catch (Exception e) {
