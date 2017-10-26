@@ -1,6 +1,6 @@
 ﻿namespace MicroBot.Protocol
 {
-    public sealed class BotAction
+    public sealed class UfoAction
     {
         public int Id { get; set; }
         public Move Move { get; set; }

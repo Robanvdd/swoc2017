@@ -30,19 +30,19 @@ namespace MicroBot
             var mePlayer = GetPlayerByName(gameState.Players, playerName);
             time += 0.1;
 
-            var ufos = mePlayer.Bots;
+            var ufos = mePlayer.Ufos;
             var targetUfo = GetUfosWithHitPoints(GetOtherUfos(gameState, playerName)).FirstOrDefault();
 
-            if (targetUfo == default(Protocol.Bot))
+            if (targetUfo == default(Protocol.Ufo))
                 return;
 
             foreach (var ufo in ufos)
             {
                 WriteMessage(new GameResponse
                 {
-                    Commands = new List<BotAction>
+                    Commands = new List<UfoAction>
                     {
-                        new BotAction
+                        new UfoAction
                         {
                             Id = ufo.Id,
                             Move = new Move { Direction = Sin(time * 2) * 70, Speed = Sin(time * 0.2) * 4 },
