@@ -34,3 +34,4 @@ micro-macro/tick_*.json
 temp/macro_app.jar
 temp/matchmaker.jar
 matchmaker/classes/artifacts/matchmaker_jar/matchmaker.jar
+player/public/match_logs/log*.zip
