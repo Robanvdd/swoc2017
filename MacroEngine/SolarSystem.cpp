@@ -50,3 +50,8 @@ QPointF SolarSystem::getPlanetLocation(const Planet& planet) const
 {
     return planet.getCartesianCoordinates() + m_coord;
 }
+
+QPoint SolarSystem::getCoord() const
+{
+    return m_coord;
+}

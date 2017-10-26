@@ -6,8 +6,8 @@
 Universe::Universe(QMap<int, SolarSystem *> solarSystems, QObject *parent)
     : GameObject(parent)
     , m_solarSystems(solarSystems)
-    , m_baseIncomePerSecond(1000)
-    , m_incomePerPlanetPerSecond(1000)
+    , m_baseIncomePerSecond(500)
+    , m_incomePerPlanetPerSecond(50)
 {
     for (auto solarSystemIt = m_solarSystems.begin(); solarSystemIt != m_solarSystems.end(); solarSystemIt++)
     {

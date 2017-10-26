@@ -18,6 +18,8 @@ public:
     QMap<int, Planet*> getPlanets();
     QPointF getPlanetLocation(const Planet&planet) const;
 
+    QPoint getCoord() const;
+
 signals:
 
 public slots:
