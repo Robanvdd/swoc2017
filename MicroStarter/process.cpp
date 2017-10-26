@@ -49,7 +49,7 @@ void Process::start() {
     {
         QString errorString = m_pProcess->errorString();
         qDebug() << "Error occurred " << errorString;
-        throw std::runtime_error("Could not start micro.jar");
+        throw std::runtime_error("Could not start process");
     }
 }
 

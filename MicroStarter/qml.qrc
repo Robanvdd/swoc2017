@@ -2,10 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>qtquickcontrols2.conf</file>
-        <file>PlayersModel.qml</file>
-        <file>PlayersListView.qml</file>
-        <file>PlayerInfoView.qml</file>
         <file>Json.js</file>
-        <file>GameView.qml</file>
     </qresource>
 </RCC>

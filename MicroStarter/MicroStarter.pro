@@ -3,8 +3,10 @@ QT += qml quick
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    fileio.cpp \
-    process.cpp
+    Player.cpp \
+    PlayerModel.cpp \
+    process.cpp \
+    fileio.cpp
 
 RESOURCES += qml.qrc
 
@@ -31,5 +33,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    fileio.h \
-    process.h
+    Player.h \
+    PlayerModel.h \
+    process.h \
+    fileio.h
