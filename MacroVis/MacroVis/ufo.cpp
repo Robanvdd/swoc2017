@@ -11,3 +11,28 @@ Ufo::Ufo(int ufoId, QObject* parent)
     , m_color( ((Player*) parent)->getColor())
 {
 }
+
+QString Ufo::getType() const
+{
+    return m_type;
+}
+
+bool Ufo::getInFight() const
+{
+   return m_inFight;
+}
+
+QPointF Ufo::getCoord() const
+{
+   return m_coord;
+}
+
+double Ufo::getHue() const
+{
+    return m_hue;
+}
+
+QColor Ufo::getColor() const
+{
+    return m_color;
+}

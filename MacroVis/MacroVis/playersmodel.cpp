@@ -1,17 +1,50 @@
-#include "playermodel.h"
+#include "playersmodel.h"
 
-PlayerModel::PlayerModel(QObject *parent)
+PlayersModel::PlayersModel(QObject *parent)
     : QAbstractListModel(parent)
 {
 }
 
-int PlayerModel::rowCount(const QModelIndex& parent) const
+void PlayersModel::CreatePlayer(int playerId)
 {
-    Q_UNUSED(parent)
+    beginInsertRows(QModelIndex(), rowCount(), rowCount());
+    m_players.append(new Player(playerId, this));
+    endInsertRows();
+}
+
+void PlayersModel::Clear()
+{
+    beginResetModel();
+    qDeleteAll(m_players);
+    m_players.clear();
+    endResetModel();
+}
+
+bool PlayersModel::PlayerExists(int playerId) const
+{
+    auto player = std::find_if(std::begin(m_players), std::end(m_players), [playerId](QObject* player)
+    {
+        return dynamic_cast<Player*>(player)->objectId() == playerId;
+    });
+    return player != std::end(m_players);
+}
+
+Player* PlayersModel::GetPlayer(int playerId) const
+{
+    auto player = std::find_if(std::begin(m_players), std::end(m_players), [playerId](QObject* player)
+    {
+        return dynamic_cast<Player*>(player)->objectId() == playerId;
+    });
+    return (Player*) *player;
+}
+
+int PlayersModel::rowCount(const QModelIndex& parent) const
+{
+    Q_UNUSED(parent);
     return m_players.count();
 }
 
-QVariant PlayerModel::data(const QModelIndex& index, int role) const
+QVariant PlayersModel::data(const QModelIndex& index, int role) const
 {
     if (index.row() < 0 || index.row() < m_players.count())
         return QVariant();
@@ -23,7 +56,7 @@ QVariant PlayerModel::data(const QModelIndex& index, int role) const
     case CreditsRole:
         return m_players[index.row()]->getCredits();
     case UfosRole:
-        return m_players[index.row()]->getUfos();
+        return QVariant::fromValue((void*)m_players[index.row()]->getUfos());
     case HueRole:
         return m_players[index.row()]->getHue();
     case ColorRole:
@@ -32,7 +65,7 @@ QVariant PlayerModel::data(const QModelIndex& index, int role) const
     return QVariant();
 }
 
-QHash<int, QByteArray> PlayerModel::roleNames() const
+QHash<int, QByteArray> PlayersModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[NameRole] = "name";

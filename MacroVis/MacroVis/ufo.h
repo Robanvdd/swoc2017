@@ -17,6 +17,12 @@ public:
     explicit Ufo(QObject *parent = nullptr);
     explicit Ufo(int ufoId, QObject* parent = nullptr);
 
+    QString getType() const;
+    bool getInFight() const;
+    QPointF getCoord() const;
+    double getHue() const;
+    QColor getColor() const;
+
 signals:
     void typeChanged();
     void inFightChanged();

@@ -17,7 +17,12 @@ public:
         };
     explicit PlayersModel(QObject *parent = nullptr);
 
-    int rowCount(const QModelIndex& parent) const;
+    void CreatePlayer(int playerId);
+    void Clear();
+    bool PlayerExists(int playerId) const;
+    Player* GetPlayer(int playerId) const;
+
+    int rowCount(const QModelIndex& parent = QModelIndex()) const;
     QVariant data(const QModelIndex& index, int role) const;
     QHash<int, QByteArray> roleNames() const;
 

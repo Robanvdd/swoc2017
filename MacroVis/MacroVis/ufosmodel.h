@@ -17,8 +17,15 @@ public:
     };
 
     explicit UfosModel(QObject *parent = nullptr);
+    ~UfosModel();
 
-    int rowCount(const QModelIndex& parent) const;
+    bool ufoExists(int ufoId) const;
+    void createUfo(int ufoId);
+    void destroyUfo(int ufoId);
+    Ufo* getUfo(int ufoId) const;
+    void onlyKeepUfos(const QList<int> ufosToKeep);
+
+    int rowCount(const QModelIndex& parent = QModelIndex()) const;
     QVariant data(const QModelIndex& index, int role) const;
     QHash<int, QByteArray> roleNames() const;
 

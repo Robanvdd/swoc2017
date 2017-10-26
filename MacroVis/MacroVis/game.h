@@ -15,7 +15,7 @@ class Game : public GameObject
     Q_PROPERTY(QString name MEMBER m_name NOTIFY nameChanged)
     Q_PROPERTY(int currentTick MEMBER m_currentTick NOTIFY currentTickChanged)
     Q_PROPERTY(QList<QObject*> solarSystems MEMBER m_solarSystems NOTIFY solarSystemsChanged)
-    Q_PROPERTY(PlayersModel players MEMBER m_players NOTIFY playersChanged)
+    Q_PROPERTY(PlayersModel* players MEMBER m_players NOTIFY playersChanged)
 public:
     explicit Game(QObject *parent = 0);
     explicit Game(int gameId, QObject *parent = 0);
@@ -42,7 +42,7 @@ private:
     QString m_name;
     int m_currentTick = -1;
     QList<QObject*> m_solarSystems;
-    PlayersModel m_players;
+    PlayersModel* m_players;
 };
 
 #endif // GAME_H
