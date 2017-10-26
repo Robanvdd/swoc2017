@@ -29,7 +29,7 @@ QPointF Ufo::getCoord() const
 
 double Ufo::getHue() const
 {
-    return m_hue;
+     return m_hue;
 }
 
 QColor Ufo::getColor() const

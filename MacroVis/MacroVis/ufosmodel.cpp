@@ -21,7 +21,7 @@ bool UfosModel::ufoExists(int ufoId) const
 
 void UfosModel::createUfo(int ufoId)
 {
-    auto ufo = new Ufo(ufoId, this);
+    auto ufo = new Ufo(ufoId, parent());
 
     QObject::connect(ufo, &Ufo::coordChanged, this, [this,ufo]()
     {

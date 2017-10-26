@@ -42,7 +42,7 @@ Flickable {
                         model: ufos
                         delegate: UfoImage {
                             id: image
-                            hue: hue
+                            hue: model.hue
                             property int ufoId: objectId
                             property bool inFight: inFight
                             x: coord.x - 0.5*width

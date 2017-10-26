@@ -1,4 +1,5 @@
 import QtQuick 2.7
+import QtGraphicalEffects 1.0
 import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.1
 
@@ -59,9 +60,22 @@ Column {
         }
         Repeater {
             model: gameBackend.players
-            delegate: Label {
+            delegate: Item {
                 parent: playerCreditGrid
-                text: credits
+                width: creditsLabel.width
+                height: creditsLabel.height
+                Label {
+                    id: creditsLabel
+                    text: credits
+                    visible: false
+                }
+                Colorize {
+                    anchors.fill: creditsLabel
+                    source: creditsLabel
+                    hue: model.hue
+                    saturation: 1
+                    lightness: 0
+                }
             }
         }
     }
