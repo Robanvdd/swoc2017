@@ -6,6 +6,30 @@
 
 > Control your UFOs to conquer planets and gain credits.
 
+#### Starting a macro game
+
+You can start the macro game from the command line with the following arguments:
+```
+    MacroEngine.exe playername /path/to/macro/script/ /path/to/micro/script ...
+```
+
+The first argument is the player name, the second argument is the directory
+which contains your Macro script and a runCommand.txt file, and the third
+argument is the directory which contains your Micro script and a runCommand.txt
+file. Macro will read the command that has to be executed from the
+runCommand.txt file.
+
+Example command line:
+
+```
+    MacroEngine.exe jesper C:/scripts/macro/ C:/scripts/micro ferdi C:/scripts/macro/ C:/scripts/micro
+```
+
+Example runCommand.txt
+```
+    python C:/scripts/macro/script.py
+```
+
 #### Conquering Planets
 
 The goal of Macro is to command your UFOs to move to planets and conquering
