@@ -6,8 +6,8 @@
 Universe::Universe(QMap<int, SolarSystem *> solarSystems, QObject *parent)
     : GameObject(parent)
     , m_solarSystems(solarSystems)
-    , m_baseIncomePerSecond(1000)
-    , m_incomePerPlanetPerSecond(1000)
+    , m_baseIncomePerSecond(2000)
+    , m_incomePerPlanetPerSecond(225)
 {
     for (auto solarSystemIt = m_solarSystems.begin(); solarSystemIt != m_solarSystems.end(); solarSystemIt++)
     {
@@ -100,8 +100,12 @@ void Universe::addCredits(Player* player, double durationInSeconds)
                 ownedPlanets++;
         }
     }
-    if (ownedPlanets > 0)
-        player->addCredits(ownedPlanets * m_incomePerPlanetPerSecond * durationInSeconds);
+    auto baseIncome = m_baseIncomePerSecond;
+    auto basePlanet = m_incomePerPlanetPerSecond;
+    auto shifted = ownedPlanets + 3;
+    auto paneltyPerPlanet = 5;
+    auto total = baseIncome + (basePlanet - paneltyPerPlanet * shifted)*shifted;
+    player->addCredits(total*durationInSeconds);
 }
 
 QList<Ufo*> Universe::getUfosNearLocation(const QPointF& location, const Player& player)

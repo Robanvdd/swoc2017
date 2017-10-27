@@ -1,54 +1,78 @@
 #include "player.h"
 
-Player::Player(QObject *parent) : GameObject(-1, parent)
-{   
+#include <QDebug>
+
+Player::Player(QObject *parent)
+    : Player(-1, parent)
+{
 }
 
-Player::Player(int playerId, QObject* parent) : GameObject(playerId, parent)
+Player::Player(int playerId, QObject* parent)
+    : GameObject(playerId, parent)
 {
+    m_ufos = new UfosModel(this);
+    emit ufosChanged();
+
 }
 
 Player::~Player()
 {
-    qDeleteAll(m_ufos);
 }
 
 bool Player::ufoExists(int ufoId) const
 {
-    auto ufo = std::find_if(std::begin(m_ufos), std::end(m_ufos), [ufoId](QObject* ufo)
-    {
-        return dynamic_cast<Ufo*>(ufo)->objectId() == ufoId;
-    });
-    return ufo != std::end(m_ufos);
+    return m_ufos->ufoExists(ufoId);
 }
 
 void Player::createUfo(int ufoId)
 {
-    m_ufos.append(new Ufo(ufoId, this));
-    emit ufosChanged();
+    m_ufos->createUfo(ufoId);
 }
 
 Ufo* Player::getUfo(int ufoId) const
 {
-    auto ufo = std::find_if(std::begin(m_ufos), std::end(m_ufos), [ufoId](QObject* ufo)
-    {
-        return dynamic_cast<Ufo*>(ufo)->objectId() == ufoId;
-    });
-    return (Ufo*) *ufo;
+    return m_ufos->getUfo(ufoId);
 }
 
 void Player::destroyUfo(int ufoId)
 {
-    if (ufoExists(ufoId))
-    {
-        auto ufo = getUfo(ufoId);
-        m_ufos.removeOne(ufo);
-        emit ufosChanged();
-        ufo->deleteLater();
-    }
+    m_ufos->destroyUfo(ufoId);
+    emit ufosChanged();
 }
 
-//QColor Player::getColor() const
-//{
-//    return m_color;
-//}
+void Player::onlyKeepUfos(const QList<int> ufosToKeep)
+{
+    m_ufos->onlyKeepUfos(ufosToKeep);
+    emit ufosChanged();
+}
+
+double Player::getHue() const
+{
+    return m_hue;
+}
+
+QColor Player::getColor() const
+{
+    return m_color;
+}
+
+void Player::setColor(const QColor& color)
+{
+    m_color = color;
+    emit colorChanged();
+}
+
+QString Player::getName() const
+{
+    return m_name;
+}
+
+int Player::getCredits() const
+{
+    return m_credits;
+}
+
+UfosModel* Player::getUfos()
+{
+    return m_ufos;
+}

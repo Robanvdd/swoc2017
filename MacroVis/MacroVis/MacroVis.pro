@@ -11,7 +11,9 @@ SOURCES += main.cpp \
     gameobject.cpp \
     planetimageprovider.cpp \
     player.cpp \
-    ufo.cpp
+    ufo.cpp \
+    playersmodel.cpp \
+    ufosmodel.cpp
 
 RESOURCES += qml.qrc
 
@@ -46,4 +48,6 @@ HEADERS += \
     gameobject.h \
     planetimageprovider.h \
     player.h \
-    ufo.h
+    ufo.h \
+    playersmodel.h \
+    ufosmodel.h

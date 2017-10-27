@@ -18,8 +18,8 @@ Item {
         anchors.fill: image
         source: image
         hue: control.hue
-        saturation: 0.5
-        lightness: -0.3
+        saturation: 1
+        lightness: 0
     }
 
     Image {
