@@ -1,11 +1,6 @@
 package matchmaker;
 
-import com.mongodb.MongoClient;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
+import com.mongodb.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -273,6 +268,13 @@ public class Matchmaker implements AutoCloseable {
         match.put("time", now);
         match.put("winner", winner);
         match.put("log", logFileName);
+        BasicDBList scores= new BasicDBList();
+        for (PlayerScore playerScore : gameResult.playerScores) {
+            DBObject result = new BasicDBObject("name", playerScore.name);
+            result.put("score", playerScore.score);
+            scores.add(result);
+        }
+        match.put("scores", scores);
         matchCol.insert(match);
         //TODO insert entries into match-users table with individual scores
     }
