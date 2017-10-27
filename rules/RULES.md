@@ -26,8 +26,18 @@ When a planet is conquered you gain credits. These are used to buy more UFOs.
 The player with the most credits at the end of the game will win so be mindful
 of how you are spending your credits.
 
-The base income is a **500** credits per second. On top of that you get an
-additional **50** credits per planet you have conquered per second.
+The base income is a **2000** credits per second. On top of that you get an
+additional amount credits for the total number of planet you have conquered
+per second. Your total income per second is calculated with the following
+formula:
+```
+    Bi + ((Bp - P * S) * S)
+    where
+        Bi = base income (2000 credits)
+        Bp = base income per planet (225 credits)
+        P = penalty per planet (5 credits)
+        S = number of conquered planets + 3
+```
 
 See commands: [buy](#buy)
 
@@ -36,21 +46,28 @@ See commands: [buy](#buy)
 On each tick of the game, Macro will send the **game state** to all Macro
 scripts. Macro will wait for **250 milliseconds** during each tick.
 
+The game state consists of the following:
+- List of solar systems, each containing a list of planets
+- List of players, each containing a list of ufos
+
 Example game state:
 ```json
     {
-        "Id": 1337,
-        "Name": "",
+        "Id": 1,
+        "Name": "Match1",
         "Tick": 0,
         "SolarSystems": [
             {
                 "Id": 1,
-                "Name": "SolarSystem1",
-                "Coords": {},
+                "Name": "S1",
+                "Coords": {
+                    "X": 50,
+                    "Y": 15
+                },
                 "Planets": [
                     {
                         "Id": 1,
-                        "Name": "Planet1",
+                        "Name": "S1P1",
                         "OrbitDistance": 10,
                         "OrbitRotation": 10,
                         "OwnedBy": 1
@@ -62,7 +79,7 @@ Example game state:
             {
                 "Id": 1,
                 "Name": "Player1",
-                "Credits": 9000,
+                "Credits": 9001,
                 "Ufos": [
                     {
                         "Id": 1,
@@ -98,9 +115,13 @@ In order to conquer a planet you have to have at least one UFO that is within
 a radius of **256** "space meters" of the planet that you want to conquer, and
 you have to send the `conquer` command with the ID of that planet.
 
+If there are other enemy UFOs in the radius of the planet, a [Micro](#micro)
+ battle will start with all the UFOs in the radius of the planet.
+UFOs that are already in a battle will not be included.
+
 Example: lets say you have UFO at (45,75) and you want to conquer planet 42
-which is located at (50,60). The distance is sqrt((50-45)(50-45) +
-(60-75)(60-75)) = 15 which is within the radius of **256**.
+which is located at (50,60). You can calculate the distance with the formula
+ sqrt((50-45)(50-45)+(60-75)(60-75)) = 15 which is within the radius of **256**.
 
 Sending the following `conquer` command will let you conquer planet 42.
 
@@ -110,6 +131,12 @@ Sending the following `conquer` command will let you conquer planet 42.
         "PlanetId": 42,
     }
 ```
+
+**[Pro-tip]** *Planet Sniping*: If you try to conquer a planet where there are
+other UFOs in its radius that are already in a fight for that planet, you can
+take that planet without starting a battle and you can keep it until the other
+UFOs are done fighting (the winner will take the planet).
+If the battle is a draw, you get to keep the planet.
 
 ##### <a name="moveToPlanet"></a>moveToPlanet
 
@@ -246,12 +273,12 @@ Sending the following `buy` command will spawn 3 UFOs at planet 42.
 
 ### Game Mechanics
 
-Players control bots using 2 commands: `move` and `shoot`.
+Players control UFOs using 2 commands: `move` and `shoot`.
 
 
 #### Moving
 
-The `move` command moves the bot in the specified `direction` at the specified `speed`.
+The `move` command moves the UFO in the specified `direction` at the specified `speed`.
 The movement is based on the [polar coordinate system], `direction` being the *angle* and `speed` being the *radius*.
 
 **Parameters:**
@@ -262,11 +289,11 @@ The movement is based on the [polar coordinate system], `direction` being the *a
 
 #### Shooting
 
-The `shoot` command shoots a lazer from the origin of the bot in the specified `direction`.
+The `shoot` command shoots a laser from the origin of the UFO in the specified `direction`.
 Unlike moving, shooting has a fixed projectile speed.
 The movement is based on the [polar coordinate system], `direction` being the *angle* and the fixed projectile speed being the *radius*.
-Shooting also has a *cooldown* of **0.5** seconds meaning that you can only shoot twice per second.
-Each shot does **2** points of damage. There is no friendly fire.
+Shooting also has a *cooldown* of **1** seconds meaning that you can only shoot once per second.
+Each shot does **25** points of damage. There is no friendly fire.
 
 **Parameters:**
 
@@ -275,25 +302,25 @@ Each shot does **2** points of damage. There is no friendly fire.
 
 #### Hitpoints
 
-A bot starts with **20** `hitpoints` and is destroyed when it's `hitpoints` reaches `0`.
+A UFO starts with **100** `hitpoints` and is destroyed when it's `hitpoints` reaches `0`.
 
 
 #### Position
 
-All bots have a `position` "**x,y**". This represents the bot's current position on the arena.
+All UFOs have a `position` "**x,y**". This represents the UFO's current position on the arena.
 The arena has a specified `width` and `height`. The top left corner of the arena represents "**0,0**" and the bottom right corner of the arena represents "**width,height**".
-Your bot can only move within the bounds of the arena. There is no collision between bots.
+Your UFO can only move within the bounds of the arena. There is no collision between UFOs.
 
 
-#### The Laz0r Fence
+#### The Laser Fence
 
-The arena is surrounded by a lazor fence. If any bot touches this fence, they will immediatly be destroyed (**0** `hitpoints`).
+The arena is surrounded by a laser fence. If any UFO touches this fence, they will immediately be destroyed (**0** `hitpoints`).
 In order to keep the games short, the arena will start shrinking after a fixed amount of time and will keep shrinking until the battle is over.
 
 
 #### Winning Condition
 
-Last man standing: if all your bots are destroyed you lose.
+Last man standing: if all your UFOs are destroyed you lose.
 
 
 ### Scripting
@@ -301,10 +328,10 @@ Last man standing: if all your bots are destroyed you lose.
 
 #### Game Loop
 
-The game loop of any basic micro bot is as follows:
+The game loop of any basic micro UFO is as follows:
 
 1. Read `JSON` formatted game state (input) from micro using `stdin`
-2. Bot logic (where the magic happens)
+2. Script logic (where the magic happens)
 3. Write `JSON` formatted commands (output) to micro using `stdout`
 
 *Note: The input and output are in [JSON] format*
@@ -315,7 +342,7 @@ Python example:
 
 while True:
     input = input()
-    # Bot logic
+    # Script logic
     print(output)
 
 ```
@@ -355,7 +382,7 @@ The input received from micro has the following format:
             "position": {
                 "x": "float",
                 "y": "float"
-            }
+            },
             "direction": "float",
         },
     ]
@@ -366,7 +393,7 @@ Input example:
 
 ```json
 {
-    "tick": 10
+    "tick": 10,
     "arena": {
         "height": 1000,
         "width": 1000
@@ -377,10 +404,10 @@ Input example:
         {
             "id": 0,
             "name": "player0",
-            "bots": [
+            "ufos": [
                 {
                     "id": 0,
-                    "name": "bot0",
+                    "name": "ufo0",
                     "hitpoints": 20,
                     "position": {
                         "x": 25,
@@ -389,7 +416,7 @@ Input example:
                 },
                 {
                     "id": 1,
-                    "name": "bot1",
+                    "name": "ufo1",
                     "hitpoints": 10,
                     "position": {
                         "x": 25,
@@ -401,10 +428,10 @@ Input example:
         {
             "id": 1,
             "name": "player1",
-            "bots": [
+            "ufos": [
                 {
                     "id": 0,
-                    "name": "bot0",
+                    "name": "ufo0",
                     "hitpoints": 15,
                     "position": {
                         "x": 75,
@@ -413,7 +440,7 @@ Input example:
                 },
                 {
                     "id": 1,
-                    "name": "bot1",
+                    "name": "ufo1",
                     "hitpoints": 15,
                     "position": {
                         "x": 50,
