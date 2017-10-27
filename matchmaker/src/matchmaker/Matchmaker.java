@@ -238,10 +238,11 @@ public class Matchmaker implements AutoCloseable {
         for(Bot bot : botList) {
             Integer newRanking = null;
             for(PlayerScore playerScore : gameResult.playerScores) {
-                if (playerScore.name == bot.user.get("username")) {
+                if (playerScore.name.equals(bot.user.get("username"))) {
                     newRanking = playerScore.score;
                 }
             }
+
 
             BasicDBObject macro_query = new BasicDBObject("_id", bot.macro.get("_id"));
             BasicDBObject micro_query = new BasicDBObject("_id", bot.micro.get("_id"));
@@ -252,6 +253,8 @@ public class Matchmaker implements AutoCloseable {
             update_micro.append("$set", new BasicDBObject(RANKINGFIELDNAME, newRanking));
             coll.update(macro_query, update_macro);
             coll.update(micro_query, update_micro);
+
+            System.out.println("Updated score "+ newRanking +" for player: " + bot.user.get("username"));
         }
     }
 
