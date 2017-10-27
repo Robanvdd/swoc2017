@@ -74,18 +74,6 @@ Example game state:
                     }
                 ]
             }
-        ],
-        "Fights": [
-            {
-                "Id": 1,
-                "PlanetId": 1,
-                "Players": [
-                    {
-                        "PlayerId": 1,
-                        "PlayerUfoIds": [1, 2, 3]
-                    }
-                ]
-            }
         ]
     }
 ```
