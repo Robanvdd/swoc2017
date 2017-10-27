@@ -7,7 +7,7 @@ Download the Log Visualizers here: <a href="./microvis.zip">Micro </a> <a href="
 <table width="100%" class="table table-hover">
 	<thead>
 		<tr>
-			<th>Time</th><th>Winner</th><th>Log</th><th width="100px"></th>
+			<th>Time</th><th>Winner</th><th>Results</th><th>Log</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -17,7 +17,12 @@ Download the Log Visualizers here: <a href="./microvis.zip">Micro </a> <a href="
 				<span>{{match.winner}}</span>
 			</td>
 			<td>
-				<a href="./match_logs/{{match.log}}">Download log</span>
+				<div ng-repeat="score in match.scores">
+				{{score.name}}: {{score.score}}
+				</div>
+			</td>
+			<td>
+				<a href="./match_logs/{{match.log}}">Log</span>
 			</td>
 		</tr>
 	</tbody>
