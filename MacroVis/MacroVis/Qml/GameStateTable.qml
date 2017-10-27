@@ -7,6 +7,10 @@ import SWOC 1.0
 
 Column {
     spacing: 16
+    Label {
+        text: "Game Info"
+        font.pointSize: 18
+    }
     Grid {
         id: gameGrid
         flow: Grid.TopToBottom
@@ -44,6 +48,11 @@ Column {
             visible: gameBackend.objectId != -1
         }
     }
+    Label {
+        text: "Credits"
+        font.pointSize: 18
+    }
+
     GridLayout {
         id: playerCreditGrid
         rows: gameBackend.players.rowCount()
@@ -60,22 +69,36 @@ Column {
         }
         Repeater {
             model: gameBackend.players
-            delegate: Item {
+            delegate: Label {
                 parent: playerCreditGrid
-                width: creditsLabel.width
-                height: creditsLabel.height
-                Label {
-                    id: creditsLabel
-                    text: credits
-                    visible: false
-                }
-                Colorize {
-                    anchors.fill: creditsLabel
-                    source: creditsLabel
-                    hue: model.hue
-                    saturation: 1
-                    lightness: 0
-                }
+                id: creditsLabel
+                text: credits
+            }
+        }
+    }
+    Label {
+        text: "Ufos"
+        font.pointSize: 18
+    }
+    GridLayout {
+        id: playerPlanetsGrid
+        rows: gameBackend.players.rowCount()
+        columns: 2
+        rowSpacing: gameGrid.rowSpacing
+        flow: GridLayout.TopToBottom
+        Repeater {
+            model: gameBackend.players
+            delegate: Label {
+                parent: playerPlanetsGrid
+                text: name
+                color: model.color
+            }
+        }
+        Repeater {
+            model: gameBackend.players
+            delegate: Label {
+                parent: playerPlanetsGrid
+                text: ufos.length
             }
         }
     }

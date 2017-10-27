@@ -7,6 +7,7 @@
 class UfosModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(int length READ rowCount NOTIFY lengthChanged)
 public:
     enum UfoRoles {
         TypeRole = Qt::UserRole + 1,
@@ -29,6 +30,8 @@ public:
     int rowCount(const QModelIndex& parent = QModelIndex()) const;
     QVariant data(const QModelIndex& index, int role) const;
     QHash<int, QByteArray> roleNames() const;
+signals:
+    void lengthChanged();
 
 private:
     QList<Ufo*> m_ufos;

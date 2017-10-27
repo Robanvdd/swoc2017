@@ -44,7 +44,7 @@ Flickable {
                             id: image
                             hue: model.hue
                             property int ufoId: objectId
-                            property bool inFight: inFight
+                            property bool inFight: model.inFight
                             x: coord.x - 0.5*width
                             y: coord.y - 0.5*height
                             Behavior on x { NumberAnimation { duration: tickDuration } }
