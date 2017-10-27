@@ -8,8 +8,8 @@ Player::Player(QString name, int hue, QObject *parent)
     : GameObject(parent)
     , m_credits(0)
     , m_name(name)
-    , m_color(QColor::fromHsv(hue, 255, 255))
-    , m_hue(hue / 255.0)
+    , m_color(QColor::fromHsl(hue, 255, 127).toRgb())
+    , m_hue(hue / 359.0)
 {
 }
 
@@ -78,7 +78,6 @@ void Player::writeState(QJsonObject& gameState)
     gameState["name"] = m_name;
     gameState["credits"] = m_credits;
     gameState["color"] = m_color.name(QColor::HexArgb);
-    auto color = m_color.name(QColor::HexArgb);
     gameState["hue"] = m_hue;
     QJsonArray ufoArray;
     foreach (Ufo* ufo, m_ufos) {

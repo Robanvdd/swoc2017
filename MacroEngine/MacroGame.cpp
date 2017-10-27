@@ -51,7 +51,7 @@ MacroGame::MacroGame(QList<PlayerBotFolders*> playerBotFolders, Universe* univer
     int nUfosPerPlayer = 3;
     if (m_playerBotFolders.size() > 0)
     {
-        hueJump = 255 / m_playerBotFolders.size();
+        hueJump = 359 / m_playerBotFolders.size();
         ufoPlacementJump = 1.0 / (nUfosPerPlayer * m_playerBotFolders.size());
     }
 

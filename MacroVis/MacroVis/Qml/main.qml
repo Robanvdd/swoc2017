@@ -12,6 +12,7 @@ ApplicationWindow {
     title: qsTr("MacroVis")
     color: "black"
     property int tickDuration: 250
+    property bool showDebug: true
 
     Image {
         id: background
@@ -76,8 +77,20 @@ ApplicationWindow {
             }
         }
 
-        GameStateTable {
-            id: gameStateTable
+        Button {
+            text: showDebug ? "Hide debug info" : "Show debug info"
+            onClicked: showDebug = !showDebug
+        }
+
+        Item {
+            id: hideable
+            height: showDebug ? gameStateTable.height : 0
+            width: gameStateTable.width
+            Behavior on height { NumberAnimation { duration: 250 } }
+            clip: true
+            GameStateTable {
+                id: gameStateTable
+            }
         }
     }
 }
