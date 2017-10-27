@@ -291,7 +291,7 @@ The movement is based on the [polar coordinate system], `direction` being the *a
 
 The `shoot` command shoots a laser from the origin of the UFO in the specified `direction`.
 Unlike moving, shooting has a fixed projectile speed.
-The movement is based on the [polar coordinate system], `direction` being the *angle* and the fixed projectile speed being the *radius*.
+The movement is based on the [polar coordinate system], `direction` being the *angle* and the projectile speed which is always 10 (fixed speed).
 Shooting also has a *cooldown* of **1** seconds meaning that you can only shoot once per second.
 Each shot does **25** points of damage. There is no friendly fire.
 
