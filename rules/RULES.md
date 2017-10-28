@@ -77,40 +77,40 @@ The game state consists of the following:
 Example game state:
 ```json
     {
-        "Id": 1,
-        "Name": "Match1",
-        "Tick": 0,
-        "SolarSystems": [
+        "id": 1,
+        "name": "Match1",
+        "tick": 0,
+        "solarSystems": [
             {
-                "Id": 1,
-                "Name": "S1",
-                "Coords": {
-                    "X": 50,
-                    "Y": 15
+                "id": 1,
+                "name": "S1",
+                "coords": {
+                    "x": 50,
+                    "y": 15
                 },
-                "Planets": [
+                "planets": [
                     {
-                        "Id": 1,
-                        "Name": "S1P1",
-                        "OrbitDistance": 10,
-                        "OrbitRotation": 10,
-                        "OwnedBy": 1
+                        "id": 1,
+                        "name": "S1P1",
+                        "orbitDistance": 10,
+                        "orbitRotation": 10,
+                        "ownedBy": 1
                     }
                 ]
             }
         ],
-        "Players": [
+        "players": [
             {
-                "Id": 1,
-                "Name": "Player1",
-                "Credits": 9001,
-                "Ufos": [
+                "id": 1,
+                "name": "Player1",
+                "credits": 9001,
+                "ufos": [
                     {
-                        "Id": 1,
-                        "InFight": true,
-                        "Coord": {
-                            "X": 25,
-                            "Y": 75
+                        "id": 1,
+                        "inFight": true,
+                        "coord": {
+                            "x": 25,
+                            "y": 75
                         }
                     }
                 ]
@@ -122,8 +122,9 @@ Example game state:
 #### Sending Commands to Macro
 
 You can send commands to [Macro](#macro) by writting them to `stdout`.
-There are 4 types of Macro commands:
+There are 5 types of Macro commands:
 - [conquer](#conquer)
+- [fight](#fight)
 - [moveToPlanet](#moveToPlanet)
 - [moveToCoord](#moveToCoord)
 - [buy](#buy)
@@ -151,8 +152,8 @@ Sending the following `conquer` command will let you conquer planet 42.
 
 ```json
     {
-        "Command": "conquer",
-        "PlanetId": 42,
+        "command": "conquer",
+        "planetId": 42,
     }
 ```
 
@@ -161,6 +162,18 @@ other UFOs in its radius that are already in a fight for that planet, you can
 take that planet without starting a battle and you can keep it until the other
 UFOs are done fighting (the winner will take the planet).
 If the battle is a draw, you get to keep the planet.
+
+##### <a name="fight"></a>fight
+
+In order to fight bots in space, you can send the `fight` command with the ID
+of the UFO you want to fight.
+
+```json
+    {
+        "command": "fight",
+        "ufoId": 1,
+    }
+```
 
 ##### <a name="moveToPlanet"></a>moveToPlanet
 
@@ -173,9 +186,9 @@ towards planet 42.
 
 ```json
   {
-      "Command": "moveToPlanet",
-      "Ufos": [1, 2, 3],
-      "PlanetId": 42
+      "command": "moveToPlanet",
+      "ufos": [1, 2, 3],
+      "planetId": 42
   }
 ```
 
@@ -190,9 +203,9 @@ towards the coordinate (75,25).
 
 ```json
     {
-        "Command": "moveToCoord",
-        "Ufos": [1, 2, 3],
-        "Coord": {
+        "command": "moveToCoord",
+        "ufos": [1, 2, 3],
+        "coord": {
             "X": 75,
             "Y": 25
         }
@@ -205,7 +218,7 @@ If you send multiple `moveToCoord` commands during one tick
 
 To buy additional UFOs you can send the `buy` command with the amount of UFOs
 that you want to buy and the ID of the planet where you want your new UFOs
-to spawn. The price of a UFO is **100000** credits.
+to spawn. The price of a UFO is **50000** credits.
 
 There are some constraints:
 1. The buy command will be ignored if you try to buy more UFOs that you can
@@ -220,9 +233,9 @@ Sending the following `buy` command will spawn 3 UFOs at planet 42.
 
 ```json
     {
-        "Command": "buy",
-        "Amount": 3,
-        "Planet": 42
+        "command": "buy",
+        "amount": 3,
+        "planet": 42
     }
 ```
 
@@ -235,45 +248,58 @@ allowed to buy **one** UFO and go to negative credits.
 #### conquer
 
 **Properties**
-- `Command`: Type of command (conquer)
-- `PlanetId`: ID of planet you want to conquer
+- `command`: Type of command (conquer)
+- `planetId`: ID of planet you want to conquer
 
 ```json
     {
-        "Command": "string",
-        "PlanetId": "int",
+        "command": "string",
+        "planetId": "int",
+    }
+```
+
+### fight
+
+**Properties**
+- `command`: Type of command (fight)
+- `ufoId`: ID of UFO you want to fight
+
+```json
+    {
+        "command": "fight",
+        "ufoId": 1,
     }
 ```
 
 #### moveToPlanet
 
 **Properties**
-- `Command`: Type of command (moveToPlanet)
-- `Ufos`: List of UFOs you want to move
-- `PlanetId`: ID of planet you want to move to
+- `command`: Type of command (moveToPlanet)
+- `ufos`: List of UFOs you want to move
+- `planetId`: ID of planet you want to move to
 
 ```json
   {
-      "Command": "string",
-      "Ufos": "[int]",
-      "PlanetId": "int"
+      "command": "string",
+      "ufos": "[int]",
+      "planetId": "int"
   }
 ```
 
 #### moveToCoord
 
 **Properties**
-- `Command`: Type of command (moveToCoord)
-- `Ufos`: List of UFOs you want to move
-- `Coord`: (X,Y) coordinate you want to move to
+- `command`: Type of command (moveToCoord)
+- `ufos`: List of UFOs you want to move
+- `coord`: (X,Y) coordinate you want to move to
 
 ```json
     {
-        "Command": "string",
-        "Ufos": "[int]",
-        "Coord": {
-            "X": "int",
-            "Y": "int"
+        "command": "string",
+        "ufos": "[int]",
+        "coord": {
+            "x": "int",
+            "y": "int"
         }
     }
 ```
@@ -281,16 +307,16 @@ allowed to buy **one** UFO and go to negative credits.
 #### buy
 
 **Properties**
-- `Command`: Type of command (buy)
-- `Amount`: Quantity of UFOs that you want to buy
-- `PlanetId`: ID of planet where your UFOs will spawn
+- `command`: Type of command (buy)
+- `amount`: Quantity of UFOs that you want to buy
+- `planetId`: ID of planet where your UFOs will spawn
 
 
 ```json
     {
-        "Command": "string",
-        "Amount": "int",
-        "Planet": "int"
+        "command": "string",
+        "amount": "int",
+        "planet": "int"
     }
 ```
 
