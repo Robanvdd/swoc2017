@@ -12,6 +12,7 @@
 #include "ConquerCommand.h"
 #include "MoveToPlanetCommand.h"
 #include "MoveToCoordCommand.h"
+#include "FightCommand.h"
 
 #include <QDir>
 #include <QElapsedTimer>
@@ -69,10 +70,14 @@ private:
     void handleConquerCommand(Player* player, ConquerCommand* conquerCommand);
     void handleMoveToPlanetCommand(Player* player, MoveToPlanetCommand* moveToPlanetCommand);
     void handleMoveToCoordCommand(Player* player, MoveToCoordCommand* moveToCoordCommand);
+    void handleFightCommand(Player* player, int ufoId);
+    void handleFightCommand(Player* player, FightCommand* fightCommand);
 
     void startMicroGame(const MicroGameInput& input, Planet* planet);
     void setNameAndLogDir();
     void startMicroGame(Player* player, const QPointF& location, Planet* planet);
+    void killMacro();
+    void startMicroGame(const MicroGameInput& input);
 };
 
 #endif // MACROGAME_H

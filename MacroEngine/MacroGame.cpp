@@ -1,6 +1,7 @@
 #include "BuyCommand.h"
 #include "CommandBase.h"
 #include "ConquerCommand.h"
+#include "FightCommand.h"
 #include "MacroGame.h"
 #include "MicroGameInput.h"
 #include "MicroGameInputPlayer.h"
@@ -142,11 +143,32 @@ void MacroGame::killBots()
 void MacroGame::killMicroGames()
 {
     std::cerr << "Killing MicroGames" << std::endl;
-    for (auto it = m_microGames.begin(); it != m_microGames.end(); it++)
+    foreach (auto microGame, m_microGames)
     {
-        auto microGame = *it;
-        microGame->stopProcess();
+        microGame->disconnect();
+        microGame->connect(microGame, &MicroGame::dataAvailable, this, [this, microGame]()
+        {
+            microGame->stopProcess();
+            microGame->deleteLater();
+            if (m_microGames.count() == 1) // This is the last MicroGame
+            {
+                std::cerr << "Killed last game" << std::endl;
+                killMacro();
+            }
+        });
     }
+}
+
+void MacroGame::killMacro()
+{
+    std::cerr << "Reporting game results" << std::endl;
+    std::cout << m_gameId << " " << m_matchDir.absolutePath().toStdString() << " ";
+    foreach (auto player, m_universe->getPlayers())
+    {
+        std::cout << player->getName().toStdString() << " " << static_cast<int>(player->getCredits()) << " ";
+    }
+    std::cout << std::endl;
+    deleteLater();
 }
 
 void MacroGame::stopMacroGame()
@@ -154,17 +176,10 @@ void MacroGame::stopMacroGame()
     std::cerr << "Stopping MacroGame" << std::endl;
     m_tickTimer->stop();
     killBots();
-    killMicroGames();
-
-    std::cerr << "Reporting game results" << std::endl;
-    std::cout << m_gameId << " " << m_matchDir.absolutePath().toStdString() << " ";
-    foreach (auto player, m_universe->getPlayers())
-    {
-        std::cout << player->getName().toStdString() << " " << player->getCredits() << " ";
-    }
-    std::cout << std::endl;
-
-    deleteLater();
+    if (m_microGames.count() > 0)
+        killMicroGames();
+    else
+        killMacro();
 }
 
 bool MacroGame::gameTimeOver()
@@ -293,15 +308,39 @@ void MacroGame::handleConquerCommand(Player* player, ConquerCommand* conquerComm
     SolarSystem* solarSystem = m_universe->getCorrespondingSolarSystem(planet);
     QPointF location = solarSystem->getPlanetLocation(*planet);
     QList<Ufo*> nearbyUfosPlayer = m_universe->getUfosNearLocation(location, *player);
-    QList<Ufo*> nearbyUfosCurrentOwner = m_universe->getUfosNearLocation(location, *currentOwner);
     if (nearbyUfosPlayer.size() == 0)
         return;
-    if (nearbyUfosCurrentOwner.size() == 0)
+
+    startMicroGame(player, location, planet);
+}
+
+void MacroGame::handleFightCommand(Player* player, FightCommand* fightCommand)
+{
+    handleFightCommand(player, fightCommand->getUfoId());
+}
+
+void MacroGame::handleFightCommand(Player* player, int ufoId)
+{
+    if (player == nullptr || !player->hasUfo(ufoId))
     {
-        planet->takeOverBy(player);
+        std::cerr << player->getName().toStdString() << " doesn't have ufo: " << ufoId << std::endl;
         return;
     }
-    startMicroGame(player, location, planet);
+    auto ufo = player->getUfo(ufoId);
+    if (m_universe->getUfosNearLocation(ufo->getCoord(), *player).size() <= 0)
+        return;
+
+    QList<MicroGameInputPlayer> microGameInputs;
+    foreach (auto player, m_universe->getPlayers())
+    {
+        QList<Ufo*> nearbyUfos = m_universe->getUfosNearLocation(ufo->getCoord(), *player);
+        if (nearbyUfos.size() > 0)
+            microGameInputs.append(MicroGameInputPlayer(player, nearbyUfos, m_playerMicroBotFolder[player]));
+    }
+    if (microGameInputs.size() >= 2)
+        startMicroGame(MicroGameInput(microGameInputs));
+    else
+        std::cerr << "No it enough ufo's nearby to fight" << std::endl;
 }
 
 void MacroGame::startMicroGame(Player* player, const QPointF& location, Planet* planet)
@@ -309,7 +348,6 @@ void MacroGame::startMicroGame(Player* player, const QPointF& location, Planet* 
     if (m_universe->getUfosNearLocation(location, *player).size() <= 0)
         return;
 
-    QMap<Player*, QList<Ufo*>> playerUfos;
     QList<MicroGameInputPlayer> microGameInputs;
     foreach (auto player, m_universe->getPlayers())
     {
@@ -319,6 +357,70 @@ void MacroGame::startMicroGame(Player* player, const QPointF& location, Planet* 
     }
     if (microGameInputs.size() >= 2)
         startMicroGame(MicroGameInput(microGameInputs), planet);
+    else
+        planet->takeOverBy(player);
+}
+
+void MacroGame::startMicroGame(const MicroGameInput& input)
+{
+    std::cerr << "Starting MicroGame at tick " << m_currentTick << std::endl;
+
+    foreach (auto playerInput, input.m_microGameInputPlayers)
+    {
+        foreach (auto ufo, playerInput.ufos)
+        {
+            ufo->setInFight(true);
+        }
+    }
+
+    static int nextMicroGame = 0;
+    QDir microLogFolder(m_tickDir.filePath("../MicroGame" + QString::number(++nextMicroGame)));
+    m_tickDir.mkpath(microLogFolder.absolutePath());
+    MicroGame* microGame = new MicroGame("java -jar micro.jar", input, microLogFolder.absolutePath());
+    microGame->startProcess();
+    std::cerr << "Fight started!!!" << std::endl;
+
+    QObject::connect(microGame, &MicroGame::dataAvailable, this, [this, microGame, microLogFolder]() {
+        if (microGame->canReadLine())
+        {
+            auto result = microGame->readLine();
+
+            std::cerr << result.toStdString() << std::endl;
+
+            MicroGameOutput parsedOutput;
+            parsedOutput.readOutput(result);
+            if (parsedOutput.getGameId() < 0)
+            {
+                throw std::runtime_error("Parsing microgame output went horribly wrong.");
+            }
+
+            foreach (auto playerOutput, parsedOutput.getPlayers())
+            {
+                auto player = m_universe->getPlayers()[playerOutput.getId()];
+                foreach (auto ufoId, playerOutput.getCasualties())
+                {
+                    player->removeUfo(player->getUfo(ufoId));
+                }
+                foreach (auto ufoId, playerOutput.getSurvivors())
+                {
+                    player->getUfo(ufoId)->setInFight(false);
+                }
+            }
+
+            QFile file(microLogFolder.absolutePath() + QDir::separator() + "microOutput_" + QString::number(microGame->getId()) + ".json");
+            if (file.open(QIODevice::ReadWrite))
+            {
+                QTextStream stream(&file);
+                stream << result;
+            }
+
+            microGame->stopProcess();
+            m_microGames.removeAll(microGame);
+            microGame->deleteLater();
+        }
+    });
+
+    m_microGames << microGame;
 }
 
 void MacroGame::startMicroGame(const MicroGameInput& input, Planet* planet)
@@ -407,6 +509,11 @@ void MacroGame::handleCommand(Player* player, std::unique_ptr<CommandBase>& comm
     {
         handleMoveToCoordCommand(player, moveToCoordCommand);
     }
+    FightCommand* fightCommand = dynamic_cast<FightCommand*>(command.get());
+    if (fightCommand)
+    {
+        handleFightCommand(player, fightCommand);
+    }
 }
 
 void MacroGame::communicateWithBots(QJsonDocument gameStateDoc)
@@ -446,6 +553,10 @@ std::unique_ptr<CommandBase> MacroGame::createCommand(const QJsonObject object)
     else if (commandString == "conquer")
     {
         command = std::make_unique<ConquerCommand>();
+    }
+    else if (commandString == "fight")
+    {
+        command = std::make_unique<FightCommand>();
     }
     else {
         throw std::exception();
