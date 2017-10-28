@@ -14,6 +14,7 @@ import java.io.OutputStreamWriter;
 
 public class BotProcess implements AutoCloseable
 {
+    private final ProcessBuilder processBuilder;
     private final Process child;
 
     private final OutputStreamWriter outputWriter;
@@ -28,7 +29,8 @@ public class BotProcess implements AutoCloseable
     {
         Debug.Print(Debug.DebugMode.Dev, "Starting new bot process with command: %s", command);
 
-        child = Runtime.getRuntime().exec(command);
+        processBuilder = new ProcessBuilder(command);
+        child = processBuilder.start();
 
         inputReader = new StreamGobbler(child.getInputStream());
         errorReader = new StreamGobbler(child.getErrorStream());
