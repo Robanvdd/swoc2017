@@ -50,17 +50,17 @@ When a planet is conquered you gain credits. These are used to buy more UFOs.
 The player with the most credits at the end of the game will win so be mindful
 of how you are spending your credits.
 
-The base income is a **2000** credits per second. On top of that you get an
-additional amount credits for the total number of planet you have conquered
-per second. Your total income per second is calculated with the following
-formula:
+If you have at least one planet conquered, your base income is a **1500**
+credits per second. On top of that you get an additional amount credits for
+the total number of planet you have conquered per second.
+Your total income per second is calculated with the following formula:
 ```
     Bi + ((Bp - P * S) * S)
     where
-        Bi = base income (2000 credits)
+        Bi = base income (1500 credits)
         Bp = base income per planet (225 credits)
-        P = penalty per planet (5 credits)
-        S = number of conquered planets + 3
+        P = penalty per planet (3 credits)
+        S = number of conquered planets (up to a maximum of 50) + 3
 ```
 
 See commands: [buy](#buy)
@@ -226,6 +226,10 @@ Sending the following `buy` command will spawn 3 UFOs at planet 42.
     }
 ```
 
+**[Pro-tip]** *Second Life*: If all your UFOs have been destroyed and you
+do not have enough credits to buy more UFOs or any conquered planets, you are
+allowed to buy **one** UFO and go to negative credits.
+
 #### <a name="macro-commands-reference"></a>Macro Commands Reference
 
 #### conquer
@@ -315,7 +319,7 @@ The movement is based on the [polar coordinate system], `direction` being the *a
 
 The `shoot` command shoots a laser from the origin of the UFO in the specified `direction`.
 Unlike moving, shooting has a fixed projectile speed.
-The movement is based on the [polar coordinate system], `direction` being the *angle* and the projectile speed which is always 10 (fixed speed).
+The movement is based on the [polar coordinate system], `direction` being the *angle* and the projectile speed which is always **15** (fixed speed).
 Shooting also has a *cooldown* of **1** seconds meaning that you can only shoot once per second.
 Each shot does **25** points of damage. There is no friendly fire.
 
@@ -381,7 +385,9 @@ The input received from micro has the following format:
     "tick": "integer",
     "arena": {
         "height": "integer",
-        "width": "integer"
+        "width": "integer",
+        "shrinkRate": "integer",
+        "shrinkThreshold": "integer"
     },
     "player": "string",
     "players": [
@@ -420,7 +426,9 @@ Input example:
     "tick": 10,
     "arena": {
         "height": 1000,
-        "width": 1000
+        "width": 1000,
+        "shrinkRate": 10,
+        "shrinkThreshold": 2
     },
     "playerId": 0,
     "playerName": "player0",
