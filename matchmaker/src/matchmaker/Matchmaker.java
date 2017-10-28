@@ -272,6 +272,10 @@ public class Matchmaker implements AutoCloseable {
         for (PlayerScore playerScore : gameResult.playerScores) {
             DBObject result = new BasicDBObject("name", playerScore.name);
             result.put("score", playerScore.score);
+            botList.stream().filter(bot -> playerScore.name.equals(bot.user.get("username"))).forEach(bot -> {
+                result.put("microVersion", bot.micro.get("version"));
+                result.put("macroVersion", bot.macro.get("version"));
+            });
             scores.add(result);
         }
         match.put("scores", scores);

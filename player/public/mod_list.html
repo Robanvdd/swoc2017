@@ -7,7 +7,7 @@ Download the Log Visualizers here: <a href="./microvis.zip">Micro </a> <a href="
 <table width="100%" class="table table-hover">
 	<thead>
 		<tr>
-			<th>Time</th><th>Winner</th><th>Results</th><th>Log</th>
+			<th>Time</th><th>Winner</th><th>Results (macro/micro)</th><th>Log</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -18,7 +18,7 @@ Download the Log Visualizers here: <a href="./microvis.zip">Micro </a> <a href="
 			</td>
 			<td>
 				<div ng-repeat="score in match.scores| orderBy:'score':'true'">
-				{{score.name}}: {{score.score}}
+				{{score.name}}({{score.macroVersion}}/{{score.microVersion}}): {{score.score}}
 				</div>
 			</td>
 			<td>
