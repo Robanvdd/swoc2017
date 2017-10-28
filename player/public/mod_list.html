@@ -17,7 +17,7 @@ Download the Log Visualizers here: <a href="./microvis.zip">Micro </a> <a href="
 				<span>{{match.winner}}</span>
 			</td>
 			<td>
-				<div ng-repeat="score in match.scores">
+				<div ng-repeat="score in match.scores| orderBy:'score':'true'">
 				{{score.name}}: {{score.score}}
 				</div>
 			</td>
