@@ -58,7 +58,7 @@ MacroGame::MacroGame(QList<PlayerBotFolders*> playerBotFolders, Universe* univer
 
     foreach (auto playerBotFolder, m_playerBotFolders)
     {
-        auto player = new Player(playerBotFolder->getPlayerName(), hue, this);
+        auto player = new Player(playerBotFolder->getPlayerName(), hue, m_universe, this);
         for (int i = 0; i < nUfosPerPlayer; i++)
         {
             m_ufoShop.giveUfo(player, m_universe, ufoPlacement);
@@ -164,7 +164,8 @@ void MacroGame::killMacro()
     std::cout << m_gameId << " " << m_matchDir.absolutePath().toStdString() << " ";
     foreach (auto player, m_universe->getPlayers())
     {
-        std::cout << player->getName().toStdString() << " " << static_cast<int>(player->getCredits()) << " ";
+        int score = player->getCredits() + (0.5*m_ufoShop.getUfoPrice() * m_universe->getNumberofOwnedUfos(player));
+        std::cout << player->getName().toStdString() << " " << static_cast<int>(score) << " ";
     }
     std::cout << std::endl;
     deleteLater();

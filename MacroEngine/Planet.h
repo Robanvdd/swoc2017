@@ -4,6 +4,7 @@
 #include "GameObject.h"
 
 #include <QObject>
+#include <QColor>
 #include <QPoint>
 
 class Player;
@@ -33,6 +34,7 @@ private:
     double m_orbitRotation;
     double m_orbitSpeed;
     int m_ownedBy;
+    QColor m_color;
 };
 
 #endif // PLANET_H

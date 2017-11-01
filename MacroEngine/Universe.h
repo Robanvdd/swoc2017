@@ -27,6 +27,9 @@ public:
     QMap<int, Fight*> getFights() const;
     SolarSystem* getCorrespondingSolarSystem(Planet* planet);
 
+    int getIncome(Player* player);
+    int getNumberofOwnedUfos(Player* player);
+    int getNumberofOwnedPlanets(Player* player);
 signals:
 
 public slots:

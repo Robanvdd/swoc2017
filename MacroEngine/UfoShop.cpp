@@ -77,4 +77,9 @@ void UfoShop::buyUfos(Player* player, Planet* planet, Universe* universe, int am
     }
 }
 
+int UfoShop::getUfoPrice() const
+{
+    return m_ufoPrice;
+}
+
 

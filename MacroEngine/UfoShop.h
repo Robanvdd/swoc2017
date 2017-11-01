@@ -16,6 +16,8 @@ public:
     void giveUfo(Player* player, Universe* universe, double ufoPlacement);
 
     void buyUfos(Player *player, Planet* planet, Universe* universe, int amount=1);
+    int getUfoPrice() const;
+
 signals:
 
 public slots:

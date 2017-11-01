@@ -7,11 +7,12 @@
 #include <QObject>
 
 class Ufo;
+class Universe;
 class Player : public GameObject
 {
     Q_OBJECT
 public:
-    explicit Player(QString name, int hue, QObject *parent = nullptr);
+    Player(QString name, int hue, Universe* universe, QObject *parent = nullptr);
 
     double getCredits() const;
     void addCredits(double credits);
@@ -46,6 +47,7 @@ private:
     QList<Ufo*> m_ufos;
     QColor m_color;
     double m_hue;
+    Universe* m_universe;
 };
 
 #endif // PLAYER_H
