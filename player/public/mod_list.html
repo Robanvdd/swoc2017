@@ -2,10 +2,12 @@
 <h2>History of Space Invaders</h2>
 <h3>Make the Galaxy Great Again!</h3>
 
+Download the Log Visualizers here: <a href="./microvis.zip">Micro </a> <a href="./macrovis.zip">Macro </a>
+
 <table width="100%" class="table table-hover">
 	<thead>
 		<tr>
-			<th>Time</th><th>Winner</th><th>Log</th><th width="100px"></th>
+			<th>Time</th><th>Winner</th><th>Results (macro/micro)</th><th>Log</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -15,7 +17,12 @@
 				<span>{{match.winner}}</span>
 			</td>
 			<td>
-				<a href="./match_logs/{{match.log}}">Download log</span>
+				<div ng-repeat="score in match.scores| orderBy:'score':'true'">
+				{{score.name}}({{score.macroVersion}}/{{score.microVersion}}): {{score.score}}
+				</div>
+			</td>
+			<td>
+				<a href="./match_logs/{{match.log}}">Log</span>
 			</td>
 		</tr>
 	</tbody>

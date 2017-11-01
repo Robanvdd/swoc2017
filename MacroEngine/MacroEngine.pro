@@ -31,7 +31,8 @@ SOURCES += main.cpp \
     PlayerBotFolders.cpp \
     MicroGameInput.cpp \
     MicroGameOutput.cpp \
-    MicroGameInputPlayer.cpp
+    MicroGameInputPlayer.cpp \
+    FightCommand.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -66,4 +67,5 @@ HEADERS += \
     PlayerBotFolders.h \
     MicroGameInput.h \
     MicroGameOutput.h \
-    MicroGameInputPlayer.h
+    MicroGameInputPlayer.h \
+    FightCommand.h

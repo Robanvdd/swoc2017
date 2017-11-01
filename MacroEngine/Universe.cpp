@@ -1,13 +1,14 @@
 #include "Ufo.h"
 #include "Universe.h"
 
+#include <algorithm>
 #include <QJsonArray>
 
 Universe::Universe(QMap<int, SolarSystem *> solarSystems, QObject *parent)
     : GameObject(parent)
     , m_solarSystems(solarSystems)
-    , m_baseIncomePerSecond(500)
-    , m_incomePerPlanetPerSecond(50)
+    , m_baseIncomePerSecond(1500)
+    , m_incomePerPlanetPerSecond(225)
 {
     for (auto solarSystemIt = m_solarSystems.begin(); solarSystemIt != m_solarSystems.end(); solarSystemIt++)
     {
@@ -92,7 +93,6 @@ SolarSystem*Universe::getCorrespondingSolarSystem(Planet* planet)
 
 void Universe::addCredits(Player* player, double durationInSeconds)
 {
-    player->addCredits(m_baseIncomePerSecond * durationInSeconds);
     int ownedPlanets = 0;
     foreach (SolarSystem* solarSystem, m_solarSystems) {
         foreach (Planet* planet, solarSystem->getPlanets()) {
@@ -100,8 +100,12 @@ void Universe::addCredits(Player* player, double durationInSeconds)
                 ownedPlanets++;
         }
     }
-    if (ownedPlanets > 0)
-        player->addCredits(ownedPlanets * m_incomePerPlanetPerSecond * durationInSeconds);
+    auto baseIncome = ownedPlanets > 0 ? m_baseIncomePerSecond : 0;
+    auto basePlanet = m_incomePerPlanetPerSecond;
+    auto shifted =  std::min(ownedPlanets, 50) + 3;
+    auto paneltyPerPlanet = 3;
+    auto total = baseIncome + (basePlanet - paneltyPerPlanet * shifted)*shifted;
+    player->addCredits(ownedPlanets > 0 ? total*durationInSeconds : 0);
 }
 
 QList<Ufo*> Universe::getUfosNearLocation(const QPointF& location, const Player& player)
@@ -118,3 +122,5 @@ QList<Ufo*> Universe::getUfosNearLocation(const QPointF& location, const Player&
     }
     return result;
 }
+
+

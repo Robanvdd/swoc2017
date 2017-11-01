@@ -4,7 +4,7 @@
 <table width="100%" class="table table-hover">
 	<thead>
 		<tr>
-			<th width="50px">Rank</th><th>Name</th><th>Version</th><th>User</th>
+			<th width="150px">Rank</th><th>User</th><th>Version</th>
 		</tr>
 	</thead>
 		<tr ng-repeat="bot in bots | orderBy:'ranking':'true'">
@@ -12,13 +12,10 @@
 				<span>{{bot.ranking}}</span>
 			</td>
 			<td>
-				<span>{{bot.name}}</span>
+				<span>{{bot.username}}</span>
 			</td>
 			<td>
 				<span>{{bot.version}}</span>
-			</td>
-			<td>
-				<span>{{bot.username}}</span>
 			</td>
 		</tr>
 	</tbody>

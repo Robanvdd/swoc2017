@@ -10,7 +10,7 @@ UniverseBuilder::UniverseBuilder()
 
 Universe* UniverseBuilder::buildUniverse()
 {
-    std::uniform_int_distribution<> disSolarSystem(4, 9);
+    std::uniform_int_distribution<> disSolarSystem(6,11);
     auto nSolarSystems = disSolarSystem(m_randomGenerator);
 
     auto solarSystemLocations = buildSolarSystemLocations(nSolarSystems);

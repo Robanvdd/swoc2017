@@ -15,6 +15,8 @@ Ufo::Ufo(QObject *parent)
 
 void Ufo::applyTick(double durationInSeconds)
 {
+    if (m_inFight)
+        return;
     if (m_FlyingToCoord)
     {
         QVector2D directionVector(m_targetCoord - m_coord);

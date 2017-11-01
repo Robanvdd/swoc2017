@@ -39,6 +39,14 @@ function parseFight(fightJSON) {
 function parsePlayer(playerJSON, playerCpp) {
     playerCpp.name = playerJSON.name
     playerCpp.credits = playerJSON.credits
+    playerCpp.hue = playerJSON.hue
+    playerCpp.color = playerJSON.color
+
+    var ufoIds = []
+    for (var i = 0; i < playerJSON.ufos.length; i++) {
+        ufoIds.push(playerJSON.ufos[i].id);
+    }
+    playerCpp.onlyKeepUfos(ufoIds);
 
     for (var ufoI = 0; ufoI < playerJSON.ufos.length; ufoI++) {
         var ufoJSON = playerJSON.ufos[ufoI]

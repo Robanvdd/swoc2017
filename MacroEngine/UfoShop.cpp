@@ -7,13 +7,26 @@
 
 UfoShop::UfoShop(QObject *parent)
     : QObject(parent)
-    , m_ufoPrice(1e5)
+    , m_ufoPrice(2e4)
 {
 }
 
 void UfoShop::buyUfo(Player* player, Planet* planet, Universe* universe)
 {
-    if (player == nullptr || player->getCredits() < m_ufoPrice)
+    if (player == nullptr)
+        return;
+
+    int nUfos = player->getUfos().count();
+
+    int nOwnedPlanets = 0;
+    foreach (SolarSystem* solarSystem, universe->getSolarSystems()) {
+        foreach (Planet* planet, solarSystem->getPlanets()) {
+            if (planet->getOwnedBy() == player->getId())
+                nOwnedPlanets++;
+        }
+    }
+
+    if ( player->getCredits() < m_ufoPrice && (nUfos > 0 || nOwnedPlanets > 0))
         return;
 
     if (planet == nullptr)

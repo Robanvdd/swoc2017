@@ -1,11 +1,6 @@
 package matchmaker;
 
-import com.mongodb.MongoClient;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
+import com.mongodb.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -238,10 +233,11 @@ public class Matchmaker implements AutoCloseable {
         for(Bot bot : botList) {
             Integer newRanking = null;
             for(PlayerScore playerScore : gameResult.playerScores) {
-                if (playerScore.name == bot.user.get("username")) {
+                if (playerScore.name.equals(bot.user.get("username"))) {
                     newRanking = playerScore.score;
                 }
             }
+
 
             BasicDBObject macro_query = new BasicDBObject("_id", bot.macro.get("_id"));
             BasicDBObject micro_query = new BasicDBObject("_id", bot.micro.get("_id"));
@@ -252,6 +248,8 @@ public class Matchmaker implements AutoCloseable {
             update_micro.append("$set", new BasicDBObject(RANKINGFIELDNAME, newRanking));
             coll.update(macro_query, update_macro);
             coll.update(micro_query, update_micro);
+
+            System.out.println("Updated score "+ newRanking +" for player: " + bot.user.get("username"));
         }
     }
 
@@ -270,6 +268,17 @@ public class Matchmaker implements AutoCloseable {
         match.put("time", now);
         match.put("winner", winner);
         match.put("log", logFileName);
+        BasicDBList scores= new BasicDBList();
+        for (PlayerScore playerScore : gameResult.playerScores) {
+            DBObject result = new BasicDBObject("name", playerScore.name);
+            result.put("score", playerScore.score);
+            botList.stream().filter(bot -> playerScore.name.equals(bot.user.get("username"))).forEach(bot -> {
+                result.put("microVersion", bot.micro.get("version"));
+                result.put("macroVersion", bot.macro.get("version"));
+            });
+            scores.add(result);
+        }
+        match.put("scores", scores);
         matchCol.insert(match);
         //TODO insert entries into match-users table with individual scores
     }

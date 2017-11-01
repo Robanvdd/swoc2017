@@ -29,6 +29,9 @@ int main(int argc, char *argv[])
     qmlRegisterType<Player>("SWOC", 1, 0, "Player");
     qmlRegisterType<Ufo>("SWOC", 1, 0, "Ufo");
 
+    qmlRegisterType<Player>("SWOC", 1, 0, "Player");
+    qmlRegisterType<PlayersModel>("SWOC", 1, 0, "PlayersModel");
+
     QQmlApplicationEngine engine;
     QQmlContext* context = engine.rootContext();
     context->setContextProperty("planetImageProvider", &planetImageProvider);
