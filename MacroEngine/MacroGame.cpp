@@ -145,16 +145,15 @@ void MacroGame::killMicroGames()
     std::cerr << "Killing MicroGames" << std::endl;
     foreach (auto microGame, m_microGames)
     {
-        microGame->disconnect();
         microGame->connect(microGame, &MicroGame::dataAvailable, this, [this, microGame]()
         {
-            microGame->stopProcess();
-            microGame->deleteLater();
-            if (m_microGames.count() == 1) // This is the last MicroGame
-            {
-                std::cerr << "Killed last game" << std::endl;
-                killMacro();
-            }
+//            microGame->stopProcess();
+//            microGame->deleteLater();
+//            if (m_microGames.count() == 1) // This is the last MicroGame
+//            {
+//                std::cerr << "Killed last game" << std::endl;
+//                killMacro();
+//            }
         });
     }
 }
@@ -417,6 +416,8 @@ void MacroGame::startMicroGame(const MicroGameInput& input)
             microGame->stopProcess();
             m_microGames.removeAll(microGame);
             microGame->deleteLater();
+            if (!m_tickTimer->isActive() && m_microGames.count() == 0)
+                killMacro();
         }
     });
 
@@ -480,6 +481,8 @@ void MacroGame::startMicroGame(const MicroGameInput& input, Planet* planet)
             microGame->stopProcess();
             m_microGames.removeAll(microGame);
             microGame->deleteLater();
+            if (!m_tickTimer->isActive() && m_microGames.count() == 0)
+                killMacro();
         }
     });
 

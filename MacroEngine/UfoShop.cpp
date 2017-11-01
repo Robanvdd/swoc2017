@@ -7,7 +7,7 @@
 
 UfoShop::UfoShop(QObject *parent)
     : QObject(parent)
-    , m_ufoPrice(5e4)
+    , m_ufoPrice(2e4)
 {
 }
 
