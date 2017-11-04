@@ -25,5 +25,15 @@ Item {
         height: 64
         mipmap: true
         source: planetImageProvider.getRandomPlanet()
+
+        Rectangle {
+            anchors.centerIn: parent
+            z: planet.z - 1
+            opacity: 0.75
+            width: planet.width+20
+            height: width
+            radius: 0.5*width
+            color: modelData.color
+        }
     }
 }

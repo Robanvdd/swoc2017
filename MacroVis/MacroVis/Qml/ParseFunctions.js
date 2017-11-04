@@ -20,20 +20,6 @@ function parseGameJSON(gameJSON) {
         var playerCpp = gameBackend.getPlayer(playerId)
         parsePlayer(playerJSON, playerCpp)
     }
-
-//    for (var fightI = 0; fightI < gameJSON.fights.length; fightI++) {
-//        var fightJSON = gameJSON.fights[fightI]
-//        parseFight(fightJSON)
-//    }
-}
-
-function parseFight(fightJSON) {
-    print(fightJSON.id + " "
-        + fightJSON.player1Id + " "
-        + fightJSON.player2Id + " "
-        + fightJSON.planetId + " "
-        + fightJSON.player1UfoIds + " "
-        + fightJSON.player2UfoIds)
 }
 
 function parsePlayer(playerJSON, playerCpp) {
@@ -41,6 +27,8 @@ function parsePlayer(playerJSON, playerCpp) {
     playerCpp.credits = playerJSON.credits
     playerCpp.hue = playerJSON.hue
     playerCpp.color = playerJSON.color
+    playerCpp.income = playerJSON.income
+    playerCpp.planetsOwned = playerJSON.ownedPlanets
 
     var ufoIds = []
     for (var i = 0; i < playerJSON.ufos.length; i++) {
@@ -84,4 +72,5 @@ function parsePlanet(planetJSON, planetCpp) {
     planetCpp.orbitDistance = planetJSON.orbitDistance
     planetCpp.orbitRotation = planetJSON.orbitRotation
     planetCpp.ownedBy = planetJSON.ownedBy
+    planetCpp.color = planetJSON.color
 }

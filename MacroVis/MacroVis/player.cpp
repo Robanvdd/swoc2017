@@ -76,3 +76,25 @@ UfosModel* Player::getUfos()
 {
     return m_ufos;
 }
+
+int Player::getIncome() const
+{
+    return m_income;
+}
+
+void Player::setIncome(int income)
+{
+    m_income = income;
+    emit incomeChanged();
+}
+
+int Player::getPlanetsOwned() const
+{
+    return m_planetsOwned;
+}
+
+void Player::setPlanetsOwned(int planetsOwned)
+{
+    m_planetsOwned = planetsOwned;
+    emit planetsOwnedChanged();
+}

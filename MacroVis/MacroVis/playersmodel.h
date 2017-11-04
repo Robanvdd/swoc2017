@@ -15,6 +15,8 @@ public:
         UfosRole,
         HueRole,
         ColorRole,
+        IncomeRole,
+        PlanetsOwnedRole,
     };
     explicit PlayersModel(QObject *parent = nullptr);
 

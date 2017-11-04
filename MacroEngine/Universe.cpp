@@ -102,6 +102,7 @@ int Universe::getIncome(Player* player)
     if (ownedPlanets == 0)
         return 0;
 
+
     auto baseIncome = m_baseIncomePerSecond;
     auto basePlanet = m_incomePerPlanetPerSecond;
     auto shifted =  std::min(ownedPlanets, 50) + 3;
