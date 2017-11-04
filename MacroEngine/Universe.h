@@ -27,6 +27,7 @@ public:
     QMap<int, Fight*> getFights() const;
     SolarSystem* getCorrespondingSolarSystem(Planet* planet);
 
+    QList<Ufo*> getFriends(const QList<Ufo*>& attackees, const Player& player);
     int getIncome(Player* player);
     int getNumberofOwnedUfos(Player* player);
     int getNumberofOwnedPlanets(Player* player);
@@ -38,8 +39,8 @@ private:
     QMap<int, SolarSystem*> m_solarSystems;
     QMap<int, Player*> m_players;
     QMap<int, Fight*> m_fights;
-    double m_baseIncomePerSecond;
-    double m_incomePerPlanetPerSecond;
+    int m_baseIncomePerSecond;
+    int m_incomePerPlanetPerSecond;
 
     void addCredits(Player* player, double durationInSeconds);
 };

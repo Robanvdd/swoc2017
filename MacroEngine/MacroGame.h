@@ -70,7 +70,7 @@ private:
     void handleConquerCommand(Player* player, ConquerCommand* conquerCommand);
     void handleMoveToPlanetCommand(Player* player, MoveToPlanetCommand* moveToPlanetCommand);
     void handleMoveToCoordCommand(Player* player, MoveToCoordCommand* moveToCoordCommand);
-    void handleFightCommand(Player* player, int ufoId);
+    void handleFightCommand(Player* attacker, int ufoId);
     void handleFightCommand(Player* player, FightCommand* fightCommand);
 
     void startMicroGame(const MicroGameInput& input, Planet* planet);

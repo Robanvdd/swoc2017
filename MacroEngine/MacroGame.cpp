@@ -319,23 +319,28 @@ void MacroGame::handleFightCommand(Player* player, FightCommand* fightCommand)
     handleFightCommand(player, fightCommand->getUfoId());
 }
 
-void MacroGame::handleFightCommand(Player* player, int ufoId)
+void MacroGame::handleFightCommand(Player* attacker, int ufoId)
 {
-    if (player == nullptr || !player->hasUfo(ufoId))
+    if (attacker == nullptr || !attacker->hasUfo(ufoId))
     {
-        std::cerr << player->getName().toStdString() << " doesn't have ufo: " << ufoId << std::endl;
+        std::cerr << attacker->getName().toStdString() << " doesn't have ufo: " << ufoId << std::endl;
         return;
     }
-    auto ufo = player->getUfo(ufoId);
-    if (m_universe->getUfosNearLocation(ufo->getCoord(), *player).size() <= 0)
-        return;
+    auto ufo = attacker->getUfo(ufoId);
 
     QList<MicroGameInputPlayer> microGameInputs;
     foreach (auto player, m_universe->getPlayers())
     {
         QList<Ufo*> nearbyUfos = m_universe->getUfosNearLocation(ufo->getCoord(), *player);
-        if (nearbyUfos.size() > 0)
-            microGameInputs.append(MicroGameInputPlayer(player, nearbyUfos, m_playerMicroBotFolder[player]));
+        // Find ufo's around attacked ufo's
+        QList<Ufo*> nearbyIncludingFriends;
+        if (player == attacker)
+            nearbyIncludingFriends = nearbyUfos;
+        else
+            nearbyIncludingFriends = m_universe->getFriends(nearbyUfos, *player);
+
+        if (nearbyIncludingFriends.size() > 0)
+            microGameInputs.append(MicroGameInputPlayer(player, nearbyIncludingFriends, m_playerMicroBotFolder[player]));
     }
     if (microGameInputs.size() >= 2)
         startMicroGame(MicroGameInput(microGameInputs));
