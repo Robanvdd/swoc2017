@@ -15,6 +15,8 @@ class Player : public GameObject
     Q_PROPERTY(UfosModel* ufos MEMBER m_ufos NOTIFY ufosChanged)
     Q_PROPERTY(double hue MEMBER m_hue NOTIFY hueChanged)
     Q_PROPERTY(QColor color READ getColor WRITE setColor NOTIFY colorChanged)
+    Q_PROPERTY(int income READ getIncome WRITE setIncome NOTIFY incomeChanged)
+    Q_PROPERTY(int planetsOwned READ getPlanetsOwned WRITE setPlanetsOwned NOTIFY planetsOwnedChanged)
 public:
     explicit Player(QObject *parent = nullptr);
     explicit Player(int playerId, QObject* parent = nullptr);
@@ -35,12 +37,20 @@ public:
     int getCredits() const;
     UfosModel* getUfos();
 
+    int getIncome() const;
+    void setIncome(int income);
+
+    int getPlanetsOwned() const;
+    void setPlanetsOwned(int planetsOwned);
+
 signals:
     void nameChanged();
     void creditsChanged();
     void ufosChanged();
     void hueChanged();
     void colorChanged();
+    void incomeChanged();
+    void planetsOwnedChanged();
 
 public slots:
 private:
@@ -48,6 +58,8 @@ private:
     int m_credits;
     double m_hue;
     QColor m_color;
+    int m_income;
+    int m_planetsOwned;
     UfosModel* m_ufos;
 };
 

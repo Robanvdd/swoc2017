@@ -1,15 +1,18 @@
 #include "Player.h"
 #include "Ufo.h"
+#include "Universe.h"
 
 #include <QJsonArray>
 #include <QJsonObject>
 
-Player::Player(QString name, int hue, QObject *parent)
+
+Player::Player(QString name, int hue, Universe* universe, QObject *parent)
     : GameObject(parent)
     , m_credits(0)
     , m_name(name)
     , m_color(QColor::fromHsl(hue, 255, 127).toRgb())
     , m_hue(hue / 359.0)
+    , m_universe(universe)
 {
 }
 
@@ -86,6 +89,8 @@ void Player::writeState(QJsonObject& gameState)
         ufoArray.append(ufoObject);
     }
     gameState["ufos"] = ufoArray;
+    gameState["ownedPlanets"] = m_universe->getNumberofOwnedPlanets(this);
+    gameState["income"] = m_universe->getIncome(this);
 }
 
 QList<Ufo*> Player::getUfos() const

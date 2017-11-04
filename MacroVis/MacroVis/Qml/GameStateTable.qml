@@ -56,7 +56,7 @@ Column {
     GridLayout {
         id: playerCreditGrid
         rows: gameBackend.players.rowCount()
-        columns: 2
+        columns: 3
         rowSpacing: gameGrid.rowSpacing
         flow: GridLayout.TopToBottom
         Repeater {
@@ -75,9 +75,42 @@ Column {
                 text: credits
             }
         }
+        Repeater {
+            model: gameBackend.players
+            delegate: Label {
+                parent: playerCreditGrid
+                text: income
+            }
+        }
     }
     Label {
         text: "Ufos"
+        font.pointSize: 18
+    }
+    GridLayout {
+        id: playerUfosGrid
+        rows: gameBackend.players.rowCount()
+        columns: 2
+        rowSpacing: gameGrid.rowSpacing
+        flow: GridLayout.TopToBottom
+        Repeater {
+            model: gameBackend.players
+            delegate: Label {
+                parent: playerUfosGrid
+                text: name
+                color: model.color
+            }
+        }
+        Repeater {
+            model: gameBackend.players
+            delegate: Label {
+                parent: playerUfosGrid
+                text: ufos.length
+            }
+        }
+    }
+    Label {
+        text: "Number of Planets"
         font.pointSize: 18
     }
     GridLayout {
@@ -98,7 +131,7 @@ Column {
             model: gameBackend.players
             delegate: Label {
                 parent: playerPlanetsGrid
-                text: ufos.length
+                text: ownedPlanets
             }
         }
     }

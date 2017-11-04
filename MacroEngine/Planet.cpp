@@ -2,6 +2,7 @@
 #include "Player.h"
 
 #include <QJsonObject>
+#include <QColor>
 #define _USE_MATH_DEFINES
 #include <math.h>
 
@@ -23,6 +24,7 @@ void Planet::writeState(QJsonObject& gameState) const
     gameState["orbitDistance"] = m_orbitDistance;
     gameState["orbitRotation"] = m_orbitRotation;
     gameState["ownedBy"] = m_ownedBy;
+    gameState["color"] = m_color.name(QColor::HexArgb);
 }
 
 void Planet::applyTick(double durationInSeconds)
@@ -38,7 +40,10 @@ int Planet::getOwnedBy() const
 void Planet::takeOverBy(Player* player)
 {
     if (player)
+    {
         m_ownedBy = player->getId();
+        m_color = player->getColor();
+    }
 }
 
 double Planet::getOrbitRotation() const

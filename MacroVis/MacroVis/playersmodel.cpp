@@ -59,6 +59,26 @@ void PlayersModel::CreatePlayer(int playerId)
             emit dataChanged(index(rowId), index(rowId), roles);
         }
     });
+    QObject::connect(player, &Player::incomeChanged, this, [this, player]()
+    {
+        if (m_players.contains(player))
+        {
+            int rowId = m_players.indexOf(player);
+            QVector<int> roles;
+            roles << IncomeRole;
+            emit dataChanged(index(rowId), index(rowId), roles);
+        }
+    });
+    QObject::connect(player, &Player::planetsOwnedChanged, this, [this, player]()
+    {
+        if (m_players.contains(player))
+        {
+            int rowId = m_players.indexOf(player);
+            QVector<int> roles;
+            roles << PlanetsOwnedRole;
+            emit dataChanged(index(rowId), index(rowId), roles);
+        }
+    });
 
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     m_players.append(player);
@@ -117,6 +137,10 @@ QVariant PlayersModel::data(const QModelIndex& index, int role) const
         return m_players[index.row()]->getHue();
     case ColorRole:
         return m_players[index.row()]->getColor();
+    case IncomeRole:
+        return m_players[index.row()]->getIncome();
+    case PlanetsOwnedRole:
+        return m_players[index.row()]->getPlanetsOwned();
     }
     return QVariant();
 }
@@ -129,5 +153,7 @@ QHash<int, QByteArray> PlayersModel::roleNames() const
     roles[UfosRole] = "ufos";
     roles[HueRole] = "hue";
     roles[ColorRole] = "color";
+    roles[IncomeRole] = "income";
+    roles[PlanetsOwnedRole] = "ownedPlanets";
     return roles;
 }
