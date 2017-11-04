@@ -6,5 +6,5 @@ package com.sioux.Micro.Configuration;
 public final class Projectile {
     public static int Damage = 25;
     public static int Radius = 5;
-    public static int Speed = 15;
+    public static int Speed = 20;
 }
