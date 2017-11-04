@@ -7,8 +7,8 @@
 Universe::Universe(QMap<int, SolarSystem *> solarSystems, QObject *parent)
     : GameObject(parent)
     , m_solarSystems(solarSystems)
-    , m_baseIncomePerSecond(1500)
-    , m_incomePerPlanetPerSecond(225)
+    , m_baseIncomePerSecond(1000)
+    , m_incomePerPlanetPerSecond(250)
 {
     for (auto solarSystemIt = m_solarSystems.begin(); solarSystemIt != m_solarSystems.end(); solarSystemIt++)
     {
@@ -102,12 +102,7 @@ int Universe::getIncome(Player* player)
     if (ownedPlanets == 0)
         return 0;
 
-
-    auto baseIncome = m_baseIncomePerSecond;
-    auto basePlanet = m_incomePerPlanetPerSecond;
-    auto shifted =  std::min(ownedPlanets, 50) + 3;
-    auto paneltyPerPlanet = 3;
-    return baseIncome + (basePlanet - paneltyPerPlanet * shifted)*shifted;
+    return static_cast<int>(1000 * log(ownedPlanets + 5));
 }
 
 int Universe::getNumberofOwnedUfos(Player* player)

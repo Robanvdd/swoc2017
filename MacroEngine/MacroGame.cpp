@@ -327,8 +327,6 @@ void MacroGame::handleFightCommand(Player* attacker, int ufoId)
         return;
     }
     auto ufo = attacker->getUfo(ufoId);
-    if (m_universe->getUfosNearLocation(ufo->getCoord(), *attacker).size() <= 0)
-        return;
 
     QList<MicroGameInputPlayer> microGameInputs;
     foreach (auto player, m_universe->getPlayers())
