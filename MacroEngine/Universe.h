@@ -27,6 +27,7 @@ public:
     QMap<int, Fight*> getFights() const;
     SolarSystem* getCorrespondingSolarSystem(Planet* planet);
 
+    QList<Ufo*> getFriends(const QList<Ufo*>& attackees, const Player& player);
 signals:
 
 public slots:

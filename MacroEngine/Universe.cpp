@@ -123,4 +123,17 @@ QList<Ufo*> Universe::getUfosNearLocation(const QPointF& location, const Player&
     return result;
 }
 
-
+QList<Ufo*> Universe::getFriends(const QList<Ufo*>& attackees, const Player& player)
+{
+    auto result = attackees;
+    foreach (auto ufo, attackees)
+    {
+        auto nearby = getUfosNearLocation(ufo->getCoord(), player);
+        foreach (auto nearbyUfo, nearby)
+        {
+            if (!result.contains(nearbyUfo))
+                result << nearbyUfo;
+        }
+    }
+    return result;
+}
