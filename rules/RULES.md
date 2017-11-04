@@ -50,18 +50,16 @@ When a planet is conquered you gain credits. These are used to buy more UFOs.
 The player with the most credits at the end of the game will win so be mindful
 of how you are spending your credits.
 
-If you have at least one planet conquered, your base income is a **1500**
-credits per second. On top of that you get an additional amount credits for
-the total number of planet you have conquered per second.
+You get credits for the total number of planet you have conquered per second.
 Your total income per second is calculated with the following formula:
 ```
-    Bi + ((Bp - P * S) * S)
+    10000 * log(X + 5)
     where
-        Bi = base income (1500 credits)
-        Bp = base income per planet (225 credits)
-        P = penalty per planet (3 credits)
-        S = number of conquered planets (up to a maximum of 50) + 3
+        X = number of planets you have conquered
 ```
+
+At the end of the game you get an additional **10000** credits for each UFO
+that you have remaining.
 
 See commands: [buy](#buy)
 
@@ -72,7 +70,7 @@ scripts. Macro will wait for **250 milliseconds** during each tick.
 
 The game state consists of the following:
 - List of solar systems, each containing a list of planets
-- List of players, each containing a list of ufos
+- List of players, each containing a list of UFOs
 
 Example game state:
 ```json
@@ -166,7 +164,9 @@ If the battle is a draw, you get to keep the planet.
 ##### <a name="fight"></a>fight
 
 In order to fight bots in space, you can send the `fight` command with the ID
-of the UFO you want to fight.
+of the UFO you want to fight. All your UFOs that are within a radius of **256**
+of your attacking UFO will join the battle along with all the enemy's UFOs
+that are within the same radius of the UFO you are attacking.
 
 ```json
     {
@@ -218,7 +218,7 @@ If you send multiple `moveToCoord` commands during one tick
 
 To buy additional UFOs you can send the `buy` command with the amount of UFOs
 that you want to buy and the ID of the planet where you want your new UFOs
-to spawn. The price of a UFO is **50000** credits.
+to spawn. The price of a UFO is **20000** credits.
 
 There are some constraints:
 1. The buy command will be ignored if you try to buy more UFOs that you can
